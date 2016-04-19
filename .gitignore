@@ -1,7 +1,9 @@
 venv
 *.pyc
 staticfiles
-.env
+.env/
+env/
 .idea/
 djangoISSSTE/migrations/
 Projects/settingsOscar.py
+DjangoISSSTE/
