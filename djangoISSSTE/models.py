@@ -1,3 +1,5 @@
+# coding=utf-8
+
 from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import User
@@ -7,10 +9,11 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.forms import model_to_dict
 
 
+@python_2_unicode_compatible
 class Estado(models.Model):
-	nombreEstado = models.CharField(max_length=200)
-	latitud = models.FloatField()
-	longitud = models.FloatField()
+	claveEstado = models.CharField(max_length=2, null=False, blank=False)
+	nombreEstado = models.CharField(max_length=45, null=False, blank=False)
+	abrevEstado = models.CharField(max_length=16, null=False, blank=False)
 
 	def __str__(self):  # __unicode__ on Python 2
 		return self.nombreEstado
@@ -20,12 +23,20 @@ class Estado(models.Model):
 		ans['id'] = str(self.id)
 		return ans
 
+	class Meta:
+		ordering = ('nombreEstado',)
 
+
+@python_2_unicode_compatible
 class Municipio(models.Model):
+	estado = models.ForeignKey(Estado, null=False, blank=False)
+	claveMunicipio = models.CharField(max_length=3, null=False, blank=False)
 	nombreMunicipio = models.CharField(max_length=200)
+	sigla = models.CharField(max_length=2)
 	latitud = models.FloatField()
 	longitud = models.FloatField()
-	estado = models.ForeignKey(Estado, null=False, blank=False, default="")
+
+
 
 	def to_serializable_dict(self):
 		ans = model_to_dict(self)
@@ -33,9 +44,8 @@ class Municipio(models.Model):
 		ans['estado'] = self.estado.nombreEstado
 		return ans
 
-	def __str__(self):
+	def __str__(self):	# __unicode__ on Python 2
 		return self.nombreMunicipio
-
 
 
 @python_2_unicode_compatible
@@ -54,9 +64,9 @@ class Carencia(models.Model):
 @python_2_unicode_compatible
 class SubCarencia(models.Model):
 	nombreSubCarencia = models.CharField(max_length=200)
-	carencia = models.ForeignKey(Carencia, null=False, blank=False);
+	carencia = models.ForeignKey(Carencia, null=False, blank=False)
 
-	def __str__(self):
+	def __str__(self):	# __unicode__ on Python 2
 		return self.nombreSubCarencia
 
 	def to_serialize_dict(self):
@@ -74,7 +84,7 @@ class Responsable(models.Model):
 	nombreResponsable = models.CharField(max_length=100)
 	cargoResponsable = models.CharField(max_length=100)
 
-	def __str__(self):
+	def __str__(self): # __unicode__ on Python 2
 		return self.nombreResponsable
 
 	def to_serialize_dict(self):
@@ -90,7 +100,7 @@ class AccionEstrategica(models.Model):
 	subCarencia = models.ForeignKey(SubCarencia, null=False, blank=False)
 	responsable = models.ForeignKey(Responsable)
 
-	def __str__(self):
+	def __str__(self): # __unicode__ on Python 2
 		return self.nombreAccion
 
 	def to_serialize_dict(self):
@@ -113,14 +123,21 @@ class Periodo(models.Model):
 	class Meta:
 		ordering = ['nombrePeriodo']
 
+
+@python_2_unicode_compatible
 class Mes(models.Model):
 	nombreMes = models.CharField(max_length=20, null=False, blank=False)
 
-	def __str__(self):
+	def __str__(self):# __unicode__ on Python 2
 		return self.nombreMes
 
+	class Meta:
+		verbose_name = 'Mes'
+		verbose_name_plural = 'Meses'
+
+
+@python_2_unicode_compatible
 class Meta(models.Model):
-	nombreMeta = models.CharField(max_length=200)
 	accionEstrategica = models.ForeignKey(AccionEstrategica, null=False, blank=False)
 	estado = models.ForeignKey(Estado, null=False, blank=False)
 	periodo = models.ForeignKey(Periodo, null=False, blank=False)
@@ -136,24 +153,37 @@ class Meta(models.Model):
 		return ans
 
 	def save(self, *args, **kwargs):
-		self.nombreMeta = self.accionEstrategica.nombreAccion +' - '+self.estado.nombreEstado
-
+		self.nombreMeta = self.accionEstrategica.nombreAccion + ' - ' + self.estado.nombreEstado
 		super(Meta, self).save(*args, **kwargs)
 
 	def __str__(self):
-		return self.nombreMeta
+		return self.accionEstrategica.nombreAccion + " - " + self.estado.nombreEstado
 
+
+@python_2_unicode_compatible
 class MetaMensual(models.Model):
 	meta = models.ForeignKey(Meta, null=False, blank=False)
 	mes = models.ForeignKey(Mes, null=False, blank=False)
 	cantidad = models.FloatField()
 
+	def __str__(self):
+		return self.meta.accionEstrategica.nombreAccion + " - "+ self.cantidad.__str__()
 
+	class Meta:
+		verbose_name = 'Meta Mensual'
+		verbose_name_plural = 'Metas Mensuales'
+
+@python_2_unicode_compatible
 class AvancePorMunicipio(models.Model):
 	meta = models.ForeignKey(Meta, null=False, blank=False)
 	municipio = models.ForeignKey(Municipio, null=False, blank=False)
 	periodo = models.ForeignKey(Periodo, null=False, blank=False)
 
+	def __str__(self):
+		return self.meta.accionEstrategica.nombreAccion + " - " + self.municipio.nombreMunicipio
+
+
+@python_2_unicode_compatible
 class AvanceMensual(models.Model):
 	avancePorMunicipio = models.ForeignKey(AvancePorMunicipio, null=False, blank=False)
 	mes = models.ForeignKey(Mes, null=False, blank=False)
@@ -167,7 +197,12 @@ class AvanceMensual(models.Model):
 		ans['periodo'] = self.periodo.nombrePeriodo
 		return ans
 
+	def __str__(self):
+		return self.avancePorMunicipio.meta.accionEstrategica.nombreAccion + " - " + self.cantidad.__str__()
 
+	class Meta:
+		verbose_name = "Avance Mensual"
+		verbose_name_plural = "Avances Mensuales"
 
 class Usuario(models.Model):
 	REGIONAL = "RE"
@@ -181,3 +216,4 @@ class Usuario(models.Model):
 	user = models.OneToOneField(User)
 	rol = models.CharField(max_length=2, choices=ROLES_CHOICES, default=User)
 	estado = models.ForeignKey(Estado, null=False, blank=False)
+
