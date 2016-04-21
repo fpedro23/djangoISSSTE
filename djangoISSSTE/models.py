@@ -139,9 +139,7 @@ class Mes(models.Model):
 @python_2_unicode_compatible
 class Meta(models.Model):
 	accionEstrategica = models.ForeignKey(AccionEstrategica, null=False, blank=False)
-	estado = models.ForeignKey(Estado, null=False, blank=False)
 	periodo = models.ForeignKey(Periodo, null=False, blank=False)
-
 	inversionAprox = models.FloatField()
 
 	def to_serialize_dict(self):
@@ -152,42 +150,63 @@ class Meta(models.Model):
 		ans['periodo'] = self.periodo.nombrePeriodo
 		return ans
 
-	def save(self, *args, **kwargs):
-		self.nombreMeta = self.accionEstrategica.nombreAccion + ' - ' + self.estado.nombreEstado
-		super(Meta, self).save(*args, **kwargs)
-
 	def __str__(self):
-		return self.accionEstrategica.nombreAccion + " - " + self.estado.nombreEstado
+		return self.accionEstrategica.nombreAccion
+
+	class Meta:
+		verbose_name = 'Meta'
+		verbose_name_plural = 'Metas'
 
 
-@python_2_unicode_compatible
 class MetaMensual(models.Model):
 	meta = models.ForeignKey(Meta, null=False, blank=False)
-	mes = models.ForeignKey(Mes, null=False, blank=False)
-	cantidad = models.FloatField()
-
-	def __str__(self):
-		return self.meta.accionEstrategica.nombreAccion + " - "+ self.cantidad.__str__()
+	estado = models.ForeignKey(Estado, null=False, blank=False)
+	ene = models.FloatField()
+	feb = models.FloatField()
+	mar = models.FloatField()
+	abr = models.FloatField()
+	may = models.FloatField()
+	jun = models.FloatField()
+	jul = models.FloatField()
+	ago = models.FloatField()
+	sep = models.FloatField()
+	oct = models.FloatField()
+	nov = models.FloatField()
+	dic = models.FloatField()
 
 	class Meta:
 		verbose_name = 'Meta Mensual'
 		verbose_name_plural = 'Metas Mensuales'
 
 @python_2_unicode_compatible
-class AvancePorMunicipio(models.Model):
-	meta = models.ForeignKey(Meta, null=False, blank=False)
-	municipio = models.ForeignKey(Municipio, null=False, blank=False)
+class AvancePorEstado(models.Model):
+	meta = models.ForeignKey(Meta, null=False, blank=False, verbose_name="Acción Estratégica")
+	estado = models.ForeignKey(Estado, null=False, blank=False)
 	periodo = models.ForeignKey(Periodo, null=False, blank=False)
 
 	def __str__(self):
-		return self.meta.accionEstrategica.nombreAccion + " - " + self.municipio.nombreMunicipio
+		return self.meta.accionEstrategica.nombreAccion + " - " + self.estado.nombreEstado
+
+	class Meta:
+		verbose_name = 'Avance por Estado'
+		verbose_name_plural = 'Avances por Estado'
 
 
-@python_2_unicode_compatible
 class AvanceMensual(models.Model):
-	avancePorMunicipio = models.ForeignKey(AvancePorMunicipio, null=False, blank=False)
-	mes = models.ForeignKey(Mes, null=False, blank=False)
-	cantidad = models.FloatField()
+	avancePorEstado = models.ForeignKey(AvancePorEstado, null=False, blank=False)
+	municipio = models.ForeignKey(Municipio, null=False, blank=False)
+	ene = models.FloatField()
+	feb = models.FloatField()
+	mar = models.FloatField()
+	abr = models.FloatField()
+	may = models.FloatField()
+	jun = models.FloatField()
+	jul = models.FloatField()
+	ago = models.FloatField()
+	sep = models.FloatField()
+	oct = models.FloatField()
+	nov = models.FloatField()
+	dic = models.FloatField()
 
 	def to_serialize_dict(self):
 		ans = model_to_dict(self)
@@ -196,9 +215,6 @@ class AvanceMensual(models.Model):
 		ans['municipio'] = self.municipio.nombreMunicipio
 		ans['periodo'] = self.periodo.nombrePeriodo
 		return ans
-
-	def __str__(self):
-		return self.avancePorMunicipio.meta.accionEstrategica.nombreAccion + " - " + self.cantidad.__str__()
 
 	class Meta:
 		verbose_name = "Avance Mensual"
