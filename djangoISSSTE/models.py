@@ -18,10 +18,11 @@ class Estado(models.Model):
 	def __str__(self):  # __unicode__ on Python 2
 		return self.nombreEstado
 
+	def __unicode__(self):  # __unicode__ on Python 2
+		return self.nombreEstado
+
 	def to_serializable_dict(self):
-		ans = model_to_dict(self)
-		ans['id'] = str(self.id)
-		return ans
+		return {'id': self.id, 'nombreEstado': self.nombreEstado}
 
 	class Meta:
 		ordering = ('nombreEstado',)
@@ -140,7 +141,7 @@ class Mes(models.Model):
 class Meta(models.Model):
 	accionEstrategica = models.ForeignKey(AccionEstrategica, null=False, blank=False)
 	periodo = models.ForeignKey(Periodo, null=False, blank=False)
-	inversionAprox = models.FloatField()
+	observaciones = models.TextField(max_length=500, default="")
 
 	def to_serialize_dict(self):
 		ans = model_to_dict(self)
@@ -161,6 +162,7 @@ class Meta(models.Model):
 class MetaMensual(models.Model):
 	meta = models.ForeignKey(Meta, null=False, blank=False)
 	estado = models.ForeignKey(Estado, null=False, blank=False)
+	inversionAprox = models.FloatField()
 	ene = models.FloatField()
 	feb = models.FloatField()
 	mar = models.FloatField()
@@ -173,6 +175,7 @@ class MetaMensual(models.Model):
 	oct = models.FloatField()
 	nov = models.FloatField()
 	dic = models.FloatField()
+
 
 	class Meta:
 		verbose_name = 'Meta Mensual'
@@ -221,12 +224,19 @@ class AvanceMensual(models.Model):
 		verbose_name_plural = "Avances Mensuales"
 
 class Usuario(models.Model):
-	REGIONAL = "RE"
-	ESTATAL = "ES"
+	ADMIN_GENERAL = "AG"
+	USUARIO_CENTRAL = "UC"
+	FUNCIONARIO_CENTRAL = "FC"
+	USUARIO_ESTATAL = "UE"
+	FUNCIONARIO_ESTATAL = "FE"
 
 	ROLES_CHOICES = (
-		(REGIONAL, 'Administrador Regional'),
-		(ESTATAL, 'Administrador Estatal'),
+		(ADMIN_GENERAL, 'Administrador General'),
+		(USUARIO_CENTRAL, 'Usuario Central'),
+		(FUNCIONARIO_CENTRAL, 'Funcionario Central'),
+		(USUARIO_ESTATAL, 'Usuario Estatal'),
+		(FUNCIONARIO_ESTATAL, 'Funcionario Estatal'),
+
 	)
 
 	user = models.OneToOneField(User)

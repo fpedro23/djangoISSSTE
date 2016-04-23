@@ -30,18 +30,32 @@ class UserAdmin(UserAdmin):
 		obj.is_staff = True
 		usuario = obj
 		usuario.save()
-		try:
-			g = Group.objects.get(name='Administrador')
+
+		if usuario.usuario.rol == "AG":
+			g = Group.objects.get(name = "administrador_general")
 			g.user_set.add(usuario)
-			'''
-			if usuario.usuario.rol == "ES":
-				usuario.is_superuser = True
-			elif usuario.userprofile.rol == 'RE':
-				g = Group.objects.get(name='Administrador')
-				g.user_set.add(usuario)
-			'''
-		except Exception as e:
-			print e
+			print "Definiendo permisos para Administrador General"
+
+		elif usuario.usuario.rol == "UC":
+			g = Group.objects.get(name="usuario")
+			g.user_set.add(usuario)
+			print "Definiendo permisos para Usuario Central"
+
+		elif usuario.usuario.rol == "FC":
+			g = Group.objects.get(name="funcionario")
+			g.user_set.add(usuario)
+			print "Definiendo permisos para Funcionario Central"
+
+		elif usuario.usuario.rol == "UE":
+			g = Group.objects.get(name="usuario")
+			g.user_set.add(usuario)
+			print "Definiendo permisos para Usuario Estatal"
+
+		elif usuario.usuario.rol == "FE":
+			g = Group.objects.get(name="funcionario")
+			g.user_set.add(usuario)
+			print "Definiendo permisos para Funcionario Estatal"
+
 		super(UserAdmin, self).save_model(request, obj, form, change)
 
 
@@ -52,7 +66,7 @@ class MetaMensualInLine(admin.TabularInline):
 
 class MetaAdmin(admin.ModelAdmin):
 	model = Meta
-	fields = ('accionEstrategica', 'periodo', 'inversionAprox')
+	fields = ('accionEstrategica', 'periodo', 'observaciones')
 	inlines = [MetaMensualInLine]
 	can_delete = True
 
