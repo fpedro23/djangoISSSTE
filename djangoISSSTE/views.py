@@ -10,3 +10,10 @@ def redirect_admin(request):
 @login_required()
 def secret_page(request, *args, **kwargs):
     return HttpResponse('Secret contents!', status=200)
+
+
+@login_required()
+def test(request):
+    print request.user.usuario.estado
+
+    return HttpResponse('Secret contents!', status=200)

@@ -51,7 +51,7 @@ class Municipio(models.Model):
 
 @python_2_unicode_compatible
 class Carencia(models.Model):
-	nombreCarencia = models.CharField(max_length=200, null=False, blank=False)
+	nombreCarencia = models.CharField(max_length=200, null=False, blank=False, verbose_name='Carencia')
 
 	def __str__(self):  # __unicode__ on Python 2
 		return self.nombreCarencia
@@ -64,7 +64,7 @@ class Carencia(models.Model):
 
 @python_2_unicode_compatible
 class SubCarencia(models.Model):
-	nombreSubCarencia = models.CharField(max_length=200)
+	nombreSubCarencia = models.CharField(max_length=200, verbose_name='SubCarencia')
 	carencia = models.ForeignKey(Carencia, null=False, blank=False)
 
 	def __str__(self):	# __unicode__ on Python 2
@@ -77,6 +77,7 @@ class SubCarencia(models.Model):
 		return ans
 
 	class Meta:
+		verbose_name = "Sub Carencia"
 		verbose_name_plural = "Sub Carencias"
 
 
@@ -96,8 +97,8 @@ class Responsable(models.Model):
 
 @python_2_unicode_compatible
 class AccionEstrategica(models.Model):
-	nombreAccion = models.CharField(max_length=200, null=False, blank=False)
-	unidadDeMedida = models.CharField(max_length=200, null=False, blank=False)
+	nombreAccion = models.CharField(max_length=200, null=False, blank=False, verbose_name='Acción')
+	unidadDeMedida = models.CharField(max_length=200, null=False, blank=False, verbose_name='Unidad de medida')
 	subCarencia = models.ForeignKey(SubCarencia, null=False, blank=False)
 	responsable = models.ForeignKey(Responsable)
 
@@ -139,9 +140,10 @@ class Mes(models.Model):
 
 @python_2_unicode_compatible
 class Meta(models.Model):
-	accionEstrategica = models.ForeignKey(AccionEstrategica, null=False, blank=False)
+	nombreMeta = models.CharField(max_length=200, null=False,)
+	accionEstrategica = models.ForeignKey(AccionEstrategica, null=False, blank=False, verbose_name='Acción Estrategica')
 	periodo = models.ForeignKey(Periodo, null=False, blank=False)
-	observaciones = models.TextField(max_length=500, default="")
+	observaciones = models.TextField(max_length=500, default="", blank=True)
 
 	def to_serialize_dict(self):
 		ans = model_to_dict(self)
@@ -155,34 +157,40 @@ class Meta(models.Model):
 		return self.accionEstrategica.nombreAccion
 
 	class Meta:
+		unique_together = [("accionEstrategica", "periodo",)]
 		verbose_name = 'Meta'
 		verbose_name_plural = 'Metas'
+
+	def save(self, *args, **kwargs):
+		self.nombreMeta = self.accionEstrategica.nombreAccion
+		super(Meta, self).save(*args, **kwargs)
 
 
 class MetaMensual(models.Model):
 	meta = models.ForeignKey(Meta, null=False, blank=False)
 	estado = models.ForeignKey(Estado, null=False, blank=False)
 	inversionAprox = models.FloatField()
-	ene = models.FloatField()
-	feb = models.FloatField()
-	mar = models.FloatField()
-	abr = models.FloatField()
-	may = models.FloatField()
-	jun = models.FloatField()
-	jul = models.FloatField()
-	ago = models.FloatField()
-	sep = models.FloatField()
-	oct = models.FloatField()
-	nov = models.FloatField()
-	dic = models.FloatField()
+	ene = models.FloatField(null=False, default=0)
+	feb = models.FloatField(null=False, default=0)
+	mar = models.FloatField(null=False, default=0)
+	abr = models.FloatField(null=False, default=0)
+	may = models.FloatField(null=False, default=0)
+	jun = models.FloatField(null=False, default=0)
+	jul = models.FloatField(null=False, default=0)
+	ago = models.FloatField(null=False, default=0)
+	sep = models.FloatField(null=False, default=0)
+	oct = models.FloatField(null=False, default=0)
+	nov = models.FloatField(null=False, default=0)
+	dic = models.FloatField(null=False, default=0)
 
 
 	class Meta:
+		unique_together = [("meta", "estado",)]
 		verbose_name = 'Meta Mensual'
 		verbose_name_plural = 'Metas Mensuales'
 
 @python_2_unicode_compatible
-class AvancePorEstado(models.Model):
+class AvancePorMunicipio(models.Model):
 	meta = models.ForeignKey(Meta, null=False, blank=False, verbose_name="Acción Estratégica")
 	estado = models.ForeignKey(Estado, null=False, blank=False)
 	periodo = models.ForeignKey(Periodo, null=False, blank=False)
@@ -191,25 +199,27 @@ class AvancePorEstado(models.Model):
 		return self.meta.accionEstrategica.nombreAccion + " - " + self.estado.nombreEstado
 
 	class Meta:
-		verbose_name = 'Avance por Estado'
-		verbose_name_plural = 'Avances por Estado'
+		unique_together = [("meta", "periodo", "estado")]
+		verbose_name = 'Avance por Municipio'
+		verbose_name_plural = 'Avances por Municipio'
+
 
 
 class AvanceMensual(models.Model):
-	avancePorEstado = models.ForeignKey(AvancePorEstado, null=False, blank=False)
+	avancePorMunicipio = models.ForeignKey(AvancePorMunicipio, null=False, blank=False)
 	municipio = models.ForeignKey(Municipio, null=False, blank=False)
-	ene = models.FloatField()
-	feb = models.FloatField()
-	mar = models.FloatField()
-	abr = models.FloatField()
-	may = models.FloatField()
-	jun = models.FloatField()
-	jul = models.FloatField()
-	ago = models.FloatField()
-	sep = models.FloatField()
-	oct = models.FloatField()
-	nov = models.FloatField()
-	dic = models.FloatField()
+	ene = models.FloatField(null=False, default=0)
+	feb = models.FloatField(null=False, default=0)
+	mar = models.FloatField(null=False, default=0)
+	abr = models.FloatField(null=False, default=0)
+	may = models.FloatField(null=False, default=0)
+	jun = models.FloatField(null=False, default=0)
+	jul = models.FloatField(null=False, default=0)
+	ago = models.FloatField(null=False, default=0)
+	sep = models.FloatField(null=False, default=0)
+	oct = models.FloatField(null=False, default=0)
+	nov = models.FloatField(null=False, default=0)
+	dic = models.FloatField(null=False, default=0)
 
 	def to_serialize_dict(self):
 		ans = model_to_dict(self)
@@ -220,6 +230,7 @@ class AvanceMensual(models.Model):
 		return ans
 
 	class Meta:
+		unique_together = [("avancePorMunicipio", "municipio")]
 		verbose_name = "Avance Mensual"
 		verbose_name_plural = "Avances Mensuales"
 

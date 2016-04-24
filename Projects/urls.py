@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+
+import djangoISSSTE
 from djangoISSSTE import api
 from  djangoISSSTE import views
 
@@ -23,5 +25,6 @@ urlpatterns = [
     url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^admin/', admin.site.urls),
     url(r'^api/estados', api.EstadosEndpoint.as_view()),
-    url(r'^secrets', views.secret_page, name='secret')
+    url(r'^secrets', djangoISSSTE.views.secret_page, name='secret'),
+    url(r'^test', djangoISSSTE.views.test, name='test')
 ]
