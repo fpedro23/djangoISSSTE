@@ -25,6 +25,9 @@ urlpatterns = [
     url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^admin/', admin.site.urls),
     url(r'^api/estados', api.EstadosEndpoint.as_view()),
+    url(r'^api/municipios_por_estado', api.MunicipiosForEstadosEndpoint.as_view()),
+
+
     url(r'^secrets', djangoISSSTE.views.secret_page, name='secret'),
     url(r'^test', djangoISSSTE.views.test, name='test')
 ]
