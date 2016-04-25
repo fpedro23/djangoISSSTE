@@ -18,7 +18,6 @@ class UsuarioInLine(admin.StackedInline):
 	verbose_name_plural = 'Usuario'
 
 	can_delete = False
-	verbose_name_plural = 'Usuario'
 	extra = 1
 
 

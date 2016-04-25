@@ -56,7 +56,7 @@ class Carencia(models.Model):
 	def __str__(self):  # __unicode__ on Python 2
 		return self.nombreCarencia
 
-	def to_serialize_dict(self):
+	def to_serializable_dict(self):
 		ans = model_to_dict(self)
 		ans['id'] = str(self.id)
 		return ans
@@ -70,7 +70,7 @@ class SubCarencia(models.Model):
 	def __str__(self):	# __unicode__ on Python 2
 		return self.nombreSubCarencia
 
-	def to_serialize_dict(self):
+	def to_serializable_dict(self):
 		ans = model_to_dict(self)
 		ans['id'] = str(self.id)
 		ans['carencia'] = self.carencia.nombreCarencia
@@ -89,7 +89,7 @@ class Responsable(models.Model):
 	def __str__(self): # __unicode__ on Python 2
 		return self.nombreResponsable
 
-	def to_serialize_dict(self):
+	def to_serializable_dict(self):
 		ans = model_to_dict(self)
 		ans['id'] = str(self.id)
 		return ans
@@ -105,7 +105,7 @@ class AccionEstrategica(models.Model):
 	def __str__(self): # __unicode__ on Python 2
 		return self.nombreAccion
 
-	def to_serialize_dict(self):
+	def to_serializable_dict(self):
 		ans = model_to_dict(self)
 		ans['id'] = str(self.id)
 		ans['subCarencia'] = str(self.subCarencia.nombreSubCarencia)
@@ -125,6 +125,11 @@ class Periodo(models.Model):
 	class Meta:
 		ordering = ['nombrePeriodo']
 
+	def to_serializable_dict(self):
+		ans = model_to_dict(self)
+		ans['id'] = str(self.id)
+		return ans
+
 
 @python_2_unicode_compatible
 class Mes(models.Model):
@@ -137,6 +142,11 @@ class Mes(models.Model):
 		verbose_name = 'Mes'
 		verbose_name_plural = 'Meses'
 
+	def to_serializable_dict(self):
+		ans = model_to_dict(self)
+		ans['id'] = str(self.id)
+		return ans
+
 
 @python_2_unicode_compatible
 class Meta(models.Model):
@@ -145,7 +155,7 @@ class Meta(models.Model):
 	periodo = models.ForeignKey(Periodo, null=False, blank=False)
 	observaciones = models.TextField(max_length=500, default="", blank=True)
 
-	def to_serialize_dict(self):
+	def to_serializable_dict(self):
 		ans = model_to_dict(self)
 		ans['id'] = str(self.id)
 		ans['accionEstrategica'] = self.accionEstrategica.nombreAccion
@@ -221,7 +231,7 @@ class AvanceMensual(models.Model):
 	nov = models.FloatField(null=False, default=0)
 	dic = models.FloatField(null=False, default=0)
 
-	def to_serialize_dict(self):
+	def to_serializable_dict(self):
 		ans = model_to_dict(self)
 		ans['id'] = str(self.id)
 		ans['meta'] = "meta_ISSTE"

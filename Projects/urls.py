@@ -15,18 +15,17 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.views.generic.base import RedirectView
 
 import djangoISSSTE
-from djangoISSSTE import api
-from  djangoISSSTE import views
+from djangoISSSTE import views
+from djangoISSSTE import urls
 
 urlpatterns = [
-    #url(r'^$', 'djangoISSSTE.views.redirect_admin', name='redirect_admin'),
-    url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    url(r'^$', RedirectView.as_view(url='/admin')),
     url(r'^admin/', admin.site.urls),
-    url(r'^api/estados', api.EstadosEndpoint.as_view()),
-    url(r'^api/municipios_por_estado', api.MunicipiosForEstadosEndpoint.as_view()),
-
+    url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    url(r'issste/', include(djangoISSSTE.urls)),
 
     url(r'^secrets', djangoISSSTE.views.secret_page, name='secret'),
     url(r'^test', djangoISSSTE.views.test, name='test')
