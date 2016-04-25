@@ -15,6 +15,46 @@ def get_array_or_none(the_string):
 		return map(int, the_string.split(','))
 
 
+# Api para regresar todas las carencias
+class CarenciasEndpoint(ProtectedResourceView):
+	def get(self, request, *args, **kwargs):
+		return HttpResponse(
+			json.dumps((map(lambda carencia: carencia.to_serializable_dict(), Carencia.objects.all())),
+					   'application/json', ensure_ascii=False))
+
+
+# Api para regresar subcarencias pertenecientes a una carencia en especial
+class SubcarenciasForCarenciasEndpoint(ProtectedResourceView):
+	def get(self, request, *args, **kwargs):
+		carencia_ids = get_array_or_none(request.GET.get('carencias'))
+		all_carencias = False
+		print (carencia_ids)
+
+		if carencia_ids is None:
+			all_carencias = True
+
+		if all_carencias:
+			subcarencias = SubCarencia.objects.order_by('nombreSubCarencia').all()
+			print (subcarencias)
+		else:
+			subcarencias = SubCarencia.objects.filter(carencia_id__in=carencia_ids).order_by(
+				'nombreSubCarencia').all()
+
+		the_list = []
+		for subcarencias in subcarencias.values('id', 'nombreSubCarencia'):
+			the_list.append(subcarencias)
+
+		return HttpResponse(json.dumps(the_list, ensure_ascii=False), 'application/json', )
+
+
+# Api para regresar todos los responsables dados de alta
+class ResponsablesEndpoint(ProtectedResourceView):
+	def get(self, request, *args, **kwargs):
+		return HttpResponse(
+			json.dumps((map(lambda responsable: responsable.to_serializable_dict(), Responsable.objects.all())),
+					   'application/json', ensure_ascii=False))
+
+
 # Clase EndPoint (oauth2) para devolver los estados
 class EstadosEndpoint(ProtectedResourceView):
 	def get(self, request):
