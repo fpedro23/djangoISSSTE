@@ -9,158 +9,160 @@ from djangoISSSTE.models import *
 
 
 def get_array_or_none(the_string):
-	if the_string is None:
-		return None
-	else:
-		return map(int, the_string.split(','))
+    if the_string is None:
+        return None
+    else:
+        return map(int, the_string.split(','))
 
 
 # Api para regresar todas las carencias
 class CarenciasEndpoint(ProtectedResourceView):
-	def get(self, request, *args, **kwargs):
-		return HttpResponse(
-			json.dumps((map(lambda carencia: carencia.to_serializable_dict(), Carencia.objects.all())),
-					   'application/json', ensure_ascii=False))
+    def get(self, request, *args, **kwargs):
+        return HttpResponse(
+                json.dumps((map(lambda carencia: carencia.to_serializable_dict(), Carencia.objects.all())),
+                           'application/json', ensure_ascii=False))
 
 
 # Api para regresar subcarencias pertenecientes a una carencia en especial
 class SubcarenciasForCarenciasEndpoint(ProtectedResourceView):
-	def get(self, request, *args, **kwargs):
-		carencia_ids = get_array_or_none(request.GET.get('carencias'))
-		all_carencias = False
-		print (carencia_ids)
+    def get(self, request, *args, **kwargs):
+        carencia_ids = get_array_or_none(request.GET.get('carencias'))
+        all_carencias = False
+        print (carencia_ids)
 
-		if carencia_ids is None:
-			all_carencias = True
+        if carencia_ids is None:
+            all_carencias = True
 
-		if all_carencias:
-			subcarencias = SubCarencia.objects.order_by('nombreSubCarencia').all()
-			print (subcarencias)
-		else:
-			subcarencias = SubCarencia.objects.filter(carencia_id__in=carencia_ids).order_by(
-				'nombreSubCarencia').all()
+        if all_carencias:
+            subcarencias = SubCarencia.objects.order_by('nombreSubCarencia').all()
+            print (subcarencias)
+        else:
+            subcarencias = SubCarencia.objects.filter(carencia_id__in=carencia_ids).order_by(
+                    'nombreSubCarencia').all()
 
-		the_list = []
-		for subcarencias in subcarencias.values('id', 'nombreSubCarencia'):
-			the_list.append(subcarencias)
+        the_list = []
+        for subcarencias in subcarencias.values('id', 'nombreSubCarencia'):
+            the_list.append(subcarencias)
 
-		return HttpResponse(json.dumps(the_list, ensure_ascii=False), 'application/json', )
+        return HttpResponse(json.dumps(the_list, ensure_ascii=False), 'application/json', )
 
 
 # Api para regresar todos los responsables dados de alta
 class ResponsablesEndpoint(ProtectedResourceView):
-	def get(self, request, *args, **kwargs):
-		return HttpResponse(
-			json.dumps((map(lambda responsable: responsable.to_serializable_dict(), Responsable.objects.all())),
-					   'application/json', ensure_ascii=False))
+    def get(self, request, *args, **kwargs):
+        return HttpResponse(
+                json.dumps((map(lambda responsable: responsable.to_serializable_dict(), Responsable.objects.all())),
+                           'application/json', ensure_ascii=False))
 
 
 # Clase EndPoint (oauth2) para devolver los estados
 class EstadosEndpoint(ProtectedResourceView):
-	def get(self, request):
-		return HttpResponse(json.dumps((map(lambda estado: estado.to_serializable_dict(), Estado.objects.all())), ensure_ascii= False),
-							'application/json')
+    def get(self, request):
+        return HttpResponse(
+                json.dumps((map(lambda estado: estado.to_serializable_dict(), Estado.objects.all())),
+                           ensure_ascii=False),
+                'application/json')
 
 
 # Clase EndPoint (oauth2) para devolver los municipios, dado un estado
 class MunicipiosForEstadosEndpoint(ProtectedResourceView):
-	def get(self, request):
-		# Obteniendo los datos de la url
-		estado_ids = get_array_or_none(request.GET.get('estados'))
-		all_estados = False
+    def get(self, request):
+        # Obteniendo los datos de la url
+        estado_ids = get_array_or_none(request.GET.get('estados'))
+        all_estados = False
 
-		# Si TRUE, no hubo estados estados en la url y se regresan
-		# todos los municipios de la base de datos
-		if estado_ids is None:
-			all_estados = True
-		else:
-			for estado_id in estado_ids:
-				if estado_id == 33 or estado_id == 34:
-					all_estados = True
-					break
+        # Si TRUE, no hubo estados estados en la url y se regresan
+        # todos los municipios de la base de datos
+        if estado_ids is None:
+            all_estados = True
+        else:
+            for estado_id in estado_ids:
+                if estado_id == 33 or estado_id == 34:
+                    all_estados = True
+                    break
 
-		if all_estados:
-			municipios = Municipio.objects.order_by('nombreMunicipio').all()
-		else:
-			municipios = Municipio.objects.filter(estado_id__in=estado_ids).order_by('nombreMunicipio').all()
+        if all_estados:
+            municipios = Municipio.objects.order_by('nombreMunicipio').all()
+        else:
+            municipios = Municipio.objects.filter(estado_id__in=estado_ids).order_by('nombreMunicipio').all()
 
-		# Arreglo necesario para la conversión a json
-		the_list = []
-		for municipio in municipios.values('nombreMunicipio','id','latitud', 'longitud'):
-			the_list.append(municipio)
+        # Arreglo necesario para la conversión a json
+        the_list = []
+        for municipio in municipios.values('nombreMunicipio', 'id', 'latitud', 'longitud'):
+            the_list.append(municipio)
 
-		return HttpResponse(json.dumps(the_list, ensure_ascii= False), 'application/json',)
+        return HttpResponse(json.dumps(the_list, ensure_ascii=False), 'application/json', )
 
 
 # Clase EndPoint (oauth2) para devolver los periodos
 class PeriodosEndpoint(ProtectedResourceView):
-	def get(self, request):
-		return HttpResponse(json.dumps((map(lambda periodo: periodo.to_serializable_dict(), Periodo.objects.all())),
-									   ensure_ascii= False),'application/json')
+    def get(self, request):
+        return HttpResponse(json.dumps((map(lambda periodo: periodo.to_serializable_dict(), Periodo.objects.all())),
+                                       ensure_ascii=False), 'application/json')
 
 
 # Clase EndPoint (oauth2) para devolver los mese
 class MesesEndpoint(ProtectedResourceView):
-	def get(self, request):
-		return HttpResponse(json.dumps((map(lambda mes: mes.to_serializable_dict(), Mes.objects.all())),
-							'application/json', ensure_ascii= False))
+    def get(self, request):
+        return HttpResponse(json.dumps((map(lambda mes: mes.to_serializable_dict(), Mes.objects.all())),
+                                       'application/json', ensure_ascii=False))
 
 
 # Clase EndPoint (oauth2) para devolver las metas
 class MetasEndpoint(ProtectedResourceView):
-	def get(self, request):
-		return HttpResponse(json.dumps(map(lambda estado: estado.to_serializable_dict(), Mes.objects.all())
-									   ,ensure_ascii= False),'application/json')
+    def get(self, request):
+        return HttpResponse(json.dumps(map(lambda estado: estado.to_serializable_dict(), Mes.objects.all())
+                                       , ensure_ascii=False), 'application/json')
 
 
 # Clase EndPoint (oauth2) para devolver las metas mensuales dada una meta
 class MetasMensualesPorMetaEndpoint(ProtectedResourceView):
-	def get(self, request):
-		# Obteniendo los datos de la url
-		meta_ids = get_array_or_none(request.GET.get('metas'))
-		all_metas_mensuales = False
+    def get(self, request):
+        # Obteniendo los datos de la url
+        meta_ids = get_array_or_none(request.GET.get('metas'))
+        all_metas_mensuales = False
 
-		if meta_ids is None:
-			all_metas_mensuales = True
+        if meta_ids is None:
+            all_metas_mensuales = True
 
-		# Si TRUE, no hubo metas estados en la url y se regresan
-		# todas las metas mensuales de la base de datos
-		if all_metas_mensuales:
-			metas_mensuales = MetaMensual.objects.order_by('meta').all()
-		else:
-			metas_mensuales = MetaMensual.objects.filter(meta_id__in=meta_ids).order_by('meta').all()
+        # Si TRUE, no hubo metas estados en la url y se regresan
+        # todas las metas mensuales de la base de datos
+        if all_metas_mensuales:
+            metas_mensuales = MetaMensual.objects.order_by('meta').all()
+        else:
+            metas_mensuales = MetaMensual.objects.filter(meta_id__in=meta_ids).order_by('meta').all()
 
-		# Arreglo necesario para la conversión a json
-		the_list = []
-		for meta_mensual in metas_mensuales.values():
-			the_list.append(meta_mensual)
+        # Arreglo necesario para la conversión a json
+        the_list = []
+        for meta_mensual in metas_mensuales.values():
+            the_list.append(meta_mensual)
 
-		return HttpResponse(json.dumps((the_list), ensure_ascii= False), 'application/json')
+        return HttpResponse(json.dumps((the_list), ensure_ascii=False), 'application/json')
 
 
 # Clase EndPoint (oauth2) para devolver los avances mensuales dada una meta
 class avancesMensualesPorMetaEndpoint(ProtectedResourceView):
-	def get(self, request):
-		# Obteniendo los datos de la url
-		meta_ids = get_array_or_none(request.GET.get('metas'))
-		all_avances_mensuales = False
-		arreglo_avance_municipio = []
+    def get(self, request):
+        # Obteniendo los datos de la url
+        meta_ids = get_array_or_none(request.GET.get('metas'))
+        all_avances_mensuales = False
+        arreglo_avance_municipio = []
 
-		if meta_ids is None:
-			all_avances_mensuales = True
+        if meta_ids is None:
+            all_avances_mensuales = True
 
-		# Si TRUE, no hubo metas estados en la url y se regresan
-		# todas las metas mensuales de la base de datos
-		if all_avances_mensuales:
-			avances_mensuales = AvanceMensual.objects.order_by('municipio').all()
-		else:
-			for avancePorMunicipo in AvancePorMunicipio.objects.filter(meta_id__in=meta_ids):
-				arreglo_avance_municipio.append(avancePorMunicipo.id)
+        # Si TRUE, no hubo metas estados en la url y se regresan
+        # todas las metas mensuales de la base de datos
+        if all_avances_mensuales:
+            avances_mensuales = AvanceMensual.objects.order_by('municipio').all()
+        else:
+            for avancePorMunicipo in AvancePorMunicipio.objects.filter(meta_id__in=meta_ids):
+                arreglo_avance_municipio.append(avancePorMunicipo.id)
 
-			avances_mensuales = AvanceMensual.objects.filter(avancePorMunicipio__id__in=arreglo_avance_municipio)
+            avances_mensuales = AvanceMensual.objects.filter(avancePorMunicipio__id__in=arreglo_avance_municipio)
 
-		the_list = []
-		for avance_mensual in avances_mensuales.values():
-			the_list.append(avance_mensual)
+        the_list = []
+        for avance_mensual in avances_mensuales.values():
+            the_list.append(avance_mensual)
 
-		return HttpResponse(json.dumps(the_list,ensure_ascii= False), 'application/json')
+        return HttpResponse(json.dumps(the_list, ensure_ascii=False), 'application/json')
