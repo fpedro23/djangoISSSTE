@@ -50,14 +50,6 @@ class SubcarenciasForCarenciasEndpoint(ProtectedResourceView):
         return HttpResponse(json.dumps(the_list, ensure_ascii=False), 'application/json', )
 
 
-# Api para regresar todas las carencias
-class AccionesEndpoint(generic.ListView):
-	def get(self, request, *args, **kwargs):
-		return HttpResponse(
-			json.dumps((map(lambda accion: accion.to_serializable_dict(), AccionEstrategica.objects.all())),
-					   'application/json', ensure_ascii=False))
-
-
 class AccionesForSubCarenciasEndpoint(ProtectedResourceView):
 	def get(self, request, *args, **kwargs):
 		subcarencias_ids = get_array_or_none(request.GET.get('subcarencias'))

@@ -7,7 +7,6 @@ urlpatterns = [
 	url(r'^api/municipios_por_estado', api.MunicipiosForEstadosEndpoint.as_view()),
 	url(r'^api/carencias', api.CarenciasEndpoint.as_view()),
 	url(r'^api/subcarencias_por_carencia', api.SubcarenciasForCarenciasEndpoint.as_view()),
-	url(r'^api/acciones$', api.AccionesEndpoint.as_view()),
 	url(r'^api/acciones_por_subcarencia', api.AccionesForSubCarenciasEndpoint.as_view()),
 	url(r'^api/responsables', api.ResponsablesEndpoint.as_view()),
 	url(r'^api/periodos$', api.PeriodosEndpoint.as_view()),
