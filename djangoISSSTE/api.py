@@ -1,8 +1,11 @@
 # coding=utf-8
 import json
+from _ast import List
+
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.views import generic
+from django.views.generic.list import ListView
 from oauth2_provider.views.generic import ProtectedResourceView
 
 from djangoISSSTE.models import *
@@ -43,6 +46,35 @@ class SubcarenciasForCarenciasEndpoint(ProtectedResourceView):
 		the_list = []
 		for subcarencias in subcarencias.values('id', 'nombreSubCarencia'):
 			the_list.append(subcarencias)
+
+		return HttpResponse(json.dumps(the_list, ensure_ascii=False), 'application/json', )
+
+
+# Api para regresar todas las carencias
+class AccionesEndpoint(generic.ListView):
+	def get(self, request, *args, **kwargs):
+		return HttpResponse(
+			json.dumps((map(lambda accion: accion.to_serializable_dict(), AccionEstrategica.objects.all())),
+					   'application/json', ensure_ascii=False))
+
+
+class AccionesForSubCarenciasEndpoint(ProtectedResourceView):
+	def get(self, request, *args, **kwargs):
+		subcarencias_ids = get_array_or_none(request.GET.get('subcarencias'))
+		all_acciones = False
+
+		if subcarencias_ids is None:
+			all_acciones = True
+
+		if all_acciones:
+			acciones = AccionEstrategica.objects.order_by('nombreAccion').all()
+		else:
+			acciones = AccionEstrategica.objects.filter(subCarencia_id__in=subcarencias_ids).order_by(
+				'nombreAccion').all()
+
+		the_list = []
+		for accion in acciones.values():
+			the_list.append(accion)
 
 		return HttpResponse(json.dumps(the_list, ensure_ascii=False), 'application/json', )
 
@@ -109,8 +141,68 @@ class MesesEndpoint(ProtectedResourceView):
 # Clase EndPoint (oauth2) para devolver las metas
 class MetasEndpoint(ProtectedResourceView):
 	def get(self, request):
-		return HttpResponse(json.dumps(map(lambda estado: estado.to_serializable_dict(), Mes.objects.all())
+		return HttpResponse(json.dumps(map(lambda meta: meta.to_serializable_dict(), Meta.objects.all())
 									   ,ensure_ascii= False),'application/json')
+
+
+# Clase EndPoint (oauth2) para devolver las metas mensuales dada una acción
+class MetasMensualesPorAccionEndpoint(generic.ListView):
+	def get(self, request):
+		# Obteniendo los datos de la url
+		accion_ids = get_array_or_none(request.GET.get('acciones'))
+		all_metas_mensuales = False
+		arreglo_meta = []
+
+		if accion_ids is None:
+			all_metas_mensuales = True
+
+		# Si TRUE, no hubo acciones en la url y se regresan
+		# todas las metas mensuales de la base de datos
+		if all_metas_mensuales:
+			metas_mensuales = MetaMensual.objects.order_by('inversionAprox').all()
+		else:
+			for meta in Meta.objects.filter(accionEstrategica_id__in=accion_ids):
+				arreglo_meta.append(meta.id)
+
+			metas_mensuales = MetaMensual.objects.filter(meta__id__in=arreglo_meta)
+
+		the_list = []
+		for meta_mensual in metas_mensuales.values():
+			the_list.append(meta_mensual)
+		print "Size %d" % the_list.__sizeof__()
+		return HttpResponse(json.dumps(the_list, ensure_ascii=False), 'application/json')
+
+
+# Clase EndPoint (oauth2) para devolver los avances mensuales dada una acción
+class AvancesMensualesPorAccionEndpoint(generic.ListView):
+	def get(self, request):
+		# Obteniendo los datos de la url
+		accion_ids = get_array_or_none(request.GET.get('acciones'))
+		all_avances_mensuales = False
+		arreglo_meta = []
+		arreglo_avance_municipio = []
+
+		if accion_ids is None:
+			all_avances_mensuales = True
+
+		# Si TRUE, no hubo acciones en la url y se regresan
+		# todas los avances mensuales de la base de datos
+		if all_avances_mensuales:
+			avances_mensuales = AvanceMensual.objects.order_by('municipio').all()
+		else:
+			for meta in Meta.objects.filter(accionEstrategica_id__in=accion_ids):
+				arreglo_meta.append(meta.id)
+
+			for avance_municipio in AvancePorMunicipio.objects.filter(meta_id__in=arreglo_meta):
+				arreglo_avance_municipio.append(avance_municipio.id)
+
+			avances_mensuales = AvanceMensual.objects.filter(avancePorMunicipio_id__in=arreglo_avance_municipio)
+
+		the_list = []
+		for avance_mensual in avances_mensuales.values():
+			the_list.append(avance_mensual)
+
+		return HttpResponse(json.dumps(the_list, ensure_ascii=False), 'application/json')
 
 
 # Clase EndPoint (oauth2) para devolver las metas mensuales dada una meta
