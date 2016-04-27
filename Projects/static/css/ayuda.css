@@ -1,0 +1,31 @@
+
+.ayudaTXT{
+	width:180px;
+	height:190px;
+	background-image:url(../img/bigBackground.fw.png);
+	background-position: -855px 0px;
+
+	position:absolute;
+	top: 149px;
+	left: 322px;
+}
+
+.ayudaTXT:hover{
+	background-position: -855px -190px;
+}
+
+.ayudaVIDEO{
+	width: 180px;
+	height:190px;
+	background-image:url(../img/bigBackground.fw.png);
+	background-position: -1035px 0px;
+
+	position:absolute;
+	top: 149px;
+	left:512px;
+}
+
+.ayudaVIDEO:hover{
+	background-position:-1035px -190px;
+}
+

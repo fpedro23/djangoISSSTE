@@ -1,0 +1,127 @@
+@import url('widgets.css');
+
+/* INLINES */
+
+.inline-group {
+    padding: 0;
+    border: 0px solid #ccc;
+    margin: 2px 0;
+}
+
+.inline-group .aligned label {
+    width: 8em;
+}
+
+.inline-related {
+    position: relative;
+}
+
+.inline-related h3 {
+    margin: 0;
+    color: #ffffff;
+    padding: 3px 5px;
+    font-size: 11px;
+    border-bottom: 0px solid #ddd;
+}
+
+.inline-related h3 span.delete {
+    float: right;
+}
+
+.inline-related h3 span.delete label {
+    margin-left: 2px;
+    font-size: 11px;
+}
+
+.inline-related fieldset {
+    margin: 0;
+    background: #fff;
+    border: none;
+    width: 100%;
+}
+
+.inline-related fieldset.module h3 {
+    margin: 0;
+    padding: 2px 5px 3px 5px;
+    font-size: 11px;
+    text-align: left;
+    font-weight: bold;
+    background: #bcd;
+    color: #fff;
+}
+
+.inline-group .tabular fieldset.module {
+    border: none;
+    border-bottom: 1px solid #ddd;
+}
+
+.inline-related.tabular fieldset.module table {
+    width: 100%;
+}
+
+.last-related fieldset {
+    border: none;
+}
+
+.inline-group .tabular tr.has_original td {
+    padding-top: 2px;
+}
+
+.inline-group .tabular tr td.original {
+    padding: 2px 0 0 0;
+    width: 0;
+    _position: relative;
+}
+
+.inline-group .tabular th.original {
+    width: 0px;
+    padding: 0;
+}
+
+.inline-group .tabular td.original p {
+    position: absolute;
+    left: 0;
+    height: 1.1em;
+    padding: 1px 1px;
+    overflow: hidden;
+    font-size: 9px;
+    font-weight: bold;
+    color: #666;
+    _width: 700px;
+}
+
+.inline-group ul.tools {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.inline-group ul.tools li {
+    display: inline;
+    padding: 0 1px;
+}
+
+.inline-group div.add-row,
+.inline-group .tabular tr.add-row td {
+    color: #ffffff;
+    padding: 1px 1px;
+    border-bottom: 0px solid #cccccc;
+}
+
+.inline-group .tabular tr.add-row td {
+    padding: 1px 1px 1px;
+    border-bottom: none;
+}
+
+.inline-group ul.tools a.add,
+.inline-group div.add-row a,
+.inline-group .tabular tr.add-row td a {
+    padding-left: 2px;
+    font-size: 10px;
+    outline: 0; /* Remove dotted border around link */
+    font-family: "soberana_sansregular";
+}
+
+.empty-form {
+    display: none;
+}
