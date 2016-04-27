@@ -20,14 +20,22 @@ import djangoISSSTE
 from djangoISSSTE import api
 from  djangoISSSTE import views
 
+admin.autodiscover()
+
 urlpatterns = [
     #url(r'^$', 'djangoISSSTE.views.redirect_admin', name='redirect_admin'),
     url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^admin/', admin.site.urls),
     url(r'^api/estados', api.EstadosEndpoint.as_view()),
     url(r'^api/municipios_por_estado', api.MunicipiosForEstadosEndpoint.as_view()),
+    url(r'^api/inicio', api.ReporteInicioEndpoint.as_view()),
 
 
     url(r'^secrets', djangoISSSTE.views.secret_page, name='secret'),
-    url(r'^test', djangoISSSTE.views.test, name='test')
+    url(r'^test', djangoISSSTE.views.test, name='test'),
+    url(r'^register-by-token',views.register_by_access_token, name='register_by_access_token'),
+     url(r'^catalogos$', 'djangoISSSTE.views.catalogos', name='catalogos'),
+    url(r'^consultas', 'djangoISSSTE.views.consultas', name='consultas'),
+    url(r'^usuarios', 'djangoISSSTE.views.usuarios', name='usuarios'),
+    url(r'^movimientos', 'djangoISSSTE.views.movimientos', name='movimientos')
 ]
