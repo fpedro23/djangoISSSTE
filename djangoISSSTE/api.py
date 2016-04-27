@@ -31,7 +31,6 @@ class SubcarenciasForCarenciasEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         carencia_ids = get_array_or_none(request.GET.get('carencias'))
         all_carencias = False
-        print (carencia_ids)
 
         if carencia_ids is None:
             all_carencias = True
