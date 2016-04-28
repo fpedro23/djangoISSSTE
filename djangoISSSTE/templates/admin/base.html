@@ -4,13 +4,13 @@
 <head>
 <title>{% block title %}{% endblock %}</title>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-<link href="{% static "assets/bootstrap/css/bootstrap.min.css"%}" rel="stylesheet">
+<link href="{% static "assets/bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
 <!-- Optional theme -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
 <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "assets/css/styles.css" %}{% endblock %}" />
 
     <!-- Magnific Popup core CSS file -->
-<link rel="stylesheet" href="{% static "assets/Popup/magnific-popup.css"%}">
+<link rel="stylesheet" href="{% static "assets/Popup/magnific-popup.css" %}">
 
 
 
@@ -18,9 +18,9 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
 <!-- Magnific Popup core JS file -->
-<script src="{% static "assets/Popup/jquery.magnific-popup.js"%}"></script>
+<script src="{% static "assets/Popup/jquery.magnific-popup.js" %}"></script>
 
-<link rel="stylesheet" href="{% static "assets/Popup/site.css"%}">
+<link rel="stylesheet" href="{% static "assets/Popup/site.css" %}">
 
 {% block extrastyle %}{% endblock %}
 {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}" />{% endif %}

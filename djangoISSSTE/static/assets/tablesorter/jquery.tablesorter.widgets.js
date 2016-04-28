@@ -6,7 +6,7 @@
 /* Includes widgets ( storage,uitheme,columns,filter,stickyHeaders,resizable,saveSort ) */
 (function(factory) {
 	if (typeof define === 'function' && define.amd) {
-		define(['jquery'], factory);
+		define(['jquery.tablesorter'], factory);
 	} else if (typeof module === 'object' && typeof module.exports === 'object') {
 		module.exports = factory(require('jquery'));
 	} else {

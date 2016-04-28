@@ -103,8 +103,6 @@ class ReporteInicioEndpoint(ProtectedResourceView):
 	reporte['reporte_total']['avance_alimentacion']['total'] = 5
 
 
-
-
         # Reportes anuales 2012-2015
         avance2016_educacion = avances_totales_educacion.filter(avancePorMunicipio__periodo=2016)
         the_list = []

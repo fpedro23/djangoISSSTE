@@ -5,5 +5,5 @@ staticfiles
 env/
 .idea/
 djangoISSSTE/migrations/
-Projects/settingsOscar.py
-DjangoISSSTE/
+local_settings.py
+
