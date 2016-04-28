@@ -1,0 +1,752 @@
+@charset "utf-8";
+/* CSS Document */
+
+/* Hoja de estilos del Sistema de Estrategia de Inclusión*/
+
+
+/*elementos que corresponden a TODAS LAS PAGINAS*/
+#header_EI{
+  position:relative;
+  width: 1024px;
+  height:80px;
+  margin:auto;
+  top:8px;
+  font-family: "Soberana Titular";
+  font-size:10px;
+  font-weight: bold;
+  color: #0E0E1E;
+  text-align:right;
+  
+  background-image: url(../Imagenes/fondo_header.fw.png);
+}
+
+.titleSYSTEM{
+	width: 320px;
+	height: 20px;
+	position: absolute;
+	top: 12px;
+	left: 681px;
+}
+
+.nameUSER{
+	width: 297px;
+	height: 20px;
+	position: absolute;
+	top: 34px;
+	left: 681px;
+}
+
+#logoISSTE_main{
+	width: 140px;
+	height: 53px;
+	background-image: url(../Imagenes/logo_ISSSTE.png);
+	position: absolute;
+	left: 20px;
+}
+
+#engrane{
+	width: 22px;
+	height: 22px;
+	position: absolute;
+	right: 23px;
+	top: 34px;
+	background-image: url(../Imagenes/bigBackground.fw.png);
+	background-position: -129px -0px;
+}
+
+#engrane:hover{
+	background-position: -129px -22px;
+}
+
+#menu{
+  position:relative;
+  top:80px;
+  width: 1024px;
+  height:40px;
+  margin:auto;
+  background-image:url(../Imagenes/001_gradienteMenu.fw.png);
+}
+
+.MOVIMIENTOS{
+	width: 246px;
+	height:40px;
+	position:absolute;
+	left:0px;
+	background-image: url(../Imagenes/mov_N.fw.png);
+}
+
+.MOVIMIENTOS:hover{
+	background-image: url(../Imagenes/mov_O.fw.png);
+}
+
+.pto01{
+	width:10px;
+	height: 40px;
+	position:absolute;
+	left:0px;
+}
+
+.pto001{
+	width:10px;
+	height: 40px;
+	position:absolute;
+	left:229px;
+	background:url(../Imagenes/vinieta.fw.png);
+}
+
+.CONSULTAS{
+	width: 246px;
+	height:40px;
+	position:absolute;
+	left:257px;
+	background-image: url(../Imagenes/cons_N.fw.png)
+}
+
+.CONSULTAS:hover{
+	background-image: url(../Imagenes/cons_O.fw.png);
+}
+.pto02{
+	width:10px;
+	height: 40px;
+	position:absolute;
+	left:0px;
+}
+
+.pto002{
+	width:10px;
+	height: 40px;
+	position:absolute;
+	left:468px;
+	background:url(../Imagenes/vinieta.fw.png);
+}
+
+.CATALOGOS{
+	width: 246px;
+	height:40px;
+	position:absolute;
+	left:513px;
+	background-image: url(../Imagenes/cat_N.fw.png);
+}
+
+.CATALOGOS:hover{
+	background-image: url(../Imagenes/cat_O.fw.png);
+}
+
+.pto03{
+	width:10px;
+	height: 40px;
+	position:absolute;
+	left:0px;
+}
+
+.pto003{
+	width:10px;
+	height: 40px;
+	position:absolute;
+	left:728px;
+	background:url(../Imagenes/vinieta.fw.png);
+}
+
+.USUARIOS{
+	width: 246px;
+	height:40px;
+	position:absolute;
+	left:769px;
+	background-image: url(../Imagenes/usu_N.fw.png);
+}
+
+.USUARIOS:hover{
+	background-image: url(../Imagenes/usu_O.fw.png);
+}
+.pto04{
+	width:10px;
+	height: 40px;
+	position:absolute;
+	left:0px;
+}
+
+.pto004{
+	width:10px;
+	height: 40px;
+	position:absolute;
+	left:967px;
+	background:url(../Imagenes/vinieta.fw.png);
+}
+
+#body{
+	position:relative;
+  	width: 1024px;
+ 	height: 608px;
+    top:20px;
+  	margin:auto;
+}
+
+#regresarBTN{
+    position: absolute;
+	 width: 84px;
+	 height: 21px;
+    top:25px;
+	 background-image:url(../Imagenes/bigBackground.fw.png);
+	 background-position: -300px 0px;
+}
+
+#regresarBTN:hover{
+	background-position: -300px -21px;
+}
+
+#welcome{
+	width: 400px;
+	height: 22px;
+	text-align: center;
+	position: absolute;
+	top: 26px;
+	left: 302px;
+	font-style: italic;
+}
+
+.FUA {
+	width: 290px;
+	height: 18px;
+	position: absolute;
+	left: 406px;
+	top: 736px;
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: 10px;
+	color: #161616;
+	text-align: center;
+}
+
+.footer{
+  position:relative;
+  width: 1024px;
+  height: 90px;
+  margin:auto;
+  background-image:url(../Imagenes/002_gradienteFoot.fw.png);
+ }
+ 
+ #txtFOOT{
+	 width: 450px;
+	 height: 33px;
+	 position:relative;
+	 left:302px;
+	 top:5px;
+	  
+	 font-family: 'soberana_textobold';
+	 font-size: 8px;
+     color: #6A6B6C;
+	 text-align:center;
+
+}
+
+#logoFOOT{
+	width: 116px;
+	height: 33px;
+	background-image: url(../Imagenes/logo_FOOT.fw.png);
+	position:relative;
+	left: 457px;
+	top:0px;
+}
+/*cierre de elementos de TODAS LAS PAGINAS*/
+
+
+/*elementos correspondientes a la PAGINA de LOG IN*/
+.galeria{
+	 position:relative;
+	 width:540px;
+	 height:360px;
+	 border: 1px solid black;
+	 margin-top:100px;
+	 margin-left:50px;
+}
+
+.botGAL{
+	width:55px;
+	height:10px;
+	position:absolute;
+	top: 365px;
+	left: 295px;
+	border: 1px solid black;
+}
+
+.logIn {
+	position: absolute;
+	left: 630px;
+	top: 75px;
+	width: 345px;
+	height: 360px;
+	z-index: 1;
+	/*border: 1px solid black;*/
+	
+	font-family: 'soberana_sanslight';
+	font-size:18px;
+	color: #6A6B6C;
+	
+}
+
+.titulo{
+	font-family: 'soberana_titularbold';
+	font-size:25px;
+	color: #6A6B6C;
+		
+}
+
+#botLI{
+	width:126px;
+	height:45px;
+	position:absolute;
+	top: 250px;
+	left:217px;
+	background-image:url(../Imagenes/bigBackground.fw.png);
+	background-position:0px 0px;
+}
+
+#botLI:hover{
+	background-position: 0px -45px;
+}
+
+#olvidarPW{
+	width: 224px;
+	height:40px;
+	
+	position:absolute;
+	top:320px;
+	
+	background-image:url(../Imagenes/bigBackground.fw.png);
+	background-position:-127px -187px;
+}
+
+#olvidarPW:hover{
+	background-position: -127px -230px;
+}
+
+.texto01{
+	width: 300px;
+	height: 20px;
+
+	font-family: 'soberana_sanslight';
+	font-size: 18px;
+	text-align: left;
+
+	position: absolute;
+	top: 118px;
+
+
+
+}
+
+.texto02{
+	width: 300px;
+	height: 20px;
+
+	font-family: 'soberana_sanslight';
+	font-size: 18px;
+	text-align: left;
+
+	position: absolute;
+	top: 158px;
+
+
+
+}
+/*cierre de elementos correspondientes al LOG IN*/
+
+/*elementos correspondientes a la PAGINA PRINCIPAL*/
+.en2015{
+	 position:relative;
+	 padding:6px;
+	 width:444px;
+	 height:349px;
+	 top:25px;
+	 left:50px;
+	 background-image:url(../Imagenes/bigBackground.fw.png);
+	 background-position:-400px 0px;
+	 
+	font-family: 'soberana_titularbold';
+	font-size:25px;
+	color: #FFFFFF;	
+}
+
+.mapa {
+	position: absolute;
+	left: 523px;
+	width: 443px;
+	height: 350px;
+	z-index: 1;
+	border-color: #327451;
+	border-style: solid;
+	top: 27px;
+}
+
+.infografico{
+	position:absolute;
+	left:50px;
+	top:395px;
+	width:924px;
+	height:128px;
+	border-color: #327451;
+	background-image: url(../Imagenes/bigBackground.fw.png);
+	background-position: 0px -614px;
+}
+
+#metaESIN_01{
+	position: absolute;
+	left: 17px;
+	top: 16px;
+	width: 160px;
+	height: 90px;
+	background-position: -400px 0px;
+	background-color: #9E2528;
+	padding: 2px;
+}
+
+#metaESIN_02{
+	position: absolute;
+	left: 198px;
+	top: 16px;
+	width: 160px;
+	height: 90px;
+	background-position: -400px 0px;
+	background-color: #862022;
+	padding: 2px;
+}
+
+#metaESIN_03{
+	position: absolute;
+	left: 380px;
+	top: 16px;
+	width: 160px;
+	height: 90px;
+	background-position: -400px 0px;
+	background-color: #751C1E;
+	padding: 2px;
+}
+
+#metaESIN_04{
+	position: absolute;
+	left: 563px;
+	top: 16px;
+	width: 160px;
+	height: 90px;
+	background-position: -400px 0px;
+	background-color: #65181B;
+	padding: 2px;
+}
+
+#metaESIN_05{
+	position: absolute;
+	left: 744px;
+	top: 16px;
+	width: 160px;
+	height: 90px;
+	background-position: -400px 0px;
+	background-color: #400F11;
+	padding: 2px;
+}
+
+.meta_TITULO{
+	font-family: "soberana Sans";
+	text-align:center;
+	font-size: 12px;
+	color:#FFF;
+}
+
+.meta_NUM{
+	width: 160px;
+	height: 30px;
+	position: absolute;
+	top: 23px;
+	font-family: "soberana Sans";
+	font-size: 22px;
+	font-weight: bold;
+	color: #FFFFFF;
+	text-align: center;
+}
+
+#metaICO01{
+	width: 40px;
+	height: 40px;
+	position: absolute;
+	top: 53px;
+	left: 67px;
+	background-image:url(../Imagenes/educacion_ICO.fw.png);
+}
+
+#metaICO02{
+	width: 40px;
+	height: 40px;
+	position: absolute;
+	top: 53px;
+	left: 67px;
+	background-image:url(../Imagenes/salud_ICO.fw.png);
+}
+
+#metaICO03{
+	width: 40px;
+	height: 40px;
+	position: absolute;
+	top: 53px;
+	left: 67px;
+	background-image:url(../Imagenes/vivienda_ICO.fw.png);
+}
+
+#metaICO04{
+	width: 40px;
+	height: 40px;
+	position: absolute;
+	top: 53px;
+	left: 67px;
+	background-image:url(../Imagenes/alimentacion_ICO.fw.png);
+}
+
+#metaICO05{
+	width: 40px;
+	height: 40px;
+	position: absolute;
+	top: 53px;
+	left: 67px;
+	background-image:url(../Imagenes/total_ICO.fw.png);
+}
+/*cierre de elementos correspondientes a la PAGINA PRINCIPAL*/
+
+/*elementos correspondientes a la PAGINA de MOVIMIENTOS*/
+.registrarAVANCE{
+	width: 180px;
+	height: 190px;
+	background-image: url(../Imagenes/bigBackground.fw.png);
+	background-position: -1215px 0px;
+	position: absolute;
+	top: 149px;
+	left: 431px;
+}
+
+.registrar_AVANCE:hover{
+	background-position: -1215px -190px;
+}
+/*cierre de elementos correspondientes a la PAGINA de MOVIMIENTOS*/
+
+/*elementos correspondientes a la PAGINA de MODIFICACION DE META - ficha tecnica*/
+/*cierre de elementos correspondientes a la PAGINA de MODIFICACION DE META - ficha técnica*/
+
+/*elementos correspondientes a la PAGINA de MODIFICACION DE CONSULTAS*/
+.filtroCONSULTAS{
+	width: 180px;
+	height: 190px;
+	background-image: url(../Imagenes/bigBackground.fw.png);
+	background-position: -1576px 0px;
+	position: absolute;
+	top: 80px;
+	left: 307px;
+}
+
+.filtroCONSULTAS:hover{
+	background-position: -1576px -190px;
+}
+
+.predefinidaCONSULTAS{
+	width: 180px;
+	height: 190px;
+	background-image: url(../Imagenes/bigBackground.fw.png);
+	background-position: -1755px 0px;
+	position: absolute;
+	top: 80px;
+	left: 515px;
+}
+
+.predefinidaCONSULTAS:hover{
+	background-position:-1755px -190px;
+}
+
+.listaCONSULTAS{
+	width: 180px;
+	height: 190px;
+	background-image: url(../Imagenes/bigBackground.fw.png);
+	background-position: -1034px -379px;
+	position: absolute;
+	top: 280px;
+	left: 421px;
+}
+
+.listaCONSULTAS:hover{
+	background-position:-1034px -570px;
+}
+/*cierre de elementos correspondientes a la PAGINA de CONSULTAS*/
+
+/*INICIO de elementos correspondientes a la PAGINA de USUARIOS*/
+.usuario_ADD{
+	width: 180px;
+	height: 190px;
+	background-image:url(../Imagenes/bigBackground.fw.png);
+	background-position: 0px -744px;
+	position: absolute;
+	top: 80px;
+	left: 325px;
+}
+
+.usuario_ADD:hover{
+	background-position: 0px -934px;
+}
+
+.usuario_EDIT{
+	width: 180px;
+	height: 190px;
+	background-image: url(../Imagenes/bigBackground.fw.png);
+	background-position: -360px -744px;
+	position: absolute;
+	top: 80px;
+	left: 515px;
+}
+
+.usuario_EDIT:hover{
+	background-position:-360px -934px;
+}
+
+.usuario_DEL{
+	width: 180px;
+	height: 190px;
+	background-image: url(../Imagenes/bigBackground.fw.png);
+	background-position: -540px -744px;
+	position: absolute;
+	top: 280px;
+	left: 421px;
+}
+
+.usuario_DEL:hover{
+	background-position:-540px -934px;
+}
+/*cierre de elementos correspondientes a la PAGINA de USUARIOS*/
+
+/*datos correspondientes al ALTA DE USUARIOS*/
+.datosGENERALES{
+	border: 2px solid #327451;
+	border-radius: 2px;
+	width: 334px;
+	height: 282px;
+	font-family: "Soberana Sans Light";
+	font-size: 15px;
+	color: #6A6B6C;
+	position: absolute;
+	left: 0px;
+	top: 143px;
+}
+
+.datosINICIO{
+	border: 2px solid #327451;
+	border-radius: 2px;
+	width: 334px;
+	height: 282px;
+	font-family: "Soberana Sans Light";
+	font-size: 15px;
+	color: #6A6B6C;
+	position: absolute;
+	left: 343px;
+	top: 145px;
+}
+
+.datosESPECIFICO{
+	border: 2px solid #327451;
+	border-radius: 2px;
+	width: 334px;
+	height: 282px;
+	font-family: "Soberana Sans Light";
+	font-size: 15px;
+	color: #6A6B6C;
+	position: absolute;
+	left: 685px;
+	top: 144px;
+}
+
+.eliminarBTN{
+	width: 80px;
+	height: 30px;
+	background-image: url(../Imagenes/bigBackground.fw.png);
+	background-position: -724px -1789px;
+	position: absolute;
+	top: 63px;
+	left: 102px;
+}
+
+.eliminarBTN:hover{
+	background-position: -724px -1819px;
+}
+
+.salirBTN{
+	width: 58px;
+	height: 30px;
+	background-image: url(../Imagenes/bigBackground.fw.png);
+	background-position: -808px -1789px;
+	position: absolute;
+	top: 63px;
+	left: 189px;
+}
+
+.salirBTN:hover{
+	background-position: -808px -1819px;
+}
+
+.guardarBTN{
+	width: 82px;
+	height: 30px;
+	background-image: url(../Imagenes/bigBackground.fw.png);
+	background-position: -869px -1789px;
+	position: absolute;
+	top: 63px;
+	left: 254px;
+}
+
+.guardarBTN:hover{
+	background-position: -869px -1819px;
+}
+
+.bienvenida{
+	font-family: "Soberana Sans Light";
+	font-size: 16px;
+	color: #6A6B6C;
+	width: 924px;
+	height: 40px;
+	position: absolute;
+	top: 61px;
+	left: 50px;
+}
+
+.salirBTN{
+	width: 51px;
+	height: 30px;
+	background-image: url(../Imagenes/bigBackground.fw.png);
+	background-position: -726px -1925px;
+	position: absolute;
+	top: 508px;
+	left: 618px;
+}
+
+.salirBTN:hover{
+	background-position: -726px -1956px;
+}
+  
+.guardarotroBTN{
+	width: 204px;
+	height: 30px;
+	background-image: url(../Imagenes/bigBackground.fw.png);
+	background-position: -780px -1925px;
+	position: absolute;
+	top: 508px;
+	left: 675px;
+}
+
+.guardarotroBTN:hover{
+	background-position: -780px -1956px;
+}
+
+.guardarsalirBTN{
+	width: 133px;
+	height: 30px;
+	background-image: url(../Imagenes/bigBackground.fw.png);
+	background-position: -907px -1861px;
+	position: absolute;
+	top: 508px;
+	left: 884px;
+}
+
+.guardarsalirBTN:hover{
+	background-position: -907px -1892px;
+}
+/*cierre de datos correspondientes al ALTA DE USUARIOS*/
