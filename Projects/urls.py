@@ -28,5 +28,10 @@ urlpatterns = [
     url(r'issste/', include(djangoISSSTE.urls)),
 
     url(r'^secrets', djangoISSSTE.views.secret_page, name='secret'),
-    url(r'^test', djangoISSSTE.views.test, name='test')
+    url(r'^test', djangoISSSTE.views.test, name='test'),
+    url(r'^catalogos$', 'djangoISSSTE.views.catalogos', name='catalogos'),
+    url(r'^consultas', 'djangoISSSTE.views.consultas', name='consultas'),
+    url(r'^usuarios', 'djangoISSSTE.views.usuarios', name='usuarios'),
+    url(r'^movimientos', 'djangoISSSTE.views.movimientos', name='movimientos')
+
 ]
