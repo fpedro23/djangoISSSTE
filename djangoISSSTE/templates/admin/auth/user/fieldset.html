@@ -1,0 +1,299 @@
+{% load app_filters admin_static%}
+<script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
+                            <script> $(document).ready(function($) {
+                                var $te = jQuery.noConflict();
+                                $te('[data-toggle="tooltip"]').tooltip({html:true});});</script>
+{{ fieldset.name }}
+{% if fieldset.name == "Personal info" %}
+<fieldset class="module {{ fieldset.classes }}" style="border: 0px;">
+     <div class="datosGENERALES">
+     <div id="tituloCUADROS" style="height: 39px;">
+    	DATOS GENERALES
+         <br><br>
+    </div>
+    {% for line in fieldset %}
+        {% for field in line %}
+             {% if field.field.name == "first_name" %}
+                <div class="row  field-username" align="left" style="border-bottom: 15px; padding-bottom: 10px;">
+                    <div class="col-md-4">
+                        <label class="required" for="id_first_name">Nombre:</label>
+                    </div>
+                    <div class="col-md-8" >
+                        <input {% if field.field.errors %} class="border-error" data-toggle="tooltip" data-placement="top"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}"{% endif %} id="id_first_name" maxlength="30" name="first_name" type="text" value="{{ field.field.value|default_if_none:"" }}" />
+                       {% if field.field.help_text %}
+                        <p class="help" hidden="true">{{ field.field.help_text|safe }}</p>
+                    {% endif %}
+                    </div>
+                </div>
+
+            {% endif %}
+            {% if field.field.name == "last_name" %}
+                <div class="row  field-username" align="left" style="border-bottom: 15px; padding-bottom: 10px;">
+                    <div class="col-md-4"  >
+                        <label for="id_last_name">Apellidos:</label>
+                    </div>
+                    <div class="col-md-8" {% if field.field.errors %} data-toggle="tooltip" data-placement="top"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}"{% endif %}>
+                        {% if field.field.errors %}
+                            {{ field.field|addcss:"border-error" }}
+                        {% else %}
+                            {{ field.field }}
+                        {% endif %}
+                        {% if field.field.help_text %}
+                        <p class="help" hidden="true">{{ field.field.help_text|safe }}</p>
+                    {% endif %}
+                    </div>
+                </div>
+
+            {% endif %}
+
+             {% if field.field.name == "email" %}
+                <div class="row  field-email" align="left" style="border-bottom: 15px; padding-bottom: 10px;">
+                    <div class="col-md-4"  >
+                       <label for="id_email"><span class="error__msg">*</span> E-mail:</label>
+                    </div>
+                    <div class="col-md-8" {% if field.field.errors %} data-toggle="tooltip" data-placement="top"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}"{% endif %}>
+                        {% if field.field.errors %}
+                            {{ field.field|addcss:"border-error" }}
+                        {% else %}
+                            {{ field.field }}
+                        {% endif %}
+                        {% if field.field.help_text %}
+                        <p class="help" hidden="true">{{ field.field.help_text|safe }}</p>
+                    {% endif %}
+                    </div>
+                </div>
+
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+      </div>
+</fieldset>
+{% endif %}
+
+ {% if fieldset.name == "AuthInfo" %}
+<fieldset class="module {{ fieldset.classes }}" style="border: 0px;">
+     <div class="datosINICIO">
+     <div id="tituloCUADROS" style="height: 39px;">DATOS DE ACCESO
+      <br><br></div>
+    {% for line in fieldset %}
+        {% for field in line %}
+             {% if field.field.name == "username" %}
+                <div class="row  field-username" style="border-bottom: 15px; padding-bottom: 10px;">
+
+                    <div class="col-md-4"  >
+                        <label class="" for="id_username"><span class="error__msg">*</span> Usuario:</label>
+                    </div>
+
+                    <div class="col-md-8" >
+                        <input id="id_username" {% if field.field.errors %} class="border-error" data-toggle="tooltip" data-placement="top"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}"{% endif %} maxlength="30" name="username" type="text" value="{{ field.field.value|default_if_none:"" }}" />
+                            {% if field.field.help_text %}
+                        <p class="help" hidden="true">{{ field.field.help_text|safe }}</p>
+                    {% endif %}
+                    </div>
+                </div>
+
+            {% endif %}
+
+            {% if field.field.name == "password1" %}
+                <div class="row field-password1" style="border-bottom: 15px; padding-bottom: 10px;">
+
+                    <div class="col-md-4">
+
+                        <label class="" for="id_password1"><span class="error__msg">*</span> Contraseña:</label>
+                    </div>
+                    <div class="col-md-8" >
+
+                        <input id="id_password1" {% if field.field.errors %} class="border-error" data-toggle="tooltip" data-placement="top"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}"{% endif %} name="password1" type="password" value="{{ field.field.value|default_if_none:"" }}"/>
+
+                        {% if field.field.help_text %}
+                        <p class="help" hidden="true">{{ field.field.help_text|safe }}</p>
+
+                    {% endif %}
+
+                    </div>
+                 </div>
+
+            {% endif %}
+
+            {% if field.field.name == "password2" %}
+                <div class="row field-password2" style="border-bottom: 15px; padding-bottom: 10px;">
+
+                    <div class="col-md-4">
+
+                        <label class="" for="id_password2"><span class="error__msg">*</span> Contraseña:</label>
+                    </div>
+                    <div class="col-md-8" >
+                        <input id="id_password1" {% if field.field.errors %} class="border-error" data-toggle="tooltip" data-placement="top"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}"{% endif %} name="password2" type="password" value="{{ field.field.value|default_if_none:"" }}"/>
+
+                        {% if field.field.help_text %}
+                        <p class="help" hidden="true">{{ field.field.help_text|safe }}</p>
+                    {% endif %}
+                    </div>
+                </div>
+
+             {% endif %}
+        {% endfor %}
+    {% endfor %}
+     </div>
+</fieldset>
+{% endif %}
+
+
+{% if fieldset.name  == "Permissions" %}
+      <div class="datosESPECIFICO">
+    <div id="tituloCUADROS" style="height: 39px;">DATOS DE PERFIL DE USUARIO</div>
+    </div>
+    <div class="campos04">
+<fieldset class="module {{ fieldset.classes }}" style="border: 0px;">
+
+         {% for line in fieldset %}
+            {% for field in line %}
+               {% if field.field.name == "is_active" %}
+                 <div class="row field-is_active" id="usuarioactivo" hidden="true">
+                    <div class="col-md-6" >
+                        <label class="vCheckboxLabel" for="id_is_active">Activo</label>
+                        {% if field.field.help_text %}
+                        <p class="help" hidden="true">{{ field.field.help_text|safe }}</p>
+                    {% endif %}
+                    </div>
+                    <div class="col-md-3" {% if field.field.errors %} data-toggle="tooltip" data-placement="top"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}"{% endif %}>
+                        {% if field.field.errors %}
+                            &nbsp;{{ field.field|addcss:"border-error" }}
+                        {% else %}
+                            &nbsp;{{ field.field }}
+                        {% endif %}
+                    </div>
+                 </div>
+                 <div class="row field-is_active errornote" align="center">{{ field.errors }}</div>
+               {% endif %}
+
+        {% endfor %}
+    {% endfor %}
+
+</fieldset>
+    </div>
+{% endif %}
+
+{% if inline_admin_formset.opts.verbose_name_plural == "None" %}
+
+  <div class="campos03">
+
+    <fieldset class="module  {{ fieldset.classes }}">
+
+         {% for line in fieldset %}
+            {% for field in line %}
+               {% if field.field.name == "rol" %}
+                 <div class="row">
+                    <div class="col-md-4" style="padding-right: 0px;">
+                        <label class="required" for="id_rol"><span class="error__msg">*</span> Rol:</label>
+                    </div>
+                    <div class="col-md-8" {% if field.field.errors %} data-toggle="tooltip" data-placement="top"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}"{% endif %}>
+                        {% if field.field.errors %}
+                            {{ field.field|add_attributes:"class:usurol border-error" }}
+                        {% else %}
+                            {{ field.field|add_attributes:"class:usurol" }}
+                        {% endif %}
+
+                        {% if field.field.help_text %}
+                        <p class="help" hidden="true">{{ field.field.help_text|safe }}</p>
+                    {% endif %}
+                    </div>
+                 </div>
+
+               {% endif %}
+
+               {% if field.field.name == "dependencia" %}
+                  <div class="row field-dependencia" style="padding-top: 8px;">
+                    <div class="col-md-4" style="padding-right: 0px;">
+                        <label style="padding-right: 0px; font-style: normal; font-size: 12px; font-family: Verdana, Geneva, sans-serif; width:110px;" for="id_userprofile-0-dependencia"><span class="error__msg">*</span> Dependencia:</label>
+                    </div>
+                    <div class="col-md-8" {% if field.field.errors %} data-toggle="tooltip" data-placement="top"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}"{% endif %}>
+                        {% if field.field.errors %}
+                            {{ field.field|add_attributes:"class:usudependencia border-error" }}
+                        {% else %}
+                            {{ field.field|add_attributes:"class:usudependencia" }}
+                        {% endif %}
+
+                       {% if field.field.help_text %}
+                        <p class="help" hidden="true">{{ field.field.help_text|safe }}</p>
+                    {% endif %}
+                    </div>
+                  </div>
+
+                {% endif %}
+
+                {% if field.field.name == "subdependencia" %}
+                  <div class="row field-subdependencia" style="padding-top: 8px;">
+                    <div class="col-md-4" style="padding-right: 5px;">
+                        <label style="padding-right: 0px;" for="id_usuario-0-subdependencia"> SubDependencia:</label>
+                    </div>
+                    <div class="col-md-8" {% if field.field.errors %} data-toggle="tooltip" data-placement="top"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}"{% endif %}>
+                        {% if field.field.errors %}
+                            {{ field.field|add_attributes:"class:usudependencia border-error" }}
+                        {% else %}
+                            {{ field.field|add_attributes:"class:usudependencia" }}
+                        {% endif %}
+
+                       {% if field.field.help_text %}
+                        <p class="help" hidden="true">{{ field.field.help_text|safe }}</p>
+                    {% endif %}
+                    </div>
+                  </div>
+
+                {% endif %}
+        {% endfor %}
+    {% endfor %}
+
+</fieldset>
+    </div>
+{% endif %}
+
+
+
+
+
+
+{% if fieldset.name  == "Important dates" %}
+<fieldset class="module aligned {{ fieldset.classes }}" style="border: 0px;">
+     <div class="campos05">
+         {% for line in fieldset %}
+            {% for field in line %}
+               {% if field.field.name == "last_login" %}
+                 <div class="row field-last_login" hidden="true">
+                    <div class="col-md-5" >
+                        <label class="required" for="last_login">Último acceso:</label>
+                    </div>
+                 </div>
+                 <div class="row field-last_login">
+                    <div class="col-md-7" hidden="true">
+                            {{ field.field }}
+                        {% if field.field.help_text %}
+                        <p class="help" hidden="true">{{ field.field.help_text|safe }}</p>
+                    {% endif %}
+                    </div>
+                 </div>
+                 <div class="row field-last_login errornote" align="center">{{ field.errors }}</div>
+               {% endif %}
+
+               {% if field.field.name == "date_joined" %}
+                  <div class="row field-date_joined" hidden="true">
+                    <div class="col-md-7" hidden="true">
+                        <label for="date_joined" hidden="true">Fecha de Alta:</label>
+                    </div>
+                  </div>
+                  <div class="row field-last_login" hidden="true">
+                    <div class="col-md-7" hidden="true">
+                        {{ field.field }}
+                        {% if field.field.help_text %}
+                        <p class="help" hidden="true">{{ field.field.help_text|safe }}</p>
+                    {% endif %}
+                    </div>
+                  </div>
+                  <div class="row field-date_joined errornote" align="center">{{ field.field.errors }}</div>
+                {% endif %}
+        {% endfor %}
+    {% endfor %}
+     </div>
+</fieldset>
+
+{% endif %}

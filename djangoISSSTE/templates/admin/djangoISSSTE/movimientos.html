@@ -1,0 +1,22 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static %}
+{% block extrastyle %}{{ block.super }}
+
+{% endblock %}
+{% block breadcrumbs %}
+        {% endblock %}
+
+{% block content %}
+
+  <div id = "regresarBTN" onclick="window.history.go(-1);">
+  </div>
+
+  <div id="welcome">
+    	M O V I M I E N T O S
+  </div>
+
+<div class="registrarAVANCE" onclick="location.href='/admin/djangoISSSTE/avancepormunicipio/add?m=1'">
+  </div>
+
+
+{% endblock %}

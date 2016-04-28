@@ -1,0 +1,13 @@
+{% load i18n admin_urls admin_static %}
+<div >
+{% if show_save %}<div class="guardarsalirBTN" onclick="document.getElementById('{{ opts.model_name }}_form').submit('_save');"></div>
+{% endif %}
+{% if show_delete_link %}
+    {% url opts|admin_urlname:'delete' original.pk|admin_urlquote as delete_url %}
+   <div class="eliminarBTN" onclick="location.href='{% add_preserved_filters delete_url %}';"></div>
+{% endif %}
+{% if show_save_as_new %}<input type="submit" value="{% trans 'Save as new' %}" name="_saveasnew" />{%endif%}
+{% if show_save_and_add_another %}
+    <input  class="guardarotroBTN"  type="submit" value="" name="_addanother" />
+{% endif %}
+</div>

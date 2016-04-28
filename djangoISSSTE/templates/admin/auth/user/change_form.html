@@ -1,0 +1,175 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls admin_static admin_modify %}
+
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+{{ media }}
+{% endblock %}
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />
+
+
+    <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.css" />
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.js"></script>
+
+<script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
+
+
+    <script type="text/javascript">
+        var $l = jQuery.noConflict();
+    $l(function(){
+        // off
+        /*
+        $l("#id_userprofile-0-dependencia").multiselect({
+            header: true,
+            checkAllText: 'Marcar todos',
+            uncheckAllText: 'Desmarcar todos',
+            noneSelectedText: '',
+            selectedText: '# Dependencias',
+            multiple: false
+        });*/
+
+        $l('#imgerr1').tooltip({html:true});
+        $l('#imgerr2').tooltip({html:true});
+        $l('#imgerr3').tooltip({html:true});
+        $l('#imgerr4').tooltip({html:true});
+        $l('#imgerr5').tooltip({html:true});
+        $l('#imgerr6').tooltip({html:true});
+        $l('#imgerr7').tooltip({html:true});
+        $l('#imgerr8').tooltip({html:true});
+        $l('#imgerr9').tooltip({html:true});
+
+
+    });
+
+    $l(document).ready(function() {
+
+        var srol = $l('select#id_userprofile-0-rol').val();
+        if (srol == "AD"){
+            //$l("#id_userprofile-0-dependencia").multiselect('disable');
+            $l("#id_userprofile-0-dependencia").prop('disabled', 'disabled');
+        }
+
+        $l('select#id_userprofile-0-rol').on('change',function () {
+            var selrol = $l(this).val();
+
+            if (selrol == "AD") {
+
+               //$l("#id_userprofile-0-dependencia").multiselect('disable');
+                $l("#id_userprofile-0-dependencia").prop('disabled', 'disabled');
+                $l("#id_userprofile-0-dependencia").prop('selectedIndex',0);
+            }
+            else
+            {
+
+                //$l("#id_userprofile-0-dependencia").multiselect('enable');
+                $l("#id_userprofile-0-dependencia").removeAttr("disabled");
+                $l("#id_userprofile-0-dependencia").prop('selectedIndex',0);
+
+            }
+
+        });
+
+
+    });
+    </script>
+
+
+{% endblock %}
+
+{% block coltype %}colM{% endblock %}
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} change-form{% endblock %}
+
+{% if not is_popup %}
+{% block breadcrumbs %}
+
+
+{% endblock %}
+{% endif %}
+
+{% block content %}
+        <div id="regresarBTN" onclick="window.history.go(-1);">
+   </div>
+<div id="welcome">
+        {% if not change %}
+            Registro de
+        {% else %}
+            Modificar
+        {% endif %}
+        Usuario
+  </div>
+
+  <div class="bienvenida">
+      {% if not change %}
+            Bienvenido a la Sección de "Registro de Usuarios". Los campos marcados con asterisco (*) son obligatorios, le pedimos los llene correctamente.
+        {% else %}
+            Bienvenido a la Sección de "Modificar Usuario". Realice los cambios a los datos del usuario seleccionado y presione el botón Guardar.
+            <script>$(document).ready(function() {
+                var $mu = jQuery.noConflict();
+                $mu("#usuarioactivo").show();})</script>
+        {% endif %}
+ </div>
+    <div id="content-main">
+{% block object-tools %}
+{% if change %}{% if not is_popup %}
+  <ul class="object-tools">
+    {% block object-tools-items %}
+    <li>
+        {% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}
+
+    </li>
+    {% if has_absolute_url %}<li><a href="{{ absolute_url }}" class="viewsitelink">{% trans "View on site" %}</a></li>{% endif%}
+    {% endblock %}
+  </ul>
+{% endif %}{% endif %}
+{% endblock %}
+<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.model_name }}_form" novalidate>{% csrf_token %}{% block form_top %}{% endblock %}
+<div>
+{% if is_popup %}<input type="hidden" name="{{ is_popup_var }}" value="1" />{% endif %}
+{% if to_field %}<input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}" />{% endif %}
+{% if save_on_top %}{% block submit_buttons_top %}{% submit_row %}{% endblock %}{% endif %}
+{% if errors %}
+     <div class="set-errmsg" style="top:96px;left:50px;">
+                    {% if adminform.form.non_field_errors|length == 1 %} {% endif %}
+                    </div>
+    {{ adminform.form.non_field_errors }}
+{% endif %}
+
+{% block field_sets %}
+{% for fieldset in adminform %}
+  {% include "admin/auth/user/fieldset.html" %}
+{% endfor %}
+{% endblock %}
+
+{% block after_field_sets %}{% endblock %}
+
+{% block inline_field_sets %}
+{% for inline_admin_formset in inline_admin_formsets %}
+    {% include "admin/auth/user/stacked.html" %}
+{% endfor %}
+{% endblock %}
+
+{% block after_related_objects %}{% endblock %}
+
+{% block submit_buttons_bottom %}{% submit_row %}{% endblock %}
+
+{% if adminform and add %}
+    <script type="text/javascript">
+        (function($) {
+            $(document).ready(function() {
+                $('form#{{ opts.model_name }}_form :input:visible:enabled:first').focus()
+            });
+        })(django.jQuery);
+    </script>
+{% endif %}
+
+{# JavaScript for prepopulated fields #}
+{% prepopulated_fields_js %}
+
+</div>
+</form></div>
+{% endblock %}
