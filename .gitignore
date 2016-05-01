@@ -7,3 +7,4 @@ env/
 djangoISSSTE/migrations/
 Projects/settingsOscar.py
 DjangoISSSTE/
+*.sqlite3
