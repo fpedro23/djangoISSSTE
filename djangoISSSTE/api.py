@@ -144,6 +144,7 @@ class MetasMensualesPorAccionEndpoint(generic.ListView):
 	def get(self, request):
 		# Obteniendo los datos de la url
 		accion_ids = get_array_or_none(request.GET.get('acciones'))
+		estado_ids = get_array_or_none(request.GET.get('estados'))
 		all_metas_mensuales = False
 		arreglo_meta = []
 
@@ -158,12 +159,12 @@ class MetasMensualesPorAccionEndpoint(generic.ListView):
 			for meta in Meta.objects.filter(accionEstrategica_id__in=accion_ids):
 				arreglo_meta.append(meta.id)
 
-			metas_mensuales = MetaMensual.objects.filter(meta__id__in=arreglo_meta)
+			metas_mensuales = MetaMensual.objects.filter(meta_id__in=arreglo_meta, estado_id__in = estado_ids)
 
 		the_list = []
 		for meta_mensual in metas_mensuales.values():
 			the_list.append(meta_mensual)
-		print "Size %d" % the_list.__sizeof__()
+
 		return HttpResponse(json.dumps(the_list, ensure_ascii=False), 'application/json')
 
 

@@ -158,6 +158,7 @@ class Meta(models.Model):
     accionEstrategica = models.ForeignKey(AccionEstrategica, null=False, blank=False, verbose_name='Acción Estrategica')
     periodo = models.ForeignKey(Periodo, null=False, blank=False)
     observaciones = models.TextField(max_length=500, default="", blank=True)
+    montoPromedio = models.FloatField(null=False, default=0, verbose_name= 'Monto Promedio')
 
     def to_serializable_dict(self):
         ans = model_to_dict(self)
@@ -183,7 +184,7 @@ class Meta(models.Model):
 class MetaMensual(models.Model):
     meta = models.ForeignKey(Meta, null=False, blank=False)
     estado = models.ForeignKey(Estado, null=False, blank=False)
-    inversionAprox = models.FloatField()
+    inversionAprox = models.FloatField(default=0)
     ene = models.FloatField(null=False, default=0)
     feb = models.FloatField(null=False, default=0)
     mar = models.FloatField(null=False, default=0)
@@ -201,6 +202,20 @@ class MetaMensual(models.Model):
         unique_together = [("meta", "estado",)]
         verbose_name = 'Meta Mensual'
         verbose_name_plural = 'Metas Mensuales'
+
+    def save(self, *args, **kwargs):
+        suma_metas = self.ene + self.feb + self.mar + self.abr + self.may + self.jun + self.jul + self.ago + self.sep
+        suma_metas += self.oct + self.nov + self.dic
+        self.inversionAprox = suma_metas * self.meta.montoPromedio
+        print "Inversion %f" % self.inversionAprox
+        super(MetaMensual, self).save(*args, **kwargs)
+
+    def to_serializable_dict(self):
+        ans = model_to_dict(self)
+        ans['id'] = str(self.id)
+        ans['meta'] = "meta_ISSTE"
+        ans['estado'] = self.estado.nombreEstado
+        return ans
 
 
 @python_2_unicode_compatible
