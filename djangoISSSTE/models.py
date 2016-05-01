@@ -225,6 +225,7 @@ class AvancePorMunicipio(models.Model):
     meta = models.ForeignKey(Meta, null=False, blank=False, verbose_name="Acción Estratégica")
     estado = models.ForeignKey(Estado, null=False, blank=False)
     periodo = models.ForeignKey(Periodo, null=False, blank=False)
+    inversionAprox = models.FloatField(default=0)
 
     def __str__(self):
         return self.meta.accionEstrategica.nombreAccion + " - " + self.estado.nombreEstado
@@ -233,6 +234,24 @@ class AvancePorMunicipio(models.Model):
         unique_together = [("meta", "periodo", "estado")]
         verbose_name = 'Avance por Municipio'
         verbose_name_plural = 'Avances por Municipio'
+
+    def save(self, *args, **kwargs):
+        monto_promedio = 0
+        for meta in Meta.objects.filter(id=self.meta.id):
+            monto_promedio = meta.montoPromedio
+
+        avances_mensuales = AvanceMensual.objects.filter(avancePorMunicipio__id=self.id)
+        suma_avances = 0
+        print "Saving"
+        for avance_mensual in avances_mensuales:
+            suma_avances += avance_mensual.ene + avance_mensual.feb + avance_mensual.mar + avance_mensual.abr
+            suma_avances += avance_mensual.may + avance_mensual.jun + avance_mensual.jul + avance_mensual.ago
+            suma_avances += avance_mensual.sep + avance_mensual.oct + avance_mensual.nov + avance_mensual.dic
+        print "Saving 2"
+        print "Avances %f" % suma_avances
+        print "Monto: %f" % monto_promedio
+        self.inversionAprox = suma_avances * monto_promedio
+        super(AvancePorMunicipio, self).save(*args, **kwargs)
 
 
 class AvanceMensual(models.Model):
@@ -256,7 +275,6 @@ class AvanceMensual(models.Model):
         ans['id'] = str(self.id)
         ans['meta'] = "meta_ISSTE"
         ans['municipio'] = self.municipio.nombreMunicipio
-        ans['periodo'] = self.periodo.nombrePeriodo
         return ans
 
     class Meta:

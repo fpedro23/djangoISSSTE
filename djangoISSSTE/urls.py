@@ -16,5 +16,6 @@ urlpatterns = [
 	url(r'^api/avancesMensualesPorAccion', api.AvancesMensualesPorAccionEndpoint.as_view()),
 	url(r'^api/metasMensualesPorMeta', api.MetasMensualesPorMetaEndpoint.as_view()),
 	url(r'^api/avancesMensualesPorMeta', api.avancesMensualesPorMetaEndpoint.as_view()),
+	url(r'^api/busqueda', api.BuscadorEndpoint.as_view()),
 
  ]
