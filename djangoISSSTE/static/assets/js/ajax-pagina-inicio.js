@@ -262,11 +262,11 @@ function puntosMapaTotales(Datos) {
   var arregloSimple=new Array();
   var arregloDoble=new Array();
     var arregloObjeto = new Object();
-    for(var i= 0;i<Datos.reporte_mapa.obras_mapa.obras.length;i++){
+    for(var i= 0;i<Datos.reporte_mapa.avance_mapa.avances.length;i++){
         var arregloSimple=new Array();
-        arregloSimple.push(Datos.reporte_mapa.obras_mapa.obras[i].estado + ", " + Datos.reporte_mapa.obras_mapa.obras[i].numero_obras + " Obras, " + formato_numero(Datos.reporte_mapa.obras_mapa.obras[i].totalinvertido,2,'.',',') + " MDP.");
-        arregloSimple.push(Datos.reporte_mapa.obras_mapa.obras[i].latitud);
-        arregloSimple.push(Datos.reporte_mapa.obras_mapa.obras[i].longitud);
+        arregloSimple.push(Datos.reporte_mapa.avance_mapa.avances[i].avancemensual__municipio); //+ ", " + Datos.reporte_mapa.avance_mapa.avances[i].numero_obras + " Obras, " + formato_numero(Datos.reporte_mapa.obras_mapa.obras[i].totalinvertido,2,'.',',') + " MDP.");
+        arregloSimple.push(Datos.reporte_mapa.avance_mapa.avances[i].avancemensual__municipio__latitud);
+        arregloSimple.push(Datos.reporte_mapa.avance_mapa.avances[i].avancemensual__municipio__longitud);
         arregloSimple.push(i);
         arregloDoble.push(arregloSimple);
     }
