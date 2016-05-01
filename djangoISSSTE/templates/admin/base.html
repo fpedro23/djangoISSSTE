@@ -67,7 +67,7 @@
                     </li>
                 </div>
             </div>
-
+    </div>
         {% endif %}
         {% endblock %}
 
@@ -169,7 +169,7 @@
     <!-- Content -->
 
         {% block pretitle %}{% endblock %}
-        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
+        {% block content_title %}{% if title %}{% endif %}{% endblock %}
         {% block content %}
         {% block object-tools %}{% endblock %}
         {{ content }}

@@ -10,57 +10,57 @@
   width: 1024px;
   height:80px;
   margin:auto;
-  top:8px;
+
   font-family: "Soberana Titular";
   font-size:10px;
   font-weight: bold;
   color: #0E0E1E;
   text-align:right;
-  
-  background-image: url(../Imagenes/fondo_header.fw.png);
+
+  background-image:url(../Imagenes/back_header.png);
 }
 
 .titleSYSTEM{
-	width: 320px;
-	height: 20px;
-	position: absolute;
-	top: 12px;
-	left: 681px;
+    width: 320px;
+    height: 20px;
+    position: absolute;
+    top: 12px;
+    left: 681px;
 }
 
 .nameUSER{
-	width: 297px;
-	height: 20px;
-	position: absolute;
-	top: 34px;
-	left: 681px;
+    width: 297px;
+    height: 20px;
+    position: absolute;
+    top: 33px;
+    left: 676px;
 }
 
 #logoISSTE_main{
-	width: 140px;
-	height: 53px;
-	background-image: url(../Imagenes/logo_ISSSTE.png);
-	position: absolute;
-	left: 20px;
+    width: 140px;
+    height: 53px;
+    background-image: url(../Imagenes/logo_ISSSTE.png);
+    position: absolute;
+    left: 20px;
+    top: 0px;
 }
 
 #engrane{
-	width: 22px;
-	height: 22px;
-	position: absolute;
-	right: 23px;
-	top: 34px;
-	background-image: url(../Imagenes/bigBackground.fw.png);
-	background-position: -129px -0px;
+    width: 22px;
+    height: 22px;
+    position: absolute;
+    right: 23px;
+    top: 28px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -129px -0px;
 }
 
 #engrane:hover{
-	background-position: -129px -22px;
+    background-position: -129px -22px;
 }
 
 #menu{
   position:relative;
-  top:80px;
   width: 1024px;
   height:40px;
   margin:auto;
@@ -68,152 +68,122 @@
 }
 
 .MOVIMIENTOS{
-	width: 246px;
-	height:40px;
-	position:absolute;
-	left:0px;
-	background-image: url(../Imagenes/mov_N.fw.png);
+    width: 246px;
+    height:40px;
+    position:absolute;
+    left:0px;
+    background-image: url(../Imagenes/mov_N.fw.png);
 }
 
 .MOVIMIENTOS:hover{
-	background-image: url(../Imagenes/mov_O.fw.png);
+    background-image: url(../Imagenes/mov_O.fw.png);
 }
 
 .pto01{
-	width:10px;
-	height: 40px;
-	position:absolute;
-	left:0px;
-}
-
-.pto001{
-	width:10px;
-	height: 40px;
-	position:absolute;
-	left:229px;
-	background:url(../Imagenes/vinieta.fw.png);
+    width: 10px;
+    height: 40px;
+    position: absolute;
+    left: 229px;
+    background-image: url(../Imagenes/vinieta.fw.png);
 }
 
 .CONSULTAS{
-	width: 246px;
-	height:40px;
-	position:absolute;
-	left:257px;
-	background-image: url(../Imagenes/cons_N.fw.png)
+    width: 246px;
+    height:40px;
+    position:absolute;
+    left:257px;
+    background-image: url(../Imagenes/cons_N.fw.png)
 }
 
 .CONSULTAS:hover{
-	background-image: url(../Imagenes/cons_O.fw.png);
+    background-image: url(../Imagenes/cons_O.fw.png);
 }
 .pto02{
-	width:10px;
-	height: 40px;
-	position:absolute;
-	left:0px;
-}
-
-.pto002{
-	width:10px;
-	height: 40px;
-	position:absolute;
-	left:468px;
-	background:url(../Imagenes/vinieta.fw.png);
+    width: 10px;
+    height: 40px;
+    position: absolute;
+    left: 468px;
+    background-image: url(../Imagenes/vinieta.fw.png);
 }
 
 .CATALOGOS{
-	width: 246px;
-	height:40px;
-	position:absolute;
-	left:513px;
-	background-image: url(../Imagenes/cat_N.fw.png);
+    width: 246px;
+    height:40px;
+    position:absolute;
+    left:513px;
+    background-image: url(../Imagenes/cat_N.fw.png);
 }
 
 .CATALOGOS:hover{
-	background-image: url(../Imagenes/cat_O.fw.png);
+    background-image: url(../Imagenes/cat_O.fw.png);
 }
 
 .pto03{
-	width:10px;
-	height: 40px;
-	position:absolute;
-	left:0px;
-}
-
-.pto003{
-	width:10px;
-	height: 40px;
-	position:absolute;
-	left:728px;
-	background:url(../Imagenes/vinieta.fw.png);
+    width: 10px;
+    height: 40px;
+    position: absolute;
+    left: 728px;
+    background-image: url(../Imagenes/vinieta.fw.png);
 }
 
 .USUARIOS{
-	width: 246px;
-	height:40px;
-	position:absolute;
-	left:769px;
-	background-image: url(../Imagenes/usu_N.fw.png);
+    width: 246px;
+    height:40px;
+    position:absolute;
+    left:769px;
+    background-image: url(../Imagenes/usu_N.fw.png);
 }
 
 .USUARIOS:hover{
-	background-image: url(../Imagenes/usu_O.fw.png);
+    background-image: url(../Imagenes/usu_O.fw.png);
 }
 .pto04{
-	width:10px;
-	height: 40px;
-	position:absolute;
-	left:0px;
-}
-
-.pto004{
-	width:10px;
-	height: 40px;
-	position:absolute;
-	left:967px;
-	background:url(../Imagenes/vinieta.fw.png);
+    width: 10px;
+    height: 40px;
+    position: absolute;
+    left: 967px;
+    background-image: url(../Imagenes/vinieta.fw.png);
 }
 
 #body{
-	position:relative;
-  	width: 1024px;
- 	height: 608px;
-    top:20px;
-  	margin:auto;
+    position:relative;
+    width: 1024px;
+    height: 608px;
+    margin:auto;
 }
 
 #regresarBTN{
-    position: absolute;
-	 width: 84px;
-	 height: 21px;
-    top:25px;
-	 background-image:url(../Imagenes/bigBackground.fw.png);
-	 background-position: -300px 0px;
+     width: 84px;
+     height: 21px;
+     background-image:url(../Imagenes/bigBackground.fw.png);
+     background-position: -300px 0px;
 }
 
 #regresarBTN:hover{
-	background-position: -300px -21px;
+    background-position: -300px -21px;
 }
 
 #welcome{
-	width: 400px;
-	height: 22px;
-	text-align: center;
-	position: absolute;
-	top: 26px;
-	left: 302px;
-	font-style: italic;
+    width: 400px;
+    height: 22px;
+    text-align: center;
+    position: absolute;
+    top: 2px;
+    left: 302px;
+    font-style: italic;
+    font-family: 'soberana_titularregular';
 }
 
 .FUA {
-	width: 290px;
-	height: 18px;
-	position: absolute;
-	left: 406px;
-	top: 736px;
-	font-family: Verdana, Geneva, sans-serif;
-	font-size: 10px;
-	color: #161616;
-	text-align: center;
+    width: 290px;
+    height: 18px;
+    position: absolute;
+    left: 369px;
+    top: 718px;
+    font-family: 'soberana_sanslight';
+    font-size: 10px;
+    color: #161616;
+    text-align: center;
 }
 
 .footer{
@@ -223,530 +193,766 @@
   margin:auto;
   background-image:url(../Imagenes/002_gradienteFoot.fw.png);
  }
- 
+
  #txtFOOT{
-	 width: 450px;
-	 height: 33px;
-	 position:relative;
-	 left:302px;
-	 top:5px;
-	  
-	 font-family: 'soberana_textobold';
-	 font-size: 8px;
+     width: 450px;
+     height: 33px;
+     position:relative;
+     left:302px;
+     top:5px;
+
+     font-family: 'soberana_textobold';
+     font-size: 8px;
      color: #6A6B6C;
-	 text-align:center;
+     text-align:center;
 
 }
 
 #logoFOOT{
-	width: 116px;
-	height: 33px;
-	background-image: url(../Imagenes/logo_FOOT.fw.png);
-	position:relative;
-	left: 457px;
-	top:0px;
+    width: 116px;
+    height: 33px;
+    background-image: url(../Imagenes/logo_FOOT.fw.png);
+    position:absolute;
+    left: 457px;
+    top:45px;
 }
 /*cierre de elementos de TODAS LAS PAGINAS*/
 
 
 /*elementos correspondientes a la PAGINA de LOG IN*/
 .galeria{
-	 position:relative;
-	 width:540px;
-	 height:360px;
-	 border: 1px solid black;
-	 margin-top:100px;
-	 margin-left:50px;
+     position:relative;
+     width:540px;
+     height:360px;
+     border: 1px solid black;
+     margin-top:55px;
+     margin-left:50px;
 }
 
 .botGAL{
-	width:55px;
-	height:10px;
-	position:absolute;
-	top: 365px;
-	left: 295px;
-	border: 1px solid black;
+    width:55px;
+    height:10px;
+    position:absolute;
+    top: 365px;
+    left: 295px;
+    border: 1px solid black;
 }
 
 .logIn {
-	position: absolute;
-	left: 630px;
-	top: 75px;
-	width: 345px;
-	height: 360px;
-	z-index: 1;
-	/*border: 1px solid black;*/
-	
-	font-family: 'soberana_sanslight';
-	font-size:18px;
-	color: #6A6B6C;
-	
+    position: absolute;
+    left: 630px;
+    top: 55px;
+    width: 345px;
+    height: 360px;
+    z-index: 1;
+    /*border: 1px solid black;*/
+
+    font-family: 'soberana_sanslight';
+    font-size:18px;
+    color: #6A6B6C;
+
 }
 
 .titulo{
-	font-family: 'soberana_titularbold';
-	font-size:25px;
-	color: #6A6B6C;
-		
+    font-family: 'soberana_titularbold';
+    font-size:25px;
+    color: #6A6B6C;
+
 }
 
 #botLI{
-	width:126px;
-	height:45px;
-	position:absolute;
-	top: 250px;
-	left:217px;
-	background-image:url(../Imagenes/bigBackground.fw.png);
-	background-position:0px 0px;
+    width:126px;
+    height:45px;
+    position:absolute;
+    top: 250px;
+    left:217px;
+    background-image:url(../Imagenes/bigBackground.fw.png);
+    background-position:0px 0px;
 }
 
 #botLI:hover{
-	background-position: 0px -45px;
+    background-position: 0px -45px;
 }
 
 #olvidarPW{
-	width: 224px;
-	height:40px;
-	
-	position:absolute;
-	top:320px;
-	
-	background-image:url(../Imagenes/bigBackground.fw.png);
-	background-position:-127px -187px;
+    width: 224px;
+    height:40px;
+
+    position:absolute;
+    top:320px;
+
+    background-image:url(../Imagenes/bigBackground.fw.png);
+    background-position:-127px -187px;
 }
 
 #olvidarPW:hover{
-	background-position: -127px -230px;
-}
-
-.texto01{
-	width: 300px;
-	height: 20px;
-
-	font-family: 'soberana_sanslight';
-	font-size: 18px;
-	text-align: left;
-
-	position: absolute;
-	top: 118px;
-
-
-
-}
-
-.texto02{
-	width: 300px;
-	height: 20px;
-
-	font-family: 'soberana_sanslight';
-	font-size: 18px;
-	text-align: left;
-
-	position: absolute;
-	top: 158px;
-
-
-
+    background-position: -127px -230px;
 }
 /*cierre de elementos correspondientes al LOG IN*/
 
 /*elementos correspondientes a la PAGINA PRINCIPAL*/
 .en2015{
-	 position:relative;
-	 padding:6px;
-	 width:444px;
-	 height:349px;
-	 top:25px;
-	 left:50px;
-	 background-image:url(../Imagenes/bigBackground.fw.png);
-	 background-position:-400px 0px;
-	 
-	font-family: 'soberana_titularbold';
-	font-size:25px;
-	color: #FFFFFF;	
+     position:relative;
+     padding:6px;
+     width:444px;
+     height:349px;
+     top:25px;
+     left:50px;
+     background-image:url(../Imagenes/bigBackground.fw.png);
+     background-position:-400px 0px;
+
+    font-family: 'soberana_titularbold';
+    font-size:25px;
+    color: #FFFFFF;
 }
 
 .mapa {
-	position: absolute;
-	left: 523px;
-	width: 443px;
-	height: 350px;
-	z-index: 1;
-	border-color: #327451;
-	border-style: solid;
-	top: 27px;
+    position: absolute;
+    left: 523px;
+    width: 443px;
+    height: 350px;
+    z-index: 1;
+    border-color: #327451;
+    border-style: solid;
+    top: 27px;
 }
 
 .infografico{
-	position:absolute;
-	left:50px;
-	top:395px;
-	width:924px;
-	height:128px;
-	border-color: #327451;
-	background-image: url(../Imagenes/bigBackground.fw.png);
-	background-position: 0px -614px;
+    position:absolute;
+    left:50px;
+    top:395px;
+    width:924px;
+    height:128px;
+    border-color: #327451;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: 0px -614px;
 }
 
 #metaESIN_01{
-	position: absolute;
-	left: 17px;
-	top: 16px;
-	width: 160px;
-	height: 90px;
-	background-position: -400px 0px;
-	background-color: #9E2528;
-	padding: 2px;
+    position: absolute;
+    left: 17px;
+    top: 16px;
+    width: 160px;
+    height: 90px;
+    background-position: -400px 0px;
+    background-color: #9E2528;
+    padding: 2px;
 }
 
 #metaESIN_02{
-	position: absolute;
-	left: 198px;
-	top: 16px;
-	width: 160px;
-	height: 90px;
-	background-position: -400px 0px;
-	background-color: #862022;
-	padding: 2px;
+    position: absolute;
+    left: 198px;
+    top: 16px;
+    width: 160px;
+    height: 90px;
+    background-position: -400px 0px;
+    background-color: #862022;
+    padding: 2px;
 }
 
 #metaESIN_03{
-	position: absolute;
-	left: 380px;
-	top: 16px;
-	width: 160px;
-	height: 90px;
-	background-position: -400px 0px;
-	background-color: #751C1E;
-	padding: 2px;
+    position: absolute;
+    left: 380px;
+    top: 16px;
+    width: 160px;
+    height: 90px;
+    background-position: -400px 0px;
+    background-color: #751C1E;
+    padding: 2px;
 }
 
 #metaESIN_04{
-	position: absolute;
-	left: 563px;
-	top: 16px;
-	width: 160px;
-	height: 90px;
-	background-position: -400px 0px;
-	background-color: #65181B;
-	padding: 2px;
+    position: absolute;
+    left: 563px;
+    top: 16px;
+    width: 160px;
+    height: 90px;
+    background-position: -400px 0px;
+    background-color: #65181B;
+    padding: 2px;
 }
 
 #metaESIN_05{
-	position: absolute;
-	left: 744px;
-	top: 16px;
-	width: 160px;
-	height: 90px;
-	background-position: -400px 0px;
-	background-color: #400F11;
-	padding: 2px;
+    position: absolute;
+    left: 744px;
+    top: 16px;
+    width: 160px;
+    height: 90px;
+    background-position: -400px 0px;
+    background-color: #400F11;
+    padding: 2px;
 }
 
 .meta_TITULO{
-	font-family: "soberana Sans";
-	text-align:center;
-	font-size: 12px;
-	color:#FFF;
+    font-family: "soberana Sans";
+    text-align:center;
+    font-size: 12px;
+    color:#FFF;
 }
 
 .meta_NUM{
-	width: 160px;
-	height: 30px;
-	position: absolute;
-	top: 23px;
-	font-family: "soberana Sans";
-	font-size: 22px;
-	font-weight: bold;
-	color: #FFFFFF;
-	text-align: center;
+    width: 160px;
+    height: 30px;
+    position: absolute;
+    top: 23px;
+    font-family: "soberana Sans";
+    font-size: 22px;
+    font-weight: bold;
+    color: #FFFFFF;
+    text-align: center;
 }
 
 #metaICO01{
-	width: 40px;
-	height: 40px;
-	position: absolute;
-	top: 53px;
-	left: 67px;
-	background-image:url(../Imagenes/educacion_ICO.fw.png);
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 53px;
+    left: 67px;
+    background-image:url(../Imagenes/educacion_ICO.fw.png);
 }
 
 #metaICO02{
-	width: 40px;
-	height: 40px;
-	position: absolute;
-	top: 53px;
-	left: 67px;
-	background-image:url(../Imagenes/salud_ICO.fw.png);
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 53px;
+    left: 67px;
+    background-image:url(../Imagenes/salud_ICO.fw.png);
 }
 
 #metaICO03{
-	width: 40px;
-	height: 40px;
-	position: absolute;
-	top: 53px;
-	left: 67px;
-	background-image:url(../Imagenes/vivienda_ICO.fw.png);
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 53px;
+    left: 67px;
+    background-image:url(../Imagenes/vivienda_ICO.fw.png);
 }
 
 #metaICO04{
-	width: 40px;
-	height: 40px;
-	position: absolute;
-	top: 53px;
-	left: 67px;
-	background-image:url(../Imagenes/alimentacion_ICO.fw.png);
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 53px;
+    left: 67px;
+    background-image:url(../Imagenes/alimentacion_ICO.fw.png);
 }
 
 #metaICO05{
-	width: 40px;
-	height: 40px;
-	position: absolute;
-	top: 53px;
-	left: 67px;
-	background-image:url(../Imagenes/total_ICO.fw.png);
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 53px;
+    left: 67px;
+    background-image:url(../Imagenes/total_ICO.fw.png);
 }
 /*cierre de elementos correspondientes a la PAGINA PRINCIPAL*/
 
 /*elementos correspondientes a la PAGINA de MOVIMIENTOS*/
 .registrarAVANCE{
-	width: 180px;
-	height: 190px;
-	background-image: url(../Imagenes/bigBackground.fw.png);
-	background-position: -1215px 0px;
-	position: absolute;
-	top: 149px;
-	left: 431px;
+    width: 180px;
+    height: 190px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -1214px 0px;
+    position: absolute;
+    top: 149px;
+    left: 431px;
 }
 
-.registrar_AVANCE:hover{
-	background-position: -1215px -190px;
+.registrarAVANCE:hover{
+    background-position: -1214px -190px;
 }
 /*cierre de elementos correspondientes a la PAGINA de MOVIMIENTOS*/
 
-/*elementos correspondientes a la PAGINA de MODIFICACION DE META - ficha tecnica*/
-/*cierre de elementos correspondientes a la PAGINA de MODIFICACION DE META - ficha técnica*/
+/*elementos correspondientes a la PAGINA de REGISTRO DE AVANCES*/
+.imprimirBTN{
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    left: 987px;
+    top: 1px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -190px 0px;
+}
 
-/*elementos correspondientes a la PAGINA de MODIFICACION DE CONSULTAS*/
+.imprimirBTN:hover{
+    background-position:-190px -30px;
+}
+
+
+#tituloCUADROS{
+    ont-family: 'soberana_titularregular';
+    font-size:20px;
+    color: #0C0C1E;
+
+}
+
+.general{
+    border: 2px solid #327451;
+    border-radius: 2px;
+    width: 1021px;
+    height: 52px;
+    font-family: 'soberana_sanslight';
+    font-size: 15px;
+    color: #6A6B6C;
+    position: absolute;
+    left: -1px;
+    top: 52px;
+}
+
+.caracteristicas_ACCION{
+    border: 2px solid #327451;
+    border-radius: 2px;
+    width: 1021px;
+    height: 101px;
+    font-family: 'soberana_sanslight';
+    font-size: 15px;
+    color: #6A6B6C;
+    position: absolute;
+    left: -1px;
+    top: 119px;
+}
+
+.captura_AVANCES{
+    border: 2px solid #327451;
+    border-radius: 2px;
+    width: 1021px;
+    height: 295px;
+    font-family: 'soberana_sanslight';
+    font-size: 15px;
+    color: #6A6B6C;
+    position: absolute;
+    left: -1px;
+    top: 233px;
+}
+
+.subtituloTABLA{
+    font-family: 'soberana_sanslight';
+    font-size:13px;
+    font-weight:bold;
+    color: #6A6B6C;
+    text-align:center;
+}
+
+.contenidoTABLA{
+    font-family: 'soberana_sanslight';
+    font-size:13px;
+    color: #6A6B6C;
+    text-align:center;
+}
+
+/*cierre de elementos correspondientes a la PAGINA de REGISTRO DE AVANCES*/
+
+/*elementos correspondientes a la PAGINA DE CONSULTAS*/
 .filtroCONSULTAS{
-	width: 180px;
-	height: 190px;
-	background-image: url(../Imagenes/bigBackground.fw.png);
-	background-position: -1576px 0px;
-	position: absolute;
-	top: 80px;
-	left: 307px;
+    width: 180px;
+    height: 190px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -1576px 0px;
+    position: absolute;
+    top: 149px;
+    left: 230px;
 }
 
 .filtroCONSULTAS:hover{
-	background-position: -1576px -190px;
+    background-position: -1576px -190px;
 }
 
 .predefinidaCONSULTAS{
-	width: 180px;
-	height: 190px;
-	background-image: url(../Imagenes/bigBackground.fw.png);
-	background-position: -1755px 0px;
-	position: absolute;
-	top: 80px;
-	left: 515px;
+    width: 180px;
+    height: 190px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -1755px 0px;
+    position: absolute;
+    top: 149px;
+    left: 611px;
 }
 
 .predefinidaCONSULTAS:hover{
-	background-position:-1755px -190px;
+    background-position:-1755px -190px;
 }
 
 .listaCONSULTAS{
-	width: 180px;
-	height: 190px;
-	background-image: url(../Imagenes/bigBackground.fw.png);
-	background-position: -1034px -379px;
-	position: absolute;
-	top: 280px;
-	left: 421px;
+    width: 180px;
+    height: 190px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -1034px -379px;
+    position: absolute;
+    top: 149px;
+    left: 421px;
 }
 
 .listaCONSULTAS:hover{
-	background-position:-1034px -570px;
+    background-position:-1034px -570px;
 }
 /*cierre de elementos correspondientes a la PAGINA de CONSULTAS*/
 
+/*elementos correspondientes a PAGINA de CONSULTA MEDIANTE FILTROS*/
+.parametros_CONSULTA{
+    border: 2px solid #327451;
+    border-radius: 2px;
+    width: 1021px;
+    height: 200px;
+    font-family: 'soberana_sanslight';
+    font-size: 15px;
+    color: #6A6B6C;
+    position: absolute;
+    top: 33px;
+}
+
+.subtituloTABLA{
+    font-family: 'soberana_sanslight';
+    font-size:13px;
+    font-weight:bold;
+    color: #6A6B6C;
+    text-align:center;
+}
+
+.contenidoTABLA{
+    font-family: 'soberana_sanslight';
+    font-size:13px;
+    color: #6A6B6C;
+    text-align:center;
+}
+
+.guardar_consBTN{
+    width: 82px;
+    height: 30px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -869px -1789px;
+    position: absolute;
+    top: 157px;
+    left: 656px;
+}
+
+.guardar_consBTN:hover{
+    background-position: -869px -1819px;
+}
+
+#resultados{
+    border: 2px solid #327451;
+    border-radius: 2px;
+
+    width: 294px;
+    height: 334px;
+
+    position: absolute;
+    top: 244px;
+}
+
+#mapaid{
+    border: 2px solid #327451;
+    border-radius: 2px;
+    width: 416px;
+    height: 334px;
+    position: absolute;
+    top: 244px;
+    left: 301px;
+}
+
+#reporte{
+    border: 2px solid #327451;
+    border-radius: 2px;
+    width: 294px;
+    height: 334px;
+    position: absolute;
+    top: 244px;
+    left: 724px;
+}
+
+.exportarBTN{
+    width: 30px;
+    height: 30px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -678px -368px;
+    position: absolute;
+    top: 302px;
+    left: 226px;
+}
+
+.exportarBTN:hover{
+    background-position: -678px -398px;
+}
+
+.graficoBTN{
+    width: 30px;
+    height: 30px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -709px -369px;
+    position: absolute;
+    top: 302px;
+    left: 261px;
+}
+
+.graficoBTN:hover{
+    background-position:-709px -399px;
+}
+/*cierre de elementos correspondientes a PAGINA de CONSULTA MEDIANTE FILTROS*/
+
+/*elementos correspondientes a la PAGINA de CATÁLOGOS*/
+.metaCATALOGO{
+    width: 180px;
+    height: 190px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -1215px -380px;
+    position: absolute;
+    top: 149px;
+    left: 421px;
+}
+
+.metaCATALOGO:hover{
+    background-position:-1215px -570px;
+}
+/*CIERRE elementos correspondientes a la PAGINA de CATÁLOGOS*/
+
+/*elementos correspondientes a la PAGINA de CATALOGO DE METAS*/
+.metaADD{
+    width: 180px;
+    height: 190px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -1395px -380px;
+    position: absolute;
+    top: 149px;
+    left: 230px;
+}
+
+.metaADD:hover{
+    background-position: -1395px -570px;
+}
+
+.metaEDIT{
+    width: 180px;
+    height: 190px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -1575px -380px;
+    position: absolute;
+    top: 149px;
+    left: 421px;
+}
+
+.metaEDIT:hover{
+    background-position:-1575px -570px;
+}
+
+.metaDELETE{
+    width: 180px;
+    height: 190px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -1755px -380px;
+    position: absolute;
+    top: 149px;
+    left: 611px;
+}
+
+.metaDELETE:hover{
+    background-position:-1755px -570px;
+}
+/*cierre de elementos correspondientes a la PAGINA de CATALOGO DE METAS*/
+
 /*INICIO de elementos correspondientes a la PAGINA de USUARIOS*/
 .usuario_ADD{
-	width: 180px;
-	height: 190px;
-	background-image:url(../Imagenes/bigBackground.fw.png);
-	background-position: 0px -744px;
-	position: absolute;
-	top: 80px;
-	left: 325px;
+    width: 180px;
+    height: 190px;
+    background-image:url(../Imagenes/bigBackground.fw.png);
+    background-position: 0px -744px;
+    position: absolute;
+    top: 149px;
+    left: 230px;
 }
 
 .usuario_ADD:hover{
-	background-position: 0px -934px;
+    background-position: 0px -934px;
 }
 
 .usuario_EDIT{
-	width: 180px;
-	height: 190px;
-	background-image: url(../Imagenes/bigBackground.fw.png);
-	background-position: -360px -744px;
-	position: absolute;
-	top: 80px;
-	left: 515px;
+    width: 180px;
+    height: 190px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -360px -744px;
+    position: absolute;
+    top: 149px;
+    left: 421px;
 }
 
 .usuario_EDIT:hover{
-	background-position:-360px -934px;
+    background-position:-360px -934px;
 }
 
 .usuario_DEL{
-	width: 180px;
-	height: 190px;
-	background-image: url(../Imagenes/bigBackground.fw.png);
-	background-position: -540px -744px;
-	position: absolute;
-	top: 280px;
-	left: 421px;
+    width: 180px;
+    height: 190px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -540px -744px;
+    position: absolute;
+    top: 149px;
+    left: 611px;
 }
 
 .usuario_DEL:hover{
-	background-position:-540px -934px;
+    background-position:-540px -934px;
 }
 /*cierre de elementos correspondientes a la PAGINA de USUARIOS*/
 
 /*datos correspondientes al ALTA DE USUARIOS*/
 .datosGENERALES{
-	border: 2px solid #327451;
-	border-radius: 2px;
-	width: 334px;
-	height: 282px;
-	font-family: "Soberana Sans Light";
-	font-size: 15px;
-	color: #6A6B6C;
-	position: absolute;
-	left: 0px;
-	top: 143px;
+    border: 2px solid #327451;
+    border-radius: 2px;
+    width: 334px;
+    height: 282px;
+    font-family: "Soberana Sans Light";
+    font-size: 15px;
+    color: #6A6B6C;
+    position: absolute;
+    left: 0px;
+    top: 143px;
 }
 
 .datosINICIO{
-	border: 2px solid #327451;
-	border-radius: 2px;
-	width: 334px;
-	height: 282px;
-	font-family: "Soberana Sans Light";
-	font-size: 15px;
-	color: #6A6B6C;
-	position: absolute;
-	left: 343px;
-	top: 145px;
+    border: 2px solid #327451;
+    border-radius: 2px;
+    width: 334px;
+    height: 282px;
+    font-family: "Soberana Sans Light";
+    font-size: 15px;
+    color: #6A6B6C;
+    position: absolute;
+    left: 343px;
+    top: 145px;
 }
 
 .datosESPECIFICO{
-	border: 2px solid #327451;
-	border-radius: 2px;
-	width: 334px;
-	height: 282px;
-	font-family: "Soberana Sans Light";
-	font-size: 15px;
-	color: #6A6B6C;
-	position: absolute;
-	left: 685px;
-	top: 144px;
+    border: 2px solid #327451;
+    border-radius: 2px;
+    width: 334px;
+    height: 282px;
+    font-family: "Soberana Sans Light";
+    font-size: 15px;
+    color: #6A6B6C;
+    position: absolute;
+    left: 685px;
+    top: 144px;
 }
 
 .eliminarBTN{
-	width: 80px;
-	height: 30px;
-	background-image: url(../Imagenes/bigBackground.fw.png);
-	background-position: -724px -1789px;
-	position: absolute;
-	top: 63px;
-	left: 102px;
+    width: 80px;
+    height: 30px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -724px -1789px;
+    position: absolute;
+    top: 522px;
+    left: 720px;
 }
 
 .eliminarBTN:hover{
-	background-position: -724px -1819px;
-}
-
-.salirBTN{
-	width: 58px;
-	height: 30px;
-	background-image: url(../Imagenes/bigBackground.fw.png);
-	background-position: -808px -1789px;
-	position: absolute;
-	top: 63px;
-	left: 189px;
-}
-
-.salirBTN:hover{
-	background-position: -808px -1819px;
+    background-position: -724px -1819px;
 }
 
 .guardarBTN{
-	width: 82px;
-	height: 30px;
-	background-image: url(../Imagenes/bigBackground.fw.png);
-	background-position: -869px -1789px;
-	position: absolute;
-	top: 63px;
-	left: 254px;
+    width: 82px;
+    height: 30px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -869px -1789px;
+    position: absolute;
+    top: 540px;
+    left: 927px;
 }
 
 .guardarBTN:hover{
-	background-position: -869px -1819px;
+    background-position: -869px -1819px;
 }
 
 .bienvenida{
-	font-family: "Soberana Sans Light";
-	font-size: 16px;
-	color: #6A6B6C;
-	width: 924px;
-	height: 40px;
-	position: absolute;
-	top: 61px;
-	left: 50px;
+    font-family: "Soberana Sans Light";
+    font-size: 16px;
+    color: #6A6B6C;
+    width: 924px;
+    height: 40px;
+    position: absolute;
+    top: 61px;
+    left: 50px;
 }
 
 .salirBTN{
-	width: 51px;
-	height: 30px;
-	background-image: url(../Imagenes/bigBackground.fw.png);
-	background-position: -726px -1925px;
-	position: absolute;
-	top: 508px;
-	left: 618px;
+    width: 51px;
+    height: 30px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -726px -1925px;
+    position: absolute;
+    top: 540px;
+    left: 864px;
 }
 
 .salirBTN:hover{
-	background-position: -726px -1956px;
+    background-position: -726px -1956px;
 }
-  
+
 .guardarotroBTN{
-	width: 204px;
-	height: 30px;
-	background-image: url(../Imagenes/bigBackground.fw.png);
-	background-position: -780px -1925px;
-	position: absolute;
-	top: 508px;
-	left: 675px;
+    width: 204px;
+    height: 30px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -780px -1925px;
+    position: absolute;
+    top: 522px;
+    left: 675px;
 }
 
 .guardarotroBTN:hover{
-	background-position: -780px -1956px;
+    background-position: -780px -1956px;
 }
 
 .guardarsalirBTN{
-	width: 133px;
-	height: 30px;
-	background-image: url(../Imagenes/bigBackground.fw.png);
-	background-position: -907px -1861px;
-	position: absolute;
-	top: 508px;
-	left: 884px;
+    width: 133px;
+    height: 30px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -907px -1861px;
+    position: absolute;
+    top: 522px;
+    left: 884px;
 }
 
 .guardarsalirBTN:hover{
-	background-position: -907px -1892px;
+    background-position: -907px -1892px;
+}
+
+.listarBTN{
+    width: 64px;
+    height: 30px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -1047px -1862px;
+    position: absolute;
+    top: 157px;
+    left: 771px;
+}
+
+.listarBTN:hover{
+    background-position: -1047px -1893px;
+}
+
+.limpiarBTN{
+    width: 80px;
+    height: 30px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -726px -1861px;
+    position: absolute;
+    top: 157px;
+    left: 842px;
+}
+
+.limpiarBTN:hover{
+    background-position: -726px -1892px;
+}
+
+.consultarBTN{
+    width: 90px;
+    height: 30px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -811px -1861px;
+    position: absolute;
+    top: 157px;
+    left: 927px;
+}
+
+.consultarBTN:hover{
+    background-position: -811px -1892px;
 }
 /*cierre de datos correspondientes al ALTA DE USUARIOS*/

@@ -111,24 +111,24 @@ function arregloDataGrafica(Datos) {
 
 
             var arregloSimple=new Array();
-            arregloSimple.push("Obras Concluidas");
+            arregloSimple.push("Avances Educación");
             arregloSimple.push(Datos.reporte_total.avance_educacion.total);
             //arregloSimple.push(Datos.reporte_total.obras_concluidas.inversion_total);
 
             arregloDoble.push(arregloSimple);
             var arregloSimple2=new Array();
-            arregloSimple2.push("Obras en Proceso");
+            arregloSimple2.push("Avances Salud");
             arregloSimple2.push(Datos.reporte_total.avance_salud.total);
             //arregloSimple2.push(Datos.reporte_total.obras_proceso.inversion_total);
             arregloDoble.push(arregloSimple2);
             var arregloSimple3=new Array();
-            arregloSimple3.push("Obras Proyectadas");
+            arregloSimple3.push("Avances Vivienda");
             arregloSimple3.push(Datos.reporte_total.avance_vivienda.total);
             //arregloSimple3.push(Datos.reporte_total.obras_proyectadas.inversion_total)
             arregloDoble.push(arregloSimple3);
 
             var arregloSimple4=new Array();
-            arregloSimple4.push("Obras Proyectadas");
+            arregloSimple4.push("Avances Alimentación");
             arregloSimple4.push(Datos.reporte_total.avance_alimentacion.total);
             //arregloSimple3.push(Datos.reporte_total.obras_proyectadas.inversion_total)
             arregloDoble.push(arregloSimple4);

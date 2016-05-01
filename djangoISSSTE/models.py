@@ -195,6 +195,9 @@ class AvancePorMunicipio(models.Model):
 	estado = models.ForeignKey(Estado, null=False, blank=False)
 	periodo = models.ForeignKey(Periodo, null=False, blank=False)
 
+	avanceMunicipio = models.ManyToManyField(Municipio,
+                                           through='AvanceMensual',)
+
 	def __str__(self):
 		return self.meta.accionEstrategica.nombreAccion + " - " + self.estado.nombreEstado
 

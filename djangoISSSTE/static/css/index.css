@@ -161,7 +161,7 @@ url('../fonts/Soberana%20Sans/soberanasans-regular-webfont.svg#soberana_sansregu
     font-style: normal;
 
 }
- .en2015{
+ .en2015_a{
 	 position:relative;
 	 padding:6px;
 	 width: 456px;
@@ -224,7 +224,7 @@ url('../fonts/Soberana%20Sans/soberanasans-regular-webfont.svg#soberana_sansregu
 	background-position: -250px -59px;
 }
 
-.mapa {
+.mapa_a {
 	position: absolute;
 	left: 523px;
 	width: 443px;
@@ -235,7 +235,7 @@ url('../fonts/Soberana%20Sans/soberanasans-regular-webfont.svg#soberana_sansregu
 	top: 27px;
 }
 
-.infografico{
+.infografico_a{
 	position:absolute;
 	left:50px;
 	top:395px;
