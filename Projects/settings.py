@@ -98,9 +98,9 @@ DATABASES = {
 }
 
 # Parse database configuration from $DATABASE_URL
-import dj_database_url
+# import dj_database_url
 
-DATABASES['default'] = dj_database_url.config()
+# DATABASES['default'] = dj_database_url.config()
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators

@@ -31,7 +31,6 @@ class SubcarenciasForCarenciasEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         carencia_ids = get_array_or_none(request.GET.get('carencias'))
         all_carencias = False
-        print (carencia_ids)
 
         if carencia_ids is None:
             all_carencias = True
@@ -80,12 +79,12 @@ class ResponsablesEndpoint(ProtectedResourceView):
 
 
 # Clase EndPoint (oauth2) para devolver los estados
-class EstadosEndpoint(ProtectedResourceView):
-    def get(self, request):
-        return HttpResponse(
-                json.dumps((map(lambda estado: estado.to_serializable_dict(), Estado.objects.all())),
-                           ensure_ascii=False),
-                'application/json')
+class EstadosEndpoint(generic.ListView):
+	def get(self, request):
+		return HttpResponse(
+				json.dumps((map(lambda estado: estado.to_serializable_dict(), Estado.objects.all())),
+						   ensure_ascii=False),
+				'application/json')
 
 
 # Clase EndPoint (oauth2) para devolver los municipios, dado un estado
@@ -169,7 +168,7 @@ class MetasMensualesPorAccionEndpoint(generic.ListView):
 
 
 # Clase EndPoint (oauth2) para devolver los avances mensuales dada una acción
-class AvancesMensualesPorAccionEndpoint(generic.ListView):
+class AvancesMensualesPorAccionEndpoint(ProtectedResourceView):
 	def get(self, request):
 		# Obteniendo los datos de la url
 		accion_ids = get_array_or_none(request.GET.get('acciones'))

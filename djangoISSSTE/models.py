@@ -111,7 +111,9 @@ class AccionEstrategica(models.Model):
         ans = model_to_dict(self)
         ans['id'] = str(self.id)
         ans['subCarencia'] = str(self.subCarencia.nombreSubCarencia)
-        ans['responsable'] = str(self.responsable.nombreResponsable)
+        ans['nombreResponsable'] = str(self.responsable.nombreResponsable)
+        ans['nombreAccion'] = str(self.nombreAccion)
+
         return ans
 
     class Meta:
