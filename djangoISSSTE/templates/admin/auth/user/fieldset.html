@@ -173,8 +173,8 @@
 </fieldset>
     </div>
 {% endif %}
-
-{% if inline_admin_formset.opts.verbose_name_plural == "None" %}
+--{{ inline_admin_formset.opts.verbose_name_plural }}--
+{% if inline_admin_formset.opts.verbose_name_plural == "Usuario" %}
 
   <div class="campos03">
 
@@ -202,36 +202,16 @@
 
                {% endif %}
 
-               {% if field.field.name == "dependencia" %}
-                  <div class="row field-dependencia" style="padding-top: 8px;">
+               {% if field.field.name == "estado" %}
+                  <div class="row field-estado" style="padding-top: 8px;">
                     <div class="col-md-4" style="padding-right: 0px;">
-                        <label style="padding-right: 0px; font-style: normal; font-size: 12px; font-family: Verdana, Geneva, sans-serif; width:110px;" for="id_userprofile-0-dependencia"><span class="error__msg">*</span> Dependencia:</label>
+                        <label style="padding-right: 0px; font-style: normal; font-size: 12px; font-family: Verdana, Geneva, sans-serif; width:110px;" for="id_userprofile-0-estado"><span class="error__msg">*</span> Estado:</label>
                     </div>
                     <div class="col-md-8" {% if field.field.errors %} data-toggle="tooltip" data-placement="top"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}"{% endif %}>
                         {% if field.field.errors %}
-                            {{ field.field|add_attributes:"class:usudependencia border-error" }}
+                            {{ field.field|add_attributes:"class:estado border-error" }}
                         {% else %}
-                            {{ field.field|add_attributes:"class:usudependencia" }}
-                        {% endif %}
-
-                       {% if field.field.help_text %}
-                        <p class="help" hidden="true">{{ field.field.help_text|safe }}</p>
-                    {% endif %}
-                    </div>
-                  </div>
-
-                {% endif %}
-
-                {% if field.field.name == "subdependencia" %}
-                  <div class="row field-subdependencia" style="padding-top: 8px;">
-                    <div class="col-md-4" style="padding-right: 5px;">
-                        <label style="padding-right: 0px;" for="id_usuario-0-subdependencia"> SubDependencia:</label>
-                    </div>
-                    <div class="col-md-8" {% if field.field.errors %} data-toggle="tooltip" data-placement="top"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}"{% endif %}>
-                        {% if field.field.errors %}
-                            {{ field.field|add_attributes:"class:usudependencia border-error" }}
-                        {% else %}
-                            {{ field.field|add_attributes:"class:usudependencia" }}
+                            {{ field.field|add_attributes:"class:estado" }}
                         {% endif %}
 
                        {% if field.field.help_text %}

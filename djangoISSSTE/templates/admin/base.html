@@ -34,114 +34,112 @@
 
 
     {% if not is_popup %}
-    <!-- Header -->
+        <!-- BEGIN HEADER -->
 
-    <div id="header_EI">
-        <div id="logoISSTE_main"></div>
-        <div class="titleSYSTEM">Estrategia Nacional de Inclusión - ISSSTE</div>
-
-
-        {% block usertools %}
-        {% if has_permission %}
-            <div class="nameUSER">
-                {% block welcome-msg %}
-
-                    <strong> {% firstof user.get_short_name user.get_username %}</strong>.
-                {% endblock %}
-            </div>
-            <div id="engrane">
-                <div class="nav navbar-nav btn-user">
-                    <li class="dropdown right-text" >
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                            <span class="engrane"></span> </a>
-                            <ul class="dropdown-menu" role="menu" style="left: -130px; top:23px;">
-                               {% if user.has_usable_password %}
-                                   <!-- <span class="glyphicon glyphicon-cog pull-right"></span> -->
-                                  <li><a href="{% url 'admin:password_change' %}">Cambiar Contraseña </a></li>
-                                   <li><a href="/djangoISSSTE/ayuda">Ayuda </a></li>
-                                  <li class="divider"></li>
-                                   <!-- <span class="glyphicon glyphicon-log-out pull-right"></span> -->
-                                  <li><a href="{% url 'admin:logout' %}">Cerrar Sesion </a></li>
-                                {% endif %}
-                            </ul>
-                    </li>
-                </div>
-            </div>
-
-        {% endif %}
-        {% endblock %}
-
-    <!-- BEGIN Menu -->
-        <div id="menu">
-
-         {% if user.is_active and user.is_staff %}
+            <!--header -->
+                <div id="header_EI">
+                    <div id="logoISSTE_main"></div>
+                    <div class="titleSYSTEM">Estrategia Nacional de Inclusión - ISSSTE</div>
 
 
-                  <div class="MOVIMIENTOS" onclick="location.href='/movimientos'"></div>
-                  <li class="dropdown right-text" style="list-style-type: none;">
-                        <div class="pto001">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="pto01" aria-hidden="true"></span></a>
-                                        <ul class="dropdown-menu" style="left:-155px; top:29px;">
-                                          <li><a href="/admin/djangoISSSTE/visita/add/?m=1">Registrar Avances</a></li>
-                                        </ul>
+                    {% block usertools %}
+                    {% if has_permission %}
+                        <div class="nameUSER">
+                            {% block welcome-msg %}
+
+                                <strong> {% firstof user.get_short_name user.get_username %}</strong>.
+                            {% endblock %}
                         </div>
-                  </li>
-
-                    <div class="CONSULTAS" onclick="location.href='/consultas'"></div>
-                        <li class="dropdown right-text" style="list-style-type: none;">
-                            <div class="pto002">
-                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="pto02"></span></a>
-                                         <ul class="dropdown-menu" style="left:-170px; top:29px;">
-                                            <li><a href="/djangoISSSTE/consulta_filtros">Consultar por Filtro</a></li>
-                                            <li><a href="/djangoISSSTE/consulta_predefinidos">Consultar Predefinida</a></li>
-                                             <li><a href="/admin/djangoISSSTE/avance/">Lista de Avances</a></li>
+                        <div id="engrane">
+                            <div class="nav navbar-nav btn-user">
+                                <li class="dropdown right-text" >
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                        <span class="engrane"></span> </a>
+                                        <ul class="dropdown-menu" role="menu" style="left: -130px; top:23px;">
+                                           {% if user.has_usable_password %}
+                                               <!-- <span class="glyphicon glyphicon-cog pull-right"></span> -->
+                                              <li><a href="{% url 'admin:password_change' %}">Cambiar Contraseña </a></li>
+                                               <li><a href="/djangoISSSTE/ayuda">Ayuda </a></li>
+                                              <li class="divider"></li>
+                                               <!-- <span class="glyphicon glyphicon-log-out pull-right"></span> -->
+                                              <li><a href="{% url 'admin:logout' %}">Cerrar Sesion </a></li>
+                                            {% endif %}
                                         </ul>
+                                </li>
                             </div>
-                        </li>
-
-            {%  if user.usuario.rol == 'AG' %}
-                <div class="CATALOGOS" onclick="location.href='/catalogos'"></div>
-                        <div class="pto003">
-                            <a href="/catalogo" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="pto03"></span></a>
-                                <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu" style="left:-165px; top:29px;">
-                                    <li class="dropdown-submenu"><a href="#" class="dropdown-toggle" data-toggle="dropdown">De Metas</a>
-                                      <ul class="dropdown-menu" style="left:217px; top:8px;">
-                                          <li><a tabindex="-1" href="/admin/djangoISSSTE/cargo/add/?s=1">Crear</a></li>
-                                          <li><a href="/admin/djangoISSSTE/cargo/">Buscar</a></li>
-                                          <li><a href="/admin/djangoISSSTE/cargo/?e=2">Modificar</a></li>
-                                          <li><a href="/admin/djangoISSSTE/cargo/?e=1">Eliminar</a></li>
-                                      </ul>
-                                  </li>
-                                </ul>
                         </div>
 
+                    {% endif %}
+                    {% endblock %}
+                </div>
+                 <!-- end header  -->
+
+                <!-- BEGIN Menu -->
+                    <div id="menu">
+
+                     {% if user.is_active and user.is_staff %}
 
 
-                <div class="USUARIOS" onclick="location.href='/usuarios'"></div>
-                  <li class="dropdown right-text" style="list-style-type: none;">
-                    <div class="pto004">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="pto04"></span></a>
-                        <ul class="dropdown-menu" role="menu" style="left:-155px; top:29px;">
-                          <li><a href="/admin/auth/user/add">Crear Nuevo</a></li>
-                          <li><a href="/admin/auth/user/">Buscar Existente</a></li>
-                          <li><a href="/admin/auth/user/?e=2">Modificar Existente</a></li>
-                          <li><a href="/admin/auth/user/?e=1">Eliminar Existente</a></li>
-                        </ul>
-                    </div>
-                  </li>
-            {% endif %}
+                              <div class="MOVIMIENTOS" onclick="location.href='/movimientos'"></div>
+                              <li class="dropdown right-text" style="list-style-type: none;">
+                                    <div class="pto001">
+                                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="pto01" aria-hidden="true"></span></a>
+                                                    <ul class="dropdown-menu" style="left:-155px; top:29px;">
+                                                      <li><a href="/admin/djangoISSSTE/visita/add/?m=1">Registrar Avances</a></li>
+                                                    </ul>
+                                    </div>
+                              </li>
 
-         {% endif %}
-    </div>
+                                <div class="CONSULTAS" onclick="location.href='/consultas'"></div>
+                                    <li class="dropdown right-text" style="list-style-type: none;">
+                                        <div class="pto002">
+                                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="pto02"></span></a>
+                                                     <ul class="dropdown-menu" style="left:-170px; top:29px;">
+                                                        <li><a href="/djangoISSSTE/consulta_filtros">Consultar por Filtro</a></li>
+                                                        <li><a href="/djangoISSSTE/consulta_predefinidos">Consultar Predefinida</a></li>
+                                                         <li><a href="/admin/djangoISSSTE/avance/">Lista de Avances</a></li>
+                                                    </ul>
+                                        </div>
+                                    </li>
 
-    <!-- END menu -->
+                        {%  if user.usuario.rol == 'AG' %}
+                            <div class="CATALOGOS" onclick="location.href='/catalogos'"></div>
+                                    <div class="pto003">
+                                        <a href="/catalogo" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="pto03"></span></a>
+                                            <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu" style="left:-165px; top:29px;">
+                                                <li class="dropdown-submenu"><a href="#" class="dropdown-toggle" data-toggle="dropdown">De Metas</a>
+                                                  <ul class="dropdown-menu" style="left:217px; top:8px;">
+                                                      <li><a tabindex="-1" href="/admin/djangoISSSTE/cargo/add/?s=1">Crear</a></li>
+                                                      <li><a href="/admin/djangoISSSTE/cargo/">Buscar</a></li>
+                                                      <li><a href="/admin/djangoISSSTE/cargo/?e=2">Modificar</a></li>
+                                                      <li><a href="/admin/djangoISSSTE/cargo/?e=1">Eliminar</a></li>
+                                                  </ul>
+                                              </li>
+                                            </ul>
+                                    </div>
 
 
 
-    </div>
+                            <div class="USUARIOS" onclick="location.href='/usuarios'"></div>
+                              <li class="dropdown right-text" style="list-style-type: none;">
+                                <div class="pto004">
+                                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="pto04"></span></a>
+                                    <ul class="dropdown-menu" role="menu" style="left:-155px; top:29px;">
+                                      <li><a href="/admin/auth/user/add">Crear Nuevo</a></li>
+                                      <li><a href="/admin/auth/user/">Buscar Existente</a></li>
+                                      <li><a href="/admin/auth/user/?e=2">Modificar Existente</a></li>
+                                      <li><a href="/admin/auth/user/?e=1">Eliminar Existente</a></li>
+                                    </ul>
+                                </div>
+                              </li>
+                        {% endif %}
 
-        {% endif %}
-    <!-- END Header -->
+                     {% endif %}
+                </div>
+
+                <!-- END menu -->
+    {% endif %}
+    <!-- END HEADER -->
 
 
     <!-- BEGIN BODY  -->

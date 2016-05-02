@@ -1,0 +1,140 @@
+{% load  admin_static app_filters%}
+<fieldset style="padding-top: 10px;">
+    {% if fieldset.name %}<h2>{{ fieldset.name }}</h2>{% endif %}
+    {% if fieldset.description %}
+        <div class="description">{{ fieldset.description|safe }}</div>
+    {% endif %}
+    {% for line in fieldset %}
+            {% for field in line %}
+                {% if field.field.name == "periodo" %}
+                    <div class= "general">
+                        <div id="tituloCUADROS">
+                            DATOS GENERALES
+                        </div>
+                         <table width="1022">
+                            <tr>
+                                <td width="170" height="19" class="related-widget-wrapper">
+                                   <label class="required" for="id_periodo">Periodo:</label>
+                                </td>
+
+                                <td width="170" height="19" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                                     {% if field.field.errors %}
+                                         {{ field.field|addcss:"border-error" }}
+                                       {% else %}
+                                          {{ field.field }}
+                                       {% endif %}
+                                <script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
+                                <script> $(document).ready(function($) {
+                                    var $te = jQuery.noConflict();
+                                    $te('#tr-{{ field.field.name}}').tooltip({html:true});});</script>
+                                </td>
+                {% endif %}
+                {% if field.field.name == "meta" %}
+                                 <td width="170" height="19" class="related-widget-wrapper">
+                                    <label class="required" for="id_meta">Acción Estratégica:</label>
+                                 </td>
+
+                                <td width="170" height="19" class="related-widget-wrapper">
+                                       {% if field.field.errors %}
+                                         {{ field.field|addcss:"border-error" }}
+                                       {% else %}
+                                          {{ field.field }}
+                                       {% endif %}
+                                <script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
+                                <script> $(document).ready(function($) {
+                                    var $te = jQuery.noConflict();
+                                    $te('#tr-{{ field.field.name}}').tooltip({html:true});});</script>
+                                </td>
+                {% endif %}
+                {% if field.field.name == "estado" %}
+
+                                <td width="170" height="19" class="related-widget-wrapper">
+                                    <label class="required" for="id_meta">Estado:</label>
+                                </td>
+
+                                <td width="170" height="19" class="related-widget-wrapper">
+                                 {% if field.field.errors %}
+                                         {{ field.field|addcss:"border-error" }}
+                                       {% else %}
+                                          {{ field.field }}
+                                       {% endif %}
+                                <script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
+                                <script> $(document).ready(function($) {
+                                    var $te = jQuery.noConflict();
+                                    $te('#tr-{{ field.field.name}}').tooltip({html:true});});</script>
+                                </td>
+                    </tr>
+                         </table>
+                    </div>
+                    <div class= "caracteristicas_ACCION">
+   	<div id="tituloCUADROS">
+    			CARACTERÍSTICAS DE LA ACCIÓN
+	</div>
+
+      <table width="1022">
+            <td width="170" height="10">
+              Carencia:</td>
+
+            <td width="170" height="10">
+            </td>
+
+            <td width="170" height="10">
+                Unidad de Medida:</td>
+
+            <td width="170" height="10">
+            </td>
+
+            <td width="170" height="10">
+                OBSERVACIONES:</td>
+
+            <td width="170" height="10">
+            </td>
+      </table>
+
+       <table width="1022">
+            <td width="170" height="10">
+              Sub Carencia:</td>
+
+            <td width="170" height="10">
+            </td>
+
+            <td width="170" height="10">
+                Meta Mensual:</td>
+
+            <td width="170" height="10">
+            </td>
+
+            <td width="170" height="10">
+            </td>
+
+            <td width="170" height="10">
+            </td>
+      </table>
+
+      <table width="1022">
+            <td width="170" height="10">
+              Acción a Realizar:</td>
+
+            <td width="170" height="10">
+            </td>
+
+            <td width="170" height="10">
+                Inversión:</td>
+
+            <td width="170" height="10">
+            </td>
+
+            <td width="170" height="10">
+            </td>
+
+            <td width="170" height="10">
+            </td>
+      </table>
+  </div>
+                {% endif %}
+            {% endfor %}
+
+    {% endfor %}
+
+
+</fieldset>
