@@ -4,9 +4,22 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.encoding import python_2_unicode_compatible
+from datetime import date
 
 # Create your models here.
 from django.forms import model_to_dict
+
+
+## Seleccionar el año actual (2016)
+def getPeriodoActual():
+    periodoActual = date.today().year
+    try:
+        periodo = Periodo.objects.get(nombrePeriodo=periodoActual)
+    except Periodo.DoesNotExist:
+        periodo = None
+    #print periodo
+
+    return periodo
 
 
 @python_2_unicode_compatible
@@ -158,7 +171,7 @@ class Mes(models.Model):
 class Meta(models.Model):
     nombreMeta = models.CharField(max_length=200, null=False, )
     accionEstrategica = models.ForeignKey(AccionEstrategica, null=False, blank=False, verbose_name='Acción Estrategica')
-    periodo = models.ForeignKey(Periodo, null=False, blank=False)
+    periodo = models.ForeignKey(Periodo, null=False, blank=False, default=getPeriodoActual().nombrePeriodo)
     observaciones = models.TextField(max_length=500, default="", blank=True)
     montoPromedio = models.FloatField(null=False, default=0, verbose_name= 'Monto Promedio')
 
@@ -224,7 +237,7 @@ class MetaMensual(models.Model):
 class AvancePorMunicipio(models.Model):
     meta = models.ForeignKey(Meta, null=False, blank=False, verbose_name="Acción Estratégica")
     estado = models.ForeignKey(Estado, null=False, blank=False)
-    periodo = models.ForeignKey(Periodo, null=False, blank=False)
+    periodo = models.ForeignKey(Periodo, null=False, blank=False, default=getPeriodoActual().nombrePeriodo)
 
     def __str__(self):
         return self.meta.accionEstrategica.nombreAccion + " - " + self.estado.nombreEstado
@@ -235,9 +248,11 @@ class AvancePorMunicipio(models.Model):
         verbose_name_plural = 'Avances por Municipio'
 
 
+
 class AvanceMensual(models.Model):
     avancePorMunicipio = models.ForeignKey(AvancePorMunicipio, null=False, blank=False)
     municipio = models.ForeignKey(Municipio, null=False, blank=False)
+    fecha_ultima_modificacion = models.DateTimeField(auto_now=True)
     ene = models.FloatField(null=False, default=0)
     feb = models.FloatField(null=False, default=0)
     mar = models.FloatField(null=False, default=0)
@@ -251,12 +266,13 @@ class AvanceMensual(models.Model):
     nov = models.FloatField(null=False, default=0)
     dic = models.FloatField(null=False, default=0)
 
+
     def to_serializable_dict(self):
         ans = model_to_dict(self)
         ans['id'] = str(self.id)
         ans['meta'] = "meta_ISSTE"
         ans['municipio'] = self.municipio.nombreMunicipio
-        ans['periodo'] = self.periodo.nombrePeriodo
+        ans['fecha_ultima_modificacion'] = self.fecha_ultima_modificacion.__str__()
         return ans
 
     class Meta:
