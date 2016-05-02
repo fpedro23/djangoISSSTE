@@ -1,6 +1,7 @@
 # coding=utf-8
 from django import forms
 from django.contrib import admin
+import json
 #from django.contrib.admin.models import LogEntry
 
 # Register your models here.
@@ -114,32 +115,24 @@ class UserAdmin(UserAdmin):
 class MetaMensualInLine(admin.TabularInline):
 	model = MetaMensual
 	can_delete = False
-	formset = RequiredInlineFormSet	# Debe de estar lleno forzosamente
+	readonly_fields = ('inversionAprox',)
 	extra = 0
 
 	# Define los estados visibles dependiendo del rol del usuario
 	# y del estado al que pertenece en la pantalla para añadir una nueva
 	# meta mensual
-	def formfield_for_foreignkey(self, db_field, request, **kwargs):
-		query_estado = request.user.usuario.estado.id
 
-		if db_field.name == "estado":
-			if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UR' or request.user.usuario.rol == 'FR':
-				kwargs["queryset"] = Estado.objects.all()
-			elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
-				kwargs["queryset"] = Estado.objects.filter(
-					Q(id=query_estado)
-				)
-
-		return super(
-			MetaMensualInLine, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
+class MetaMensualInLine(admin.TabularInline):
+	model = MetaMensual
+	form = MetaMensualForm
+	readonly_fields = ('inversionAprox',)
+	extra = 0
 
 class MetaAdmin(admin.ModelAdmin):
 	model = Meta
-	fields = ('accionEstrategica', 'periodo', 'observaciones')
+	fields = ('accionEstrategica', 'periodo', 'montoPromedio','observaciones',)
 	list_display = ('get_carencia','get_subcarencia','accionEstrategica', 'periodo','get_inversion')
-	inlines = [MetaMensualInLine]
+	inlines = [MetaMensualInLine, ]
 	can_delete = True
 
 	# Obteniendo el campo de la SuCarencia para la lista de Metas
@@ -156,17 +149,22 @@ class MetaAdmin(admin.ModelAdmin):
 		inversionAprox = 0
 		for singleMetaMensual in MetaMensual.objects.filter(Q(meta__id=metaID)):
 			inversionAprox += singleMetaMensual.inversionAprox
-		print  inversionAprox
 		return inversionAprox
 
 	get_subcarencia.short_description = "SubCarencia"
 	get_carencia.short_description = "Carencia"
 	get_inversion.short_description = "Inversion Aproximada"
 
+	def save_formset(self, request, form, formset, change):
+		formset.save()
+		if change:
+			for f in formset.forms:
+				obj = f.instance
+				obj.save()
+
 
 class AvanceMensualInLine(admin.TabularInline):
 	model = AvanceMensual
-	formset = RequiredInlineFormSet	# Debe de estar lleno forzosamente
 	extra = 0
 
 	# Define los municipios visibles dependiendo del rol del usuario
@@ -195,8 +193,11 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 
 	model = AvancePorMunicipio
 	inlines = [AvanceMensualInLine, ]
-	fields = ('periodo','meta', 'estado',)
-	list_display = ('id','get_carencia','get_subcarencia','meta', 'periodo','estado')
+	fields = ('periodo','meta', 'estado','get_carencia', 'get_unidad_medida','get_observaciones',
+			  'get_subcarencia', 'get_meta_mensual', 'get_accion', 'inversionAprox')
+	readonly_fields = ('get_carencia', 'get_subcarencia', 'get_unidad_medida', 'get_observaciones',
+					   'get_meta_mensual','get_accion', 'inversionAprox')
+	list_display = ('id','get_carencia','get_subcarencia','meta', 'periodo','estado', 'inversionAprox')
 	ordering = ['meta__nombreMeta', ]
 
 	# Obteniendo el campo de la SuCarencia para la lista de avances por municipio
@@ -207,9 +208,35 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 	def get_carencia(self, obj):
 		return obj.meta.accionEstrategica.subCarencia.carencia
 
-	get_subcarencia.short_description = "SubCarencia"
-	get_carencia.short_description = "Carencia"
+	def get_unidad_medida(self, obj):
+		return obj.meta.accionEstrategica.unidadDeMedida
 
+	def get_observaciones(self, obj):
+		return obj.meta.observaciones
+
+	def get_meta_mensual(self, obj):
+		arreglo_metas = []
+		val_meta = obj.meta.id
+		val_estado = obj.estado.id
+		meta_mensual = MetaMensual.objects.filter(meta__id = val_meta, estado__id = val_estado)
+		to_print = ""
+		for meta in meta_mensual:
+			to_print += " Enero: "   + str(meta.ene) + " Febrero: "   + str(meta.feb) + " Marzo: "      + str(meta.mar)
+			to_print += " Abril: "   + str(meta.abr) + " Mayo: "      + str(meta.may) + " Junio: "      + str(meta.jun)
+			to_print += " Julio: "   + str(meta.jul) + " Agosto: "    + str(meta.ago) + " Septiembre: " + str(meta.sep)
+			to_print += " Octubre: " + str(meta.oct) + " Noviembre: " + str(meta.nov) + " Diciembre: "  + str(meta.dic)
+		return to_print
+
+	def get_accion(self, obj):
+		return obj.meta.accionEstrategica.nombreAccion
+
+
+	get_subcarencia.short_description = "Sub Carencia"
+	get_carencia.short_description = "Carencia"
+	get_unidad_medida.short_description = "Unidad de Medida"
+	get_observaciones.short_description = "Observaciones"
+	get_meta_mensual.short_description = "Metas"
+	get_accion.short_description = "Acción a Ralizar"
 
 	# Esta funcion se ejecuta al desplegar la lista de Avances por municipio. Dentro
 	# de ella se aplica un filtro por el rol del usuario y de su estado
