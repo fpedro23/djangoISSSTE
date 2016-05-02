@@ -37,5 +37,6 @@ urlpatterns = [
      url(r'^catalogos$', djangoISSSTE.views.catalogos, name='catalogos'),
     url(r'^consultas', djangoISSSTE.views.consultas, name='consultas'),
     url(r'^usuarios', djangoISSSTE.views.usuarios, name='usuarios'),
-    url(r'^movimientos', djangoISSSTE.views.movimientos, name='movimientos')
+    url(r'^movimientos', djangoISSSTE.views.movimientos, name='movimientos'),
+    url(r'^djangoISSSTE/consulta_filtros', 'djangoISSSTE.views.consulta_web', name='consulta_filtros'),
 ]

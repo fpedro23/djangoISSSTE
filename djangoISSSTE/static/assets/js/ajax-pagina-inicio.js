@@ -259,9 +259,9 @@ function puntosMapa(Datos) {
 }
 
 function puntosMapaTotales(Datos) {
-  var arregloSimple=new Array();
   var arregloDoble=new Array();
     var arregloObjeto = new Object();
+    var total=0;
     for(var i= 0;i<Datos.reporte_mapa.avance_mapa.avances.length;i++){
         var arregloSimple=new Array();
         arregloSimple.push(Datos.reporte_mapa.avance_mapa.avances[i].avancemensual__municipio); //+ ", " + Datos.reporte_mapa.avance_mapa.avances[i].numero_obras + " Obras, " + formato_numero(Datos.reporte_mapa.obras_mapa.obras[i].totalinvertido,2,'.',',') + " MDP.");

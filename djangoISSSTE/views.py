@@ -62,3 +62,23 @@ def usuarios(request):
 def catalogos(request):
     return render_to_response('admin/djangoISSSTE/catalogos.html', locals(),
                               context_instance=RequestContext(request))
+
+@login_required()
+def consulta_web(request):
+
+    print request.user.usuario.rol
+
+    #templates = loader.get_template('consultas/busqueda_general.html')
+    template = loader.get_template('admin/obras/consulta_filtros/consulta-filtros.html')
+    context = RequestContext(request, {
+        'estatusObra': TipoObra.objects.all(),
+        'dependencias': dependencias,
+        'subdependencias': subdependencias,
+        'estados': Estado.objects.all(),
+        'tipo_inversiones': TipoInversion.objects.all(),
+        'impactos': Impacto.objects.all(),
+        'clasificacion': TipoClasificacion.objects.all(),
+        'inaugurador': Inaugurador.objects.all(),
+        'InstanciaEjecutora': InstanciaEjecutora.objects.all(),
+    })
+    return HttpResponse(template.render(context))
