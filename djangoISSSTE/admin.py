@@ -121,26 +121,18 @@ class MetaMensualInLine(admin.TabularInline):
 	# Define los estados visibles dependiendo del rol del usuario
 	# y del estado al que pertenece en la pantalla para añadir una nueva
 	# meta mensual
-	def formfield_for_foreignkey(self, db_field, request, **kwargs):
-		query_estado = request.user.usuario.estado.id
 
-		if db_field.name == "estado":
-			if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UR' or request.user.usuario.rol == 'FR':
-				kwargs["queryset"] = Estado.objects.all()
-			elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
-				kwargs["queryset"] = Estado.objects.filter(
-					Q(id=query_estado)
-				)
-
-		return super(
-			MetaMensualInLine, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
+class MetaMensualInLine(admin.TabularInline):
+	model = MetaMensual
+	form = MetaMensualForm
+	readonly_fields = ('inversionAprox',)
+	extra = 0
 
 class MetaAdmin(admin.ModelAdmin):
 	model = Meta
 	fields = ('accionEstrategica', 'periodo', 'montoPromedio','observaciones',)
 	list_display = ('get_carencia','get_subcarencia','accionEstrategica', 'periodo','get_inversion')
-	inlines = [MetaMensualInLine]
+	inlines = [MetaMensualInLine, ]
 	can_delete = True
 
 	# Obteniendo el campo de la SuCarencia para la lista de Metas
@@ -157,14 +149,18 @@ class MetaAdmin(admin.ModelAdmin):
 		inversionAprox = 0
 		for singleMetaMensual in MetaMensual.objects.filter(Q(meta__id=metaID)):
 			inversionAprox += singleMetaMensual.inversionAprox
-		return inversionAprox * obj.montoPromedio
+		return inversionAprox
 
 	get_subcarencia.short_description = "SubCarencia"
 	get_carencia.short_description = "Carencia"
 	get_inversion.short_description = "Inversion Aproximada"
 
-	def save_model(self, request, obj, form, change):
-		super(MetaAdmin, self).save_model(request, obj, form, change)
+	def save_formset(self, request, form, formset, change):
+		formset.save()
+		if change:
+			for f in formset.forms:
+				obj = f.instance
+				obj.save()
 
 
 class AvanceMensualInLine(admin.TabularInline):
