@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, render_to_response
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.template import RequestContext
+from django.template import RequestContext, loader
 from oauth2_provider.models import AccessToken
 from djangoISSSTE.tools import *
+from djangoISSSTE.models import *
 
 
 def get_user_for_token(token):
@@ -96,16 +97,15 @@ def consulta_web(request):
     print request.user.usuario.rol
 
     #templates = loader.get_template('consultas/busqueda_general.html')
-    template = loader.get_template('admin/obras/consulta_filtros/consulta-filtros.html')
+    template = loader.get_template('admin/djangoISSSTE/consulta_filtros/consulta-filtros.html')
     context = RequestContext(request, {
-        'estatusObra': TipoObra.objects.all(),
-        'dependencias': dependencias,
-        'subdependencias': subdependencias,
+        'carencias': Carencia.objects.all(),
+        'subcarencias': SubCarencia.objects.all(),
+        'acciones': AccionEstrategica.objects.all(),
         'estados': Estado.objects.all(),
-        'tipo_inversiones': TipoInversion.objects.all(),
-        'impactos': Impacto.objects.all(),
-        'clasificacion': TipoClasificacion.objects.all(),
-        'inaugurador': Inaugurador.objects.all(),
-        'InstanciaEjecutora': InstanciaEjecutora.objects.all(),
+        'municipios': Municipio.objects.all(),
+        'periodos': Periodo.objects.all(),
+        'meses': Mes.objects.all(),
+        'responsables': Responsable.objects.all(),
     })
     return HttpResponse(template.render(context))

@@ -340,7 +340,7 @@ class BuscadorEndpoint(generic.ListView):
 			reporte_estado['inversion_aproximada'] = reporte_estado['avance'] * reporte_estado['meta__montoPromedio']
 			json_map['reporte_por_estado'].append(reporte_estado)
 
-		return HttpResponse(json.dumps(json_map, ensure_ascii=False), 'application/json')		return HttpResponse(json.dumps(the_list), 'application/json')
+		return HttpResponse(json.dumps(json_map, ensure_ascii=False), 'application/json')
 
 def get_avance_values(modelo):
     return modelo.values('avancemensual__municipio__latitud', 'avancemensual__municipio__longitud', 'avancemensual__municipio__nombreMunicipio',
