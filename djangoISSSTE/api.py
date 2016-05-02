@@ -13,6 +13,7 @@ from djangoISSSTE.BuscarAvances import BuscarAvances
 from oauth2_provider.views.generic import ProtectedResourceView
 
 from djangoISSSTE.models import *
+from django.db.models import Q, Sum, Count
 
 
 def get_array_or_none(the_string):
@@ -339,4 +340,85 @@ class BuscadorEndpoint(generic.ListView):
 			reporte_estado['inversion_aproximada'] = reporte_estado['avance'] * reporte_estado['meta__montoPromedio']
 			json_map['reporte_por_estado'].append(reporte_estado)
 
-		return HttpResponse(json.dumps(json_map, ensure_ascii=False), 'application/json')
+		return HttpResponse(json.dumps(json_map, ensure_ascii=False), 'application/json')		return HttpResponse(json.dumps(the_list), 'application/json')
+
+def get_avance_values(modelo):
+    return modelo.values('avancemensual__municipio__latitud', 'avancemensual__municipio__longitud', 'avancemensual__municipio__nombreMunicipio',
+                                           'avancemensual__ene','avancemensual__feb','avancemensual__mar','avancemensual__abr','avancemensual__may',
+										   'avancemensual__jun','avancemensual__jul','avancemensual__ago','avancemensual__sep','avancemensual__oct',
+										   'avancemensual__nov','avancemensual__dic','avancemensual__avancePorMunicipio')
+def get_suma_mes(S):
+    return S.aggregate(Sum('avancemensual__ene'))['avancemensual__ene__sum'] + S.aggregate(Sum('avancemensual__feb'))['avancemensual__feb__sum']+\
+           S.aggregate(Sum('avancemensual__mar'))['avancemensual__mar__sum'] +S.aggregate(Sum('avancemensual__abr'))['avancemensual__abr__sum']+\
+           S.aggregate(Sum('avancemensual__may'))['avancemensual__may__sum']+S.aggregate(Sum('avancemensual__jun'))['avancemensual__jun__sum']\
+           +S.aggregate(Sum('avancemensual__jul'))['avancemensual__jul__sum']+S.aggregate(Sum('avancemensual__ago'))['avancemensual__ago__sum']+\
+           S.aggregate(Sum('avancemensual__sep'))['avancemensual__sep__sum'] +S.aggregate(Sum('avancemensual__oct'))['avancemensual__oct__sum']+\
+           S.aggregate(Sum('avancemensual__nov'))['avancemensual__nov__sum']+S.aggregate(Sum('avancemensual__dic'))['avancemensual__dic__sum']
+
+class ReporteInicioEndpoint(ProtectedResourceView):
+    def rename_municipio(self, avance):
+        avance['avancemensual__municipio'] = avance['avancemensual__municipio__nombreMunicipio']
+        del avance['avancemensual__municipio__nombreMunicipio']
+
+    def get(self, request):
+        avances = AvancePorMunicipio.objects.all()
+
+        reporte = {
+            'reporte_mapa': {'avance_mapa': {}},
+            'reporte_total': {'avance_educacion': {}, 'avance_salud': {}, 'avance_vivienda': {}, 'avance_alimentacion': {}},
+			'reporte2016': {'avance_educacion': {}, 'avance_salud': {}, 'avance_vivienda': {}, 'avance_alimentacion': {}},
+            'educacion': {'total': {}},
+            'salud': {'total': {}},
+            'vivienda': {'total': {}},
+            'alimentacion': {'total': {}},
+        }
+
+
+        the_list = []
+        reporte_municipio = get_avance_values(avances)
+        if reporte_municipio:
+            for avance in reporte_municipio:
+                self.rename_municipio(avance)
+                the_list.append(avance)
+            reporte['reporte_mapa']['avance_mapa']['avances'] = the_list
+            reporte['reporte_mapa']['avance_mapa']['total'] = get_suma_mes(reporte_municipio)
+        else:
+            reporte['reporte_mapa']['avance_mapa']['avances'] = the_list
+            reporte['reporte_mapa']['avance_mapa']['total'] = 0
+
+
+        # Grafico, obras totales
+        avances_totales_educacion = avances.filter(avancemensual__avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=1)
+        the_list = []
+        if avances_totales_educacion:
+            avances_values=get_avance_values(avances_totales_educacion)
+            for avance in avances_values:
+                self.rename_municipio(avance)
+                the_list.append(avance)
+            reporte['reporte_total']['avance_educacion']['avances'] = the_list
+            reporte['reporte_total']['avance_educacion']['total'] = get_suma_mes(avances_totales_educacion)
+        else:
+            reporte['reporte_total']['avance_educacion']['avances'] = the_list
+            reporte['reporte_total']['avance_educacion']['total'] = 0
+
+
+        reporte['reporte_total']['avance_salud']['total'] = 15
+        reporte['reporte_total']['avance_vivienda']['total'] = 8
+        reporte['reporte_total']['avance_alimentacion']['total'] = 5
+
+
+        # Reportes anuales 2012-2015
+        avance2016_educacion = avances_totales_educacion.filter(avancemensual__avancePorMunicipio__periodo=2016)
+        the_list = []
+        if avance2016_educacion:
+            avances_values=get_avance_values(avance2016_educacion)
+            for avance in avances_values:
+                self.rename_municipio(avance)
+                the_list.append(avance)
+            reporte['reporte2016']['avance_educacion']['avances'] = the_list
+            reporte['reporte2016']['avance_educacion']['total'] = get_suma_mes(avance2016_educacion)
+        else:
+            reporte['reporte2016']['avance_educacion']['avances'] = the_list
+            reporte['reporte2016']['avance_educacion']['total'] = 0
+
+        return HttpResponse(json.dumps(reporte), 'application/json')

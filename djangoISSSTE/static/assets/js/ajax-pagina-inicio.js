@@ -30,42 +30,30 @@ function main_consulta() {
 function verDatos() {
 
 
-    $.get("/visitas/register-by-token", function(respu) {
+    $j.get("/register-by-token", function(respu) {
         var ajax_data = {
             "access_token": respu.access_token
         };
 
         $j.ajax({
-            url: '/api/Inicio',
+            url: '/api/inicio',
             type: 'get',
             data: ajax_data,
             success: function (data) {
                 datosJson = data;
 
                 graficas();
-                datosConcluidas();
-
+                //datosConcluidas();
                 // MAPA
                 var mapOptions = {
                 zoom: 4,
                 center: new google.maps.LatLng(22.6526121, -100.1780452),
-                mapTypeId: google.maps.MapTypeId.HYBRID,
-                styles:[
-                    {
-                        featureType: "road",
-                        elementType: "labels",
-                        stylers: [
-                            { visibility: "off" }
-                        ]
-                    }
-                ]
+                mapTypeId: google.maps.MapTypeId.SATELLITE
                 }
-
-
-                var map = new google.maps.Map(document.getElementById('mapaVISITAS'),
+                var map = new google.maps.Map(document.getElementById('mapa'),
                                             mapOptions)
                 var lugares =  new Array();
-                lugares=puntosMapaTotales(datosJson);
+                lugares=puntosMapaTotales(data);
                 setMarkers(map,lugares);
                 google.maps.event.addDomListener(window, 'load', initialize);
                 // mapa
@@ -81,24 +69,17 @@ function verDatos() {
 
 
 function datosConcluidas() {
-    for (i=0;i<5;i++){
-       if (datosJson.medios[i].total_apariciones == null){
-           datosJson.medios[i].total_apariciones=0;
-       }
-    }
 
-
-    $j('#medioTV').html(formato_numero(datosJson.medios[0].total_apariciones, 0, '.', ','));
-    $j('#medioRadio').html(formato_numero(datosJson.medios[1].total_apariciones, 0, '.', ','));
-    $j('#medioPeriodico').html(formato_numero(datosJson.medios[3].total_apariciones, 0, '.', ','));
-    $j('#medioInternet').html(formato_numero(datosJson.medios[2].total_apariciones, 0, '.', ','));
-    $j('#medioRevistas').html(formato_numero(datosJson.medios[4].total_apariciones, 0, '.', ','));
+    $j('#info2012').html(formato_numero(datosJson.reporte2012.obras_concluidas.total, 0, '.', ','));
+    $j('#info2013').html(formato_numero(datosJson.reporte2013.obras_concluidas.total, 0, '.', ','));
+    $j('#info2014').html(formato_numero(datosJson.reporte2014.obras_concluidas.total, 0, '.', ','));
+    $j('#info2015').html(formato_numero(datosJson.reporte2015.obras_concluidas.total, 0, '.', ','));
 
 }
 
 function graficas(){
 
-    titulo="Visitas por Estado";
+    titulo="Total de Avances";
 
 
     Highcharts.setOptions({
@@ -117,7 +98,7 @@ function graficas(){
 
 
 
-    pieGrafica(arregloDataGrafica(datosJson), titulo, 0,"Número de Visitas");
+    pieGrafica(arregloDataGrafica(datosJson), titulo, 0,"Número de Avances");
 
 }
 
@@ -128,13 +109,29 @@ function arregloDataGrafica(Datos) {
     var arregloObjeto = new Object();
 
 
-    for(var i= 0;i<Datos.estados.length;i++) {
-        var arregloSimple2 = new Array();
-        arregloSimple2.push(Datos.estados[i].estado.nombreEstado);
-        arregloSimple2.push(Datos.estados[i].total_visitas);
-        arregloSimple2.push(Datos.estados[i].total_visitas);
-        arregloDoble.push(arregloSimple2);
-    }
+
+            var arregloSimple=new Array();
+            arregloSimple.push("Avances Educación");
+            arregloSimple.push(Datos.reporte_total.avance_educacion.total);
+            //arregloSimple.push(Datos.reporte_total.obras_concluidas.inversion_total);
+
+            arregloDoble.push(arregloSimple);
+            var arregloSimple2=new Array();
+            arregloSimple2.push("Avances Salud");
+            arregloSimple2.push(Datos.reporte_total.avance_salud.total);
+            //arregloSimple2.push(Datos.reporte_total.obras_proceso.inversion_total);
+            arregloDoble.push(arregloSimple2);
+            var arregloSimple3=new Array();
+            arregloSimple3.push("Avances Vivienda");
+            arregloSimple3.push(Datos.reporte_total.avance_vivienda.total);
+            //arregloSimple3.push(Datos.reporte_total.obras_proyectadas.inversion_total)
+            arregloDoble.push(arregloSimple3);
+
+            var arregloSimple4=new Array();
+            arregloSimple4.push("Avances Alimentación");
+            arregloSimple4.push(Datos.reporte_total.avance_alimentacion.total);
+            //arregloSimple3.push(Datos.reporte_total.obras_proyectadas.inversion_total)
+            arregloDoble.push(arregloSimple4);
 
 
     arregloObjeto = arregloDoble;
@@ -145,7 +142,7 @@ function arregloDataGrafica(Datos) {
 function pieGrafica(datas,titulo,dona,nombreData) {
 
     var myComments=["First input","second comment","another comment","last comment"]
-    $j('#anioVISITAS').highcharts({
+    $j('#containerGrafica').highcharts({
         chart: {
             type: 'pie',
             zoomType: 'x',
@@ -153,19 +150,19 @@ function pieGrafica(datas,titulo,dona,nombreData) {
             panKey: 'shift',
             options3d: {
                 enabled: true,
-                alpha: 35,
+                alpha: 45,
                 beta: 0
             },
             style: {
                  color: '#FFFFFF',
-                 fontFamily: 'Verdana, Geneva, sans-serif',
-                 fontSize: '8px'
+                 fontFamily: 'soberana_sanslight',
+                 fontSize: '15px'
             }
         },
         title: {
             style: {
                  color: '#FFFFFF',
-                 fontFamily: 'Verdana, Geneva, sans-serif'
+                 fontFamily: 'soberana_sanslight'
             },
             text: titulo
         },
@@ -173,8 +170,8 @@ function pieGrafica(datas,titulo,dona,nombreData) {
             enabled: false
         },
         tooltip: {
-            style: { fontFamily: 'Verdana, Geneva, sans-serif', fontSize: '15px' },
-            pointFormat: 'Número de visitas: <b>{point.y}</b><br>Porcentaje del Total: <b>{point.percentage:.2f}%</b>'
+            style: { fontFamily: 'soberana_sanslight', fontSize: '15px' },
+            pointFormat: 'Número de avances: <b>{point.y}</b><br>Porcentaje del Total: <b>{point.percentage:.2f}%</b>'
 
             //    var comment = myComments[serieI];
 
@@ -182,14 +179,14 @@ function pieGrafica(datas,titulo,dona,nombreData) {
         },
         plotOptions: {
             pie: {
-                style: { fontFamily: 'Verdana, Geneva, sans-serif',color: '#FFFFFF' ,fontSize: '8px' },
+                style: { fontFamily: 'soberana_sanslight',color: 'white' ,fontSize: '12px' },
                 innerSize: dona,
                 allowPointSelect: true,
                 cursor: 'pointer',
                 depth: 35,
                 dataLabels: {
                     enabled: true,
-                    style: { fontFamily: 'Verdana, Geneva, sans-serif',color: '#FFFFFF' ,fontSize: '8px' },
+                    style: { fontFamily: 'soberana_sanslight',color: 'white' ,fontSize: '12px' },
                     format: '{point.name}'
                 }
             }
@@ -223,15 +220,38 @@ function puntosMapa(Datos) {
   var arregloSimple=new Array();
   var arregloDoble=new Array();
     var arregloObjeto = new Object();
-    for(var i= 0;i<Datos.estados.length;i++){
+    for(var i= 0;i<Datos.reporte2016.avance_educacion.avances.length;i++){
         var arregloSimple=new Array();
-        arregloSimple.push(Datos.estados[i].estado.nombreEstado + ", númerp de visitas : " + Datos.estados[i].total_visitas);
-        arregloSimple.push(Datos.estados[i].estado.latitud);
-        arregloSimple.push(Datos.estados[i].estado.longitud);
+        arregloSimple.push(Datos.reporte2016.avance_educacion.avances[i].municipio + ", total de avances : " + Datos.reporte2015.avance_educacion.total[i]);
+        arregloSimple.push(Datos.reporte2016.avance_educacion.avances[i].latitud);
+        arregloSimple.push(Datos.reporte2016.avance_educacion.avances[i].longitud);
         arregloSimple.push(i);
         arregloDoble.push(arregloSimple);
     }
-
+    for(var i= 0;i<Datos.reporte2016.avance_salud.avances.length;i++){
+        var arregloSimple=new Array();
+        arregloSimple.push(Datos.reporte2016.avance_salud.avances[i].municipio + ", total de avances : " + Datos.reporte2015.avance_salud.total[i]);
+        arregloSimple.push(Datos.reporte2016.avance_salud.avances[i].latitud);
+        arregloSimple.push(Datos.reporte2016.avance_salud.avances[i].longitud);
+        arregloSimple.push(i);
+        arregloDoble.push(arregloSimple);
+    }
+    for(var i= 0;i<Datos.reporte2016.avance_vivienda.avances.length;i++){
+        var arregloSimple=new Array();
+        arregloSimple.push(Datos.reporte2016.avance_vivienda.avances[i].municipio + ", total de avances : " + Datos.reporte2015.avance_vivienda.total[i]);
+        arregloSimple.push(Datos.reporte2016.avance_vivienda.avances[i].latitud);
+        arregloSimple.push(Datos.reporte2016.avance_vivienda.avances[i].longitud);
+        arregloSimple.push(i);
+        arregloDoble.push(arregloSimple);
+    }
+    for(var i= 0;i<Datos.reporte2016.avance_alimentacion.avances.length;i++){
+        var arregloSimple=new Array();
+        arregloSimple.push(Datos.reporte2016.avance_alimentacion.avances[i].municipio + ", total de avances : " + Datos.reporte2015.avance_educacion.total[i]);
+        arregloSimple.push(Datos.reporte2016.avance_alimentacion.avances[i].latitud);
+        arregloSimple.push(Datos.reporte2016.avance_alimentacion.avances[i].longitud);
+        arregloSimple.push(i);
+        arregloDoble.push(arregloSimple);
+    }
 
 
     arregloObjeto = arregloDoble;
@@ -239,21 +259,21 @@ function puntosMapa(Datos) {
 }
 
 function puntosMapaTotales(Datos) {
-    var arregloSimple = new Array();
-    var arregloDoble = new Array();
+  var arregloDoble=new Array();
     var arregloObjeto = new Object();
-    for (var i = 0; i < Datos.estados.length; i++) {
-        var arregloSimple = new Array();
-        arregloSimple.push(Datos.estados[i].estado.nombreEstado + ", " + Datos.estados[i].total_visitas + " Visitas, ");
-        arregloSimple.push(Datos.estados[i].estado.latitud);
-        arregloSimple.push(Datos.estados[i].estado.longitud);
+    var total=0;
+    for(var i= 0;i<Datos.reporte_mapa.avance_mapa.avances.length;i++){
+        var arregloSimple=new Array();
+        arregloSimple.push(Datos.reporte_mapa.avance_mapa.avances[i].avancemensual__municipio); //+ ", " + Datos.reporte_mapa.avance_mapa.avances[i].numero_obras + " Obras, " + formato_numero(Datos.reporte_mapa.obras_mapa.obras[i].totalinvertido,2,'.',',') + " MDP.");
+        arregloSimple.push(Datos.reporte_mapa.avance_mapa.avances[i].avancemensual__municipio__latitud);
+        arregloSimple.push(Datos.reporte_mapa.avance_mapa.avances[i].avancemensual__municipio__longitud);
         arregloSimple.push(i);
         arregloDoble.push(arregloSimple);
     }
     arregloObjeto = arregloDoble;
     return arregloObjeto;
-
 }
+
 
 function setMarkers(mapa, lugares) {
 

@@ -230,6 +230,11 @@ class AvancePorMunicipio(models.Model):
 
     def __str__(self):
         return self.meta.accionEstrategica.nombreAccion + " - " + self.estado.nombreEstado
+	avanceMunicipio = models.ManyToManyField(Municipio,
+                                           through='AvanceMensual',)
+
+	def __str__(self):
+		return self.meta.accionEstrategica.nombreAccion + " - " + self.estado.nombreEstado
 
     class Meta:
         unique_together = [("meta", "periodo", "estado")]
