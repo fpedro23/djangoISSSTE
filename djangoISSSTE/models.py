@@ -17,7 +17,7 @@ def getPeriodoActual():
         periodo = Periodo.objects.get(nombrePeriodo=periodoActual)
     except Periodo.DoesNotExist:
         periodo = None
-    #print periodo
+    # print periodo
 
     return periodo
 
@@ -173,14 +173,14 @@ class Meta(models.Model):
     accionEstrategica = models.ForeignKey(AccionEstrategica, null=False, blank=False, verbose_name='Acción Estrategica')
     periodo = models.ForeignKey(Periodo, null=False, blank=False, default=getPeriodoActual().nombrePeriodo)
     observaciones = models.TextField(max_length=500, default="", blank=True)
-    montoPromedio = models.FloatField(null=False, default=0, verbose_name= 'Monto Promedio')
+    montoPromedio = models.FloatField(null=False, default=0, verbose_name='Monto Promedio')
 
     def to_serializable_dict(self):
         ans = model_to_dict(self)
         ans['id'] = str(self.id)
         ans['accionEstrategica'] = self.accionEstrategica.nombreAccion
         ans['estado'] = MetaMensual.estado.nombreEstado
-        #ans['estado'] = self.estado.nombreEstado
+        # ans['estado'] = self.estado.nombreEstado
         ans['periodo'] = self.periodo.nombrePeriodo
         return ans
 
@@ -267,7 +267,6 @@ class AvancePorMunicipio(models.Model):
         super(AvancePorMunicipio, self).save(*args, **kwargs)
 
 
-
 class AvanceMensual(models.Model):
     avancePorMunicipio = models.ForeignKey(AvancePorMunicipio, null=False, blank=False)
     municipio = models.ForeignKey(Municipio, null=False, blank=False)
@@ -284,7 +283,6 @@ class AvanceMensual(models.Model):
     oct = models.FloatField(null=False, default=0)
     nov = models.FloatField(null=False, default=0)
     dic = models.FloatField(null=False, default=0)
-
 
     def to_serializable_dict(self):
         ans = model_to_dict(self)
