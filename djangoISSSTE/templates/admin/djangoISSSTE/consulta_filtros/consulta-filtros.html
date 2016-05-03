@@ -998,14 +998,9 @@ et$(function() {
                          <div class="col-md-3 titulo">
                              Mapa
                          </div>
-                        <div class="col-md-2">
-                            <div class="obraBTN" id="mapaObra"></div>
-                       </div>
-                       <div class="col-md-2" >
-                           <div class="estadoBTN" id="mapaEstado"></div>
-                       </div>
+
                        <div class="col-md-5" id="ajaxProgress">
-                            <img src="../../static/gifs/loading-barra2.gif">
+                            <img src="../../static/assets/gifs/loading-barra2.gif">
                        </div>
                    </div>
                    <div id="map-canvas" style="height: 285px;margin: 0px;padding: 0px;">
@@ -1105,38 +1100,37 @@ et$(function() {
                <div class="row">
                    <div class="col-md-12">
                         <fieldset>
-                   <div class="row"><div class="col-xs-5">
-                       Dependencia
-                       </div>
-                       <div class="col-xs-2">
-                           <article id="ver_tabla_dependencia">
-                               {% csrf_token %}
-                                <input type="radio" name="tipoReporte" id="dependencia" value="Dependencia" checked/>
-                            </article>
-                       </div>
-                   </div>
-                   <div class="row"><div class="col-xs-5">
-                       SubDependencia
-                       </div>
-                       <div class="col-xs-2">
-                           <article id="ver_tabla_subdependencia">
-                               {% csrf_token %}
-                                <input type="radio" name="tipoReporte" id="subdependencia" value="SubDependencia"/>
-                            </article>
-                       </div>
-                   </div>
-                   <div class="row"><div class="col-xs-5">
-                       Estado
-                       </div>
-                       <div class="col-xs-2">
-                           <article id="ver_tabla_estado">
-                               {% csrf_token %}
-                                <input type="radio" name="tipoReporte" id="estado" value="Estado"/>
-                            </article>
-                       </div>
-                   </div>
-
-                </fieldset>
+                           <div class="row"><div class="col-xs-8">
+                               Estado
+                               </div>
+                               <div class="col-xs-2">
+                                   <article id="ver_tabla_dependencia">
+                                       {% csrf_token %}
+                                        <input type="radio" name="tipoReporte" id="estado" value="Estado" checked/>
+                                    </article>
+                               </div>
+                           </div>
+                           <div class="row"><div class="col-xs-8">
+                               Carencia
+                               </div>
+                               <div class="col-xs-2">
+                                   <article id="ver_tabla_subdependencia">
+                                       {% csrf_token %}
+                                        <input type="radio" name="tipoReporte" id="carencia" value="Carencia"/>
+                                    </article>
+                               </div>
+                           </div>
+                           <div class="row"><div class="col-xs-8">
+                               Acci&oacute;n Estrat&eacute;gica
+                               </div>
+                               <div class="col-xs-2">
+                                   <article id="ver_tabla_estado">
+                                       {% csrf_token %}
+                                        <input type="radio" name="tipoReporte" id="accion" value="Acción Estratégica"/>
+                                    </article>
+                               </div>
+                           </div>
+                        </fieldset>
                    </div>
                </div>
            </div>

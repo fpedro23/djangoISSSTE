@@ -1001,3 +1001,44 @@
     padding-right: 2px;
 }
 
+.excel{
+    width: 78px;
+    height: 82px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -920px -2257px;
+    position: relative;
+    display: inline-block;
+}
+
+.excel:hover{
+    background-position: -920px -2340px;
+	cursor: pointer;
+}
+
+.pdf{
+    width: 78px;
+    height: 82px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -1006px -2259px;
+    position: relative;
+    display: inline-block;
+}
+
+.pdf:hover{
+    background-position: -1003px -2349px;
+	cursor: pointer;
+}
+
+.ppt{
+    width: 78px;
+    height: 82px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -1098px -2260px;
+    position: relative;
+    display: inline-block;
+}
+
+.ppt:hover{
+    background-position:-1095px -2350px;
+	cursor: pointer;
+}

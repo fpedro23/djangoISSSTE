@@ -137,7 +137,7 @@ function demoFromHTML() {
     function (dispose) {
         // dispose: object with X, Y of the last line add to the PDF
         //          this allow the insertion of new lines after html
-        pdf.save('Test.pdf');
+        pdf.save('Reporte.pdf');
     }, margins);
 
     $pp('#tabla-exporta').hide();
@@ -180,7 +180,7 @@ function demoFromHTML2() {
     function (dispose) {
         // dispose: object with X, Y of the last line add to the PDF
         //          this allow the insertion of new lines after html
-        pdf.save('Test.pdf');
+        pdf.save('Resultados.pdf');
     }, margins);
 
     $pp('#tabla-exporta2').hide();
@@ -447,7 +447,6 @@ function verDatos() {
         data: ajax_data,
         success: function(data) {
             $j('#historico').val("SI");
-            alert("vientos");
             tablaI(data);
             tablaD(data);
             datosJson=data;
@@ -1460,9 +1459,9 @@ function tablaI(Datos){
                 +' <colgroup>'
                 +' <col width="20%">'
                 +' <col width="20%">'
-                +' <col width="30%">'
                 +' <col width="20%">'
-                +' <col width="10%">'
+                +' <col width="20%">'
+                +' <col width="20%">'
                 +' </colgroup> '
                 +'<thead>'
                         +'<tr>'
@@ -1609,6 +1608,19 @@ function tablaD(Datos){
     var sHtmlExporta="";
     var sHtmlShorter="";
 
+    var totalAvances = 0
+    var totalInversion = 0
+    if (tipoReporte=="Estado") {
+        for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
+            totalAvances += Datos.reporte_por_estado[i].avances
+            totalInversion += Datos.reporte_por_estado[i].inversion_aproximada
+        }
+    }else{
+        for (var i = 0; i < Datos.reporte_estado.length; i++) {
+            totalAvances += Datos.reporte_por_estado[i].avances
+            totalInversion += Datos.reporte_por_estado[i].inversion_aproximada
+        }
+    }
 
     sHtmlExporta= '<table id="tablaExporta" class="table table-striped">'
                 +' <colgroup>'
@@ -1645,10 +1657,10 @@ function tablaD(Datos){
                     +'</thead>'
                     +'<tfoot>'
                         +'<tr>'
+                            +'<th></th>'
                             +'<th>TOTALES</th>'
-                            +'<th style="text-align:right;">'+ formato_numero(0, 0, '.', ',') +'</th>'
-                            +'<th style="text-align:right;">'+ formato_numero(0, 0, '.', ',') +'</th>'
-                            +'<th style="text-align:right; padding-right:10px;">'+ formato_numero(0, 0, '.', ',') +'</th>'
+                            +'<th style="text-align:right;">'+ formato_numero(totalAvances, 0, '.', ',') +'</th>'
+                            +'<th style="text-align:right; padding-right:10px;">'+ formato_numero(totalInversion, 0, '.', ',') +'</th>'
                         +'</tr>'
 
                         +'<tr><td class="pager" id="pagerD" colspan="4">'
@@ -1668,7 +1680,7 @@ function tablaD(Datos){
                     +'</tfoot>'
                     +'<tbody>';
 
-    if (tipoReporte=="Dependencia") {
+    if (tipoReporte=="Estado") {
         dependenciasChecked="checked";
         for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
             sHtml += '<tr>'
@@ -1679,7 +1691,7 @@ function tablaD(Datos){
             + '</tr>'
 
             sHtmlExporta += '<tr>'
-            + '<td width= "40%">' + Datos.reporte_por_estado[i].dependencia + '</td>'
+            + '<td width= "40%">' + Datos.reporte_por_estado[i].carencia + '</td>'
             + '<td width= "20%" align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
             + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].avance, 0, '.', ',') + '</td>'
             + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].inversion_aproximada, 2, '.', ',') + '</td>'

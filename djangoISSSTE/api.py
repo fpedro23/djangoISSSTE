@@ -16,6 +16,12 @@ from djangoISSSTE.models import *
 from django.db.models import Q, Sum, Count
 
 
+from pptx import Presentation
+from pptx.util import Inches
+from pptx.util import Pt
+from pptx.dml.color import RGBColor
+
+
 def get_array_or_none(the_string):
     if the_string is None:
         return None
@@ -438,3 +444,314 @@ class ReporteInicioEndpoint(ProtectedResourceView):
             reporte['reporte2016']['avance_educacion']['total'] = 0
 
         return HttpResponse(json.dumps(reporte), 'application/json')
+
+
+class PptxEndpoint(ProtectedResourceView):
+    def get(self, request):
+
+        user = AccessToken.objects.get(token=request.GET.get('access_token')).user
+
+        usuario = get_usuario_for_token(request.GET.get('access_token'))
+        dependencias = get_array_or_none(request.GET.get('dependencia'))
+        if dependencias is None or len(dependencias) == 0:
+            if usuario.rol == 'AD':
+                dependencias = None
+            else:
+                dependencias = [usuario.dependencia.id]
+
+        buscador = BuscarVisitas(ids_dependencia=dependencias,
+                                 rango_fecha_inicio=request.GET.get('fechaInicio', None),
+                                 rango_fecha_fin=request.GET.get('fechaFin', None),
+                                 descripcion=request.GET.get('descripcion', None),
+                                 problematica=request.GET.get('problematica', None),
+                                 nombre_medio=request.GET.get('nombreMedio', None),
+                                 ids_region=get_array_or_none(request.GET.get('region')),
+                                 ids_entidad=get_array_or_none(request.GET.get('estado')),
+                                 ids_municipio=get_array_or_none(request.GET.get('municipio')),
+                                 ids_cargo_ejecuta=get_array_or_none(request.GET.get('cargoEjecuta')),
+                                 ids_distrito_electoral=get_array_or_none(request.GET.get('distritoElectoral')),
+                                 ids_partido=get_array_or_none(request.GET.get('partido')),
+                                 identificador_unico=request.GET.get('identificador_unico', None),
+                                 ids_tipo_actividad=get_array_or_none(request.GET.get('tipoActividad')),
+                                 ids_tipo_medio=get_array_or_none(request.GET.get('tipoMedio')),
+                                 ids_tipo_capitalizacion=get_array_or_none(request.GET.get('tipoCapitalizacion')),
+                                 ids_clasificacion=get_array_or_none(request.GET.get('tipoClasificacion')),
+                                 limite_min=request.GET.get('limiteMin', 0),
+                                 limite_max=request.GET.get('limiteMax', 100),
+                                 )
+        resultados = buscador.buscar()
+
+        json_map = {}
+
+        json_map['visitas'] = []
+        for visita in resultados['visitas'].values('id', 'identificador_unico', 'entidad__nombreEstado',
+                                                   'actividad__descripcion'):
+            json_map['visitas'].append(visita)
+
+        output = StringIO.StringIO()
+        prs = Presentation()
+        slide = prs.slides.add_slide(prs.slide_layouts[5])
+        shapes = slide.shapes
+        shapes.title.text = 'Resultados'
+
+        #renglones = resultados['reporte_general']['visitas_totales'] + 1
+        renglones = len(json_map['visitas'])
+        if renglones < 22:
+            rows = renglones+1
+        else:
+            rows = 22
+        cols = 3
+        left = Inches(0.921)
+        top = Inches(1.2)
+        width = Inches(6.0)
+        height = Inches(0.8)
+
+        table = shapes.add_table(rows, cols, left, top, width, height).table
+
+        # set column widths
+        table.columns[0].width = Inches(2.0)
+        table.columns[1].width = Inches(2.0)
+        table.columns[2].width = Inches(4.0)
+
+        # write column headings
+        table.cell(0, 0).text = 'Identificador'
+        table.cell(0, 1).text = 'Actividad'
+        table.cell(0, 2).text = 'Estado'
+
+        # write body cells
+        indice = 1
+        for obra in json_map['visitas']:
+
+            if indice == 22:
+                indice = 1
+                slide = prs.slides.add_slide(prs.slide_layouts[5])
+                shapes = slide.shapes
+                shapes.title.text = 'Resultados'
+
+                rows = 22
+                cols = 3
+                left = Inches(0.921)
+                top = Inches(1.2)
+                width = Inches(6.0)
+                height = Inches(0.8)
+
+                table = shapes.add_table(rows, cols, left, top, width, height).table
+                # set column widths
+                table.columns[0].width = Inches(2.0)
+                table.columns[1].width = Inches(2.0)
+                table.columns[2].width = Inches(4.0)
+
+            # write column headings
+            for x in range(0, 3):
+                cell = table.rows[0].cells[x]
+                paragraph = cell.textframe.paragraphs[0]
+                paragraph.font.size = Pt(12)
+                paragraph.font.name = 'Arial Black'
+                paragraph.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+
+            for x in range(0, 3):
+                cell = table.rows[indice].cells[x]
+                paragraph = cell.textframe.paragraphs[0]
+                paragraph.font.size = Pt(8)
+                paragraph.font.name = 'Arial'
+                paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+            table.cell(0, 0).text = 'Identificador'
+            table.cell(0, 1).text = 'Actividad'
+            table.cell(0, 2).text = 'Estado'
+
+            # write body cells
+            table.cell(indice, 0).text = obra['identificador_unico']
+            table.cell(indice, 1).text = obra['actividad__descripcion']
+            table.cell(indice, 2).text = obra['entidad__nombreEstado']
+            indice += 1
+
+        prs.save(output)
+        response = StreamingHttpResponse(FileWrapper(output),
+                                         content_type='application/vnd.openxmlformats-officedocument.presentationml.presentation')
+        response['Content-Disposition'] = 'attachment; filename="resultado_visitas.pptx"'
+        response['Content-Length'] = output.tell()
+
+        output.seek(0)
+
+        return response
+
+
+class PptxReporteEndpoint(ProtectedResourceView):
+    def get(self, request):
+
+        user = AccessToken.objects.get(token=request.GET.get('access_token')).user
+
+        usuario = get_usuario_for_token(request.GET.get('access_token'))
+        dependencias = get_array_or_none(request.GET.get('dependencia'))
+        if dependencias is None or len(dependencias) == 0:
+            if usuario.rol == 'AD':
+                dependencias = None
+            else:
+                dependencias = [usuario.dependencia.id]
+
+        tipoReporte = request.GET.get("tipoReporte", None)
+        buscador = BuscarVisitas(ids_dependencia=dependencias,
+                                 rango_fecha_inicio=request.GET.get('fechaInicio', None),
+                                 rango_fecha_fin=request.GET.get('fechaFin', None),
+                                 descripcion=request.GET.get('descripcion', None),
+                                 problematica=request.GET.get('problematica', None),
+                                 nombre_medio=request.GET.get('nombreMedio', None),
+                                 ids_region=get_array_or_none(request.GET.get('region')),
+                                 ids_entidad=get_array_or_none(request.GET.get('estado')),
+                                 ids_municipio=get_array_or_none(request.GET.get('municipio')),
+                                 ids_cargo_ejecuta=get_array_or_none(request.GET.get('cargoEjecuta')),
+                                 ids_distrito_electoral=get_array_or_none(request.GET.get('distritoElectoral')),
+                                 ids_partido=get_array_or_none(request.GET.get('partido')),
+                                 identificador_unico=request.GET.get('identificador_unico', None),
+                                 ids_tipo_actividad=get_array_or_none(request.GET.get('tipoActividad')),
+                                 ids_tipo_medio=get_array_or_none(request.GET.get('tipoMedio')),
+                                 ids_tipo_capitalizacion=get_array_or_none(request.GET.get('tipoCapitalizacion')),
+                                 ids_clasificacion=get_array_or_none(request.GET.get('tipoClasificacion')),
+                                 limite_min=request.GET.get('limiteMin', 0),
+                                 limite_max=request.GET.get('limiteMax', 100),
+                                 )
+        resultados = buscador.buscar()
+
+        json_map = {}
+
+        json_map['reporte_dependencia'] = []
+        for reporte in resultados['reporte_dependencia']:
+            map = {}
+            map['dependencia'] = Dependencia.objects.get(
+                nombreDependencia=reporte['dependencia__nombreDependencia']).to_serializable_dict()
+            map['numero_visitas'] = reporte['numero_visitas']
+            map['numero_apariciones_otros'] = reporte['numero_apariciones_otros']
+            map['numero_apariciones_internet'] = reporte['numero_apariciones_internet']
+            if resultados['reporte_general']['visitas_totales'] is None:
+                map['sumatotal'] = 0
+            else:
+                map['sumatotal'] = float(resultados['reporte_general']['visitas_totales'])
+            json_map['reporte_dependencia'].append(map)
+
+        json_map['reporte_estado'] = []
+        for reporte_estado in resultados['reporte_estado']:
+            map = {}
+            if resultados['reporte_general']['visitas_totales'] is None:
+                map['sumatotal'] = 0
+            else:
+                map['sumatotal'] = float(resultados['reporte_general']['visitas_totales'])
+            map['estado'] = Estado.objects.get(
+                nombreEstado=reporte_estado['entidad__nombreEstado'])
+            map['numero_visitas' \
+                ''] = reporte_estado['numero_visitas']
+            map['numero_apariciones_otros'] = reporte['numero_apariciones_otros']
+            map['numero_apariciones_internet'] = reporte['numero_apariciones_internet']
+
+            json_map['reporte_estado'].append(map)
+
+        json_map['reporte_general'] = []
+        map['visitas_totales'] = resultados['reporte_general']['visitas_totales']
+        json_map['reporte_general'].append(map)
+
+        output = StringIO.StringIO()
+        prs = Presentation()
+        slide = prs.slides.add_slide(prs.slide_layouts[5])
+        shapes = slide.shapes
+        shapes.title.text = 'Reporte'
+
+        if tipoReporte == 'Dependencia':
+
+
+            rows = 17
+            cols = 4
+            left = Inches(0.921)
+            top = Inches(1.2)
+            width = Inches(6.0)
+            height = Inches(0.8)
+
+            table = shapes.add_table(rows, cols, left, top, width, height).table
+            # set column widths
+            table.columns[0].width = Inches(3.0)
+            table.columns[1].width = Inches(2.0)
+            table.columns[2].width = Inches(2.0)
+            table.columns[3].width = Inches(2.0)
+
+
+            for x in range(0, 4):
+                cell = table.rows[0].cells[x]
+                paragraph = cell.textframe.paragraphs[0]
+                paragraph.font.size = Pt(12)
+                paragraph.font.name = 'Arial Black'
+                paragraph.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+
+            # write column headings
+            table.cell(0, 0).text = 'Origen'
+            table.cell(0, 1).text = 'No. de Visitas '
+            table.cell(0, 2).text = 'Capitalizacion Medios Tradicionales'
+            table.cell(0, 3).text = 'Capitalizacion Internet'
+
+
+            # write body cells
+            i = 1
+            for obra in json_map['reporte_dependencia']:
+                for x in range(0, 4):
+                    cell = table.rows[i].cells[x]
+                    paragraph = cell.textframe.paragraphs[0]
+                    paragraph.font.size = Pt(8)
+                    paragraph.font.name = 'Arial'
+                    paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+                table.cell(i, 0).text = obra['dependencia']['nombreDependencia']
+                table.cell(i, 1).text = str(obra['numero_visitas'])
+                table.cell(i, 2).text = str(obra['numero_apariciones_otros'])
+                table.cell(i, 3).text = str(obra['numero_apariciones_internet'])
+                i += 1
+
+        if tipoReporte == 'Estado':
+            rows = 35
+            cols = 4
+            left = Inches(0.921)
+            top = Inches(1.2)
+            width = Inches(6.0)
+            height = Inches(0.8)
+
+            table = shapes.add_table(rows, cols, left, top, width, height).table
+            # set column widths
+            table.columns[0].width = Inches(3.0)
+            table.columns[1].width = Inches(2.0)
+            table.columns[2].width = Inches(2.0)
+            table.columns[3].width = Inches(2.0)
+
+            for x in range(0, 4):
+                cell = table.rows[0].cells[x]
+                paragraph = cell.textframe.paragraphs[0]
+                paragraph.font.size = Pt(12)
+                paragraph.font.name = 'Arial Black'
+                paragraph.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+
+            # write column headings
+            table.cell(0, 0).text = 'Origen'
+            table.cell(0, 1).text = 'No. de visitas '
+            table.cell(0, 2).text = 'Capitalizacion Medios Tradicionales'
+            table.cell(0, 3).text = 'Capitalizacion Internet'
+
+            # write body cells
+            i = 1
+            for obra in json_map['reporte_estado']:
+                for x in range(0, 4):
+                    cell = table.rows[i].cells[x]
+                    paragraph = cell.textframe.paragraphs[0]
+                    paragraph.font.size = Pt(8)
+                    paragraph.font.name = 'Arial'
+                    paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+                table.cell(i, 0).text = obra['estado'].nombreEstado
+                table.cell(i, 1).text = str(obra['numero_visitas'])
+                table.cell(i, 2).text = str(obra['numero_apariciones_otros'])
+                table.cell(i, 3).text = str(obra['numero_apariciones_internet'])
+                i += 1
+
+        prs.save(output)
+        response = StreamingHttpResponse(FileWrapper(output),
+                                         content_type='application/vnd.openxmlformats-officedocument.presentationml.presentation')
+        response['Content-Disposition'] = 'attachment; filename="reporte_visitas.pptx"'
+        response['Content-Length'] = output.tell()
+
+        output.seek(0)
+
+        return response
