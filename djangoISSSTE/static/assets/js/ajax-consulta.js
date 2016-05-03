@@ -49,24 +49,29 @@ function main_consulta() {
     valida_token();
 
 	$j('#ver_datos #button').on('click', verDatos);
+    $j('#ver_datos #enviaPPT2').on('click', ResultadosPptx)
+    $j('#ver_datos #enviaPPT').on('click', ReportePptx)
+    $j('#enviaPDF').on('click', demoFromHTML)
+    $j('#enviaPDF2').on('click', demoFromHTML2)
+    $j('#art_limpiar #limpiar').on('click', limpia);
+    $j('#ver_grafica #grafica').on('click', graficas)
+
+
+
     $j('#ver_tabla_estado #estado').on('click', mostrarTablas);
     $j('#ver_tabla_dependencia #dependencia').on('click', mostrarTablas)
     $j('#ver_tabla_subdependencia #subdependencia').on('click', mostrarTablas)
-    $j('#ver_grafica #grafica').on('click', graficas)
     $j('#ver_grafica_estado #estado').on('click', graficas);
     $j('#ver_grafica_dependencia #dependencia').on('click', graficas);
     $j('#ver_grafica_subdependencia #subdependencia').on('click', graficas);
     $j('#ver_grafica_tipos #tipoGrafica').on('change', graficas);
     $j('#ver_grafica_datos #datosGrafica').on('change', graficas);
-    $j('#art_limpiar #limpiar').on('click', limpia);
+
     $j('#listado #listar').on('click', listarObras)
-    $j('#ver_datos #enviaPPT2').on('click', PptxObras)
-    $j('#ver_datos #enviaPPT').on('click', PptxObrasReporte)
 
     $j('#regresaGraficas #regresarBTN').on('click', regresa)
     $j('#openWin').on('click', openWin)
-    $j('#enviaPDF').on('click', demoFromHTML)
-    $j('#enviaPDF2').on('click', demoFromHTML2)
+
 
     $j('#mapaEstado').on('click', ponerMapaEstado)
     $j('#mapaObra').on('click', ponerMapaObra)
@@ -263,125 +268,105 @@ function listarObras() {
 
 }
 
-function PptxObras() {
+function ResultadosPptx() {
     var tipoReporte = $j('input:radio[name=tipoReporte]:checked').val();
 
-    var arrayDependencias = $l("#msDependencias").multiselect("getChecked").map(function(){return this.value;}).get();
-    var fechaInicio1 = $l("#fechaInicial1").val();
-    var fechaInicio2 = $l("#fechaInicial2").val();
-    var arrayRegion = $l("#msRegiones").multiselect("getChecked").map(function(){return this.value;}).get();
+    var arrayCarencias = $l("#msCarencias").multiselect("getChecked").map(function(){return this.value;}).get();
+    var arraySubCarencias = $l("#msSubCarencias").multiselect("getChecked").map(function(){return this.value;}).get();
     var arrayEstados = $l("#msEstados").multiselect("getChecked").map(function(){return this.value;}).get();
     var arrayMunicipios = $l("#msMunicipios").multiselect("getChecked").map(function(){return this.value;}).get();
-    var arrayFuncionarios= $l("#msFuncionarios").multiselect("getChecked").map(function(){return this.value;}).get();
-    var arrayDistritos= $l("#msDistritos").multiselect("getChecked").map(function(){return this.value;}).get();
-    var arrayClasificacion = $l("#msClasificaciones").multiselect("getChecked").map(function(){return this.value;}).get();
-    var arrayTipoCapitalizacion = $l("#msTipoCapitalizacion").multiselect("getChecked").map(function(){return this.value;}).get();
-    var arrayTipoActividad = $l("#msTipoActividad").multiselect("getChecked").map(function(){return this.value;}).get();
-    var arrayMedios = $l("#msMedios").multiselect("getChecked").map(function(){return this.value;}).get();
+    var arrayResponsables= $l("#msResponsables").multiselect("getChecked").map(function(){return this.value;}).get();
+    var arrayPeriodos= $l("#msPeriodos").multiselect("getChecked").map(function(){return this.value;}).get();
+    var arrayMeses = $l("#msMeses").multiselect("getChecked").map(function(){return this.value;}).get();
+    var arrayAcciones = $l("#msAcciones").multiselect("getChecked").map(function(){return this.value;}).get();
 
-    var fechaFin1 = $l("#fechaFinal1").val();
-    var fechaFin2 = $l("#fechaFinal2").val();
     var inversionInicial = $l("#inversionInicial").val();
     var inversionFinal = $l("#inversionFinal").val();
 
-    var descripcion = $l("#descripcion").val();
-    var problematica = $l("#problematica").val();
-    var nombreMedio = $l("#nombreMedio").val();
-    var identificador_unico = $l("#identificador_unico").val();
-    var arrayPartidos = $l("#msPartidos").multiselect("getChecked").map(function(){return this.value;}).get();
+    var avanceInicial = $l("#avanceInicial").val();
+    var avanceFinal = $l("#avanceFinal").val();
+
+    var metaInicial = $l("#metaInicial").val();
+    var metaFinal = $l("#metaFinal").val();
+
+    var observaciones = $l("#observaciones").val();
+    var unidadMedida = $l("#unidadmedida").val();
 
 
-    if (fechaInicio1!=""){fechaInicio1 = myDateFormatter($dp('#fechaInicial1').datepicker("getDate"));}
-    if (fechaInicio2!=""){ fechaInicio2 = myDateFormatter($dp('#fechaInicial2').datepicker("getDate"));}
-    if (fechaFin1!=""){fechaFin1 = myDateFormatter($dp('#fechaFinal1').datepicker("getDate"));}
-    if (fechaFin2!=""){fechaFin2 = myDateFormatter($dp('#fechaFinal2').datepicker("getDate"));}
+    var URL="/issste/api/ResultadosPptx?access_token=" + newToken;
 
 
-    var URL="/api/PptxVista?access_token=" + newToken;
-
-    if(arrayDependencias.toString()!=""){URL += "&dependencia=" + arrayDependencias.toString();}
-    if(arrayRegion.toString()!=""){URL += "&region=" +arrayRegion.toString();}
-    if(arrayMunicipios.toString()!=""){URL += "&municipio=" + arrayMunicipios.toString();}
-    if(arrayFuncionarios.toString()!=""){URL += "&cargoEjecuta=" + arrayFuncionarios.toString();}
-    if(arrayDistritos.toString()!=""){URL += "&distritoElectoral=" + arrayDistritos.toString();}
-    if(arrayEstados.toString()!=""){URL += "&estado=" + arrayEstados.toString();}
-    if(arrayClasificacion.toString()!=""){URL += "&clasificacion=" + arrayClasificacion.toString();}
-    if(arrayTipoCapitalizacion.toString()!=""){URL += "capitalizacion=" + arrayTipoCapitalizacion.toString();}
-    if(arrayTipoActividad.toString()!=""){URL += "&tipoactividad=" + arrayTipoActividad.toString();}
-    if(arrayMedios.toString()!=""){URL += "&medio=" + arrayMedios.toString();}
-    if(fechaInicio1!=""){URL += "&fechaInicio=" + fechaInicio1;}
-    if(fechaInicio2!=""){URL += "&fechaFin=" + fechaInicio2;}
+    if(arrayCarencias.toString()!=""){URL += "&carencias=" + arrayCarencias.toString();}
+    if(arraySubCarencias.toString()!=""){URL += "&subcarencias=" + arraySubCarencias.toString();}
+    if(arrayMunicipios.toString()!=""){URL += "&municipios=" + arrayMunicipios.toString();}
+    //if(arrayResponsables.toString()!=""){URL += "&cargoEjecuta=" + arrayResponsables.toString();}
+    if(arrayPeriodos.toString()!=""){URL += "&periodos=" + arrayPeriodos.toString();}
+    if(arrayEstados.toString()!=""){URL += "&estados=" + arrayEstados.toString();}
+    if(arrayMeses.toString()!=""){URL += "&meses=" + arrayMeses.toString();}
+    if(arrayAcciones.toString()!=""){URL += "&acciones=" + arrayAcciones.toString();}
 
     if(inversionInicial!=""){URL += "&inversionMinima=" + inversionInicial;}
     if(inversionFinal!=""){URL += "&inversionMaxima=" + inversionFinal;}
+    if(avanceInicial!=""){URL += "&avanceMinimo=" + avanceInicial;}
+    if(avanceFinal!=""){URL += "&avanceMaximo=" + avanceFinal;}
+    //if(metaInicial!=""){ajax_data.inversionMinima=metaInicial;}
+    //if(metaFinal!=""){ajax_data.inversionMaxima=metaFinal;}
 
-    if(arrayPartidos.toString()!=""){URL += "&partido=" + arrayDependencias.toString();}
-    if(descripcion!=""){URL += "&descripcion=" + descripcion;}
-    if(problematica!=""){URL += "&problematica=" + problematica;}
-    if(nombreMedio!=""){URL += "&nombreMedio=" + nombreMedio;}
-    if(identificador_unico!=""){URL += "&identificador_unico=" + identificador_unico;}
+
+    if(observaciones!=""){URL += "&observaciones=" + observaciones;}
+    if(unidadMedida!=""){URL += "&unidadDeMedida=" + unidadMedida;}
 
     location.href = URL
 
 
 }
 
-function PptxObrasReporte() {
+function ReportePptx() {
     var tipoReporte = $j('input:radio[name=tipoReporte]:checked').val();
-    var arrayDependencias = $l("#msDependencias").multiselect("getChecked").map(function(){return this.value;}).get();
-    var fechaInicio1 = $l("#fechaInicial1").val();
-    var fechaInicio2 = $l("#fechaInicial2").val();
-    var arrayRegion = $l("#msRegiones").multiselect("getChecked").map(function(){return this.value;}).get();
+    var arrayCarencias = $l("#msCarencias").multiselect("getChecked").map(function(){return this.value;}).get();
+    var arraySubCarencias = $l("#msSubCarencias").multiselect("getChecked").map(function(){return this.value;}).get();
     var arrayEstados = $l("#msEstados").multiselect("getChecked").map(function(){return this.value;}).get();
     var arrayMunicipios = $l("#msMunicipios").multiselect("getChecked").map(function(){return this.value;}).get();
-    var arrayFuncionarios= $l("#msFuncionarios").multiselect("getChecked").map(function(){return this.value;}).get();
-    var arrayDistritos= $l("#msDistritos").multiselect("getChecked").map(function(){return this.value;}).get();
-    var arrayClasificacion = $l("#msClasificaciones").multiselect("getChecked").map(function(){return this.value;}).get();
-    var arrayTipoCapitalizacion = $l("#msTipoCapitalizacion").multiselect("getChecked").map(function(){return this.value;}).get();
-    var arrayTipoActividad = $l("#msTipoActividad").multiselect("getChecked").map(function(){return this.value;}).get();
-    var arrayMedios = $l("#msMedios").multiselect("getChecked").map(function(){return this.value;}).get();
+    var arrayResponsables= $l("#msResponsables").multiselect("getChecked").map(function(){return this.value;}).get();
+    var arrayPeriodos= $l("#msPeriodos").multiselect("getChecked").map(function(){return this.value;}).get();
+    var arrayMeses = $l("#msMeses").multiselect("getChecked").map(function(){return this.value;}).get();
+    var arrayAcciones = $l("#msAcciones").multiselect("getChecked").map(function(){return this.value;}).get();
 
-    var fechaFin1 = $l("#fechaFinal1").val();
-    var fechaFin2 = $l("#fechaFinal2").val();
     var inversionInicial = $l("#inversionInicial").val();
     var inversionFinal = $l("#inversionFinal").val();
 
-    var descripcion = $l("#descripcion").val();
-    var problematica = $l("#problematica").val();
-    var nombreMedio = $l("#nombreMedio").val();
-    var identificador_unico = $l("#identificador_unico").val();
-    var arrayPartidos = $l("#msPartidos").multiselect("getChecked").map(function(){return this.value;}).get();
+    var avanceInicial = $l("#avanceInicial").val();
+    var avanceFinal = $l("#avanceFinal").val();
 
-    if (fechaInicio1!=""){fechaInicio1 = myDateFormatter($dp('#fechaInicial1').datepicker("getDate"));}
-    if (fechaInicio2!=""){ fechaInicio2 = myDateFormatter($dp('#fechaInicial2').datepicker("getDate"));}
-    if (fechaFin1!=""){fechaFin1 = myDateFormatter($dp('#fechaFinal1').datepicker("getDate"));}
-    if (fechaFin2!=""){fechaFin2 = myDateFormatter($dp('#fechaFinal2').datepicker("getDate"));}
+    var metaInicial = $l("#metaInicial").val();
+    var metaFinal = $l("#metaFinal").val();
+
+    var observaciones = $l("#observaciones").val();
+    var unidadMedida = $l("#unidadmedida").val();
 
 
-    var URL="/api/ReportePP?access_token=" + newToken;
+    var URL="/issste/api/ReportePptx?access_token=" + newToken;
     URL += "&tipoReporte=" + tipoReporte.toString();
 
-    if(arrayDependencias.toString()!=""){URL += "&dependencia=" + arrayDependencias.toString();}
-    if(arrayRegion.toString()!=""){URL += "&region=" +arrayRegion.toString();}
-    if(arrayMunicipios.toString()!=""){URL += "&municipio=" + arrayMunicipios.toString();}
-    if(arrayFuncionarios.toString()!=""){URL += "&cargoEjecuta=" + arrayFuncionarios.toString();}
-    if(arrayDistritos.toString()!=""){URL += "&distritoElectoral=" + arrayDistritos.toString();}
-    if(arrayEstados.toString()!=""){URL += "&estado=" + arrayEstados.toString();}
-    if(arrayClasificacion.toString()!=""){URL += "&clasificacion=" + arrayClasificacion.toString();}
-    if(arrayTipoCapitalizacion.toString()!=""){URL += "capitalizacion=" + arrayTipoCapitalizacion.toString();}
-    if(arrayTipoActividad.toString()!=""){URL += "&tipoactividad=" + arrayTipoActividad.toString();}
-    if(arrayMedios.toString()!=""){URL += "&medio=" + arrayMedios.toString();}
-    if(fechaInicio1!=""){URL += "&fechaInicio=" + fechaInicio1;}
-    if(fechaInicio2!=""){URL += "&fechaFin=" + fechaInicio2;}
+    if(arrayCarencias.toString()!=""){URL += "&carencias=" + arrayCarencias.toString();}
+    if(arraySubCarencias.toString()!=""){URL += "&subcarencias=" + arraySubCarencias.toString();}
+    if(arrayMunicipios.toString()!=""){URL += "&municipios=" + arrayMunicipios.toString();}
+    //if(arrayResponsables.toString()!=""){URL += "&cargoEjecuta=" + arrayResponsables.toString();}
+    if(arrayPeriodos.toString()!=""){URL += "&periodos=" + arrayPeriodos.toString();}
+    if(arrayEstados.toString()!=""){URL += "&estados=" + arrayEstados.toString();}
+    if(arrayMeses.toString()!=""){URL += "&meses=" + arrayMeses.toString();}
+    if(arrayAcciones.toString()!=""){URL += "&acciones=" + arrayAcciones.toString();}
 
     if(inversionInicial!=""){URL += "&inversionMinima=" + inversionInicial;}
     if(inversionFinal!=""){URL += "&inversionMaxima=" + inversionFinal;}
+    if(avanceInicial!=""){URL += "&avanceMinimo=" + avanceInicial;}
+    if(avanceFinal!=""){URL += "&avanceMaximo=" + avanceFinal;}
+    //if(metaInicial!=""){ajax_data.inversionMinima=metaInicial;}
+    //if(metaFinal!=""){ajax_data.inversionMaxima=metaFinal;}
 
-    if(arrayPartidos.toString()!=""){URL += "&partido=" + arrayDependencias.toString();}
-    if(descripcion!=""){URL += "&descripcion=" + descripcion;}
-    if(problematica!=""){URL += "&problematica=" + problematica;}
-    if(nombreMedio!=""){URL += "&nombreMedio=" + nombreMedio;}
-    if(identificador_unico!=""){URL += "&identificador_unico=" + identificador_unico;}
+
+    if(observaciones!=""){URL += "&observaciones=" + observaciones;}
+    if(unidadMedida!=""){URL += "&unidadDeMedida=" + unidadMedida;}
 
     location.href = URL
 
@@ -1633,7 +1618,7 @@ function tablaD(Datos){
                         +'<tr>'
                             +'<th>Carencia</th>'
                             +'<th>Estado</th>'
-                            +'<th>AvanceTotal</th>'
+                            +'<th>Avance Total</th>'
                             +'<th>Inversión Aprox.</th>'
                         +'</tr>'
                 +'</thead>'
@@ -1651,7 +1636,7 @@ function tablaD(Datos){
                         +'<tr>'
                             +'<th width= "40%">Carencia</th>'
                             +'<th width= "20%">Estado</th>'
-                            +'<th width= "20%">AvanceTotal</th>'
+                            +'<th width= "20%">Avance Total</th>'
                             +'<th width= "20%">Inversión Aprox.</th>'
                         +'</tr>'
                     +'</thead>'

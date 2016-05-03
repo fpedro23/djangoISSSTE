@@ -17,5 +17,7 @@ urlpatterns = [
 	url(r'^api/metasMensualesPorMeta', api.MetasMensualesPorMetaEndpoint.as_view()),
 	url(r'^api/avancesMensualesPorMeta', api.avancesMensualesPorMetaEndpoint.as_view()),
 	url(r'^api/busqueda', api.BuscadorEndpoint.as_view()),
+	url(r'^api/ResultadosPptx', api.ResultadosPptxEndpoint.as_view()),
+	url(r'^api/ReportePptx', api.ReportePptxEndpoint.as_view()),
 
  ]

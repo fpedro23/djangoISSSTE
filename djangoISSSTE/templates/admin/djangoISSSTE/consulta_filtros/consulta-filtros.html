@@ -547,33 +547,33 @@ et$(function() {
                                 <div class="tr"  style="padding-right: 3px; padding-left: 3px; padding-bottom: 0px; padding-top: 0px ">
                                     <div class="row" style="padding-right: 3px; padding-left: 3px; padding-bottom: 0px; padding-top: 0px ">
                                         <div class="col-xs-3">
-                                           <p>Dependencia</p>
+                                           <p>Estado</p>
                                        </div>
                                        <div class="col-xs-1">
-                                           <article id="ver_grafica_dependencia">
+                                           <article id="ver_grafica_estado">
                                                {% csrf_token %}
-                                                <input type="radio" name="graficaTipo" id="dependencia" value="Dependencia" checked/>
+                                                <input type="radio" name="graficaTipo" id="estado" value="Estado" checked/>
                                             </article>
                                        </div>
 
                                         <div class="col-xs-4">
-                                           <p>SubDependencia</p>
+                                           <p>Carencia</p>
                                        </div>
                                        <div class="col-xs-1">
-                                           <article id="ver_grafica_subdependencia">
+                                           <article id="ver_grafica_carencia">
                                                {% csrf_token %}
-                                                <input type="radio" name="graficaTipo" id="subdependencia" value="SubDependencia"/>
+                                                <input type="radio" name="graficaTipo" id="carencia" value="carencia"/>
                                             </article>
                                        </div>
                                         </div>
                                     <div class="row" style="padding-right: 3px; padding-left: 3px; padding-bottom: 0px; padding-top: 0px ">
                                         <div class="col-xs-3">
-                                       <p>Estado</p>
+                                       <p>Acci&oacute;</p>
                                        </div>
                                        <div class="col-xs-1">
-                                           <article id="ver_grafica_estado">
+                                           <article id="ver_grafica_accion">
                                                {% csrf_token %}
-                                                <input type="radio" name="graficaTipo" id="estado" value="Estado"/>
+                                                <input type="radio" name="graficaTipo" id="accion" value="Accion"/>
                                             </article>
                                        </div>
                                     </div>
@@ -596,8 +596,8 @@ et$(function() {
                                                <article id="ver_grafica_datos">
                                                     {% csrf_token %}
                                                     <select class="selectpicker" data-size="5" id="datosGrafica">
-                                                          <option value="Numero">N&uacute;mero de obras</option>
-                                                          <option value="Monto">Monto total</option>
+                                                          <option value="Numero">N&uacute;mero de avances</option>
+                                                          <option value="Monto">Inversi&oacute;n total</option>
                                                     </select>
                                                </article>
                                             </div>
