@@ -194,9 +194,12 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 	model = AvancePorMunicipio
 	inlines = [AvanceMensualInLine, ]
 	fields = ('periodo','meta', 'estado','get_carencia', 'get_unidad_medida','get_observaciones',
-			  'get_subcarencia', 'get_meta_mensual', 'get_accion', 'inversionAprox')
-	readonly_fields = ('get_carencia', 'get_subcarencia', 'get_unidad_medida', 'get_observaciones',
-					   'get_meta_mensual','get_accion', 'inversionAprox')
+			  'get_subcarencia', 'get_enero','get_febrero', 'get_marzo', 'get_abril', 'get_mayo',
+			  'get_junio', 'get_julio', 'get_agosto', 'get_septiembre', 'get_octubre', 'get_noviembre',
+			  'get_diciembre', 'inversionAprox', 'get_accion')
+	readonly_fields = ('get_carencia', 'get_subcarencia', 'get_unidad_medida', 'get_observaciones', 'get_enero',
+					   'get_febrero', 'get_marzo', 'get_abril', 'get_mayo','get_junio', 'get_julio', 'get_agosto',
+					   'get_septiembre', 'get_octubre', 'get_noviembre', 'get_diciembre','get_accion', 'inversionAprox')
 	list_display = ('id','get_carencia','get_subcarencia','meta', 'periodo','estado', 'inversionAprox')
 	ordering = ['meta__nombreMeta', ]
 
@@ -214,17 +217,124 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 	def get_observaciones(self, obj):
 		return obj.meta.observaciones
 
-	def get_meta_mensual(self, obj):
+	def get_enero(self, obj):
 		arreglo_metas = []
 		val_meta = obj.meta.id
 		val_estado = obj.estado.id
 		meta_mensual = MetaMensual.objects.filter(meta__id = val_meta, estado__id = val_estado)
 		to_print = ""
 		for meta in meta_mensual:
-			to_print += " Enero: "   + str(meta.ene) + " Febrero: "   + str(meta.feb) + " Marzo: "      + str(meta.mar)
-			to_print += " Abril: "   + str(meta.abr) + " Mayo: "      + str(meta.may) + " Junio: "      + str(meta.jun)
-			to_print += " Julio: "   + str(meta.jul) + " Agosto: "    + str(meta.ago) + " Septiembre: " + str(meta.sep)
-			to_print += " Octubre: " + str(meta.oct) + " Noviembre: " + str(meta.nov) + " Diciembre: "  + str(meta.dic)
+			to_print = str(meta.ene)
+		return to_print
+
+	def get_febrero(self, obj):
+		arreglo_metas = []
+		val_meta = obj.meta.id
+		val_estado = obj.estado.id
+		meta_mensual = MetaMensual.objects.filter(meta__id=val_meta, estado__id=val_estado)
+		to_print = ""
+		for meta in meta_mensual:
+			to_print = str(meta.feb)
+		return to_print
+
+	def get_marzo(self, obj):
+		arreglo_metas = []
+		val_meta = obj.meta.id
+		val_estado = obj.estado.id
+		meta_mensual = MetaMensual.objects.filter(meta__id=val_meta, estado__id=val_estado)
+		to_print = ""
+		for meta in meta_mensual:
+			to_print = str(meta.mar)
+		return to_print
+
+	def get_abril(self, obj):
+		arreglo_metas = []
+		val_meta = obj.meta.id
+		val_estado = obj.estado.id
+		meta_mensual = MetaMensual.objects.filter(meta__id=val_meta, estado__id=val_estado)
+		to_print = ""
+		for meta in meta_mensual:
+			to_print = str(meta.abr)
+		return to_print
+
+	def get_mayo(self, obj):
+		arreglo_metas = []
+		val_meta = obj.meta.id
+		val_estado = obj.estado.id
+		meta_mensual = MetaMensual.objects.filter(meta__id=val_meta, estado__id=val_estado)
+		to_print = ""
+		for meta in meta_mensual:
+			to_print = str(meta.may)
+		return to_print
+
+	def get_junio(self, obj):
+		arreglo_metas = []
+		val_meta = obj.meta.id
+		val_estado = obj.estado.id
+		meta_mensual = MetaMensual.objects.filter(meta__id=val_meta, estado__id=val_estado)
+		to_print = ""
+		for meta in meta_mensual:
+			to_print = str(meta.jun)
+		return to_print
+
+	def get_julio(self, obj):
+		arreglo_metas = []
+		val_meta = obj.meta.id
+		val_estado = obj.estado.id
+		meta_mensual = MetaMensual.objects.filter(meta__id=val_meta, estado__id=val_estado)
+		to_print = ""
+		for meta in meta_mensual:
+			to_print = str(meta.jul)
+		return to_print
+
+	def get_agosto(self, obj):
+		arreglo_metas = []
+		val_meta = obj.meta.id
+		val_estado = obj.estado.id
+		meta_mensual = MetaMensual.objects.filter(meta__id=val_meta, estado__id=val_estado)
+		to_print = ""
+		for meta in meta_mensual:
+			to_print = str(meta.ago)
+		return to_print
+
+	def get_septiembre(self, obj):
+		arreglo_metas = []
+		val_meta = obj.meta.id
+		val_estado = obj.estado.id
+		meta_mensual = MetaMensual.objects.filter(meta__id=val_meta, estado__id=val_estado)
+		to_print = ""
+		for meta in meta_mensual:
+			to_print = str(meta.sep)
+		return to_print
+
+	def get_octubre(self, obj):
+		arreglo_metas = []
+		val_meta = obj.meta.id
+		val_estado = obj.estado.id
+		meta_mensual = MetaMensual.objects.filter(meta__id=val_meta, estado__id=val_estado)
+		to_print = ""
+		for meta in meta_mensual:
+			to_print = str(meta.oct)
+		return to_print
+
+	def get_noviembre(self, obj):
+		arreglo_metas = []
+		val_meta = obj.meta.id
+		val_estado = obj.estado.id
+		meta_mensual = MetaMensual.objects.filter(meta__id=val_meta, estado__id=val_estado)
+		to_print = ""
+		for meta in meta_mensual:
+			to_print = str(meta.nov)
+		return to_print
+
+	def get_diciembre(self, obj):
+		arreglo_metas = []
+		val_meta = obj.meta.id
+		val_estado = obj.estado.id
+		meta_mensual = MetaMensual.objects.filter(meta__id=val_meta, estado__id=val_estado)
+		to_print = ""
+		for meta in meta_mensual:
+			to_print = str(meta.dic)
 		return to_print
 
 	def get_accion(self, obj):
@@ -235,8 +345,18 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 	get_carencia.short_description = "Carencia"
 	get_unidad_medida.short_description = "Unidad de Medida"
 	get_observaciones.short_description = "Observaciones"
-	get_meta_mensual.short_description = "Metas"
-	get_accion.short_description = "Acción a Ralizar"
+	get_enero.short_description = "Enero"
+	get_febrero.short_description = "Febrero"
+	get_marzo.short_description = "Marzo"
+	get_abril.short_description = "Abril"
+	get_mayo.short_description = "Mayo"
+	get_junio.short_description = "Junio"
+	get_julio.short_description = "Julio"
+	get_agosto.short_description = "Agosto"
+	get_septiembre.short_description = "Septiembre"
+	get_octubre.short_description = "Octubre"
+	get_noviembre.short_description = "Noviembre"
+	get_diciembre.short_description = "Diciembre"
 
 	# Esta funcion se ejecuta al desplegar la lista de Avances por municipio. Dentro
 	# de ella se aplica un filtro por el rol del usuario y de su estado
