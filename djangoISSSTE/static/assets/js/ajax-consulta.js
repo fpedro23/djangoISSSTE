@@ -448,6 +448,23 @@ function verDatos() {
         success: function(data) {
             $j('#historico').val("SI");
             alert("vientos");
+            tablaI(data);
+            tablaD(data);
+            datosJson=data;
+            // MAPA
+            var mapOptions = {
+                zoom: 4,
+                center: new google.maps.LatLng(22.6526121, -100.1780452),
+                mapTypeId: google.maps.MapTypeId.SATELLITE
+            }
+            var map = new google.maps.Map(document.getElementById('map-canvas'),
+                                        mapOptions)
+            var lugares =  new Array();
+            lugares=puntosMapa(data);
+            setMarkers(map,lugares);
+            google.maps.event.addDomListener(window, 'load', initialize);
+            // mapa
+            // graficas
 
             $j("#ajaxProgress").hide();
         },
@@ -1383,15 +1400,11 @@ function puntosMapa(Datos) {
   var arregloSimple=new Array();
   var arregloDoble=new Array();
     var arregloObjeto = new Object();
-    for(var i= 0;i<Datos.reporte_municipio.length;i++){
+    for(var i= 0;i<Datos.reporte_general.length;i++){
         var arregloSimple=new Array();
-        if (Datos.reporte_municipio[i].numero_visitas == 1){
-            arregloSimple.push(Datos.reporte_municipio[i].municipio + ", " + Datos.reporte_municipio[i].estado + ", id. de visita : " + Datos.reporte_municipio[i].visitas[0].identificador_unico);
-        }else{
-            arregloSimple.push(Datos.reporte_municipio[i].municipio + ", " + Datos.reporte_municipio[i].estado + ", Total de Visitas : " + Datos.reporte_municipio[i].numero_visitas);
-        }
-        arregloSimple.push(Datos.reporte_municipio[i].latitud);
-        arregloSimple.push(Datos.reporte_municipio[i].longitud);
+        arregloSimple.push(Datos.reporte_general[i].accion + ", " + Datos.reporte_general[i].municipio + ", Total de Avances : " + Datos.reporte_general[i].suma_avance);
+        arregloSimple.push(Datos.reporte_general[i].latitud);
+        arregloSimple.push(Datos.reporte_general[i].longitud);
         arregloSimple.push(i);
         arregloDoble.push(arregloSimple);
     }
@@ -1445,39 +1458,49 @@ function tablaI(Datos){
 
     sHtmlExporta= '<table id="tablaExporta2" class="table2excel">'
                 +' <colgroup>'
+                +' <col width="20%">'
+                +' <col width="20%">'
                 +' <col width="30%">'
-                +' <col width="40%">'
-                +' <col width="30%">'
+                +' <col width="20%">'
+                +' <col width="10%">'
                 +' </colgroup> '
                 +'<thead>'
                         +'<tr>'
-                            +'<th>Id</th>'
-                            +'<th>Actividad</th>'
-                            +'<th>Estado</th>'
+                            +'<th>Carencia</th>'
+                            +'<th>SubCarencia</th>'
+                            +'<th>Acción</th>'
+                            +'<th>Municipio</th>'
+                            +'<th>Avance Total</th>'
                         +'</tr>'
                 +'</thead>'
                 +'<tbody>';
     sHtmlShorter ='<table cellspacing="1"  id="tablaIzquierda">'
                 +' <colgroup>'
-                +' <col width="28%">'
-                +' <col width="36%">'
-                +' <col width="28%">';
+                +' <col width="20%">'
+                +' <col width="20%">'
+                +' <col width="30%">'
+                +' <col width="20%">'
+                +' <col width="10%">';
 
 
 
     sHtmlistado ='<table cellspacing="1" id="tablaListado">';
     var sHtml='<thead>'
                         +'<tr>'
-                            +'<th width="30%">Id</th>'
-                            +'<th width="40%">Actividad</th>'
-                            +'<th width="30%">Estado</th>'
+                            +'<th width="30%">Carencia</th>'
+                            +'<th width="40%">SubCarencia</th>'
+                            +'<th width="30%">Acción</th>'
+                            +'<th width="30%">Municipio</th>'
+                            +'<th width="30%">Avance Total</th>'
                         +'</tr>'
                     +'</thead>'
                     +'<tfoot>'
                         +'<tr>'
-                            +'<th>Id</th>'
-                            +'<th>Actividad</th>'
-                            +'<th>Estado</th>'
+                            +'<th>Carencia</th>'
+                            +'<th>SubCarencia</th>'
+                            +'<th>Acción</th>'
+                            +'<th>Municipio</th>'
+                            +'<th>Avance Total</th>'
                         +'</tr>'
 
                         +'<tr><td class="pager" id="pagerI" colspan="3">'
@@ -1499,23 +1522,29 @@ function tablaI(Datos){
 
 
     sHtmlistado = sHtml;
-    for(var i= 0;i<Datos.visitas.length;i++){
+    for(var i= 0;i<Datos.reporte_general.length;i++){
                 sHtml +='<tr>'
-                +'<td style="width:28%"><a href="/admin/visitas_stg/visita/' + Datos.visitas[i].id + '/?m=1">' + Datos.visitas[i].identificador_unico +'</a></td>'
-                +'<td style="width:36%">' + Datos.visitas[i].actividades[0].descripcion +'</td>'
-                +'<td style="width:28%">' + Datos.visitas[i].entidad.nombreEstado +'</td>'
+                +'<td style="width:28%"><a href="/admin/visitas_stg/visita/' + Datos.reporte_general[i].id + '/?m=1">' + Datos.reporte_general[i].carencia +'</a></td>'
+                +'<td style="width:36%">' + Datos.reporte_general[i].subCarencia +'</td>'
+                +'<td style="width:28%">' + Datos.reporte_general[i].accion +'</td>'
+                +'<td style="width:28%">' + Datos.reporte_general[i].municipio +'</td>'
+                +'<td style="width:28%">' + Datos.reporte_general[i].suma_avance +'</td>'
                 +'</tr>'
 
 
         sHtmlistado +='<tr>'
-                +'<td>' + Datos.visitas[i].identificador_unico +'</td>'
-                +'<td>' + Datos.visitas[i].actividades[0].descripcion +'</td>'
-                +'<td>' + Datos.visitas[i].entidad.nombreEstado +'</td>'
+                +'<td>' + Datos.reporte_general[i].carencia +'</td>'
+                +'<td>' + Datos.reporte_general[i].subCarencia +'</td>'
+                +'<td>' + Datos.reporte_general[i].accion +'</td>'
+                +'<td>' + Datos.reporte_general[i].municipio +'</td>'
+                +'<td>' + Datos.reporte_general[i].suma_avance +'</td>'
                 +'</tr>'
         sHtmlExporta += '<tr>'
-                +'<td>' + Datos.visitas[i].identificador_unico +'</td>'
-                +'<td>' + Datos.visitas[i].actividades[0].descripcion +'</td>'
-                +'<td>' + Datos.visitas[i].entidad.nombreEstado +'</td>'
+                +'<td>' + Datos.reporte_general[i].carencia +'</td>'
+                +'<td>' + Datos.reporte_general[i].subCarencia +'</td>'
+                +'<td>' + Datos.reporte_general[i].accion +'</td>'
+                +'<td>' + Datos.reporte_general[i].municipio +'</td>'
+                +'<td>' + Datos.reporte_general[i].suma_avance +'</td>'
                 +'</tr>'
     }
 
@@ -1580,19 +1609,6 @@ function tablaD(Datos){
     var sHtmlExporta="";
     var sHtmlShorter="";
 
-    var totalAparicionesInternet = 0
-    var totalAparicionesOtros = 0
-    if (tipoReporte=="Dependencia") {
-        for (var i = 0; i < Datos.reporte_dependencia.length; i++) {
-            totalAparicionesOtros += Datos.reporte_dependencia[i].numero_apariciones_otros
-            totalAparicionesInternet += Datos.reporte_dependencia[i].numero_apariciones_internet
-        }
-    }else{
-        for (var i = 0; i < Datos.reporte_estado.length; i++) {
-            totalAparicionesOtros += Datos.reporte_estado[i].numero_apariciones_otros
-            totalAparicionesInternet += Datos.reporte_estado[i].numero_apariciones_internet
-        }
-    }
 
     sHtmlExporta= '<table id="tablaExporta" class="table table-striped">'
                 +' <colgroup>'
@@ -1603,10 +1619,10 @@ function tablaD(Datos){
                 +' </colgroup> '
                 +'<thead>'
                         +'<tr>'
-                            +'<th>Origen</th>'
-                            +'<th>No. de visitas</th>'
-                            +'<th>Capitalización Medios Tradicionales</th>'
-                            +'<th>Capitalización Internet</th>'
+                            +'<th>Carencia</th>'
+                            +'<th>Estado</th>'
+                            +'<th>AvanceTotal</th>'
+                            +'<th>Inversión Aprox.</th>'
                         +'</tr>'
                 +'</thead>'
                 +'<tbody>';
@@ -1621,18 +1637,18 @@ function tablaD(Datos){
 
     var sHtml='<thead>'
                         +'<tr>'
-                            +'<th width= "40%">Origen</th>'
-                            +'<th width= "20%">No. de Visitas</th>'
-                            +'<th width= "20%">Capitalización Medios Tradicionales</th>'
-                            +'<th width= "20%">Capitalización Internet</th>'
+                            +'<th width= "40%">Carencia</th>'
+                            +'<th width= "20%">Estado</th>'
+                            +'<th width= "20%">AvanceTotal</th>'
+                            +'<th width= "20%">Inversión Aprox.</th>'
                         +'</tr>'
                     +'</thead>'
                     +'<tfoot>'
                         +'<tr>'
                             +'<th>TOTALES</th>'
-                            +'<th style="text-align:right;">'+ formato_numero(Datos.reporte_general.visitas_totales, 0, '.', ',') +'</th>'
-                            +'<th style="text-align:right;">'+ formato_numero(totalAparicionesOtros, 0, '.', ',') +'</th>'
-                            +'<th style="text-align:right; padding-right:10px;">'+ formato_numero(totalAparicionesInternet, 0, '.', ',') +'</th>'
+                            +'<th style="text-align:right;">'+ formato_numero(0, 0, '.', ',') +'</th>'
+                            +'<th style="text-align:right;">'+ formato_numero(0, 0, '.', ',') +'</th>'
+                            +'<th style="text-align:right; padding-right:10px;">'+ formato_numero(0, 0, '.', ',') +'</th>'
                         +'</tr>'
 
                         +'<tr><td class="pager" id="pagerD" colspan="4">'
@@ -1654,26 +1670,26 @@ function tablaD(Datos){
 
     if (tipoReporte=="Dependencia") {
         dependenciasChecked="checked";
-        for (var i = 0; i < Datos.reporte_dependencia.length; i++) {
+        for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
             sHtml += '<tr>'
-            + '<td width= "40%">' + Datos.reporte_dependencia[i].dependencia + '</td>'
-            + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_dependencia[i].numero_visitas, 0, '.', ',') + '</td>'
-            + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_dependencia[i].numero_apariciones_otros, 0, '.', ',') + '</td>'
-            + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_dependencia[i].numero_apariciones_internet, 0, '.', ',') + '</td>'
+            + '<td width= "40%">' + Datos.reporte_por_estado[i].carencia + '</td>'
+            + '<td width= "20%" align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
+            + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].avance, 0, '.', ',') + '</td>'
+            + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].inversion_aproximada, 0, '.', ',') + '</td>'
             + '</tr>'
 
             sHtmlExporta += '<tr>'
-            + '<td width= "40%">' + Datos.reporte_dependencia[i].dependencia + '</td>'
-            + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_dependencia[i].numero_visitas, 0, '.', ',') + '</td>'
-            + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_dependencia[i].numero_apariciones_otros, 0, '.', ',') + '</td>'
-            + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_dependencia[i].numero_apariciones_internet, 2, '.', ',') + '</td>'
+            + '<td width= "40%">' + Datos.reporte_por_estado[i].dependencia + '</td>'
+            + '<td width= "20%" align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
+            + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].avance, 0, '.', ',') + '</td>'
+            + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].inversion_aproximada, 2, '.', ',') + '</td>'
             + '</tr>'
         }
     }
 
 
 
-    if (tipoReporte=="Estado") {
+    /*if (tipoReporte=="Estado") {
         estadosChecked="checked";
         for (var i = 0; i < Datos.reporte_estado.length; i++) {
             sHtml += '<tr>'
@@ -1690,7 +1706,7 @@ function tablaD(Datos){
             + '<td align="right">' + formato_numero(Datos.reporte_estado[i].numero_apariciones_internet, 0, '.', ',') + '</td>'
             + '</tr>'
         }
-    }
+    }*/
 
         sHtml += '<tr>'
             + '<td width= "40%"></td>'
