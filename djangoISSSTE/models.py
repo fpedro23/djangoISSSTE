@@ -220,6 +220,7 @@ class MetaMensual(models.Model):
         verbose_name_plural = 'Metas Mensuales'
 
     def save(self, *args, **kwargs):
+        print "Saving Meta 1"
         suma_metas = self.ene + self.feb + self.mar + self.abr + self.may + self.jun + self.jul + self.ago + self.sep
         suma_metas += self.oct + self.nov + self.dic
         self.inversionAprox = suma_metas * self.meta.montoPromedio
@@ -256,12 +257,10 @@ class AvancePorMunicipio(models.Model):
 
         avances_mensuales = AvanceMensual.objects.filter(avancePorMunicipio__id=self.id)
         suma_avances = 0
-        print "Saving"
         for avance_mensual in avances_mensuales:
             suma_avances += avance_mensual.ene + avance_mensual.feb + avance_mensual.mar + avance_mensual.abr
             suma_avances += avance_mensual.may + avance_mensual.jun + avance_mensual.jul + avance_mensual.ago
             suma_avances += avance_mensual.sep + avance_mensual.oct + avance_mensual.nov + avance_mensual.dic
-        print "Saving 2"
         print "Avances %f" % suma_avances
         print "Monto: %f" % monto_promedio
         self.inversionAprox = suma_avances * monto_promedio
