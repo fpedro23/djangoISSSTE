@@ -1,0 +1,97 @@
+{% load  admin_static app_filters%}
+<fieldset style="padding-top: 10px;">
+    {% if fieldset.name %}<h2>{{ fieldset.name }}</h2>{% endif %}
+    {% if fieldset.description %}
+        <div class="description">{{ fieldset.description|safe }}</div>
+    {% endif %}
+    {% for line in fieldset %}
+            {% for field in line %}
+                {% if field.field.name == "accionEstrategica" %}
+                    <div id="datos_GRALES_META">
+  				        <div id="tituloCUADROS">
+                		    DATOS GENERALES
+                        </div>
+                         <table width="288">
+                            <tr>
+                                <td width="144" height="21" class="txtlabel">
+                                   * Acción Estratégica:
+                                </td>
+
+                                <td width="144" height="21" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                                     {% if field.field.errors %}
+                                         {{ field.field|addcss:"border-error" }}
+                                       {% else %}
+                                          {{ field.field }}
+                                       {% endif %}
+                                <script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
+                                <script> $(document).ready(function($) {
+                                    var $te = jQuery.noConflict();
+                                    $te('#tr-{{ field.field.name}}').tooltip({html:true});});</script>
+                                </td>
+                            </tr>
+                {% endif %}
+                {% if field.field.name == "periodo" %}
+                            <tr>
+                                 <td width="144" height="21" class="txtlabel">
+                                    * Periodo:
+                                 </td>
+
+                                <td width="144" height="21" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                                     {% if field.field.errors %}
+                                         {{ field.field|addcss:"border-error" }}
+                                       {% else %}
+                                          {{ field.field }}
+                                       {% endif %}
+                                <script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
+                                <script> $(document).ready(function($) {
+                                    var $te = jQuery.noConflict();
+                                    $te('#tr-{{ field.field.name}}').tooltip({html:true});});</script>
+                                </td>
+                            </tr>
+                {% endif %}
+                {% if field.field.name == "montoPromedio" %}
+                            <tr>
+                                <td width="144" height="21" class="txtlabel">
+                                    * Monto Promedio:
+                                </td>
+
+                                <td width="144" height="21" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                                     {% if field.field.errors %}
+                                         {{ field.field|addcss:"border-error" }}
+                                       {% else %}
+                                          {{ field.field }}
+                                       {% endif %}
+                                <script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
+                                <script> $(document).ready(function($) {
+                                    var $te = jQuery.noConflict();
+                                    $te('#tr-{{ field.field.name}}').tooltip({html:true});});</script>
+                                </td>
+                            </tr>
+                {% endif %}
+
+                {% if field.field.name == "observaciones" %}
+                            <tr>
+                                <td width="144" height="21" class="txtlabel">
+                                    Estado:
+                                </td>
+
+                                <td width="144" height="21" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                                     {% if field.field.errors %}
+                                         {{ field.field|addcss:"border-error" }}
+                                       {% else %}
+                                          {{ field.field }}
+                                       {% endif %}
+                                <script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
+                                <script> $(document).ready(function($) {
+                                    var $te = jQuery.noConflict();
+                                    $te('#tr-{{ field.field.name}}').tooltip({html:true});});</script>
+                                </td>
+                            </tr>
+                {% endif %}
+
+            {% endfor %}
+
+    {% endfor %}
+
+
+</fieldset>
