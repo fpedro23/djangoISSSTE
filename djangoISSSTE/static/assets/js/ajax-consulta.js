@@ -518,22 +518,22 @@ function graficas(){
     $pp('#div-grafica').removeClass("mfp-hide");
     $pp('#div-grafica').addClass("mfp-show");
 
-    if (tipoReporte=="Dependencia") {
-        for (var i = 0; i < datosJson.reporte_dependencia.length; i++) {
-            categorias.push(datosJson.reporte_dependencia[i].dependencia);
-            datas.push(datosJson.reporte_dependencia[i].numero_visitas);
-            montos.push(datosJson.reporte_dependencia[i].numero_apariciones);
-            titulo="Número de visitas por Dependencia";
+    if (tipoReporte=="Estado") {
+        for (var i = 0; i < datosJson.reporte_por_estado.length; i++) {
+            categorias.push(datosJson.reporte_por_estado[i].estado);
+            datas.push(datosJson.reporte_por_estado[i].avance);
+            montos.push(datosJson.reporte_por_estado[i].inversion_aproximada);
+            titulo="Total de alcances por Estado";
         }
         Series=jsonSeries(datosJson,tipoReporte);
         SeriesCategorias = jsonSeriesCategorias(datosJson,tipoReporte);
         SeriesTipeadas = jsonSeriesTipeada(datosJson,tipoReporte,datosGrafica);
     }else{
-         for (var i = 0; i < datosJson.reporte_estado.length; i++) {
+         for (var i = 0; i < datosJson.reporte_por_estado.length; i++) {
                 categorias.push(datosJson.reporte_estado[i].estado);
                 datas.push(datosJson.reporte_estado[i].numero_visitas);
                 montos.push(datosJson.reporte_estado[i].numero_apariciones);
-                titulo = "Número de visitas por Estado";
+                titulo="Total de alcances por Estado";
          }
          Series = jsonSeries(datosJson, tipoReporte);
          SeriesCategorias = jsonSeriesCategorias(datosJson, tipoReporte);
@@ -559,45 +559,45 @@ function graficas(){
     switch (tipoGrafica) {
         case "Columna3D":
             if(datosGrafica=="Numero"){
-                columnaGrafica(categorias,datas,titulo,"Número de visitas");
+                columnaGrafica(categorias,datas,titulo,"Total de Avances");
             }else{
-                columnaGrafica(categorias,montos,titulo,"Apariciones Totales");
+                columnaGrafica(categorias,montos,titulo,"Inversión Aproximada");
             }
             break;
         case "Columna2D":
             if(datosGrafica=="Numero"){
-                columna2DGrafica(categorias,datas,titulo,"Número de visitas");
+                columna2DGrafica(categorias,datas,titulo,"Total de Avances");
             }else{
-                columna2DGrafica(categorias,montos,titulo,"Apariciones Totales");
+                columna2DGrafica(categorias,montos,titulo,"Inversión Aproximada");
             }
 
             break;
         case "Pastel":
             if(datosGrafica=="Numero") {
-                pieGrafica(arregloDataGrafica(datosJson, tipoReporte,datosGrafica), titulo, 0,"Número de visitas");
+                pieGrafica(arregloDataGrafica(datosJson, tipoReporte,datosGrafica), titulo, 0,"Total de Avances");
             }else{
-                pieGrafica(arregloDataGrafica(datosJson, tipoReporte,datosGrafica), titulo, 0,"Apariciones Totales");
+                pieGrafica(arregloDataGrafica(datosJson, tipoReporte,datosGrafica), titulo, 0,"Inversión Aproximada");
             }
             break;
         case "Dona":
             if(datosGrafica=="Numero") {
-                pieGrafica(arregloDataGrafica(datosJson, tipoReporte,datosGrafica), titulo, 100,"Número de Visitas");
+                pieGrafica(arregloDataGrafica(datosJson, tipoReporte,datosGrafica), titulo, 100,"Total de Avances");
             }else{
-                pieGrafica(arregloDataGrafica(datosJson, tipoReporte,datosGrafica), titulo, 100,"Apariciones Totales");
+                pieGrafica(arregloDataGrafica(datosJson, tipoReporte,datosGrafica), titulo, 100,"Inversión Aproximada");
             }
             break;
         case "Barra":
             if(datosGrafica=="Numero"){
-                barraGrafica(categorias,datas,titulo,"Número de visitas","Mil"," Mil");
+                barraGrafica(categorias,datas,titulo,"Total de Avances","","");
             }else{
-                barraGrafica(categorias,montos,titulo,"Apariciones Totales","cientos"," cien");
+                barraGrafica(categorias,montos,titulo,"Inversión Aproximada","miles"," mil");
             }
             break;
         case "columnaTipeada":
             if(datosGrafica=="Numero") {
-                columnaTipeada(SeriesTipeadas,"Número de visitas");
+                columnaTipeada(SeriesTipeadas,"Total de Avances");
             }else{
-                columnaTipeada(SeriesTipeadas,"Apariciones Totales");
+                columnaTipeada(SeriesTipeadas,"Inversión Aproximada");
             }
             break;
         case "BarraApiladaBarra":
@@ -635,16 +635,16 @@ function jsonSeriesTipeada(Datos,tipoReporte,datosGrafica) {
     var arregloTotal=new Array();
     var Data ="";
 
-    if (tipoReporte == "Dependencia") {
-        for (var i = 0; i < Datos.reporte_dependencia.length; i++) {
+    if (tipoReporte == "Estado") {
+        for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
             if(datosGrafica=="Numero") {
-                arregloSimple.push([Datos.reporte_dependencia[i].dependencia, Datos.reporte_dependencia[i].numero_visitas]);
+                arregloSimple.push([Datos.reporte_por_estado[i].Estado, Datos.reporte_por_estado[i].avance]);
             }else{
-                arregloSimple.push([Datos.reporte_dependencia[i].dependencia, Datos.reporte_dependencia[i].numero_apariciones]);
+                arregloSimple.push([Datos.reporte_por_estado[i].Estado, Datos.reporte_por_estado[i].inversion_aproximada]);
             }
         }
         Series.serie.push({
-           'name': 'No. de Visitas',
+           'name': 'Total de Avances',
            'data': arregloSimple,
            'dataLabels': {
                 enabled: true,
@@ -663,13 +663,13 @@ function jsonSeriesTipeada(Datos,tipoReporte,datosGrafica) {
     } else {
         for (var i = 0; i < datosJson.reporte_estado.length; i++) {
             if(datosGrafica=="Numero") {
-                arregloSimple.push([Datos.reporte_estado[i].estado, Datos.reporte_estado[i].numero_visitas]);
+                arregloSimple.push([Datos.reporte_por_estado[i].estado, Datos.reporte_por_estado[i].avance]);
             }else{
-                arregloSimple.push([Datos.reporte_estado[i].estado, Datos.reporte_estado[i].numero_apariciones]);
+                arregloSimple.push([Datos.reporte_por_estado[i].estado, Datos.reporte_por_estado[i].inversion_aproximada]);
             }
         }
         Series.serie.push({
-           'name': 'No. de Visitas',
+           'name': 'Total de Avances',
            'data': arregloSimple,
            'dataLabels': {
                 enabled: true,
@@ -699,34 +699,34 @@ function jsonSeriesCategorias(Datos,tipoReporte) {
     var arregloTotal=new Array();
     var Data ="";
 
-    if (tipoReporte == "Dependencia") {
-        for (var i = 0; i < Datos.reporte_dependencia.length; i++) {
-            arregloTotal.push(Datos.reporte_dependencia[i].numero_apariciones);
-            arregloSimple.push(-1*Datos.reporte_dependencia[i].numero_visitas);
-            arregloCategoria.push(Datos.reporte_dependencia[i].dependencia);
+    if (tipoReporte == "Estado") {
+        for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
+            arregloTotal.push(Datos.reporte_por_estado[i].inversion_aproximada);
+            arregloSimple.push(-1*Datos.reporte_por_estado[i].avances);
+            arregloCategoria.push(Datos.reporte_por_estado[i].estado);
         }
         Series.serie.push({
-           'name': 'No. de Visitas',
+           'name': 'Total de Avances',
            'data': arregloSimple
         });
         Series.serie.push({
-           'name': 'Apariciones Totales',
+           'name': 'Inversión Aproximada',
            'data': arregloTotal
         });
         Series.categories.push(arregloCategoria);
 
     } else {
-        for (var i = 0; i < datosJson.reporte_estado.length; i++) {
-            arregloSimple.push(-1*Datos.reporte_estado[i].numero_visitas);
-            arregloTotal.push(Datos.reporte_estado[i].numero_apariciones);
-            arregloCategoria.push(Datos.reporte_estado[i].estado);
+        for (var i = 0; i < datosJson.reporte_por_estado.length; i++) {
+            arregloTotal.push(Datos.reporte_por_estado[i].inversion_aproximada);
+            arregloSimple.push(-1*Datos.reporte_por_estado[i].avances);
+            arregloCategoria.push(Datos.reporte_por_estado[i].estado);
         }
         Series.serie.push({
-           'name': 'No. de Visitas',
+           'name': 'Total de Avances',
            'data': arregloSimple
         });
         Series.serie.push({
-           'name': 'Apariciones Totales',
+           'name': 'Inversión Aproximada',
            'data': arregloTotal
         });
         Series.categories.push(arregloCategoria);
@@ -742,13 +742,13 @@ function jsonSeries(Datos,tipoReporte) {
       'serie': []
     };
 
-    if (tipoReporte=="Dependencia") {
-        for(var i= 0;i<Datos.reporte_dependencia.length;i++){
-            Series.serie.push({ 'name': Datos.reporte_dependencia[i].dependencia, 'data': [Datos.reporte_dependencia[i].numero_visitas,Datos.reporte_dependencia[i].numero_apariciones] });
+    if (tipoReporte=="Estado") {
+        for(var i= 0;i<Datos.reporte_por_estado.length;i++){
+            Series.serie.push({ 'name': Datos.reporte_por_estado[i].estado, 'data': [Datos.reporte_por_estado[i].avance,Datos.reporte_por_estado[i].inversion_aproximada] });
         }
     }else{
-        for (var i = 0; i < datosJson.reporte_estado.length; i++) {
-            Series.serie.push({ 'name': Datos.reporte_estado[i].estado, 'data': [Datos.reporte_estado[i].numero_visitas,Datos.reporte_estado[i].numero_apariciones]});
+        for (var i = 0; i < datosJson.reporte_por_estado.length; i++) {
+            Series.serie.push({ 'name': Datos.reporte_por_estado[i].estado, 'data': [Datos.reporte_por_estado[i].avance,Datos.reporte_por_estado[i].inversion_aproximada] });
         }
     }
     //console.log(Series.serie);
@@ -760,25 +760,25 @@ function arregloDataGrafica(Datos,tipoReporte,datosGrafica) {
     var arregloDoble=new Array();
     var arregloObjeto = new Object();
 
-    if (tipoReporte=="Dependencia") {
-        for(var i= 0;i<Datos.reporte_dependencia.length;i++){
+    if (tipoReporte=="Estado") {
+        for(var i= 0;i<Datos.reporte_por_estado.length;i++){
             var arregloSimple=new Array();
-            arregloSimple.push(Datos.reporte_dependencia[i].dependencia);
+            arregloSimple.push(Datos.reporte_por_estado[i].estado);
             if(datosGrafica=="Numero") {
-                arregloSimple.push(Datos.reporte_dependencia[i].numero_visitas);
+                arregloSimple.push(Datos.reporte_por_estado[i].avance);
             }else{
-                arregloSimple.push(Datos.reporte_dependencia[i].numero_apariciones);
+                arregloSimple.push(Datos.reporte_por_estado[i].inversion_aproximada);
             }
             arregloDoble.push(arregloSimple);
         }
     }else{
-        for (var i = 0; i < datosJson.reporte_estado.length; i++) {
+        for (var i = 0; i < datosJson.reporte_por_estado.length; i++) {
             var arregloSimple=new Array();
-            arregloSimple.push(Datos.reporte_estado[i].estado);
+            arregloSimple.push(Datos.reporte_por_estado[i].estado);
             if(datosGrafica=="Numero") {
-                arregloSimple.push(Datos.reporte_estado[i].numero_visitas);
+                arregloSimple.push(Datos.reporte_por_estado[i].avance);
             }else{
-                arregloSimple.push(Datos.reporte_estado[i].numero_apariciones);
+                arregloSimple.push(Datos.reporte_por_estado[i].inversion_aproximada);
             }
             arregloDoble.push(arregloSimple);
         }
@@ -794,13 +794,13 @@ function arregloDataMapa(Datos) {
     var arregloDoble=new Array();
     var arregloObjeto = new Object();
 
-        for (var i = 0; i < datosJson.reporte_estado.length; i++) {
+        for (var i = 0; i < datosJson.reporte_por_estado.length; i++) {
             var arregloSimple=new Array();
-            arregloSimple.push("name:" +Datos.reporte_estado[i].estado);
+            arregloSimple.push("name:" +Datos.reporte_por_estado[i].estado);
             if(datosGrafica=="Numero") {
-                arregloSimple.push("value:" +Datos.reporte_estado[i].numero_visitas);
+                arregloSimple.push("value:" +Datos.reporte_por_estado[i].avance);
             }else{
-                arregloSimple.push("value:" +Datos.reporte_estado[i].numero_apariciones);
+                arregloSimple.push("value:" +Datos.reporte_por_estado[i].inversion_aproximada);
             }
             arregloDoble.push(arregloSimple);
         }
@@ -1066,7 +1066,7 @@ function Piramide(Series) {
                 panKey: 'shift'
             },
             title: {
-                text: 'Pirámide para Número de visitas y Apariciones Totales'
+                text: 'Pirámide para Total de Avances e Inversión Aproximada'
             },
             credits: {
                 enabled: false
@@ -1134,12 +1134,12 @@ function barrasApiladas(series,tipo) {
             enabled: false
         },
         xAxis: {
-            categories: ['No. visitas', 'Apariciones Totales']
+            categories: ['Total de Avances', 'Inversión Aproximada']
         },
         yAxis: {
             min: 0,
             title: {
-                text: 'Número de visitas y Apariciones Totales'
+                text: 'Total de Avances e Inversión Aproximada'
             }
         },
         legend: {
@@ -1597,12 +1597,12 @@ function tablaD(Datos){
     var totalInversion = 0
     if (tipoReporte=="Estado") {
         for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
-            totalAvances += Datos.reporte_por_estado[i].avances
+            totalAvances += Datos.reporte_por_estado[i].avance
             totalInversion += Datos.reporte_por_estado[i].inversion_aproximada
         }
     }else{
         for (var i = 0; i < Datos.reporte_estado.length; i++) {
-            totalAvances += Datos.reporte_por_estado[i].avances
+            totalAvances += Datos.reporte_por_estado[i].avance
             totalInversion += Datos.reporte_por_estado[i].inversion_aproximada
         }
     }
@@ -1793,17 +1793,17 @@ $j.tablaGrafica = function(Datos){
     var dependenciasChecked="";
     var estadosChecked="";
 
-    var totalAparicionesInternet = 0
-    var totalAparicionesOtros = 0
-    if (tipoReporte=="Dependencia") {
-        for (var i = 0; i < Datos.reporte_dependencia.length; i++) {
-            totalAparicionesOtros += Datos.reporte_dependencia[i].numero_apariciones_otros
-            totalAparicionesInternet += Datos.reporte_dependencia[i].numero_apariciones_internet
+    var totalAvances = 0
+    var totalInversion = 0
+    if (tipoReporte=="Estado") {
+        for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
+            totalAvances += Datos.reporte_por_estado[i].avance
+            totalInversion += Datos.reporte_por_estado[i].inversion_aproximada
         }
     }else{
         for (var i = 0; i < Datos.reporte_estado.length; i++) {
-            totalAparicionesOtros += Datos.reporte_estado[i].numero_apariciones_otros
-            totalAparicionesInternet += Datos.reporte_estado[i].numero_apariciones_internet
+            totalAvances += Datos.reporte_por_estado[i].avance
+            totalInversion += Datos.reporte_por_estado[i].inversion_aproximada
         }
     }
     //alert($j('input:radio[name=tipoReporte]:checked').val());
@@ -1813,25 +1813,20 @@ $j.tablaGrafica = function(Datos){
                    + ' </div>'
                + '</div>'
                     +'<table cellspacing="1"   id="tablaGrafica">'
-                    /*+' <colgroup>'
-                    +' <col width="30%">'
-                    +' <col width="40%">'
-                    +' <col width="30%">'
-                    +' </colgroup> '*/
                     +'<thead>'
                         +'<tr>'
-                            +'<th>Origen</th>'
-                            +'<th>No. de Visitas</th>'
-                            +'<th>Capitalizacion Medios Tradicionales</th>'
-                            +'<th>Capitalización Internet</th>'
+                            +'<th>Carencia</th>'
+                            +'<th>Estado</th>'
+                            +'<th>Avances</th>'
+                            +'<th>Inversi&oacute;n Aproximada</th>'
                         +'</tr>'
                     +'</thead>'
                     +'<tfoot>'
                         +'<tr>'
+                            +'<th></th>'
                             +'<th>TOTALES</th>'
-                            +'<th style="text-align:right;">'+ formato_numero(Datos.reporte_general.visitas_totales, 0, '.', ',') +'</th>'
-                            +'<th style="text-align:right;">'+ formato_numero(totalAparicionesOtros, 0, '.', ',') +'</th>'
-                            +'<th style="text-align:right; padding-right:10px;">'+ formato_numero(totalAparicionesInternet, 0, '.', ',') +'</th>'
+                            +'<th style="text-align:right;">'+ formato_numero(totalAvances, 0, '.', ',') +'</th>'
+                            +'<th style="text-align:right; padding-right:10px;">'+ formato_numero(totalInversion, 0, '.', ',') +'</th>'
                         +'</tr>'
 
                         +'<tr><td class="pager" id="pagerG" colspan="3">'
@@ -1852,12 +1847,12 @@ $j.tablaGrafica = function(Datos){
 
     if (tipoReporte=="Dependencia") {
         dependenciasChecked="checked";
-        for (var i = 0; i < Datos.reporte_dependencia.length; i++) {
+        for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
             sHtml += '<tr>'
-            + '<td>' + Datos.reporte_dependencia[i].dependencia + '</td>'
-            + '<td align="right">' + formato_numero(Datos.reporte_dependencia[i].numero_visitas, 0, '.', ',') + '</td>'
-            + '<td align="right">' + formato_numero(Datos.reporte_dependencia[i].numero_apariciones_otros, 0, '.', ',') + '</td>'
-            + '<td align="right">' + formato_numero(Datos.reporte_dependencia[i].numero_apariciones_internet, 0, '.', ',') + '</td>'
+            + '<td>' + Datos.reporte_por_estado[i].carencia + '</td>'
+            + '<td align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
+            + '<td align="right">' + formato_numero(Datos.reporte_por_estado[i].avance, 0, '.', ',') + '</td>'
+            + '<td align="right">' + formato_numero(Datos.reporte_por_estado[i].inversion_aproximada, 0, '.', ',') + '</td>'
             + '</tr>'
         }
     }
@@ -1865,12 +1860,12 @@ $j.tablaGrafica = function(Datos){
 
     if (tipoReporte=="Estado") {
         estadosChecked="checked";
-        for (var i = 0; i < Datos.reporte_estado.length; i++) {
+        for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
             sHtml += '<tr>'
-            + '<td>' + Datos.reporte_estado[i].estado + '</td>'
-            + '<td align="right">' + formato_numero(Datos.reporte_estado[i].numero_visitas, 0, '.', ',') + '</td>'
-            + '<td align="right">' + formato_numero(Datos.reporte_estado[i].numero_apariciones_otros, 0, '.', ',') + '</td>'
-            + '<td align="right">' + formato_numero(Datos.reporte_estado[i].numero_apariciones_internet, 0, '.', ',') + '</td>'
+            + '<td>' + Datos.reporte_por_estado[i].carencia + '</td>'
+            + '<td align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
+            + '<td align="right">' + formato_numero(Datos.reporte_por_estado[i].avance, 0, '.', ',') + '</td>'
+            + '<td align="right">' + formato_numero(Datos.reporte_por_estado[i].inversion_aproximada, 0, '.', ',') + '</td>'
             + '</tr>'
         }
     }

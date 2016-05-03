@@ -546,34 +546,33 @@ et$(function() {
                                 </div>
                                 <div class="tr"  style="padding-right: 3px; padding-left: 3px; padding-bottom: 0px; padding-top: 0px ">
                                     <div class="row" style="padding-right: 3px; padding-left: 3px; padding-bottom: 0px; padding-top: 0px ">
-                                        <div class="col-xs-3">
+                                        <div class="col-xs-2">
                                            <p>Estado</p>
                                        </div>
                                        <div class="col-xs-1">
                                            <article id="ver_grafica_estado">
                                                {% csrf_token %}
-                                                <input type="radio" name="graficaTipo" id="estado" value="Estado" checked/>
+                                                <p><input type="radio" name="graficaTipo" id="estado" value="Estado" checked/></p>
                                             </article>
                                        </div>
 
-                                        <div class="col-xs-4">
+                                        <div class="col-xs-2">
                                            <p>Carencia</p>
                                        </div>
                                        <div class="col-xs-1">
                                            <article id="ver_grafica_carencia">
                                                {% csrf_token %}
-                                                <input type="radio" name="graficaTipo" id="carencia" value="carencia"/>
+                                                <p><input type="radio" name="graficaTipo" id="carencia" value="carencia"/></p>
                                             </article>
                                        </div>
-                                        </div>
-                                    <div class="row" style="padding-right: 3px; padding-left: 3px; padding-bottom: 0px; padding-top: 0px ">
-                                        <div class="col-xs-3">
-                                       <p>Acci&oacute;</p>
+
+                                        <div class="col-xs-2">
+                                       <p>Acci&oacute;n</p>
                                        </div>
                                        <div class="col-xs-1">
                                            <article id="ver_grafica_accion">
                                                {% csrf_token %}
-                                                <input type="radio" name="graficaTipo" id="accion" value="Accion"/>
+                                                <p><input type="radio" name="graficaTipo" id="accion" value="Accion"/></p>
                                             </article>
                                        </div>
                                     </div>
@@ -928,16 +927,20 @@ et$(function() {
                             <thead>
 
                                 <tr>
-                                    <th>Id</th>
-                                    <th>Denominaci&oacute;n</th>
-                                    <th>Estado</th>
+                                    <th>Carencia</th>
+                                    <th>SubCarencia</th>
+                                    <th>Acci&oacute;n</th>
+                                    <th>Municipio</th>
+                                    <th>Avance Total</th>
                                 </tr>
                             </thead>
                             <tfoot>
                                 <tr>
-                                    <th>Id</th>
-                                    <th>Denominaci&oacute;n</th>
-                                    <th>Estado</th>
+                                    <th>Carencia</th>
+                                    <th>SubCarencia</th>
+                                    <th>Acci&oacute;n</th>
+                                    <th>Municipio</th>
+                                    <th>Avance Total</th>
                                 </tr>
                                 <tr><td class="pager" id="pagerI" colspan="3">
 
@@ -958,18 +961,12 @@ et$(function() {
                                     <td></td>
                                     <td></td>
                                     <td></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
                                     <td></td>
                                     <td></td>
                                 </tr>
                                 <tr>
                                     <td></td>
                                     <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -978,8 +975,26 @@ et$(function() {
                                     <td></td>
                                     <td></td>
                                     <td></td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
                                 <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -1037,16 +1052,18 @@ et$(function() {
                         <thead>
 
                             <tr>
-                                <th>Tipo Inversi&oacute;n</th>
-                                <th>No. de Obras</th>
-                                <th>Monto</th>
+                                <th>Carencia</th>
+                                <th>Estado</th>
+                                <th>Avance Total</th>
+                                <th>Inversi&oacute;n Aproximada</th>
                             </tr>
                         </thead>
                         <tfoot>
                             <tr>
-                                <th>Tipo Inversi&oacute;n</th>
-                                <th>No. de Obras</th>
-                                <th>Monto</th>
+                                <th>Carencia</th>
+                                <th>Estado</th>
+                                <th>Avance Total</th>
+                                <th>Inversi&oacute;n Aproximada</th>
                             </tr>
                             <tr><td class="pager" id="pager2" colspan="3">
                             <img src="../../static/assets/tablesorter/addons/pager/icons/first.png" class="first"/>
@@ -1066,18 +1083,12 @@ et$(function() {
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
                                 <td></td>
                                 <td></td>
                             </tr>
                             <tr>
                                 <td></td>
                                 <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -1086,8 +1097,26 @@ et$(function() {
                                 <td></td>
                                 <td></td>
                                 <td></td>
+                                <td></td>
+                                <td></td>
                             </tr>
                             <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
