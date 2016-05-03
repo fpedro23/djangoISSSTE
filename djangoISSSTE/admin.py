@@ -54,270 +54,269 @@ class UserAdmin(UserAdmin):
         else:
             return super(UserAdmin, self).response_add(request, obj, post_url_continue)
 
-
     # Ejecutado cuando el nuevo usuario es guardado
     def save_model(self, request, obj, form, change):
         obj.is_staff = True  # True para tener acceso al admin
         usuario = obj
         usuario.save()
 
-		try:
-			if usuario.usuario.rol == "AG":
-				g = Group.objects.get(name="administrador_general")
-				g.user_set.add(usuario)
-				print "Definiendo permisos para Administrador General"
+        try:
+            if usuario.usuario.rol == "AG":
+                g = Group.objects.get(name="administrador_general")
+                g.user_set.add(usuario)
+                print "Definiendo permisos para Administrador General"
 
-			elif usuario.usuario.rol == "UC":
-				g = Group.objects.get(name="usuario")
-				g.user_set.add(usuario)
-				print "Definiendo permisos para Usuario Central"
+            elif usuario.usuario.rol == "UC":
+                g = Group.objects.get(name="usuario")
+                g.user_set.add(usuario)
+                print "Definiendo permisos para Usuario Central"
 
-			elif usuario.usuario.rol == "FC":
-				g = Group.objects.get(name="funcionario")
-				g.user_set.add(usuario)
-				print "Definiendo permisos para Funcionario Central"
+            elif usuario.usuario.rol == "FC":
+                g = Group.objects.get(name="funcionario")
+                g.user_set.add(usuario)
+                print "Definiendo permisos para Funcionario Central"
 
-			elif usuario.usuario.rol == "UE":
-				g = Group.objects.get(name="usuario")
-				g.user_set.add(usuario)
-				print "Definiendo permisos para Usuario Estatal"
+            elif usuario.usuario.rol == "UE":
+                g = Group.objects.get(name="usuario")
+                g.user_set.add(usuario)
+                print "Definiendo permisos para Usuario Estatal"
 
-			elif usuario.usuario.rol == "FE":
-				g = Group.objects.get(name="funcionario")
-				g.user_set.add(usuario)
-				print "Definiendo permisos para Funcionario Estatal"
-		except Group.DoesNotExist:
-			g = None
+            elif usuario.usuario.rol == "FE":
+                g = Group.objects.get(name="funcionario")
+                g.user_set.add(usuario)
+                print "Definiendo permisos para Funcionario Estatal"
+        except Group.DoesNotExist:
+            g = None
 
-		super(UserAdmin, self).save_model(request, obj, form, change)
+        super(UserAdmin, self).save_model(request, obj, form, change)
 
-	# Borrando usuario
-	def delete_model(self, request, obj):
-		self.message_user(request, "Usuario eliminado satisfactoriamente", )
-		super(UserAdmin, self).delete_model(request, obj)
+    # Borrando usuario
+    def delete_model(self, request, obj):
+        self.message_user(request, "Usuario eliminado satisfactoriamente", )
+        super(UserAdmin, self).delete_model(request, obj)
 
-    # Definiendo a los usuarios que serán visibles para los demás usuarios
-    # dependiendo de su rol y estado
+
+# Definiendo a los usuarios que serán visibles para los demás usuarios
+# dependiendo de su rol y estado
+def get_queryset(self, request):
+    queryEstado = request.user.usuario.estado.id
+
+    qs = super(UserAdmin, self).get_queryset(request)
+    if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UC' or request.user.usuario.rol == 'FC':
+        return qs
+    elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
+        print 'Query Set Administrador dependenciasub'
+        print queryEstado
+        return qs.filter(
+            Q(usuario__estado__id=queryEstado)
+        )
+
+
+class MetaMensualInLine(admin.TabularInline):
+    model = MetaMensual
+    can_delete = False
+    readonly_fields = ('inversionAprox',)
+    extra = 0
+
+    # Define los estados visibles dependiendo del rol del usuario
+    # y del estado al que pertenece en la pantalla para añadir una nueva
+    # meta mensual
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        query_estado = request.user.usuario.estado.id
+
+        if db_field.name == "estado":
+            if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UR' or request.user.usuario.rol == 'FR':
+                kwargs["queryset"] = Estado.objects.all()
+            elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
+                kwargs["queryset"] = Estado.objects.filter(
+                    Q(id=query_estado)
+                )
+
+        return super(
+            MetaMensualInLine, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
+
+class MetaAdmin(admin.ModelAdmin):
+    model = Meta
+    fields = ('accionEstrategica', 'periodo', 'montoPromedio', 'observaciones',)
+    list_display = ('get_carencia', 'get_subcarencia', 'accionEstrategica', 'periodo', 'get_inversion')
+    inlines = [MetaMensualInLine]
+    can_delete = True
+
+    # Obteniendo el campo de la SuCarencia para la lista de Metas
+    def get_subcarencia(self, obj):
+        return obj.accionEstrategica.subCarencia
+
+    # Obteniendo el campo de la Carencia para la lista de Metas
+    def get_carencia(self, obj):
+        return obj.accionEstrategica.subCarencia.carencia
+
+    # Obteniendo el campo de la Inversion por cada Meta a nivel estado y anual
+    def get_inversion(self, obj):
+        metaID = obj.id
+        inversionAprox = 0
+        for singleMetaMensual in MetaMensual.objects.filter(Q(meta__id=metaID)):
+            inversionAprox += singleMetaMensual.inversionAprox
+        return inversionAprox * obj.montoPromedio
+
+    get_subcarencia.short_description = "SubCarencia"
+    get_carencia.short_description = "Carencia"
+    get_inversion.short_description = "Inversion Aproximada"
+
+    def save_model(self, request, obj, form, change):
+        super(MetaAdmin, self).save_model(request, obj, form, change)
+
+
+class AvanceMensualInLine(admin.TabularInline):
+    model = AvanceMensual
+    extra = 0
+
+    # Define los municipios visibles dependiendo del rol del usuario
+    # y del estado al que pertenece en la pantalla para añadir un nuevo
+    # avance mensual
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        query_estado = request.user.usuario.estado.id
+        if db_field.name == "municipio":
+            if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UR' or request.user.usuario.rol == 'FR':
+                kwargs["queryset"] = Municipio.objects.all()
+            elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
+                kwargs["queryset"] = Municipio.objects.filter(
+                    Q(estado=query_estado)
+                )
+
+        return super(
+            AvanceMensualInLine, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
+
+class AvancePorMunicipioAdmin(admin.ModelAdmin):
+    # La entidad de meta se desplegará con el label de "Acción Estratégica"
+    # y con el nombre de su llave foránea "acción estratégica".	Esto con la
+    # intención de cumplir con los requerimientos del cliente, sin embargo,
+    # a nivel funcional debe ser tomado en cuenta como meta
+
+    model = AvancePorMunicipio
+    inlines = [AvanceMensualInLine, ]
+    fields = ('periodo', 'meta', 'estado', 'get_carencia', 'get_unidad_medida', 'get_observaciones',
+              'get_subcarencia', 'get_meta_mensual', 'get_accion', 'inversionAprox')
+    readonly_fields = ('get_carencia', 'get_subcarencia', 'get_unidad_medida', 'get_observaciones',
+                       'get_meta_mensual', 'get_accion', 'inversionAprox')
+    list_display = ('id', 'get_carencia', 'get_subcarencia', 'meta', 'periodo', 'estado', 'inversionAprox')
+    ordering = ['meta__nombreMeta', ]
+
+    # Obteniendo el campo de la SuCarencia para la lista de avances por municipio
+    def get_subcarencia(self, obj):
+        return obj.meta.accionEstrategica.subCarencia
+
+    # Obteniendo el campo de la Carencia para la lista de avances por municipio
+    def get_carencia(self, obj):
+        return obj.meta.accionEstrategica.subCarencia.carencia
+
+    def get_unidad_medida(self, obj):
+        return obj.meta.accionEstrategica.unidadDeMedida
+
+    def get_observaciones(self, obj):
+        return obj.meta.observaciones
+
+    def get_meta_mensual(self, obj):
+        arreglo_metas = []
+        val_meta = obj.meta.id
+        val_estado = obj.estado.id
+        meta_mensual = MetaMensual.objects.filter(meta__id=val_meta, estado__id=val_estado)
+        to_print = ""
+        for meta in meta_mensual:
+            to_print += " Enero: " + str(meta.ene) + " Febrero: " + str(meta.feb) + " Marzo: " + str(meta.mar)
+            to_print += " Abril: " + str(meta.abr) + " Mayo: " + str(meta.may) + " Junio: " + str(meta.jun)
+            to_print += " Julio: " + str(meta.jul) + " Agosto: " + str(meta.ago) + " Septiembre: " + str(meta.sep)
+            to_print += " Octubre: " + str(meta.oct) + " Noviembre: " + str(meta.nov) + " Diciembre: " + str(meta.dic)
+        return to_print
+
+    def get_accion(self, obj):
+        return obj.meta.accionEstrategica.nombreAccion
+
+    get_subcarencia.short_description = "Sub Carencia"
+    get_carencia.short_description = "Carencia"
+    get_unidad_medida.short_description = "Unidad de Medida"
+    get_observaciones.short_description = "Observaciones"
+    get_meta_mensual.short_description = "Metas"
+    get_accion.short_description = "Acción a Ralizar"
+
+    # Esta funcion se ejecuta al desplegar la lista de Avances por municipio. Dentro
+    # de ella se aplica un filtro por el rol del usuario y de su estado
     def get_queryset(self, request):
         queryEstado = request.user.usuario.estado.id
 
-        qs = super(UserAdmin, self).get_queryset(request)
+        qs = super(AvancePorMunicipioAdmin, self).get_queryset(request)
         if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UC' or request.user.usuario.rol == 'FC':
             return qs
         elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
             print 'Query Set Administrador dependenciasub'
             print queryEstado
             return qs.filter(
-                Q(usuario__estado__id=queryEstado)
+                Q(estado__id=queryEstado)
             )
 
+    # Define los estados visibles dependiendo del rol del usuario
+    # y del estado al que pertenece en la pantalla para añadir un nuevo
+    # avance por municipio
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        query_estado = request.user.usuario.estado.id
 
-class MetaMensualInLine(admin.TabularInline):
-	model = MetaMensual
-	can_delete = False
-	readonly_fields = ('inversionAprox',)
-	extra = 0
+        if db_field.name == "estado":
+            if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UR' or request.user.usuario.rol == 'FR':
+                kwargs["queryset"] = Estado.objects.all()
+            elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
+                kwargs["queryset"] = Estado.objects.filter(
+                    Q(id=query_estado)
+                )
 
-	# Define los estados visibles dependiendo del rol del usuario
-	# y del estado al que pertenece en la pantalla para añadir una nueva
-	# meta mensual
-	def formfield_for_foreignkey(self, db_field, request, **kwargs):
-		query_estado = request.user.usuario.estado.id
-
-		if db_field.name == "estado":
-			if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UR' or request.user.usuario.rol == 'FR':
-				kwargs["queryset"] = Estado.objects.all()
-			elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
-				kwargs["queryset"] = Estado.objects.filter(
-					Q(id=query_estado)
-				)
-
-		return super(
-			MetaMensualInLine, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
-
-class MetaAdmin(admin.ModelAdmin):
-	model = Meta
-	fields = ('accionEstrategica', 'periodo', 'montoPromedio','observaciones',)
-	list_display = ('get_carencia','get_subcarencia','accionEstrategica', 'periodo','get_inversion')
-	inlines = [MetaMensualInLine]
-	can_delete = True
-
-	# Obteniendo el campo de la SuCarencia para la lista de Metas
-	def get_subcarencia(self, obj):
-		return obj.accionEstrategica.subCarencia
-
-	# Obteniendo el campo de la Carencia para la lista de Metas
-	def get_carencia(self, obj):
-		return obj.accionEstrategica.subCarencia.carencia
-
-	# Obteniendo el campo de la Inversion por cada Meta a nivel estado y anual
-	def get_inversion(self, obj):
-		metaID = obj.id
-		inversionAprox = 0
-		for singleMetaMensual in MetaMensual.objects.filter(Q(meta__id=metaID)):
-			inversionAprox += singleMetaMensual.inversionAprox
-		return inversionAprox * obj.montoPromedio
-
-	get_subcarencia.short_description = "SubCarencia"
-	get_carencia.short_description = "Carencia"
-	get_inversion.short_description = "Inversion Aproximada"
-
-	def save_model(self, request, obj, form, change):
-		super(MetaAdmin, self).save_model(request, obj, form, change)
-
-
-class AvanceMensualInLine(admin.TabularInline):
-	model = AvanceMensual
-	extra = 0
-
-	# Define los municipios visibles dependiendo del rol del usuario
-	# y del estado al que pertenece en la pantalla para añadir un nuevo
-	# avance mensual
-	def formfield_for_foreignkey(self, db_field, request, **kwargs):
-		query_estado = request.user.usuario.estado.id
-		if db_field.name == "municipio":
-			if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UR' or request.user.usuario.rol == 'FR':
-				kwargs["queryset"] = Municipio.objects.all()
-			elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
-				kwargs["queryset"] = Municipio.objects.filter(
-					Q(estado=query_estado)
-				)
-
-		return super(
-			AvanceMensualInLine, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
-
-class AvancePorMunicipioAdmin(admin.ModelAdmin):
-
-    # La entidad de meta se desplegará con el label de "Acción Estratégica"
-    # y con el nombre de su llave foránea "acción estratégica".	Esto con la
-    # intención de cumplir con los requerimientos del cliente, sin embargo,
-    # a nivel funcional debe ser tomado en cuenta como meta
-
-	model = AvancePorMunicipio
-	inlines = [AvanceMensualInLine, ]
-	fields = ('periodo','meta', 'estado','get_carencia', 'get_unidad_medida','get_observaciones',
-			  'get_subcarencia', 'get_meta_mensual', 'get_accion', 'inversionAprox')
-	readonly_fields = ('get_carencia', 'get_subcarencia', 'get_unidad_medida', 'get_observaciones',
-					   'get_meta_mensual','get_accion', 'inversionAprox')
-	list_display = ('id','get_carencia','get_subcarencia','meta', 'periodo','estado', 'inversionAprox')
-	ordering = ['meta__nombreMeta', ]
-
-	# Obteniendo el campo de la SuCarencia para la lista de avances por municipio
-	def get_subcarencia(self, obj):
-		return obj.meta.accionEstrategica.subCarencia
-
-	# Obteniendo el campo de la Carencia para la lista de avances por municipio
-	def get_carencia(self, obj):
-		return obj.meta.accionEstrategica.subCarencia.carencia
-
-	def get_unidad_medida(self, obj):
-		return obj.meta.accionEstrategica.unidadDeMedida
-
-	def get_observaciones(self, obj):
-		return obj.meta.observaciones
-
-	def get_meta_mensual(self, obj):
-		arreglo_metas = []
-		val_meta = obj.meta.id
-		val_estado = obj.estado.id
-		meta_mensual = MetaMensual.objects.filter(meta__id = val_meta, estado__id = val_estado)
-		to_print = ""
-		for meta in meta_mensual:
-			to_print += " Enero: "   + str(meta.ene) + " Febrero: "   + str(meta.feb) + " Marzo: "      + str(meta.mar)
-			to_print += " Abril: "   + str(meta.abr) + " Mayo: "      + str(meta.may) + " Junio: "      + str(meta.jun)
-			to_print += " Julio: "   + str(meta.jul) + " Agosto: "    + str(meta.ago) + " Septiembre: " + str(meta.sep)
-			to_print += " Octubre: " + str(meta.oct) + " Noviembre: " + str(meta.nov) + " Diciembre: "  + str(meta.dic)
-		return to_print
-
-	def get_accion(self, obj):
-		return obj.meta.accionEstrategica.nombreAccion
-
-
-	get_subcarencia.short_description = "Sub Carencia"
-	get_carencia.short_description = "Carencia"
-	get_unidad_medida.short_description = "Unidad de Medida"
-	get_observaciones.short_description = "Observaciones"
-	get_meta_mensual.short_description = "Metas"
-	get_accion.short_description = "Acción a Ralizar"
-
-	# Esta funcion se ejecuta al desplegar la lista de Avances por municipio. Dentro
-	# de ella se aplica un filtro por el rol del usuario y de su estado
-	def get_queryset(self, request):
-		queryEstado = request.user.usuario.estado.id
-
-		qs = super(AvancePorMunicipioAdmin, self).get_queryset(request)
-		if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UC' or request.user.usuario.rol == 'FC':
-			return qs
-		elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
-			print 'Query Set Administrador dependenciasub'
-			print queryEstado
-			return qs.filter(
-				Q(estado__id=queryEstado)
-			)
-
-	# Define los estados visibles dependiendo del rol del usuario
-	# y del estado al que pertenece en la pantalla para añadir un nuevo
-	# avance por municipio
-	def formfield_for_foreignkey(self, db_field, request, **kwargs):
-		query_estado = request.user.usuario.estado.id
-
-		if db_field.name == "estado":
-			if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UR' or request.user.usuario.rol == 'FR':
-				kwargs["queryset"] = Estado.objects.all()
-			elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
-				kwargs["queryset"] = Estado.objects.filter(
-					Q(id=query_estado)
-				)
-
-		return super(
-			AvancePorMunicipioAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+        return super(
+            AvancePorMunicipioAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 class AccionEstrategicaAdmin(admin.ModelAdmin):
-	model = AccionEstrategica
-	list_display = ('nombreAccion','get_carencia', 'subCarencia','unidadDeMedida', 'responsable',
-					'get_cargoResponsable', 'get_inversionTotal')
-	readonly_fields = ('get_carencia',)
+    model = AccionEstrategica
+    list_display = ('nombreAccion', 'get_carencia', 'subCarencia', 'unidadDeMedida', 'responsable',
+                    'get_cargoResponsable', 'get_inversionTotal')
+    readonly_fields = ('get_carencia',)
 
-	def get_carencia(self, obj):
-		return obj.subCarencia.carencia
+    def get_carencia(self, obj):
+        return obj.subCarencia.carencia
 
-	def get_cargoResponsable(self, obj):
-		return obj.responsable.cargoResponsable
+    def get_cargoResponsable(self, obj):
+        return obj.responsable.cargoResponsable
 
-	# Obteniedo el campo de la Inversión total por Acción Estratégica
-	# esto incluye a las metas de cualquier año que atiendan a esta acción
+    # Obteniedo el campo de la Inversión total por Acción Estratégica
+    # esto incluye a las metas de cualquier año que atiendan a esta acción
 
-	def get_inversionTotal(self, obj):
-		arregloMetas = []
-		accionEstrategicaID = obj.id
-		inversionAprox = 0
-		for singleMeta in Meta.objects.filter(
-				Q(accionEstrategica__id=accionEstrategicaID)
-		):
-			arregloMetas.append(singleMeta.id)
+    def get_inversionTotal(self, obj):
+        arregloMetas = []
+        accionEstrategicaID = obj.id
+        inversionAprox = 0
+        for singleMeta in Meta.objects.filter(
+                Q(accionEstrategica__id=accionEstrategicaID)
+        ):
+            arregloMetas.append(singleMeta.id)
 
-		for singleMetaMensual in MetaMensual.objects.filter(
-			Q(meta__id__in = arregloMetas)
-		):
-			inversionAprox += singleMetaMensual.inversionAprox
-		return inversionAprox
+        for singleMetaMensual in MetaMensual.objects.filter(
+                Q(meta__id__in=arregloMetas)
+        ):
+            inversionAprox += singleMetaMensual.inversionAprox
+        return inversionAprox
 
-	get_carencia.short_description = 'Carencia'
-	get_cargoResponsable.short_description = 'Cargo del Responsable'
-	get_inversionTotal.short_description = "Inversión Aproximada"
+    get_carencia.short_description = 'Carencia'
+    get_cargoResponsable.short_description = 'Cargo del Responsable'
+    get_inversionTotal.short_description = "Inversión Aproximada"
 
 
 class SubcarenciaAdmin(admin.ModelAdmin):
     model = SubCarencia
-    list_display = ('nombreSubCarencia','carencia')
+    list_display = ('nombreSubCarencia', 'carencia')
 
 
 class AvanceMensualAdmin(admin.ModelAdmin):
     model = AvanceMensual
     list_display = ('avancePorMunicipio', 'fecha_ultima_modificacion')
+
 
 # admin.site.register(LogEntry)
 admin.site.unregister(User)

@@ -179,7 +179,8 @@ class Meta(models.Model):
         ans = model_to_dict(self)
         ans['id'] = str(self.id)
         ans['accionEstrategica'] = self.accionEstrategica.nombreAccion
-        ans['estado'] = self.estado.nombreEstado
+        ans['estado'] = MetaMensual.estado.nombreEstado
+        #ans['estado'] = self.estado.nombreEstado
         ans['periodo'] = self.periodo.nombrePeriodo
         return ans
 
