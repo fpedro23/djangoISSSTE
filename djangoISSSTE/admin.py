@@ -193,8 +193,8 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 
 	model = AvancePorMunicipio
 	inlines = [AvanceMensualInLine, ]
-	fields = ('periodo','meta', 'estado','get_carencia', 'get_unidad_medida','get_observaciones',
-			  'get_subcarencia', 'get_meta_mensual', 'get_accion', 'inversionAprox')
+	fields = ('periodo','meta', 'estado','get_carencia', 'get_unidad_medida','get_subcarencia', 'inversionAprox',
+              'get_observaciones','get_meta_mensual', 'get_accion')
 	readonly_fields = ('get_carencia', 'get_subcarencia', 'get_unidad_medida', 'get_observaciones',
 					   'get_meta_mensual','get_accion', 'inversionAprox')
 	list_display = ('id','get_carencia','get_subcarencia','meta', 'periodo','estado', 'inversionAprox')
