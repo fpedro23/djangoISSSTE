@@ -11,13 +11,13 @@
   				        <div id="tituloCUADROS">
                 		    DATOS GENERALES
                         </div>
-                         <table width="288">
+                         <table width="1022">
                             <tr>
-                                <td width="144" height="21" class="txtlabel">
+                                <td width="170" height="22" class="txtlabel">
                                    * Acción Estratégica:
                                 </td>
 
-                                <td width="144" height="21" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                                <td width="170" height="22" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
                                      {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}
@@ -28,15 +28,15 @@
                                     var $te = jQuery.noConflict();
                                     $te('#tr-{{ field.field.name}}').tooltip({html:true});});</script>
                                 </td>
-                            </tr>
+
                 {% endif %}
                 {% if field.field.name == "periodo" %}
-                            <tr>
-                                 <td width="144" height="21" class="txtlabel">
+
+                                 <td width="170" height="22" class="txtlabel">
                                     * Periodo:
                                  </td>
 
-                                <td width="144" height="21" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                                <td width="170" height="22" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
                                      {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}
@@ -47,15 +47,15 @@
                                     var $te = jQuery.noConflict();
                                     $te('#tr-{{ field.field.name}}').tooltip({html:true});});</script>
                                 </td>
-                            </tr>
+
                 {% endif %}
                 {% if field.field.name == "montoPromedio" %}
-                            <tr>
-                                <td width="144" height="21" class="txtlabel">
+
+                                <td width="170" height="22" class="txtlabel">
                                     * Monto Promedio:
                                 </td>
 
-                                <td width="144" height="21" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                                <td width="170" height="22" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
                                      {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}
@@ -66,27 +66,35 @@
                                     var $te = jQuery.noConflict();
                                     $te('#tr-{{ field.field.name}}').tooltip({html:true});});</script>
                                 </td>
-                            </tr>
+                        </tr>
+                    </table>
+
                 {% endif %}
 
                 {% if field.field.name == "observaciones" %}
+                        <table  width="1022">
                             <tr>
-                                <td width="144" height="21" class="txtlabel">
-                                    Estado:
+                                <td width="170" height="30" class="txtlabel" >
+                                    Observaciones:
                                 </td>
 
-                                <td width="144" height="21" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
-                                     {% if field.field.errors %}
-                                         {{ field.field|addcss:"border-error" }}
+                                <td width="850" height="30"  class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+
+                                                 {% if field.field.errors %}
+                                         {{ field.field|addcss:"obs-field border-error" }}
                                        {% else %}
-                                          {{ field.field }}
+                                          {{ field.field|addcss:"obs-field" }}
                                        {% endif %}
                                 <script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
                                 <script> $(document).ready(function($) {
                                     var $te = jQuery.noConflict();
                                     $te('#tr-{{ field.field.name}}').tooltip({html:true});});</script>
+
+
                                 </td>
                             </tr>
+                        </table>
+                    </div>
                 {% endif %}
 
             {% endfor %}

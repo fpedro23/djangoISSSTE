@@ -749,6 +749,32 @@
 }
 /*cierre de elementos correspondientes a la PAGINA de CATALOGO DE METAS*/
 
+/*elementos correspondientes a la ALTA de METAS*/
+#datos_GRALES_META{
+	border: 2px solid #327451;
+	border-radius: 2px;
+	width: 1021px;
+	height: 93px;
+	font-family: 'soberana_sanslight';
+	font-size: 15px;
+	color: #6A6B6C;
+	position: absolute;
+	left: -1px;
+	top: 125px;
+}
+
+.mensuales_META{
+	border: 2px solid #327451;
+	border-radius: 2px;
+	width: 1024px;
+	height: 270px;
+	position: absolute;
+	top: 180px;
+	left: -2px;
+}
+/*cierre de elementos correspondientes a la ALTA de METAS*/
+
+
 /*INICIO de elementos correspondientes a la PAGINA de USUARIOS*/
 .usuario_ADD{
 	width: 180px;
@@ -992,4 +1018,13 @@
 
 .txtlabel{
     font-weight: bold;
+}
+
+input{
+    width: 95%;
+    height: 21px;
+}
+
+.obs-field{
+    width: 99%;
 }
