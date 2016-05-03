@@ -614,6 +614,21 @@
 	text-align:center;
 }
 
+.exportarALERTA {
+	font-family: 'soberana_titularbold';
+	font-size: 24px;
+	text-align: center;
+	color: #FFFFFF;
+}
+
+.textoEXPORTAR{
+	font-family: 'soberana_sanslight';
+	color: #FFFFFF;
+	font-size: 15px;
+	text-align: center;
+	position: relative;
+}
+
 .guardar_consBTN{
 	width: 82px;
 	height: 30px;
@@ -662,29 +677,29 @@
 .exportarBTN{
 	width: 30px;
 	height: 30px;
-	background-image: url(../imagenes/bigBackground.fw.png);
+	background-image: url(../Imagenes/bigBackground.fw.png);
 	background-position: -678px -368px;
-	position: absolute;
-	top: 302px;
-	left: 226px;
+	position: relative;
+	display: inline-block;
 }
 
 .exportarBTN:hover{
 	background-position: -678px -398px;
+	cursor: pointer;
 }
 
 .graficoBTN{
 	width: 30px;
 	height: 30px;
-	background-image: url(../imagenes/bigBackground.fw.png);
+	background-image: url(../Imagenes/bigBackground.fw.png);
 	background-position: -709px -369px;
-	position: absolute;
-	top: 302px;
-	left: 261px;
+	position: relative;
+	display: inline-block;
 }
 
 .graficoBTN:hover{
 	background-position:-709px -399px;
+	cursor: pointer;
 }
 /*cierre de elementos correspondientes a PAGINA de CONSULTA MEDIANTE FILTROS*/
 
@@ -876,13 +891,13 @@
 	height: 30px;
 	background-image: url(../Imagenes/bigBackground.fw.png);
 	background-position: -726px -1925px;
-	position: absolute;
-	top: 540px;
-	left: 864px;
+	position: relative;
+	display: inline-block;
 }
 
 .salirBTN:hover{
 	background-position: -726px -1956px;
+	cursor: pointer;
 }
   
 .guardarotroBTN{
@@ -918,13 +933,13 @@
 	height: 30px;
 	background-image: url(../Imagenes/bigBackground.fw.png);
 	background-position: -1047px -1862px;
-	position: absolute;
-	top: 157px;
-	left: 771px;
+	position: relative;
+	display: inline-block;
 }
 
 .listarBTN:hover{
 	background-position: -1047px -1893px;
+	cursor: pointer;
 }
 
 .limpiarBTN{
@@ -932,13 +947,14 @@
 	height: 30px;
 	background-image: url(../Imagenes/bigBackground.fw.png);
 	background-position: -726px -1861px;
-	position: absolute;
-	top: 157px;
-	left: 842px;
+	position: relative;
+	display: inline-block;
+
 }
 
 .limpiarBTN:hover{
 	background-position: -726px -1892px;
+	cursor: pointer
 }
 
 .consultarBTN{
@@ -946,13 +962,13 @@
 	height: 30px;
 	background-image: url(../Imagenes/bigBackground.fw.png);
 	background-position: -811px -1861px;
-	position: absolute;
-	top: 157px;
-	left: 927px;
+	position: relative;
+	display: inline-block;
 }
 
 .consultarBTN:hover{
 	background-position: -811px -1892px;
+	cursor: pointer
 }
 /*cierre de datos correspondientes al ALTA DE USUARIOS*/
 

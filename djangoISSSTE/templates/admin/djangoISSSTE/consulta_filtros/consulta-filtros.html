@@ -73,7 +73,7 @@
             header: true,
             checkAllText: 'Marcar todas',
             uncheckAllText: 'Desmarcar todas',
-            noneSelectedText: 'SubCarencias',
+            noneSelectedText: 'SubCarencia',
             selectedText: '# SubCarencias'
         });
         // off
@@ -81,7 +81,7 @@
             header: true,
             checkAllText: 'Marcar todas',
             uncheckAllText: 'Desmarcar todas',
-            noneSelectedText: 'Acciones estratégicas',
+            noneSelectedText: 'Acción estratégica',
             selectedText: '# Acciones'
         });
         // off
@@ -89,7 +89,7 @@
             header: true,
             checkAllText: 'Marcar todos',
             uncheckAllText: 'Desmarcar todos',
-            noneSelectedText: 'Estados',
+            noneSelectedText: 'Estado',
             selectedText: '# Estados'
         });
         // off
@@ -97,7 +97,7 @@
             header: true,
             checkAllText: 'Marcar todos',
             uncheckAllText: 'Desmarcar todos',
-            noneSelectedText: 'Municipios',
+            noneSelectedText: 'Municipio',
             selectedText: '# Municipios'
         });
         // off
@@ -105,7 +105,7 @@
             header: true,
             checkAllText: 'Marcar todos',
             uncheckAllText: 'Desmarcar todos',
-            noneSelectedText: 'Periodos',
+            noneSelectedText: 'Periodo',
             selectedText: '# Periodos'
         });
         // off
@@ -113,7 +113,7 @@
             header: true,
             checkAllText: 'Marcar todos',
             uncheckAllText: 'Desmarcar todos',
-            noneSelectedText: 'Meses',
+            noneSelectedText: 'Mes',
             selectedText: '# Meses'
         });
         // off
@@ -121,7 +121,7 @@
             header: true,
             checkAllText: 'Marcar todos',
             uncheckAllText: 'Desmarcar todos',
-            noneSelectedText: 'Responsables',
+            noneSelectedText: 'Responsable',
             selectedText: '# Responsables'
         });
     });
@@ -150,7 +150,7 @@
 
 
     <link href="{% static "assets/bootstrap/css/bootstrap-datepicker3.min.css"%}" rel="stylesheet">
-    <link href="{% static "css/styles.css"%}" rel="stylesheet">
+
 
     <style type="text/css">
         /**
@@ -690,13 +690,13 @@ et$(function() {
                         </div>
                     </div>
 
-                    <div class="col-md-3 " style="padding-right: 3px; padding-left: 3px; padding-bottom: 0px; padding-top: 0px ">
+                    <div class="col-md-2 " style="padding-right: 3px; padding-left: 3px; padding-bottom: 0px; padding-top: 0px ">
                          <div class="panel panel-default panel-table ">
                             <div class="panel-body " style="padding-right: 4px; padding-left: 4px; padding-bottom: 4px; padding-top: 4px ">
                                 <div class="tr">
 
                                     <div class="row">
-                                        <div class="col-md-10 " style="padding-right: 4px; padding-left: 4px; padding-bottom: 0px; padding-top: 0px ">
+                                        <div class="col-md-12 " style="padding-right: 4px; padding-left: 4px; padding-bottom: 0px; padding-top: 0px ">
                                             <center>Rango de Avance</center>
                                         </div>
                                     </div>
@@ -704,7 +704,7 @@ et$(function() {
                                         <div class="col-md-2 " style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
                                            De:
                                         </div>
-                                        <div class="col-md-7" style=" padding-bottom: 0px; padding-top: 0px ">
+                                        <div class="col-md-10" style=" padding-bottom: 0px; padding-top: 0px ">
                                                 <input type="text" class="form-control2" id="avanceInicial" placeholder="0.00">
                                         </div></center>
                                     </div>
@@ -712,14 +712,14 @@ et$(function() {
                                         <div class="col-md-2 " style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
                                             A:
                                         </div>
-                                        <div class="col-md-7 " style=" padding-bottom: 0px; padding-top: 0px ">
+                                        <div class="col-md-10 " style=" padding-bottom: 0px; padding-top: 0px ">
                                                 <input type="text" class="form-control2" id="avanceFinal" placeholder="0.00">
                                         </div></center>
 
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-10 " style="padding-right: 4px; padding-left: 4px; padding-bottom: 0px; padding-top: 0px ">
+                                        <div class="col-md-12 " style="padding-right: 4px; padding-left: 4px; padding-bottom: 0px; padding-top: 0px ">
                                             <center>Rango de Inversi&oacute;n</center>
                                         </div>
                                     </div>
@@ -727,7 +727,7 @@ et$(function() {
                                         <div class="col-md-2 " style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
                                            De:
                                         </div>
-                                        <div class="col-md-7" style=" padding-bottom: 0px; padding-top: 0px ">
+                                        <div class="col-md-10" style=" padding-bottom: 0px; padding-top: 0px ">
                                                 <input type="text" class="form-control2" id="inversionInicial" placeholder="0.00">
                                         </div></center>
                                     </div>
@@ -735,7 +735,7 @@ et$(function() {
                                         <div class="col-md-2 " style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
                                             A:
                                         </div>
-                                        <div class="col-md-7 " style=" padding-bottom: 0px; padding-top: 0px ">
+                                        <div class="col-md-10 " style=" padding-bottom: 0px; padding-top: 0px ">
                                                 <input type="text" class="form-control2" id="inversionFinal" placeholder="0.00">
                                         </div></center>
                                     </div>
@@ -745,58 +745,93 @@ et$(function() {
                          </div>
                     </div>
 
-                    <div class="col-md-2" style="padding-right: 4px; padding-left: 4px; padding-bottom: 0px; padding-top: 0px ">
-                        <div class="panel panel-default panel-table">
-                            <div class="panel-body" style="padding-right: 4px; padding-left: 4px; padding-bottom: 4px; padding-top: 4px ">
+                    <div class="col-md-2 " style="padding-right: 4px; padding-left: 4px; padding-bottom: 0px; padding-top: 0px ">
+                         <div class="panel panel-default panel-table ">
+                            <div class="panel-body " style="padding-right: 4px; padding-left: 4px; padding-bottom: 4px; padding-top: 4px ">
                                 <div class="tr">
-                                    <div class="row">
-                                        <div class="col-md-10" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
 
-                                            <select id="msCarencias" multiple="multiple" style="width: 100%;height: auto;">
-                                                {% for obj in carencias %}
-                                                     <option value={{obj.id}}>{{obj.nombreCarencia}}</option>
-                                                {% endfor %}
-                                            </select>
+                                    <div class="row">
+                                        <div class="col-md-12 " style="padding-right: 4px; padding-left: 4px; padding-bottom: 0px; padding-top: 0px ">
+                                            <center>Rango de Meta</center>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-10" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+                                    <div class="row"><center>
+                                        <div class="col-md-2 " style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+                                           De:
+                                        </div>
+                                        <div class="col-md-10" style=" padding-bottom: 0px; padding-top: 0px ">
+                                                <input type="text" class="form-control2" id="metaInicial" placeholder="0.00">
+                                        </div></center>
+                                    </div>
+                                    <div class="row"><center>
+                                        <div class="col-md-2 " style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+                                            A:
+                                        </div>
+                                        <div class="col-md-10 " style=" padding-bottom: 0px; padding-top: 0px ">
+                                                <input type="text" class="form-control2" id="metaFinal" placeholder="0.00">
+                                        </div></center>
 
-                                            <select id="msSubCarencias" multiple="multiple" style="width: 100%;height: auto;">
-                                                {% for obj in subcarencia %}
-                                                     <option value={{obj.id}}>{{obj.nombreSubCarencia}}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-10"  style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
-                                            <select id="msAcciones" multiple="multiple" style="width: 100%;height: auto;">
-                                                {% for dep in acciones %}
-                                                     <option value={{dep.id}}>{{dep.nombreAccion}}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-10" id="divSubDep" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
-                                            <select id="msResponsables" multiple="multiple" style="width: 100%;height: auto;">
-                                                {% for dep in responsables %}
-                                                     <option value={{dep.id}}>{{dep.nombreResponsable}}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                    </div>
-
 
                                 </div>
                             </div>
-                        </div>
+                         </div>
                     </div>
 
-                    <div class="col-md-4" style="padding-right: 4px; padding-left: 4px; padding-bottom: 0px; padding-top: 0px ">
+
+                    <div class="col-md-5" style="padding-right: 10px; padding-left: 12px; padding-bottom: 0px; padding-top: 0px ">
                         <div class="row">
-                            <div class="col-md-6" style="padding-right: 0px; padding-left: 12px; padding-bottom: 0px; padding-top: 0px ">
+
+                            <div class="col-md-6" style="padding-right: 4px; padding-left: 4px; padding-bottom: 0px; padding-top: 0px ">
+                                <div class="panel panel-default panel-table">
+                                    <div class="panel-body" style="padding-right: 4px; padding-left: 4px; padding-bottom: 4px; padding-top: 4px ">
+                                        <div class="tr">
+                                            <div class="row">
+                                                <div class="col-md-10" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+
+                                                    <select id="msCarencias" multiple="multiple" style="width: 100%;height: auto;">
+                                                        {% for obj in carencias %}
+                                                             <option value={{obj.id}}>{{obj.nombreCarencia}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-10" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+
+                                                    <select id="msSubCarencias" multiple="multiple" style="width: 100%;height: auto;">
+                                                        {% for obj in subcarencia %}
+                                                             <option value={{obj.id}}>{{obj.nombreSubCarencia}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-10"  style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+                                                    <select id="msAcciones" multiple="multiple" style="width: 100%;height: auto;">
+                                                        {% for dep in acciones %}
+                                                             <option value={{dep.id}}>{{dep.nombreAccion}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-10" id="divSubDep" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+                                                    <select id="msResponsables" multiple="multiple" style="width: 100%;height: auto;">
+                                                        {% for dep in responsables %}
+                                                             <option value={{dep.id}}>{{dep.nombreResponsable}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6" style="padding-right: 3px; padding-left: 3px; padding-bottom: 0px; padding-top: 0px ">
                                 <div class="panel panel-default panel-table">
                                     <div class="panel-body" style="padding-right: 4px; padding-left: 4px; padding-bottom: 4px; padding-top: 4px ">
                                         <div class="tr">
@@ -842,38 +877,7 @@ et$(function() {
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6" style="padding-right: 10px; padding-left: 6px; padding-bottom: 0px; padding-top: 0px ">
-                                <div class="panel panel-default panel-table">
-                                    <div class="panel-body" style="padding-right: 4px; padding-left: 4px; padding-bottom: 4px; padding-top: 4px ">
-                                        <div class="tr">
-                                            <div class="row">
-                                                <div class="col-md-10" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
-                                                    <select id="msMeses" multiple="multiple" style="width: 100%;height: auto;">
 
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="row" >
-                                                <div class="col-md-9" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
-                                                    <span class="input-label">Inauguradas</span>
-                                                </div>
-                                                <div class="col-md-2" style=" padding-bottom: 0px; padding-top: 0px ">
-                                                    <input type="checkbox" id="inauguradas" value="option1">
-                                                </div>
-                                            </div>
-                                            <div class="row" >
-                                                <div class="col-md-9" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
-                                                    <span class="input-label">No Inauguradas</span>
-                                                </div>
-                                                <div class="col-md-2" style="padding-bottom: 0px; padding-top: 0px ">
-                                                    <input type="checkbox" id="noInauguradas" value="option3">
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                         <div class="row">
                              <div class="col-md-4" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">

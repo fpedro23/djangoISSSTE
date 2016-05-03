@@ -18,7 +18,7 @@ var ajax_datatoken = {
 
 
     $j.ajax({
-        url: '/visitas/register-by-token',
+        url: '/register-by-token',
         type: 'get',
         data: ajax_datatoken,
         success: function(data) {
@@ -93,7 +93,7 @@ function volverHistorico() {
     //document.write(variable);
     var sHistorico = $j('#historico').val();
     if (sHistorico.toString() =="SI") {
-        $.get("/visitas/register-by-token", function (respu) {
+        $.get("/register-by-token", function (respu) {
            newToken = respu.access_token;
            verDatos()
         });
@@ -391,91 +391,63 @@ function PptxObrasReporte() {
 
 function verDatos() {
 
-    var arrayDependencias = $l("#msDependencias").multiselect("getChecked").map(function(){return this.value;}).get();
-    var fechaInicio1 = $l("#fechaInicial1").val();
-    var fechaInicio2 = $l("#fechaInicial2").val();
-    var arrayRegion = $l("#msRegiones").multiselect("getChecked").map(function(){return this.value;}).get();
+    var arrayCarencias = $l("#msCarencias").multiselect("getChecked").map(function(){return this.value;}).get();
+    var arraySubCarencias = $l("#msSubCarencias").multiselect("getChecked").map(function(){return this.value;}).get();
     var arrayEstados = $l("#msEstados").multiselect("getChecked").map(function(){return this.value;}).get();
     var arrayMunicipios = $l("#msMunicipios").multiselect("getChecked").map(function(){return this.value;}).get();
-    var arrayFuncionarios= $l("#msFuncionarios").multiselect("getChecked").map(function(){return this.value;}).get();
-    var arrayDistritos= $l("#msDistritos").multiselect("getChecked").map(function(){return this.value;}).get();
-    var arrayClasificacion = $l("#msClasificaciones").multiselect("getChecked").map(function(){return this.value;}).get();
-    var arrayTipoCapitalizacion = $l("#msTipoCapitalizacion").multiselect("getChecked").map(function(){return this.value;}).get();
-    var arrayTipoActividad = $l("#msTipoActividad").multiselect("getChecked").map(function(){return this.value;}).get();
-    var arrayMedios = $l("#msMedios").multiselect("getChecked").map(function(){return this.value;}).get();
+    var arrayResponsables= $l("#msResponsables").multiselect("getChecked").map(function(){return this.value;}).get();
+    var arrayPeriodos= $l("#msPeriodos").multiselect("getChecked").map(function(){return this.value;}).get();
+    var arrayMeses = $l("#msMeses").multiselect("getChecked").map(function(){return this.value;}).get();
+    var arrayAcciones = $l("#msAcciones").multiselect("getChecked").map(function(){return this.value;}).get();
 
-    var fechaFin1 = $l("#fechaFinal1").val();
-    var fechaFin2 = $l("#fechaFinal2").val();
     var inversionInicial = $l("#inversionInicial").val();
     var inversionFinal = $l("#inversionFinal").val();
 
-    var descripcion = $l("#descripcion").val();
-    var problematica = $l("#problematica").val();
-    var nombreMedio = $l("#nombreMedio").val();
-    var identificador_unico = $l("#identificador_unico").val();
-    var arrayPartidos = $l("#msPartidos").multiselect("getChecked").map(function(){return this.value;}).get();
+    var avanceInicial = $l("#avanceInicial").val();
+    var avanceFinal = $l("#avanceFinal").val();
 
-    if (fechaInicio1!=""){fechaInicio1 = myDateFormatter($dp('#fechaInicial1').datepicker("getDate"));}
-    if (fechaInicio2!=""){ fechaInicio2 = myDateFormatter($dp('#fechaInicial2').datepicker("getDate"));}
-    if (fechaFin1!=""){fechaFin1 = myDateFormatter($dp('#fechaFinal1').datepicker("getDate"));}
-    if (fechaFin2!=""){fechaFin2 = myDateFormatter($dp('#fechaFinal2').datepicker("getDate"));}
+    var metaInicial = $l("#metaInicial").val();
+    var metaFinal = $l("#metaFinal").val();
+
+    var observaciones = $l("#observaciones").val();
+    var unidadMedida = $l("#unidadmedida").val();
 
 
     var ajax_data = {
-      "access_token"  : newToken,
-      "limiteMin":0,
-      "limiteMax":1000
+      "access_token"  : newToken
     };
 
-    if(arrayDependencias.toString()!=""){ajax_data.dependencia=arrayDependencias.toString();}
-    if(arrayRegion.toString()!=""){ajax_data.region=arrayRegion.toString();}
-    if(arrayMunicipios.toString()!=""){ajax_data.municipio=arrayMunicipios.toString();}
-    if(arrayFuncionarios.toString()!=""){ajax_data.cargoEjecuta=arrayFuncionarios.toString();}
-    if(arrayDistritos.toString()!=""){ajax_data.distritoElectoral=arrayDistritos.toString();}
-    if(arrayEstados.toString()!=""){ajax_data.estado=arrayEstados.toString();}
-    if(arrayClasificacion.toString()!=""){ajax_data.tipoClasificacion=arrayClasificacion.toString();}
-    if(arrayTipoCapitalizacion.toString()!=""){ajax_data.tipoCapitalizacion=arrayTipoCapitalizacion.toString();}
-    if(arrayTipoActividad.toString()!=""){ajax_data.tipoactividad=arrayTipoActividad.toString();}
-    if(arrayMedios.toString()!=""){ajax_data.tipoMedio=arrayMedios.toString();}
-    if(fechaInicio1!=""){ajax_data.fechaInicio=fechaInicio1;}
-    if(fechaInicio2!=""){ajax_data.fechaFin=fechaInicio2;}
+    if(arrayCarencias.toString()!=""){ajax_data.carencias=arrayCarencias.toString();}
+    if(arraySubCarencias.toString()!=""){ajax_data.subcarencias=arraySubCarencias.toString();}
+    if(arrayMunicipios.toString()!=""){ajax_data.municipios=arrayMunicipios.toString();}
+    //if(arrayResponsables.toString()!=""){ajax_data.cargoEjecuta=arrayResponsables.toString();}
+    if(arrayPeriodos.toString()!=""){ajax_data.periodos=arrayPeriodos.toString();}
+    if(arrayEstados.toString()!=""){ajax_data.estados=arrayEstados.toString();}
+    if(arrayMeses.toString()!=""){ajax_data.meses=arrayMeses.toString();}
+    if(arrayAcciones.toString()!=""){ajax_data.acciones=arrayAcciones.toString();}
 
     if(inversionInicial!=""){ajax_data.inversionMinima=inversionInicial;}
     if(inversionFinal!=""){ajax_data.inversionMaxima=inversionFinal;}
+    if(avanceInicial!=""){ajax_data.avanceMinimo=avanceInicial;}
+    if(avanceFinal!=""){ajax_data.avanceMaximo=avanceFinal;}
+    //if(metaInicial!=""){ajax_data.inversionMinima=metaInicial;}
+    //if(metaFinal!=""){ajax_data.inversionMaxima=metaFinal;}
 
-    if(arrayPartidos.toString()!=""){ajax_data.partido=arrayPartidos.toString();}
-    if(descripcion!=""){ajax_data.descripcion=descripcion;}
-    if(problematica!=""){ajax_data.problematica=problematica;}
-    if(nombreMedio!=""){ajax_data.nombreMedio=nombreMedio;}
-    if(identificador_unico!=""){ajax_data.identificador_unico=identificador_unico;}
+
+    if(observaciones!=""){ajax_data.observaciones=observaciones;}
+    if(unidadMedida!=""){ajax_data.unidadDeMedida=unidadMedida;}
+
 
 
 
     $j("#ajaxProgress").show();
     $j.ajax({
-        url: '/api/buscador',
+        url: '/issste/api/busqueda',
         type: 'get',
         data: ajax_data,
         success: function(data) {
-            //$j('#datos').html
             $j('#historico').val("SI");
-            tablaI(data);
-            tablaD(data);
-            datosJson=data;
-            // MAPA
-            var mapOptions = {
-                zoom: 4,
-                center: new google.maps.LatLng(22.6526121, -100.1780452),
-                mapTypeId: google.maps.MapTypeId.SATELLITE
-            }
-            var map = new google.maps.Map(document.getElementById('map-canvas'),
-                                        mapOptions)
-            var lugares =  new Array();
-            lugares=puntosMapa(data);
-            setMarkers(map,lugares);
-            google.maps.event.addDomListener(window, 'load', initialize);
-            // mapa
-            // graficas
+            alert("vientos");
 
             $j("#ajaxProgress").hide();
         },
