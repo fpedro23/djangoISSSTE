@@ -271,7 +271,7 @@ class avancesMensualesPorMetaEndpoint(ProtectedResourceView):
 
 
 # Clase EndPoint (oauth2) para implementar el buscador en base al filtro grande
-class BuscadorEndpoint(generic.ListView):
+class BuscadorEndpoint(ProtectedResourceView):
 	def get(self, request):
 		myObj = BuscarAvances(
 			carencias = get_array_or_none(request.GET.get('carencias')),
@@ -460,26 +460,28 @@ def get_usuario_for_token(token):
 
 class ResultadosPptxEndpoint(ProtectedResourceView):
     def get(self, request):
+		usuario = get_usuario_for_token(request.GET.get('access_token'))
+		estados = get_array_or_none(request.GET.get('estados'))
+		municipios = get_array_or_none(request.GET.get('municipios'))
 
-        user = AccessToken.objects.get(token=request.GET.get('access_token')).user
-        usuario = get_usuario_for_token(request.GET.get('access_token'))
+		if estados is None or len(estados) == 0:
+			if usuario.rol == 'AG' or usuario.rol == 'UR' or usuario.rol == 'FR':
+				estados = None
+			else:
+				estados = [usuario.estado.id]
 
-        queryEstado = request.user.usuario.estado.id
+		if municipios is None or len(municipios) == 0:
+			if usuario.rol == 'AG' or usuario.rol == 'UR' or usuario.rol == 'FR':
+				municipios = None
+			else:
+				municipios = [Municipio.objects.filter(estado_id = usuario.estado.id)]
 
-
-        estados = get_array_or_none(request.GET.get('estados'))
-        if estados is None or len(estados) == 0:
-            if usuario.rol == 'AG':
-                estados = None
-            else:
-                estados = [usuario.estado.id]
-
-        myObj =  BuscarAvances(
+		myObj =  BuscarAvances(
 			carencias = get_array_or_none(request.GET.get('carencias')),
 			subcarencias = get_array_or_none(request.GET.get('subcarencias')),
 			acciones = get_array_or_none(request.GET.get('acciones')),
 			estados = estados,
-			municipios = get_array_or_none(request.GET.get('municipios')),
+			municipios = municipios,
 			periodos = get_array_or_none(request.GET.get('periodos')),
 			meses = get_array_or_none(request.GET.get('meses')),
 			observaciones = request.GET.get('observaciones'),
@@ -489,19 +491,16 @@ class ResultadosPptxEndpoint(ProtectedResourceView):
 			inversion_maxima = get_array_or_none(request.GET.get('inversionMaxima')),
 			unidad_de_medida = request.GET.get('unidadDeMedida'),
 		)
-        resultados = myObj.buscar()
+		resultados = myObj.buscar()
 
-                #***********************************************************************************************************
-
-        json_map = {}
-        json_map['reporte_general'] = []
-
-        for reporte in resultados['reporte_general']:
-            shortened_reporte = {}
-
-            shortened_reporte['suma_avance'] = 0
-            avance_mensual = AvanceMensual.objects.get(id=reporte['id'])
-            if myObj.meses is not  None:
+		#***********************************************************************************************************
+		json_map = {}
+		json_map['reporte_general'] = []
+		for reporte in resultados['reporte_general']:
+			shortened_reporte = {}
+			shortened_reporte['suma_avance'] = 0
+			avance_mensual = AvanceMensual.objects.get(id=reporte['id'])
+			if myObj.meses is not  None:
 				for mes in myObj.meses:
 					if mes == 1: shortened_reporte['suma_avance'] += avance_mensual.ene
 					if mes == 2: shortened_reporte['suma_avance'] += avance_mensual.feb
@@ -515,121 +514,115 @@ class ResultadosPptxEndpoint(ProtectedResourceView):
 					if mes == 10: shortened_reporte['suma_avance'] += avance_mensual.oct
 					if mes == 11: shortened_reporte['suma_avance'] += avance_mensual.nov
 					if mes == 12: shortened_reporte['suma_avance'] += avance_mensual.dic
-            else:
+			else:
 				shortened_reporte['suma_avance'] += avance_mensual.ene + avance_mensual.feb + avance_mensual.mar + avance_mensual.abr
 				shortened_reporte['suma_avance'] += avance_mensual.may + avance_mensual.jun + avance_mensual.jul + avance_mensual.ago
 				shortened_reporte['suma_avance'] += avance_mensual.sep + avance_mensual.oct + avance_mensual.nov + avance_mensual.dic
 
-            shortened_reporte['id'] = reporte['id']
-            shortened_reporte['accion'] = reporte['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
-            shortened_reporte['carencia'] = reporte['avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
-            shortened_reporte['subCarencia'] = reporte['avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
-            shortened_reporte['estado'] = reporte['avancePorMunicipio__estado__nombreEstado']
-            shortened_reporte['municipio'] = reporte['municipio__nombreMunicipio']
-            shortened_reporte['periodo'] = reporte['avancePorMunicipio__periodo__nombrePeriodo']
-            shortened_reporte['latitud'] = reporte['municipio__latitud']
-            shortened_reporte['longitud'] = reporte['municipio__longitud']
-            json_map['reporte_general'].append(shortened_reporte)
+			shortened_reporte['id'] = reporte['id']
+			shortened_reporte['accion'] = reporte['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
+			shortened_reporte['carencia'] = reporte['avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
+			shortened_reporte['subCarencia'] = reporte['avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
+			shortened_reporte['estado'] = reporte['avancePorMunicipio__estado__nombreEstado']
+			shortened_reporte['municipio'] = reporte['municipio__nombreMunicipio']
+			shortened_reporte['periodo'] = reporte['avancePorMunicipio__periodo__nombrePeriodo']
+			shortened_reporte['latitud'] = reporte['municipio__latitud']
+			shortened_reporte['longitud'] = reporte['municipio__longitud']
+			json_map['reporte_general'].append(shortened_reporte)
 
+		output = StringIO.StringIO()
+		prs = Presentation()
+		slide = prs.slides.add_slide(prs.slide_layouts[5])
+		shapes = slide.shapes
+		shapes.title.text = 'Resultados'
 
+		renglones = len(json_map['reporte_general'])
+		if renglones < 22:
+			rows = renglones+1
+		else:
+			rows = 22
+		cols = 5
+		left = Inches(0.921)
+		top = Inches(1.2)
+		width = Inches(6.0)
+		height = Inches(0.8)
 
-        output = StringIO.StringIO()
-        prs = Presentation()
-        slide = prs.slides.add_slide(prs.slide_layouts[5])
-        shapes = slide.shapes
-        shapes.title.text = 'Resultados'
+		table = shapes.add_table(rows, cols, left, top, width, height).table
 
-        #renglones = resultados['reporte_general']['visitas_totales'] + 1
-        renglones = len(json_map['reporte_general'])
-        if renglones < 22:
-            rows = renglones+1
-        else:
-            rows = 22
-        cols = 5
-        left = Inches(0.921)
-        top = Inches(1.2)
-        width = Inches(6.0)
-        height = Inches(0.8)
+		# set column width
+		table.columns[0].width = Inches(1.1)
+		table.columns[1].width = Inches(2.0)
+		table.columns[2].width = Inches(3.0)
+		table.columns[3].width = Inches(1.1)
+		table.columns[4].width = Inches(1.1)
 
-        table = shapes.add_table(rows, cols, left, top, width, height).table
+		# write column headings
+		table.cell(0, 0).text = 'Carencia'
+		table.cell(0, 1).text = 'Subcarencia'
+		table.cell(0, 2).text = 'Accion'
+		table.cell(0, 3).text = 'Municipio'
+		table.cell(0, 4).text = 'Avance Total'
 
-        # set column widths
-        table.columns[0].width = Inches(1.1)
-        table.columns[1].width = Inches(2.0)
-        table.columns[2].width = Inches(3.0)
-        table.columns[3].width = Inches(1.1)
-        table.columns[4].width = Inches(1.1)
+		# write body cells
+		indice = 1
+		for avance in json_map['reporte_general']:
+			if indice == 22:
+				indice = 1
+				slide = prs.slides.add_slide(prs.slide_layouts[5])
+				shapes = slide.shapes
+				shapes.title.text = 'Resultados'
+				rows = 22
+				cols = 5
+				left = Inches(0.921)
+				top = Inches(1.2)
+				width = Inches(6.0)
+				height = Inches(0.8)
+				table = shapes.add_table(rows, cols, left, top, width, height).table
+				# set column widths
+				table.columns[0].width = Inches(1.1)
+				table.columns[1].width = Inches(2.0)
+				table.columns[2].width = Inches(3.0)
+				table.columns[3].width = Inches(1.1)
+				table.columns[4].width = Inches(1.1)
 
-        # write column headings
-        table.cell(0, 0).text = 'Carencia'
-        table.cell(0, 1).text = 'Subcarencia'
-        table.cell(0, 2).text = 'Accion'
-        table.cell(0, 3).text = 'Municipio'
-        table.cell(0, 4).text = 'Avance Total'
+				# write column headings
+			for x in range(0, 5):
+				cell = table.rows[0].cells[x]
+				paragraph = cell.textframe.paragraphs[0]
+				paragraph.font.size = Pt(12)
+				paragraph.font.name = 'Arial Black'
+				paragraph.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
 
-        # write body cells
-        indice = 1
-        for avance in json_map['reporte_general']:
+			for x in range(0, 5):
+				cell = table.rows[indice].cells[x]
+				paragraph = cell.textframe.paragraphs[0]
+				paragraph.font.size = Pt(8)
+				paragraph.font.name = 'Arial'
+				paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
 
-            if indice == 22:
-                indice = 1
-                slide = prs.slides.add_slide(prs.slide_layouts[5])
-                shapes = slide.shapes
-                shapes.title.text = 'Resultados'
+			table.cell(0, 0).text = 'Carencia'
+			table.cell(0, 1).text = 'Subcarencia'
+			table.cell(0, 2).text = 'Accion'
+			table.cell(0, 3).text = 'Municipio'
+			table.cell(0, 4).text = 'Avance Total'
 
-                rows = 22
-                cols = 5
-                left = Inches(0.921)
-                top = Inches(1.2)
-                width = Inches(6.0)
-                height = Inches(0.8)
+			# write body cells
+			table.cell(indice, 0).text = avance['carencia']
+			table.cell(indice, 1).text = avance['subCarencia']
+			table.cell(indice, 2).text = avance['accion']
+			table.cell(indice, 3).text = avance['municipio']
+			table.cell(indice, 4).text = str(avance['suma_avance'])
+			indice += 1
 
-                table = shapes.add_table(rows, cols, left, top, width, height).table
-                # set column widths
-                table.columns[0].width = Inches(1.1)
-                table.columns[1].width = Inches(2.0)
-                table.columns[2].width = Inches(3.0)
-                table.columns[3].width = Inches(1.1)
-                table.columns[4].width = Inches(1.1)
-
-            # write column headings
-            for x in range(0, 5):
-                cell = table.rows[0].cells[x]
-                paragraph = cell.textframe.paragraphs[0]
-                paragraph.font.size = Pt(12)
-                paragraph.font.name = 'Arial Black'
-                paragraph.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
-
-            for x in range(0, 5):
-                cell = table.rows[indice].cells[x]
-                paragraph = cell.textframe.paragraphs[0]
-                paragraph.font.size = Pt(8)
-                paragraph.font.name = 'Arial'
-                paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
-
-            table.cell(0, 0).text = 'Carencia'
-            table.cell(0, 1).text = 'Subcarencia'
-            table.cell(0, 2).text = 'Accion'
-            table.cell(0, 3).text = 'Municipio'
-            table.cell(0, 4).text = 'Avance Total'
-
-            # write body cells
-            table.cell(indice, 0).text = avance['carencia']
-            table.cell(indice, 1).text = avance['subCarencia']
-            table.cell(indice, 2).text = avance['accion']
-            table.cell(indice, 3).text = avance['municipio']
-            table.cell(indice, 4).text = str(avance['suma_avance'])
-            indice += 1
-
-        prs.save(output)
-        response = StreamingHttpResponse(FileWrapper(output),
+		prs.save(output)
+		response = StreamingHttpResponse(FileWrapper(output),
                                          content_type='application/vnd.openxmlformats-officedocument.presentationml.presentation')
-        response['Content-Disposition'] = 'attachment; filename="Resultados.pptx"'
-        response['Content-Length'] = output.tell()
+		response['Content-Disposition'] = 'attachment; filename="Resultados.pptx"'
+		response['Content-Length'] = output.tell()
 
-        output.seek(0)
+		output.seek(0)
 
-        return response
+		return response
 
 class ReportePptxEndpoint(ProtectedResourceView):
     def get(self, request):

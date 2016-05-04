@@ -1934,12 +1934,12 @@ function myDateFormatter (dateObject) {
  */
 
 $l(function() {
-    $l('#msRegiones').bind('change', function () {
+    $l('#msCarencias').bind('change', function () {
 
-        var regionId = $l("#msRegiones").multiselect("getChecked").map(function(){return this.value;}).get();
-        if (regionId != null) {
-            getEstadosForRegion(regionId, function (ans) {
-                populateEstadosSelect(ans);
+        var carenciaId = $l("#msCarencias").multiselect("getChecked").map(function(){return this.value;}).get();
+        if (carenciaId != null) {
+            getSubcarenciasForCarencia(carenciaId, function (ans) {
+                populateSubCarenciasSelect(ans);
             });
         }
     });
@@ -1959,19 +1959,19 @@ $l(function() {
         });
     });
 
-    $l('#msDependencias').on('change', function () {
-        var dependencias = $l(this).multiselect("getChecked").map(function () {
+    $l('#msSubCarencias').on('change', function () {
+        var subcarencias = $l(this).multiselect("getChecked").map(function () {
             return this.value;
         }).get();
 
-        getCargosForDependencias(dependencias, function (ans) {
-            populateCargosSelect(ans,dependencias);
+        getAccionesForSubCarencias(subcarencias, function (ans) {
+            populateAccionesSelect(ans);
         });
 
     });
 });
 
-function getCargosForDependencias(regionId, onSuccess) {
+function getAccionesForSubCarencias(subcarenciasId, onSuccess) {
     // Setup CSRF tokens and all that good stuff so we don't get hacked
     $j.ajaxSetup(
         {
@@ -1985,13 +1985,13 @@ function getCargosForDependencias(regionId, onSuccess) {
     );
 
     // Get an Oauth2 access token and then do the ajax call, because SECURITY
-    $.get('/visitas/register-by-token', function(ans) {
+    $.get('/register-by-token', function(ans) {
         // TODO: add a failure function
 
-        var ajaxData = { access_token: ans.access_token, dependencias: regionId.toString() };
+        var ajaxData = { access_token: ans.access_token, subcarencias: subcarenciasId.toString() };
 
         $j.ajax({
-            url: '/api/cargos',
+            url: '/issste/api/acciones_por_subcarencia',
             type: 'get',
             data: ajaxData,
             success: onSuccess
@@ -1999,8 +1999,8 @@ function getCargosForDependencias(regionId, onSuccess) {
     });
 }
 
-// PARA CARGA DE ESTADOS POR REGION SELECCIONADA
-function getEstadosForRegion(regionId, onSuccess) {
+// PARA CARGA DE SUBCARENCIA POR CARENCIA SELECCIONADA
+function getSubcarenciasForCarencia(carenciaId, onSuccess) {
     // Setup CSRF tokens and all that good stuff so we don't get hacked
     $j.ajaxSetup(
         {
@@ -2014,13 +2014,13 @@ function getEstadosForRegion(regionId, onSuccess) {
     );
 
     // Get an Oauth2 access token and then do the ajax call, because SECURITY
-    $.get('/visitas/register-by-token', function(ans) {
+    $.get('/register-by-token', function(ans) {
         // TODO: add a failure function
 
-        var ajaxData = { access_token: ans.access_token, regiones: regionId.toString() };
+        var ajaxData = { access_token: ans.access_token, carencias: carenciaId.toString() };
 
         $j.ajax({
-            url: '/api/estados',
+            url: '/issste/api/subcarencias_por_carencia',
             type: 'get',
             data: ajaxData,
             success: onSuccess
@@ -2043,13 +2043,13 @@ function getMunicipiosForEstado(estadoId, onSuccess) {
     );
 
     // Get an Oauth2 access token and then do the ajax call, because SECURITY
-    $.get('/visitas/register-by-token', function(ans) {
+    $.get('/register-by-token', function(ans) {
         // TODO: add a failure function
 
         var ajaxData = { access_token: ans.access_token, estados: estadoId.toString() };
 
         $j.ajax({
-            url: '/api/municipios',
+            url: '/issste/api/municipios_por_estado',
             type: 'get',
             data: ajaxData,
             success: onSuccess
@@ -2086,48 +2086,42 @@ function getDistritosForEstado(estadoId, onSuccess) {
 }
 
 // Once we're done filtering, we just put the results where they belong
-function populateCargosSelect(cargos,dependencias) {
+function populateAccionesSelect(acciones) {
     // Clean the field
-    clearCargos();
-    var sHtml='<select id="msFuncionarios" multiple="multiple" style="width: 100%;height: auto;">';
-    if (dependencias ==''){
-        for(var i= 0;i<cargos.length;i++) {
-           sHtml= sHtml +'<option value='+ cargos[i].id +'>' + cargos[i].dependencia.nombreDependencia + '-' + cargos[i].nombre_cargo +'</option>';
-        }
-    }else{
-        for(var i= 0;i<cargos.length;i++) {
-           sHtml= sHtml +'<option value='+ cargos[i].id +'>' + cargos[i].nombre_cargo +'</option>';
-        }
+    clearAcciones();
+    var sHtml='<select id="msAcciones" multiple="multiple" style="width: 100%;height: auto;">';
+
+    for(var i= 0;i<acciones.length;i++) {
+       sHtml= sHtml +'<option value='+ acciones[i].id +'>' + acciones[i].nombreAccion +'</option>';
     }
     sHtml= sHtml +'</select>';
 
-    $l('#msFuncionarios').html(sHtml);
+    $l('#msAcciones').html(sHtml);
 
-    $l("#msFuncionarios").multiselect({
-            header: true,
-            checkAllText: 'Marcar todos',
-            uncheckAllText: 'Desmarcar todos',
-            noneSelectedText: 'Funcionario',
-            selectedText: '# Funcionarios'
-    });
+    $l("#msAcciones").multiselect({
+       header: true,
+       checkAllText: 'Marcar todas', uncheckAllText: 'Desmarcar todas',
+       noneSelectedText: 'Acción',
+       selectedText: '# Acciones'
+   });
 }
 
-function populateEstadosSelect(estados) {
+function populateSubCarenciasSelect(subcarencias) {
     // Clean the field
-    clearEstados();
-    var sHtml='<select id="msEstados" multiple="multiple" style="width: 100%;height: auto;">';
-    for(var i= 0;i<estados.length;i++) {
-       sHtml= sHtml +'<option value='+ estados[i].id +'>' + estados[i].nombreEstado +'</option>';
+    clearSubCarencias();
+    var sHtml='<select id="msSubCarencias" multiple="multiple" style="width: 100%;height: auto;">';
+    for(var i= 0;i<subcarencias.length;i++) {
+       sHtml= sHtml +'<option value='+ subcarencias[i].id +'>' + subcarencias[i].nombreSubCarencia +'</option>';
     }
     sHtml= sHtml +'</select>';
 
-    $l('#msEstados').html(sHtml);
+    $l('#msSubCarencias').html(sHtml);
 
-    $l("#msEstados").multiselect({
+    $l("#msSubCarencias").multiselect({
        header: true,
-       checkAllText: 'Marcar todos', uncheckAllText: 'Desmarcar todos',
-       noneSelectedText: 'Estados',
-       selectedText: '# Estados'
+       checkAllText: 'Marcar todas', uncheckAllText: 'Desmarcar todas',
+       noneSelectedText: 'SubCarencia',
+       selectedText: '# SubCarencias'
    });
 }
 
@@ -2176,9 +2170,9 @@ function populateDistritosSelect(distritos) {
     limpiar los multiselect si han elegido alguna opciòn de filtrado
 */
 
-function clearEstados() {
-    $l('#msEstados').html('');
-    $l('#msEstados').multiselect('destroy');
+function clearSubCarencias() {
+    $l('#msSubCarencias').html('');
+    $l('#msSubCarencias').multiselect('destroy');
 
 }
 function clearMunicipios() {
@@ -2191,9 +2185,9 @@ function clearDistritoElectoral() {
     $l('#msDistritos').multiselect('destroy');
 }
 
-function clearCargos() {
-    $l('#msFuncionarios').html('');
-    $l('#msFuncionarios').multiselect('destroy');
+function clearAcciones() {
+    $l('#msAcciones').html('');
+    $l('#msAcciones').multiselect('destroy');
 
 }
 

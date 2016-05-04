@@ -799,7 +799,7 @@ et$(function() {
                                                 <div class="col-md-10" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
 
                                                     <select id="msSubCarencias" multiple="multiple" style="width: 100%;height: auto;">
-                                                        {% for obj in subcarencia %}
+                                                        {% for obj in subcarencias %}
                                                              <option value={{obj.id}}>{{obj.nombreSubCarencia}}</option>
                                                         {% endfor %}
                                                     </select>
@@ -848,7 +848,9 @@ et$(function() {
                                             <div class="row">
                                                 <div class="col-md-10" id="divMunicipios" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
                                                     <select id="msMunicipios" multiple="multiple"  style="width: 100%;height: auto;">
-
+                                                        {% for obj in municipios %}
+                                                             <option value={{obj.id}}>{{obj.nombreMunicipio}}</option>
+                                                        {% endfor %}
                                                     </select>
                                                 </div>
                                             </div>
@@ -865,7 +867,7 @@ et$(function() {
                                             <div class="row">
                                                 <div class="col-md-10" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
                                                     <select id="msMeses" multiple="multiple" style="width: 100%;height: auto;">
-                                                        {% for dep in periodos %}
+                                                        {% for dep in meses %}
                                                              <option value={{dep.id}}>{{dep.nombreMes}}</option>
                                                         {% endfor %}
                                                     </select>

@@ -96,14 +96,23 @@ def consulta_web(request):
 
     print request.user.usuario.rol
 
+    usuario = request.user.usuario
+    if usuario.rol == 'AG' or usuario.rol == 'UR' or usuario.rol == 'FR':
+        estados = Estado.objects.all()
+        municipios = Municipio.objects.all()
+    else:
+        estados = Estado.objects.filter(id=usuario.estado.id)
+        municipios = Municipio.objects.filter(estado_id = usuario.estado.id)
+
+
     #templates = loader.get_template('consultas/busqueda_general.html')
     template = loader.get_template('admin/djangoISSSTE/consulta_filtros/consulta-filtros.html')
     context = RequestContext(request, {
         'carencias': Carencia.objects.all(),
         'subcarencias': SubCarencia.objects.all(),
         'acciones': AccionEstrategica.objects.all(),
-        'estados': Estado.objects.all(),
-        'municipios': Municipio.objects.all(),
+        'estados': estados,
+        'municipios': municipios,
         'periodos': Periodo.objects.all(),
         'meses': Mes.objects.all(),
         'responsables': Responsable.objects.all(),
