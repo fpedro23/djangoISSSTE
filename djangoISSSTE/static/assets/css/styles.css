@@ -295,8 +295,8 @@
 .en2015{
 	 position:relative;
 	 padding:6px;
-	 width:444px;
-	 height:349px;
+	 width:454px;
+	 height:359px;
 	 top:25px;
 	 left:50px;
 	 background-image:url(../Imagenes/bigBackground.fw.png);
@@ -310,8 +310,8 @@
 .mapa {
 	position: absolute;
 	left: 523px;
-	width: 443px;
-	height: 350px;
+	width: 450px;
+	height: 357px;
 	z-index: 1;
 	border-color: #327451;
 	border-style: solid;
@@ -334,7 +334,7 @@
 	left: 17px;
 	top: 16px;
 	width: 160px;
-	height: 90px;
+	height: 96px;
 	background-position: -400px 0px;
 	background-color: #9E2528;
 	padding: 2px;
@@ -345,7 +345,7 @@
 	left: 198px;
 	top: 16px;
 	width: 160px;
-	height: 90px;
+	height: 96px;
 	background-position: -400px 0px;
 	background-color: #862022;
 	padding: 2px;
@@ -356,7 +356,7 @@
 	left: 380px;
 	top: 16px;
 	width: 160px;
-	height: 90px;
+	height: 96px;
 	background-position: -400px 0px;
 	background-color: #751C1E;
 	padding: 2px;
@@ -367,7 +367,7 @@
 	left: 563px;
 	top: 16px;
 	width: 160px;
-	height: 90px;
+	height: 96px;
 	background-position: -400px 0px;
 	background-color: #65181B;
 	padding: 2px;
@@ -378,7 +378,7 @@
 	left: 744px;
 	top: 16px;
 	width: 160px;
-	height: 90px;
+	height: 96px;
 	background-position: -400px 0px;
 	background-color: #400F11;
 	padding: 2px;
@@ -1080,10 +1080,6 @@
     color: #6A6B6C;
 }
 
-input{
-    width: 95%;
-    height: 21px;
-}
 
 .obs-field{
     width: 99%;

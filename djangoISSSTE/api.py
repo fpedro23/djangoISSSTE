@@ -411,7 +411,14 @@ class ReporteInicioEndpoint(ProtectedResourceView):
         del avance['avancemensual__municipio__nombreMunicipio']
 
     def get(self, request):
-        avances = AvancePorMunicipio.objects.all()
+
+        usuario = get_usuario_for_token(request.GET.get('access_token'))
+        if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
+			avancesRol = AvancePorMunicipio.objects.all()
+        else:
+            avancesRol = AvancePorMunicipio.objects.filter(estado__id = usuario.usuario.estado.id)
+
+        avances = avancesRol
 
         reporte = {
             'reporte_mapa': {'avance_mapa': {}},
