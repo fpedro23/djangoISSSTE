@@ -40,6 +40,11 @@ urlpatterns = [
     url(r'^consultas', djangoISSSTE.views.consultas, name='consultas'),
     url(r'^usuarios', djangoISSSTE.views.usuarios, name='usuarios'),
     url(r'^movimientos', djangoISSSTE.views.movimientos, name='movimientos'),
+    url(r'^catalogos$', djangoISSSTE.views.catalogos, name='catalogos'),
+    url(r'^meta$', djangoISSSTE.views.meta, name='meta'),
+    url(r'^consultas', djangoISSSTE.views.consultas, name='consultas'),
+    url(r'^usuarios', djangoISSSTE.views.usuarios, name='usuarios'),
+    url(r'^movimientos', djangoISSSTE.views.movimientos, name='movimientos')
 
     url(r'^test', djangoISSSTE.views.test, name='test'),
     url(r'^register-by-token',views.register_by_access_token, name='register_by_access_token'),

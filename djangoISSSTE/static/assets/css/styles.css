@@ -1,6 +1,7 @@
 @charset "utf-8";
 /* CSS Document */
 
+@import "../fonts/fonts.css";
 /* Hoja de estilos del Sistema de Estrategia de Inclusión*/
 
 
@@ -11,7 +12,7 @@
   height:80px;
   margin:auto;
 
-  font-family: "Soberana Titular";
+  font-family: 'soberana_titularregular';
   font-size:10px;
   font-weight: bold;
   color: #0E0E1E;
@@ -266,7 +267,7 @@
 	position:absolute;
 	top: 250px;
 	left:217px;
-	background-image:url(../imagenes/bigBackground.fw.png);
+	background-image:url(../Imagenes/bigBackground.fw.png);
 	background-position:0px 0px;
 }
 
@@ -281,7 +282,7 @@
 	position:absolute;
 	top:320px;
 	
-	background-image:url(../imagenes/bigBackground.fw.png);
+	background-image:url(../Imagenes/bigBackground.fw.png);
 	background-position:-127px -187px;
 }
 
@@ -298,7 +299,7 @@
 	 height:349px;
 	 top:25px;
 	 left:50px;
-	 background-image:url(../imagenes/bigBackground.fw.png);
+	 background-image:url(../Imagenes/bigBackground.fw.png);
 	 background-position:-400px 0px;
 	 
 	font-family: 'soberana_titularbold';
@@ -324,7 +325,7 @@
 	width:924px;
 	height:128px;
 	border-color: #327451;
-	background-image: url(../imagenes/bigBackground.fw.png);
+	background-image: url(../Imagenes/bigBackground.fw.png);
 	background-position: 0px -614px;
 }
 
@@ -452,7 +453,7 @@
 .registrarAVANCE{
 	width: 180px;
 	height: 190px;
-	background-image: url(../imagenes/bigBackground.fw.png);
+	background-image: url(../Imagenes/bigBackground.fw.png);
 	background-position: -1214px 0px;
 	position: absolute;
 	top: 149px;
@@ -471,7 +472,7 @@
 	position: absolute;
 	left: 987px;
 	top: 1px;
-	background-image: url(../imagenes/bigBackground.fw.png);
+	background-image: url(../Imagenes/bigBackground.fw.png);
 	background-position: -190px 0px;
 }
 
@@ -481,7 +482,7 @@
 
 
 #tituloCUADROS{
-	ont-family: 'soberana_titularregular';
+	font-family: 'soberana_titularregular';
 	font-size:20px;
 	color: #0C0C1E;
 		
@@ -503,7 +504,7 @@
 	border: 2px solid #327451;
 	border-radius: 2px;
 	width: 1024px;
-	height: 101px;
+	height: 121px;
 	font-family: 'soberana_sanslight';
 	font-size: 15px;
 	color: #6A6B6C;
@@ -522,7 +523,7 @@
 	color: #6A6B6C;
 	position: absolute;
 	left: -1px;
-	top: 124px;
+	top: 144px;
 }
 
 .subtituloTABLA{
@@ -632,7 +633,7 @@
 .guardar_consBTN{
 	width: 82px;
 	height: 30px;
-	background-image: url(../imagenes/bigBackground.fw.png);
+	background-image: url(../Imagenes/bigBackground.fw.png);
 	background-position: -869px -1789px;
 	position: absolute;
 	top: 157px;
@@ -763,6 +764,32 @@
 }
 /*cierre de elementos correspondientes a la PAGINA de CATALOGO DE METAS*/
 
+/*elementos correspondientes a la ALTA de METAS*/
+#datos_GRALES_META{
+	border: 2px solid #327451;
+	border-radius: 2px;
+	width: 1021px;
+	height: 93px;
+	font-family: 'soberana_sanslight';
+	font-size: 15px;
+	color: #6A6B6C;
+	position: absolute;
+	left: -1px;
+	top: 125px;
+}
+
+.mensuales_META{
+	border: 2px solid #327451;
+	border-radius: 2px;
+	width: 1024px;
+	height: 270px;
+	position: absolute;
+	top: 180px;
+	left: -2px;
+}
+/*cierre de elementos correspondientes a la ALTA de METAS*/
+
+
 /*INICIO de elementos correspondientes a la PAGINA de USUARIOS*/
 .usuario_ADD{
 	width: 180px;
@@ -853,7 +880,7 @@
 	background-image: url(../Imagenes/bigBackground.fw.png);
 	background-position: -724px -1789px;
 	position: absolute;
-	top: 522px;
+	top: 550px;
 	left: 720px;
 }
 
@@ -906,7 +933,7 @@
 	background-image: url(../Imagenes/bigBackground.fw.png);
 	background-position: -780px -1925px;
 	position: absolute;
-	top: 522px;
+	top: 550px;
 	left: 675px;
 }
 
@@ -920,7 +947,7 @@
 	background-image: url(../Imagenes/bigBackground.fw.png);
 	background-position: -907px -1861px;
 	position: absolute;
-	top: 522px;
+	top: 550px;
 	left: 884px;
 }
 
@@ -989,7 +1016,7 @@
 }
 
 .campos03{
-	font-family: Verdana, Geneva, sans-serif;
+	font-family: soberana_textoregular;
 	font-size: 11px;
 	color: #6A6B6C;
 	width: 320px;
@@ -1041,4 +1068,24 @@
 .ppt:hover{
     background-position:-1095px -2350px;
 	cursor: pointer;
+}
+.tamcontrol{
+    width: 60px;
+}
+
+.txtlabel{
+    font-weight: bold;
+    font-family: 'soberana_sanslight';
+    font-size: 13px;
+    color: #6A6B6C;
+}
+
+input{
+    width: 95%;
+    height: 21px;
+}
+
+.obs-field{
+    width: 99%;
+    height: 30px;
 }
