@@ -155,11 +155,9 @@ function verHistoria() {
 
 $j(function() {
     $j('#id_estado').bind('change', function () {
-       alert("hola");
         var valor = $(this).val();
         if (valor != null) {
             getAvanceForPeriodo(valor, function (ans) {
-                alert(ans);
             });
         }
     });
@@ -190,7 +188,10 @@ function getAvanceForPeriodo(estadoId, onSuccess) {
             url: '/issste/api/avancePorPeriodo',
             type: 'get',
             data: ajaxData,
-            success: onSuccess
+            success: function(data) {
+                location.href="/admin/djangoISSSTE/avancepormunicipio/"+data[0].id+"/change";
+            }
         });
+
     });
 }

@@ -18,3 +18,8 @@ input{
 .related-widget-wrapper{
     float: left;
 }
+
+#id_montoPromedio{
+
+    width: 95%;
+}
