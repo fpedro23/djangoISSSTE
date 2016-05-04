@@ -3,7 +3,7 @@
                             <script> $(document).ready(function($) {
                                 var $te = jQuery.noConflict();
                                 $te('[data-toggle="tooltip"]').tooltip({html:true});});</script>
-{{ fieldset.name }}
+
 {% if fieldset.name == "Personal info" %}
 <fieldset class="module {{ fieldset.classes }}" style="border: 0px;">
      <div class="datosGENERALES">
@@ -16,7 +16,7 @@
              {% if field.field.name == "first_name" %}
                 <div class="row  field-username" align="left" style="border-bottom: 15px; padding-bottom: 10px;">
                     <div class="col-md-4">
-                        <label class="required" for="id_first_name">Nombre:</label>
+                        <label class="txtlabel" for="id_first_name">Nombre:</label>
                     </div>
                     <div class="col-md-8" >
                         <input {% if field.field.errors %} class="border-error" data-toggle="tooltip" data-placement="top"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}"{% endif %} id="id_first_name" maxlength="30" name="first_name" type="text" value="{{ field.field.value|default_if_none:"" }}" />
@@ -30,7 +30,7 @@
             {% if field.field.name == "last_name" %}
                 <div class="row  field-username" align="left" style="border-bottom: 15px; padding-bottom: 10px;">
                     <div class="col-md-4"  >
-                        <label for="id_last_name">Apellidos:</label>
+                        <label for="id_last_name" class="txtlabel">Apellidos:</label>
                     </div>
                     <div class="col-md-8" {% if field.field.errors %} data-toggle="tooltip" data-placement="top"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}"{% endif %}>
                         {% if field.field.errors %}
@@ -49,7 +49,7 @@
              {% if field.field.name == "email" %}
                 <div class="row  field-email" align="left" style="border-bottom: 15px; padding-bottom: 10px;">
                     <div class="col-md-4"  >
-                       <label for="id_email"><span class="error__msg">*</span> E-mail:</label>
+                       <label for="id_email" class="txtlabel"><span class="error__msg">*</span> E-mail:</label>
                     </div>
                     <div class="col-md-8" {% if field.field.errors %} data-toggle="tooltip" data-placement="top"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}"{% endif %}>
                         {% if field.field.errors %}
@@ -81,7 +81,7 @@
                 <div class="row  field-username" style="border-bottom: 15px; padding-bottom: 10px;">
 
                     <div class="col-md-4"  >
-                        <label class="" for="id_username"><span class="error__msg">*</span> Usuario:</label>
+                        <label class="txtlabel" for="id_username"><span class="error__msg">*</span> Usuario:</label>
                     </div>
 
                     <div class="col-md-8" >
@@ -158,9 +158,9 @@
                     </div>
                     <div class="col-md-3" {% if field.field.errors %} data-toggle="tooltip" data-placement="top"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}"{% endif %}>
                         {% if field.field.errors %}
-                            &nbsp;{{ field.field|addcss:"border-error" }}
+                            {{ field.field|addcss:"border-error" }}
                         {% else %}
-                            &nbsp;{{ field.field }}
+                            {{ field.field }}
                         {% endif %}
                     </div>
                  </div>
@@ -173,7 +173,7 @@
 </fieldset>
     </div>
 {% endif %}
---{{ inline_admin_formset.opts.verbose_name_plural }}--
+
 {% if inline_admin_formset.opts.verbose_name_plural == "Usuario" %}
 
   <div class="campos03">
@@ -185,7 +185,7 @@
                {% if field.field.name == "rol" %}
                  <div class="row">
                     <div class="col-md-4" style="padding-right: 0px;">
-                        <label class="required" for="id_rol"><span class="error__msg">*</span> Rol:</label>
+                        <label class="txtlabel" for="id_rol"><span class="error__msg">*</span> Rol:</label>
                     </div>
                     <div class="col-md-8" {% if field.field.errors %} data-toggle="tooltip" data-placement="top"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}"{% endif %}>
                         {% if field.field.errors %}
@@ -205,13 +205,13 @@
                {% if field.field.name == "estado" %}
                   <div class="row field-estado" style="padding-top: 8px;">
                     <div class="col-md-4" style="padding-right: 0px;">
-                        <label style="padding-right: 0px; font-style: normal; font-size: 12px; font-family: Verdana, Geneva, sans-serif; width:110px;" for="id_userprofile-0-estado"><span class="error__msg">*</span> Estado:</label>
+                        <label class="txtlabel"" for="id_userprofile-0-estado"><span class="error__msg">*</span> Estado:</label>
                     </div>
                     <div class="col-md-8" {% if field.field.errors %} data-toggle="tooltip" data-placement="top"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}"{% endif %}>
                         {% if field.field.errors %}
-                            {{ field.field|add_attributes:"class:estado border-error" }}
+                            {{ field.field|add_attributes:"class:usuestado border-error" }}
                         {% else %}
-                            {{ field.field|add_attributes:"class:estado" }}
+                            {{ field.field|add_attributes:"class:usuestado" }}
                         {% endif %}
 
                        {% if field.field.help_text %}
@@ -241,7 +241,7 @@
                {% if field.field.name == "last_login" %}
                  <div class="row field-last_login" hidden="true">
                     <div class="col-md-5" >
-                        <label class="required" for="last_login">Último acceso:</label>
+                        <label class="txtlabel" for="last_login">Último acceso:</label>
                     </div>
                  </div>
                  <div class="row field-last_login">

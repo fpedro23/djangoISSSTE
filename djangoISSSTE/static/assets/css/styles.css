@@ -831,6 +831,7 @@
 	position: absolute;
 	left: 0px;
 	top: 143px;
+    padding-left: 4px;
 }
 
 .datosINICIO{
@@ -844,6 +845,7 @@
 	position: absolute;
 	left: 343px;
 	top: 145px;
+    padding-left: 4px;
 }
 
 .datosESPECIFICO{
@@ -1023,12 +1025,125 @@
     color: #6A6B6C;
 }
 
-input{
-    width: 95%;
-    height: 21px;
-}
+
 
 .obs-field{
     width: 99%;
     height: 30px;
 }
+
+.camposRL{
+	font-family: "soberana_sanslight";
+	font-size: 13px;
+	color: #6A6B6C;
+	width: 700px;
+	height: 310px;
+	position: absolute;
+	left: 123px;
+	top: 90px;
+    overflow: scroll;
+    /*border-bottom: 1px;
+    border-bottom-color: rgb(108, 108, 108);
+    border-bottom-style: solid;*/
+}
+
+.campopag{
+	font-family: "soberana_sanslight";
+	font-size: 18px;
+	color: #6A6B6C;
+	width: 694px;
+	height: 30px;
+	position: absolute;
+	left: 123px;
+	top: 400px;
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: #6A6B6C;
+}
+
+.campos04{
+	font-family: "soberana_sanslight";
+	font-size: 13px;
+	color: #6A6B6C;
+	width: 200px;
+	height: 30px;
+	position: absolute;
+	left: 684px;
+	top: 264px;
+    padding-left: 8px;
+    padding-right: 2px;
+}
+
+a{
+    color:#6A6B6C;
+    text-decoration: underline;
+}
+a:focus {
+  outline: thin dotted;
+    color: #8e8f90;
+}
+
+a:active,
+a:hover {
+  outline: 0;
+    color: #8e8f90;
+}
+
+.error__msg {
+  font-size: 12px;
+  font-weight: bold;
+  color: #B92025;
+}
+
+.tituloALERTA{
+	font-family: 'soberana_titularregular';
+	font-size: 24px;
+	text-align: center;
+	color: #FFFFFF;
+	font-weight: bold;
+	width: 360px;
+	height: 40px;
+	position: absolute;
+	left: 26px;
+	top: 48px;
+}
+
+.alertaVENTANA{
+	width: 400px;
+	height:250px;
+	background-image:url(../Imagenes/bigBackground.fw.png);
+	background-position:-721px -2000px;
+    position: relative;
+}
+
+.textoALERTA{
+	font-family: 'soberana_sansregular';
+	color:#FFFFFF;
+	font-size:15px;
+	text-align:center;
+
+	width:360px;
+	height:60px;
+
+	position:absolute;
+	left:26px;
+	top:100px;
+}
+
+.aceptarBTN{
+	width:92px;
+	height:30px;
+
+	background-image:url(../Imagenes/bigBackground.fw.png);
+	background-position:-724px -2256px;
+
+	position:absolute;
+	top:180px;
+	left:100px;
+}
+
+.aceptarBTN:hover{
+	background-position:-724px -2287px;
+}
+
+

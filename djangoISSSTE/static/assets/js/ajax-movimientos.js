@@ -20,7 +20,7 @@ function main_consulta() {
 	$j('#buscarICO').on('click', verDatos);
     $j('#imprimirBTN').on('click', imprimeFicha);
 
-    $.get("/visitas/register-by-token", function(respu) {
+    $.get("/register-by-token", function(respu) {
         newToken=respu.access_token;
     });
 
@@ -153,3 +153,44 @@ function verHistoria() {
 };
 
 
+$j(function() {
+    $j('#id_estado').bind('change', function () {
+       alert("hola");
+        var valor = $(this).val();
+        if (valor != null) {
+            getAvanceForPeriodo(valor, function (ans) {
+                alert(ans);
+            });
+        }
+    });
+
+
+});
+
+// PARA CARGA DE DISTRITO ELECTORAL DEPENDIENDO DE ESTADO SELECCIONADO
+function getAvanceForPeriodo(estadoId, onSuccess) {
+    // Setup CSRF tokens and all that good stuff so we don't get hacked
+    $j.ajaxSetup(
+        {
+            beforeSend: function(xhr, settings) {
+                if(settings.type == "POST")
+                    xhr.setRequestHeader("X-CSRFToken", $j('[name="csrfmiddlewaretoken"]').val());
+                if(settings.type == "GET")
+                    xhr.setRequestHeader("X-CSRFToken", $j('[name="csrfmiddlewaretoken"]').val());
+            }
+        }
+    );
+
+    // Get an Oauth2 access token and then do the ajax call, because SECURITY
+    $.get('/register-by-token', function(ans) {
+        // TODO: add a failure function
+        var ajaxData = { access_token: ans.access_token, periodo:(2016).toString(),accion:(1).toString(), estado: estadoId.toString() };
+
+        $j.ajax({
+            url: '/issste/api/avancePorPeriodo',
+            type: 'get',
+            data: ajaxData,
+            success: onSuccess
+        });
+    });
+}

@@ -1,0 +1,54 @@
+{% load i18n admin_static %}{% load cycle from future %}
+
+
+
+   <script id="js" type="text/javascript">
+    var $ts = jQuery.noConflict();
+         $(document).ready(function($) {
+         $ts("#RLT").show();
+
+  });
+
+</script>
+
+
+
+{% if result_hidden_fields %}
+<div class="hiddenfields">{# DIV for HTML validation #}
+{% for item in result_hidden_fields %}{{ item }}{% endfor %}
+
+</div>
+{% endif %}
+{% if results %}
+
+    <div class="camposRL" id="RLT" hidden="true" {% if cl.opts.verbose_name == "obra" %} {{ "style='width: 887px; left:5px; top:60px; height:430px;'"}}{% endif %}>
+        <table id="result_list" class="changelist" style="border-bottom:1px; border-top: 1px; border-right: 1px; border-left: 1px; padding:0px; border-color: #e4e5e6; ">
+           <thead style="background-color: #e4e5e6; border-color: #e4e5e6; border-left-color: #e4e5e6; border-top-color: #e4e5e6; border-right-color: #e4e5e6; border-top: 1px; border-right: 1px; border-left: 1px; border-bottom:0px;">
+                <tr style="border-bottom:1px; border-top: 1px; border-right: 1px; border-left: 1px; padding:0px; border-color: #e4e5e6; ">
+                {% for header in result_headers %}
+
+
+                    <th scope="col" {{ header.class_attrib }} style="border-bottom:0px; border-top: 1px; border-right: 1px; border-left: 1px; padding:4px; border-color: #e4e5e6; ">
+
+                    <div class="subtituloTABLA" style="font-family: 'soberana_textobold';">{% if header.sortable %}<a href="{{ header.url_primary }}" style="text-decoration: underline;">{{ header.text|capfirst }}</a>{% else %}<span>{{ header.text|capfirst }}</span>{% endif %}</div>
+                     <div class="clear"></div>
+                    </th>
+                {% endfor %}
+                </tr>
+            </thead>
+
+
+           <tbody style="border-bottom:1px; border-top: 1px; border-right: 1px; border-left: 1px; padding:4px; border-color: #6A6B6C; ">
+
+                {% for result in results %}
+
+                  {% if result.form.non_field_errors %}
+                      <tr style="border-bottom:1px; border-top: 1px; border-right: 1px; border-left: 1px; padding:0px; border-color: #6A6B6C; "><td  colspan="{{ result|length }}" style="border-bottom:1px; border-top: 1px; border-right: 1px; border-left: 1px; padding:4px; border-color: #6A6B6C; ">{{ result.form.non_field_errors }}</td></tr>
+                    {% endif %}
+                    <tr class="{% cycle 'row1' 'row2' %}" >{% for item in result %}{{ item }}{% endfor %}</tr>
+                {% endfor %}
+            </tbody>
+
+         </table>
+    </div>
+{% endif %}

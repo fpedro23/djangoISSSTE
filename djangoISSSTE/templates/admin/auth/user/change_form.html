@@ -8,7 +8,7 @@
 
 {% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />
 
-
+    <link rel="stylesheet" type="text/css" href="{% static "assets/css/restricted_styles.css" %}" />
     <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.css" />
 
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
@@ -118,10 +118,10 @@
 {% if change %}{% if not is_popup %}
   <ul class="object-tools">
     {% block object-tools-items %}
-    <li>
-        {% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}
+    <!--li>
+        {#% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %#}
 
-    </li>
+    </li!-->
     {% if has_absolute_url %}<li><a href="{{ absolute_url }}" class="viewsitelink">{% trans "View on site" %}</a></li>{% endif%}
     {% endblock %}
   </ul>
