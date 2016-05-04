@@ -5,6 +5,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.encoding import python_2_unicode_compatible
 from datetime import date
+from time import gmtime, strftime
 
 # Create your models here.
 from django.forms import model_to_dict
@@ -17,9 +18,8 @@ def getPeriodoActual():
         periodo = Periodo.objects.get(nombrePeriodo=periodoActual)
     except Periodo.DoesNotExist:
         periodo = None
-    # print periodo
-
-    return periodo
+    #print periodo.nombrePeriodo
+    return periodo.id
 
 
 @python_2_unicode_compatible
@@ -171,7 +171,7 @@ class Mes(models.Model):
 class Meta(models.Model):
     nombreMeta = models.CharField(max_length=200, null=False, )
     accionEstrategica = models.ForeignKey(AccionEstrategica, null=False, blank=False, verbose_name='Acción Estrategica')
-    periodo = models.ForeignKey(Periodo, null=False, blank=False, default=getPeriodoActual().nombrePeriodo)
+    periodo = models.ForeignKey(Periodo, null=False, blank=False, default=getPeriodoActual())
     observaciones = models.TextField(max_length=500, default="", blank=True)
     montoPromedio = models.FloatField(null=False, default=0, verbose_name='Monto Promedio')
 
@@ -179,8 +179,6 @@ class Meta(models.Model):
         ans = model_to_dict(self)
         ans['id'] = str(self.id)
         ans['accionEstrategica'] = self.accionEstrategica.nombreAccion
-        ans['estado'] = MetaMensual.estado.nombreEstado
-        # ans['estado'] = self.estado.nombreEstado
         ans['periodo'] = self.periodo.nombrePeriodo
         return ans
 
@@ -239,7 +237,7 @@ class MetaMensual(models.Model):
 class AvancePorMunicipio(models.Model):
     meta = models.ForeignKey(Meta, null=False, blank=False, verbose_name="Acción Estratégica")
     estado = models.ForeignKey(Estado, null=False, blank=False)
-    periodo = models.ForeignKey(Periodo, null=False, blank=False, default=getPeriodoActual().nombrePeriodo)
+    periodo = models.ForeignKey(Periodo, null=False, blank=False, default=getPeriodoActual())
     inversionAprox = models.FloatField(default=0)
 
     def __str__(self):
@@ -270,7 +268,7 @@ class AvancePorMunicipio(models.Model):
 class AvanceMensual(models.Model):
     avancePorMunicipio = models.ForeignKey(AvancePorMunicipio, null=False, blank=False)
     municipio = models.ForeignKey(Municipio, null=False, blank=False)
-    fecha_ultima_modificacion = models.DateTimeField(auto_now=True)
+    fecha_ultima_modificacion = models.DateField(auto_now=True)
     ene = models.FloatField(null=False, default=0)
     feb = models.FloatField(null=False, default=0)
     mar = models.FloatField(null=False, default=0)
@@ -289,13 +287,16 @@ class AvanceMensual(models.Model):
         ans['id'] = str(self.id)
         ans['meta'] = "meta_ISSTE"
         ans['municipio'] = self.municipio.nombreMunicipio
-        ans['fecha_ultima_modificacion'] = self.fecha_ultima_modificacion.__str__()
-        return ans
+        if self.fecha_ultima_modificacion is None:
+            ans['fecha_ultima_modificacion'] = None
+        else:
+            ans['fecha_ultima_modificacion'] = self.fecha_ultima_modificacion.isoformat()
 
     class Meta:
         unique_together = [("avancePorMunicipio", "municipio")]
         verbose_name = "Avance Mensual"
         verbose_name_plural = "Avances Mensuales"
+
 
 
 class Usuario(models.Model):

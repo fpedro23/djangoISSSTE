@@ -11,6 +11,7 @@ from oauth2_provider.models import AccessToken
 
 from djangoISSSTE.BuscarAvances import BuscarAvances
 from oauth2_provider.views.generic import ProtectedResourceView
+from django.core.serializers.json import DjangoJSONEncoder
 
 from djangoISSSTE.models import *
 
@@ -42,13 +43,13 @@ class SubcarenciasForCarenciasEndpoint(ListView):
 
         if all_carencias:
             subcarencias = SubCarencia.objects.order_by('nombreSubCarencia').all()
-            print (subcarencias)
         else:
             subcarencias = SubCarencia.objects.filter(carencia_id__in=carencia_ids).order_by(
                 'nombreSubCarencia').all()
 
         the_list = []
         for subcarencias in subcarencias.values('id', 'nombreSubCarencia'):
+            print subcarencias
             the_list.append(subcarencias)
 
         return HttpResponse(
@@ -70,12 +71,14 @@ class AccionesForSubCarenciasEndpoint(ListView):
             acciones = AccionEstrategica.objects.filter(subCarencia_id__in=subcarencias_ids).order_by(
                 'nombreAccion').all()
 
-            the_list = []
-            for accion in acciones.values():
-                the_list.append(accion)
+        the_list = []
+        for accion in acciones.values():
+            the_list.append(accion)
 
-        return HttpResponse(json.dumps(the_list, ensure_ascii=False, indent=4, separators=(',', ': '), sort_keys=True, ),
-                        'application/json', )
+        return HttpResponse(
+            json.dumps(the_list, ensure_ascii=False, indent=4, separators=(',', ': '), sort_keys=True, ),
+            'application/json', )
+
 
 # Api para regresar todos los responsables dados de alta
 
@@ -84,7 +87,7 @@ class ResponsablesEndpoint(ListView):
     def get(self, request, *args, **kwargs):
         return HttpResponse(
             json.dumps((map(lambda responsable: responsable.to_serializable_dict(), Responsable.objects.all())),
-                       ensure_ascii=False, ),
+                       ensure_ascii=False, indent=4, separators=(',', ': '), sort_keys=True, ),
             'application/json', )
 
 
@@ -123,7 +126,7 @@ class MunicipiosForEstadosEndpoint(ListView):
 
 # Clase EndPoint (oauth2) para devolver los periodos
 class PeriodosEndpoint(ListView):
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         return HttpResponse(
             json.dumps((map(lambda periodo: periodo.to_serializable_dict(), Periodo.objects.all())), ensure_ascii=False,
                        indent=4, separators=(',', ': '), sort_keys=True, ), 'application/json')
@@ -131,7 +134,7 @@ class PeriodosEndpoint(ListView):
 
 # Clase EndPoint (oauth2) para devolver los mese
 class MesesEndpoint(ListView):
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         return HttpResponse(
             json.dumps((map(lambda mes: mes.to_serializable_dict(), Mes.objects.all())), ensure_ascii=False,
                        indent=4, separators=(',', ': '), sort_keys=True, ), 'application/json')
@@ -139,7 +142,7 @@ class MesesEndpoint(ListView):
 
 # Clase EndPoint (oauth2) para devolver las metas
 class MetasEndpoint(ListView):
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         return HttpResponse(
             json.dumps((map(lambda meta: meta.to_serializable_dict(), Meta.objects.all())), ensure_ascii=False,
                        indent=4, separators=(',', ': '), sort_keys=True, ), 'application/json')
@@ -147,7 +150,7 @@ class MetasEndpoint(ListView):
 
 # Clase EndPoint (oauth2) para devolver las metas mensuales dada una acción
 class MetasMensualesPorAccionEndpoint(ListView):
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         # Obteniendo los datos de la url
         periodos_ids = get_array_or_none(request.GET.get('periodos'))
         accion_ids = get_array_or_none(request.GET.get('acciones'))
@@ -181,16 +184,16 @@ class MetasMensualesPorAccionEndpoint(ListView):
 
             metas_mensuales = MetaMensual.objects.filter(meta_id__in=arreglo_meta, estado_id__in=estado_ids, )
 
-            the_list = []
-            for meta_mensual in metas_mensuales.values():
-                the_list.append(meta_mensual)
+        the_list = []
+        for meta_mensual in metas_mensuales.values():
+            the_list.append(meta_mensual)
 
         return HttpResponse(json.dumps(the_list, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
-                        'application/json', )  # Clase EndPoint (oauth2) para devolver los avances mensuales dada una acción
+                            'application/json', )  # Clase EndPoint (oauth2) para devolver los avances mensuales dada una acción
 
 
 class AvancesMensualesPorAccionEndpoint(ListView):
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         # Obteniendo los datos de la url
         accion_ids = get_array_or_none(request.GET.get('acciones'))
         all_avances_mensuales = False
@@ -217,13 +220,13 @@ class AvancesMensualesPorAccionEndpoint(ListView):
         for avance_mensual in avances_mensuales.values():
             the_list.append(avance_mensual)
 
-        return HttpResponse(json.dumps(the_list, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
+        return HttpResponse(json.dumps(the_list, indent=4, sort_keys=True, ensure_ascii=False, cls=DjangoJSONEncoder),
                             'application/json', )
 
 
 # Clase EndPoint (oauth2) para devolver las metas mensuales dada una meta
 class MetasMensualesPorMetaEndpoint(ListView):
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         # Obteniendo los datos de la url
         meta_ids = get_array_or_none(request.GET.get('metas'))
         all_metas_mensuales = False
@@ -235,6 +238,7 @@ class MetasMensualesPorMetaEndpoint(ListView):
         # todas las metas mensuales de la base de datos
         if all_metas_mensuales:
             metas_mensuales = MetaMensual.objects.order_by('meta').all()
+
         else:
             metas_mensuales = MetaMensual.objects.filter(meta_id__in=meta_ids).order_by('meta').all()
 
@@ -243,13 +247,13 @@ class MetasMensualesPorMetaEndpoint(ListView):
         for meta_mensual in metas_mensuales.values():
             the_list.append(meta_mensual)
 
-        return HttpResponse(json.dumps(the_list, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
+        return HttpResponse(json.dumps(the_list, indent=4, sort_keys=True, ensure_ascii=False),
                             'application/json', )
 
 
 # Clase EndPoint (oauth2) para devolver los avances mensuales dada una meta
 class avancesMensualesPorMetaEndpoint(ListView):
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         # Obteniendo los datos de la url
         meta_ids = get_array_or_none(request.GET.get('metas'))
         all_avances_mensuales = False
@@ -272,7 +276,7 @@ class avancesMensualesPorMetaEndpoint(ListView):
         for avance_mensual in avances_mensuales.values():
             the_list.append(avance_mensual)
 
-        return HttpResponse(json.dumps(the_list, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
+        return HttpResponse(json.dumps(the_list, indent=4, sort_keys=True, ensure_ascii=False, cls=DjangoJSONEncoder),
                             'application/json', )
 
 
@@ -283,7 +287,7 @@ class avancesMensualesPorMetaEndpoint(ListView):
 
 # Clase EndPoint (oauth2) para implementar el buscador en base al filtro grande
 class BuscadorEndpoint(generic.ListView):
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         myObj = BuscarAvances(
             carencias=get_array_or_none(request.GET.get('carencias')),
             subcarencias=get_array_or_none(request.GET.get('subcarencias')),
@@ -434,6 +438,60 @@ class BuscadorEndpoint(generic.ListView):
                 'meta__montoPromedio']
             json_map['reporte_por_estado'].append(shortened_reporte)
 
-        return HttpResponse(json.dumps(json_map, ensure_ascii=False), 'application/json')
-        # return HttpResponse(json.dumps(json_map, indent=6, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
-        # 'application/json', )
+        return HttpResponse(json.dumps(json_map, indent=6, sort_keys=True, ensure_ascii=False),
+                            'application/json', )
+
+
+class ExcelAvancesEndpoint(ListView):
+    def get(self, request, *args, **kwargs):
+        # Obteniendo los datos de la url
+        periodo_id = get_array_or_none(request.GET.get('periodos'))
+
+        if periodo_id  is None:
+            avances_mensuales = AvanceMensual.objects.all()
+        else:
+            avances_mensuales = AvanceMensual.objects.filter(avancePorMunicipio__periodo_id__in=periodo_id).all()
+
+        the_list = []
+
+        for avance_mensual in avances_mensuales.values('avancePorMunicipio__periodo__nombrePeriodo','municipio__nombreMunicipio', 'ene',
+                                                       'feb', 'mar', 'abr', 'may', 'jun',
+                                                       'jul', 'ago', 'sep', 'oct', 'nov',
+                                                       'dic',
+                                                       'avancePorMunicipio__periodo__nombrePeriodo',
+                                                       'avancePorMunicipio__inversionAprox',
+                                                       'avancePorMunicipio__meta__accionEstrategica__nombreAccion',
+                                                       'avancePorMunicipio__meta__accionEstrategica__unidadDeMedida',
+                                                       'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia',
+                                                       'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia'):
+            the_list.append(avance_mensual)
+
+        return HttpResponse(json.dumps(the_list, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
+                            'application/json', )
+
+
+class ExcelMetasEndpoint(ListView):
+    def get(self, request, *args, **kwargs):
+        # Obteniendo los datos de la url
+        periodo_id = get_array_or_none(request.GET.get('periodo'))
+
+        if periodo_id  is None:
+            metas_mensuales = MetaMensual.objects.all()
+        else:
+            metas_mensuales = MetaMensual.objects.filter(meta__periodo_id__in=periodo_id).all()
+
+        the_list = []
+        for meta_mensual in metas_mensuales.values('meta__periodo__nombrePeriodo','estado__nombreEstado', 'ene',
+                                                       'feb', 'mar', 'abr', 'may', 'jun',
+                                                       'jul', 'ago', 'sep', 'oct', 'nov',
+                                                       'dic',
+                                                       'inversionAprox',
+                                                       'meta__accionEstrategica__nombreAccion',
+                                                       'meta__accionEstrategica__unidadDeMedida',
+                                                       'meta__accionEstrategica__subCarencia__nombreSubCarencia',
+                                                       'meta__accionEstrategica__subCarencia__carencia__nombreCarencia'):
+            the_list.append(meta_mensual)
+
+
+        return HttpResponse(json.dumps(the_list, indent=4, sort_keys=True, ensure_ascii=False),
+                            'application/json', )
