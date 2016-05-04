@@ -43,13 +43,13 @@ class SubcarenciasForCarenciasEndpoint(ListView):
 
         if all_carencias:
             subcarencias = SubCarencia.objects.order_by('nombreSubCarencia').all()
+            print (subcarencias)
         else:
             subcarencias = SubCarencia.objects.filter(carencia_id__in=carencia_ids).order_by(
-                'nombreSubCarencia').all()
+                    'nombreSubCarencia').all()
 
         the_list = []
         for subcarencias in subcarencias.values('id', 'nombreSubCarencia'):
-            print subcarencias
             the_list.append(subcarencias)
 
         return HttpResponse(
@@ -57,23 +57,23 @@ class SubcarenciasForCarenciasEndpoint(ListView):
             'application/json', )
 
 
-class AccionesForSubCarenciasEndpoint(ListView):
-    def get(self, request, *args, **kwargs):
-        subcarencias_ids = get_array_or_none(request.GET.get('subcarencias'))
-        all_acciones = False
+class AccionesForSubCarenciasEndpoint(ProtectedResourceView):
+	def get(self, request, *args, **kwargs):
+		subcarencias_ids = get_array_or_none(request.GET.get('subcarencias'))
+		all_acciones = False
 
-        if subcarencias_ids is None:
-            all_acciones = True
+		if subcarencias_ids is None:
+			all_acciones = True
 
-        if all_acciones:
-            acciones = AccionEstrategica.objects.order_by('nombreAccion').all()
-        else:
-            acciones = AccionEstrategica.objects.filter(subCarencia_id__in=subcarencias_ids).order_by(
-                'nombreAccion').all()
+		if all_acciones:
+			acciones = AccionEstrategica.objects.order_by('nombreAccion').all()
+		else:
+			acciones = AccionEstrategica.objects.filter(subCarencia_id__in=subcarencias_ids).order_by(
+				'nombreAccion').all()
 
-        the_list = []
-        for accion in acciones.values():
-            the_list.append(accion)
+		the_list = []
+		for accion in acciones.values():
+			the_list.append(accion)
 
         return HttpResponse(
             json.dumps(the_list, ensure_ascii=False, indent=4, separators=(',', ': '), sort_keys=True, ),
@@ -81,9 +81,7 @@ class AccionesForSubCarenciasEndpoint(ListView):
 
 
 # Api para regresar todos los responsables dados de alta
-
-
-class ResponsablesEndpoint(ListView):
+class ResponsablesEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         return HttpResponse(
             json.dumps((map(lambda responsable: responsable.to_serializable_dict(), Responsable.objects.all())),
@@ -94,10 +92,17 @@ class ResponsablesEndpoint(ListView):
 # Clase EndPoint (oauth2) para devolver los estados
 class EstadosEndpoint(ListView):
     def get(self, request, *args, **kwargs):
-        return HttpResponse(
-            json.dumps((map(lambda estado: estado.to_serializable_dict(), Estado.objects.all())), ensure_ascii=False,
-                       indent=4, separators=(',', ': '), sort_keys=True, ),
-            'application/json', )
+		usuario = AccessToken.objects.get(token=request.GET.get('access_token')).user.usuario
+		if usuario.rol == "FE" or usuario.rol == "UE":
+			return HttpResponse(
+				json.dumps((map(lambda estado: estado.to_serializable_dict(),
+								Estado.objects.filter(id = usuario.estado_id))),ensure_ascii=False, indent=4, separators=(',', ': '), sort_keys=True,),'application/json')
+
+		return HttpResponse(
+				json.dumps((map(lambda estado: estado.to_serializable_dict(), Estado.objects.all())),
+						   ensure_ascii=False,
+						   indent=4, separators=(',', ': '), sort_keys=True, ),
+				'application/json', )
 
 
 # Clase EndPoint (oauth2) para devolver los municipios, dado un estado
@@ -149,49 +154,36 @@ class MetasEndpoint(ListView):
 
 
 # Clase EndPoint (oauth2) para devolver las metas mensuales dada una acción
-class MetasMensualesPorAccionEndpoint(ListView):
-    def get(self, request, *args, **kwargs):
-        # Obteniendo los datos de la url
-        periodos_ids = get_array_or_none(request.GET.get('periodos'))
-        accion_ids = get_array_or_none(request.GET.get('acciones'))
-        estado_ids = get_array_or_none(request.GET.get('estados'))
+class MetasMensualesPorAccionEndpoint(ProtectedResourceView):
+	def get(self, request):
+		# Obteniendo los datos de la url
+		accion_ids = get_array_or_none(request.GET.get('acciones'))
+		estado_ids = get_array_or_none(request.GET.get('estados'))
+		all_metas_mensuales = False
+		arreglo_meta = []
 
-        # query = Q()
-        #
-        # if periodos_ids is not None:
-        #     query = query | Q(meta__periodo__id__in=periodos_ids)
-        #     print query
+		if accion_ids is None:
+			all_metas_mensuales = True
 
-        # metas_mensuales = None
+		# Si TRUE, no hubo acciones en la url y se regresan
+		# todas las metas mensuales de la base de datos
+		if all_metas_mensuales:
+			metas_mensuales = MetaMensual.objects.order_by('inversionAprox').all()
+		else:
+			for meta in Meta.objects.filter(accionEstrategica_id__in=accion_ids):
+				arreglo_meta.append(meta.id)
 
-        # if query is not None:
-        #     metas_mensuales = MetaMensual.objects.filter(query)
-        #     print 'metas' + metas_mensuales.__str__()
+			metas_mensuales = MetaMensual.objects.filter(meta_id__in=arreglo_meta, estado_id__in = estado_ids)
 
-        all_metas_mensuales = False
-        arreglo_meta = []
-
-        if accion_ids is None:
-            all_metas_mensuales = True
-
-        # Si TRUE, no hubo acciones en la url y se regresan
-        # todas las metas mensuales de la base de datos
-        if all_metas_mensuales:
-            metas_mensuales = MetaMensual.objects.order_by('inversionAprox').all()
-        else:
-            for meta in Meta.objects.filter(accionEstrategica_id__in=accion_ids):
-                arreglo_meta.append(meta.id)
-
-            metas_mensuales = MetaMensual.objects.filter(meta_id__in=arreglo_meta, estado_id__in=estado_ids, )
-
-        the_list = []
-        for meta_mensual in metas_mensuales.values():
-            the_list.append(meta_mensual)
+		the_list = []
+		for meta_mensual in metas_mensuales.values():
+			the_list.append(meta_mensual)
 
         return HttpResponse(json.dumps(the_list, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
                             'application/json', )  # Clase EndPoint (oauth2) para devolver los avances mensuales dada una acción
 
 
+# Clase EndPoint (oauth2) para devolver los avances mensuales dada una acción
 class AvancesMensualesPorAccionEndpoint(ListView):
     def get(self, request, *args, **kwargs):
         # Obteniendo los datos de la url
@@ -200,25 +192,25 @@ class AvancesMensualesPorAccionEndpoint(ListView):
         arreglo_meta = []
         arreglo_avance_municipio = []
 
-        if accion_ids is None:
-            all_avances_mensuales = True
+		if accion_ids is None:
+			all_avances_mensuales = True
 
-        # Si TRUE, no hubo acciones en la url y se regresan
-        # todas los avances mensuales de la base de datos
-        if all_avances_mensuales:
-            avances_mensuales = AvanceMensual.objects.order_by('municipio').all()
-        else:
-            for meta in Meta.objects.filter(accionEstrategica_id__in=accion_ids):
-                arreglo_meta.append(meta.id)
+		# Si TRUE, no hubo acciones en la url y se regresan
+		# todas los avances mensuales de la base de datos
+		if all_avances_mensuales:
+			avances_mensuales = AvanceMensual.objects.order_by('municipio').all()
+		else:
+			for meta in Meta.objects.filter(accionEstrategica_id__in=accion_ids):
+				arreglo_meta.append(meta.id)
 
-            for avance_municipio in AvancePorMunicipio.objects.filter(meta_id__in=arreglo_meta):
-                arreglo_avance_municipio.append(avance_municipio.id)
+			for avance_municipio in AvancePorMunicipio.objects.filter(meta_id__in=arreglo_meta):
+				arreglo_avance_municipio.append(avance_municipio.id)
 
-            avances_mensuales = AvanceMensual.objects.filter(avancePorMunicipio_id__in=arreglo_avance_municipio)
+			avances_mensuales = AvanceMensual.objects.filter(avancePorMunicipio_id__in=arreglo_avance_municipio)
 
-        the_list = []
-        for avance_mensual in avances_mensuales.values():
-            the_list.append(avance_mensual)
+		the_list = []
+		for avance_mensual in avances_mensuales.values():
+			the_list.append(avance_mensual)
 
         return HttpResponse(json.dumps(the_list, indent=4, sort_keys=True, ensure_ascii=False, cls=DjangoJSONEncoder),
                             'application/json', )
@@ -238,7 +230,6 @@ class MetasMensualesPorMetaEndpoint(ListView):
         # todas las metas mensuales de la base de datos
         if all_metas_mensuales:
             metas_mensuales = MetaMensual.objects.order_by('meta').all()
-
         else:
             metas_mensuales = MetaMensual.objects.filter(meta_id__in=meta_ids).order_by('meta').all()
 
@@ -247,8 +238,7 @@ class MetasMensualesPorMetaEndpoint(ListView):
         for meta_mensual in metas_mensuales.values():
             the_list.append(meta_mensual)
 
-        return HttpResponse(json.dumps(the_list, indent=4, sort_keys=True, ensure_ascii=False),
-                            'application/json', )
+        return HttpResponse(json.dumps((the_list), ensure_ascii=False), 'application/json')
 
 
 # Clase EndPoint (oauth2) para devolver los avances mensuales dada una meta
@@ -287,156 +277,121 @@ class avancesMensualesPorMetaEndpoint(ListView):
 
 # Clase EndPoint (oauth2) para implementar el buscador en base al filtro grande
 class BuscadorEndpoint(generic.ListView):
-    def get(self, request, *args, **kwargs):
-        myObj = BuscarAvances(
-            carencias=get_array_or_none(request.GET.get('carencias')),
-            subcarencias=get_array_or_none(request.GET.get('subcarencias')),
-            acciones=get_array_or_none(request.GET.get('acciones')),
-            estados=get_array_or_none(request.GET.get('estados')),
-            municipios=get_array_or_none(request.GET.get('municipios')),
-            periodos=get_array_or_none(request.GET.get('periodos')),
-            meses=get_array_or_none(request.GET.get('meses')),
-            observaciones=request.GET.get('observaciones'),
-            avance_minimo=get_array_or_none(request.GET.get('avanceMinimo')),
-            avance_maximo=get_array_or_none(request.GET.get('avanceMaximo')),
-            inversion_minima=get_array_or_none(request.GET.get('inversionMinima')),
-            inversion_maxima=get_array_or_none(request.GET.get('inversionMaxima')),
-            unidad_de_medida=request.GET.get('unidadDeMedida'),
-        )
-        # user = AccessToken.objects.get(token=request.GET.get('access_token')).user
-        resultados = myObj.buscar()
+	def get(self, request):
+		myObj = BuscarAvances(
+			carencias = get_array_or_none(request.GET.get('carencias')),
+			subcarencias = get_array_or_none(request.GET.get('subcarencias')),
+			acciones = get_array_or_none(request.GET.get('acciones')),
+			estados = get_array_or_none(request.GET.get('estados')),
+			municipios = get_array_or_none(request.GET.get('municipios')),
+			periodos = get_array_or_none(request.GET.get('periodos')),
+			meses = get_array_or_none(request.GET.get('meses')),
+			observaciones = request.GET.get('observaciones'),
+			avance_minimo = get_array_or_none(request.GET.get('avanceMinimo')),
+			avance_maximo = get_array_or_none(request.GET.get('avanceMaximo')),
+			inversion_minima = get_array_or_none(request.GET.get('inversionMinima')),
+			inversion_maxima = get_array_or_none(request.GET.get('inversionMaxima')),
+			unidad_de_medida = request.GET.get('unidadDeMedida'),
+			limite_inferior = request.GET.get('limiteInferior'),
+			limite_superior = request.GET.get('limiteSuperior')
+		)
 
-        json_map = {}
-        json_map['reporte_general'] = []
-        json_map['reporte_por_estado'] = []
+		resultados = myObj.buscar()
+		json_map = {}
+		json_map['reporte_general'] = []		# Entrega avances mensuales con la información solicitada
+		json_map['reporte_por_estado'] = []		# Entrega avances mensuales por estado
 
-        for reporte in resultados['reporte_general']:
-            shortened_reporte = {}
+		for reporte in resultados['reporte_general']:
+			shortened_reporte = {}
+			add = True
 
-            shortened_reporte['suma_avance'] = 0
-            avance_mensual = AvanceMensual.objects.get(id=reporte['id'])
-            if myObj.meses is not None:
-                for mes in myObj.meses:
-                    if mes == 1: shortened_reporte['suma_avance'] += avance_mensual.ene
-                    if mes == 2: shortened_reporte['suma_avance'] += avance_mensual.feb
-                    if mes == 3: shortened_reporte['suma_avance'] += avance_mensual.mar
-                    if mes == 4: shortened_reporte['suma_avance'] += avance_mensual.abr
-                    if mes == 5: shortened_reporte['suma_avance'] += avance_mensual.may
-                    if mes == 6: shortened_reporte['suma_avance'] += avance_mensual.jun
-                    if mes == 7: shortened_reporte['suma_avance'] += avance_mensual.jul
-                    if mes == 8: shortened_reporte['suma_avance'] += avance_mensual.ago
-                    if mes == 9: shortened_reporte['suma_avance'] += avance_mensual.sep
-                    if mes == 10: shortened_reporte['suma_avance'] += avance_mensual.oct
-                    if mes == 11: shortened_reporte['suma_avance'] += avance_mensual.nov
-                    if mes == 12: shortened_reporte['suma_avance'] += avance_mensual.dic
-            else:
+			shortened_reporte['suma_avance'] = 0			# Utilizado para mejorar el aspecto de las llaves del json
+			avance_mensual = AvanceMensual.objects.get(id=reporte['id'])
+			if myObj.meses is not  None:
+				for mes in myObj.meses:
+					if mes == 1: shortened_reporte['suma_avance'] += avance_mensual.ene
+					if mes == 2: shortened_reporte['suma_avance'] += avance_mensual.feb
+					if mes == 3: shortened_reporte['suma_avance'] += avance_mensual.mar
+					if mes == 4: shortened_reporte['suma_avance'] += avance_mensual.abr
+					if mes == 5: shortened_reporte['suma_avance'] += avance_mensual.may
+					if mes == 6: shortened_reporte['suma_avance'] += avance_mensual.jun
+					if mes == 7: shortened_reporte['suma_avance'] += avance_mensual.jul
+					if mes == 8: shortened_reporte['suma_avance'] += avance_mensual.ago
+					if mes == 9: shortened_reporte['suma_avance'] += avance_mensual.sep
+					if mes == 10: shortened_reporte['suma_avance'] += avance_mensual.oct
+					if mes == 11: shortened_reporte['suma_avance'] += avance_mensual.nov
+					if mes == 12: shortened_reporte['suma_avance'] += avance_mensual.dic
+			else:
 
-                shortened_reporte[
-                    'suma_avance'] += avance_mensual.ene + avance_mensual.feb + avance_mensual.mar + avance_mensual.abr
-                shortened_reporte[
-                    'suma_avance'] += avance_mensual.may + avance_mensual.jun + avance_mensual.jul + avance_mensual.ago
-                shortened_reporte[
-                    'suma_avance'] += avance_mensual.sep + avance_mensual.oct + avance_mensual.nov + avance_mensual.dic
-            shortened_reporte['id'] = reporte['id']
-            shortened_reporte['accion'] = reporte['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
-            shortened_reporte['carencia'] = reporte[
-                'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
-            shortened_reporte['subCarencia'] = reporte[
-                'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
-            shortened_reporte['estado'] = reporte['avancePorMunicipio__estado__nombreEstado']
-            shortened_reporte['municipio'] = reporte['municipio__nombreMunicipio']
-            shortened_reporte['periodo'] = reporte['avancePorMunicipio__periodo__nombrePeriodo']
-            shortened_reporte['latitud'] = reporte['municipio__latitud']
-            shortened_reporte['longitud'] = reporte['municipio__longitud']
-            json_map['reporte_general'].append(shortened_reporte)
+				shortened_reporte['suma_avance'] += avance_mensual.ene + avance_mensual.feb + avance_mensual.mar + avance_mensual.abr
+				shortened_reporte['suma_avance'] += avance_mensual.may + avance_mensual.jun + avance_mensual.jul + avance_mensual.ago
+				shortened_reporte['suma_avance'] += avance_mensual.sep + avance_mensual.oct + avance_mensual.nov + avance_mensual.dic
+			shortened_reporte['id'] = reporte['id']
+			shortened_reporte['accion'] = reporte['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
+			shortened_reporte['carencia'] = reporte['avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
+			shortened_reporte['subCarencia'] = reporte['avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
+			shortened_reporte['estado'] = reporte['avancePorMunicipio__estado__nombreEstado']
+			shortened_reporte['municipio'] = reporte['municipio__nombreMunicipio']
+			shortened_reporte['periodo'] = reporte['avancePorMunicipio__periodo__nombrePeriodo']
+			shortened_reporte['latitud'] = reporte['municipio__latitud']
+			shortened_reporte['longitud'] = reporte['municipio__longitud']
 
-        for reporte_estado in resultados['reporte_por_estado']:
-            shortened_reporte = {}
-            shortened_reporte['avance'] = 0
-            if myObj.meses is not None:
-                for mes in myObj.meses:
-                    if mes == 1: shortened_reporte['avance'] += \
-                        AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('ene'))[
-                            'ene__sum']
-                    if mes == 2: shortened_reporte['avance'] += \
-                        AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('feb'))[
-                            'feb__sum']
-                    if mes == 3: shortened_reporte['avance'] += \
-                        AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('mar'))[
-                            'mar__sum']
-                    if mes == 4: shortened_reporte['avance'] += \
-                        AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('abr'))[
-                            'abr__sum']
-                    if mes == 5: shortened_reporte['avance'] += \
-                        AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('may'))[
-                            'may__sum']
-                    if mes == 6: shortened_reporte['avance'] += \
-                        AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('jun'))[
-                            'jun__sum']
-                    if mes == 7: shortened_reporte['avance'] += \
-                        AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('jul'))[
-                            'jul__sum']
-                    if mes == 8: shortened_reporte['avance'] += \
-                        AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('ago'))[
-                            'ago__sum']
-                    if mes == 9: shortened_reporte['avance'] += \
-                        AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('sep'))[
-                            'sep__sum']
-                    if mes == 10: shortened_reporte['avance'] += \
-                        AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('oct'))[
-                            'oct__sum']
-                    if mes == 11: shortened_reporte['avance'] += \
-                        AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('nov'))[
-                            'nov__sum']
-                    if mes == 12: shortened_reporte['avance'] += \
-                        AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('dic'))[
-                            'dic__sum']
-            else:
-                shortened_reporte['avance'] += \
-                    AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('ene'))[
-                        'ene__sum']
-                shortened_reporte['avance'] += \
-                    AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('feb'))[
-                        'feb__sum']
-                shortened_reporte['avance'] += \
-                    AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('mar'))[
-                        'mar__sum']
-                shortened_reporte['avance'] += \
-                    AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('abr'))[
-                        'abr__sum']
-                shortened_reporte['avance'] += \
-                    AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('may'))[
-                        'may__sum']
-                shortened_reporte['avance'] += \
-                    AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('jun'))[
-                        'jun__sum']
-                shortened_reporte['avance'] += \
-                    AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('jul'))[
-                        'jul__sum']
-                shortened_reporte['avance'] += \
-                    AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('ago'))[
-                        'ago__sum']
-                shortened_reporte['avance'] += \
-                    AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('sep'))[
-                        'sep__sum']
-                shortened_reporte['avance'] += \
-                    AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('oct'))[
-                        'oct__sum']
-                shortened_reporte['avance'] += \
-                    AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('nov'))[
-                        'nov__sum']
-                shortened_reporte['avance'] += \
-                    AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('dic'))[
-                        'dic__sum']
+			#Validando que la suma de los avances se encuentre dentro del rango solicitado
+			if myObj.avance_minimo is not None and myObj.avance_maximo is not None:
+				if shortened_reporte['suma_avance'] < myObj.avance_minimo[0] or shortened_reporte['suma_avance'] > myObj.avance_maximo[0]:
+					add = False
 
-            shortened_reporte['id'] = reporte_estado['id']
-            shortened_reporte['estado'] = reporte_estado['estado__nombreEstado']
-            shortened_reporte['carencia'] = reporte_estado[
-                'meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
-            shortened_reporte['montoPromedio'] = reporte_estado['meta__montoPromedio']
-            shortened_reporte['inversion_aproximada'] = shortened_reporte['avance'] * reporte_estado[
-                'meta__montoPromedio']
-            json_map['reporte_por_estado'].append(shortened_reporte)
+			# Si existieron los límites del avance y se estuvo dentro de ellos, se añade
+			if add == True:
+				json_map['reporte_general'].append(shortened_reporte)
+
+
+		for reporte_estado in resultados['reporte_por_estado']:
+			add = True
+			shortened_reporte = {}
+			shortened_reporte['avance'] = 0
+			if myObj.meses is not None:
+				for mes in myObj.meses:
+					if mes == 1: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('ene'))['ene__sum']
+					if mes == 2: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('feb'))['feb__sum']
+					if mes == 3: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('mar'))['mar__sum']
+					if mes == 4: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('abr'))['abr__sum']
+					if mes == 5: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('may'))['may__sum']
+					if mes == 6: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('jun'))['jun__sum']
+					if mes == 7: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('jul'))['jul__sum']
+					if mes == 8: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('ago'))['ago__sum']
+					if mes == 9: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('sep'))['sep__sum']
+					if mes == 10: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('oct'))['oct__sum']
+					if mes == 11: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('nov'))['nov__sum']
+					if mes == 12: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('dic'))['dic__sum']
+			else:
+				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('ene'))['ene__sum']
+				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('feb'))['feb__sum']
+				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('mar'))['mar__sum']
+				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('abr'))['abr__sum']
+				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('may'))['may__sum']
+				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('jun'))['jun__sum']
+				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('jul'))['jul__sum']
+				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('ago'))['ago__sum']
+				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('sep'))['sep__sum']
+				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('oct'))['oct__sum']
+				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('nov'))['nov__sum']
+				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('dic'))['dic__sum']
+
+			shortened_reporte['id'] = reporte_estado['id']
+			shortened_reporte['estado'] = reporte_estado['estado__nombreEstado']
+			shortened_reporte['carencia'] = reporte_estado['meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
+			shortened_reporte['montoPromedio'] = reporte_estado['meta__montoPromedio']
+			shortened_reporte['inversion_aproximada'] = shortened_reporte['avance'] * reporte_estado['meta__montoPromedio']
+
+			# Validando que la suma de los avances se encuentre dentro del rango solicitado
+			if myObj.avance_minimo is not None and myObj.avance_maximo is not None:
+				if shortened_reporte['avance'] < myObj.avance_minimo[0] or shortened_reporte['avance'] > myObj.avance_maximo[0]:
+					add = False
+
+			# Si existieron los límites del avance y se estuvo dentro de ellos, se añade
+			if add == True:
+				json_map['reporte_por_estado'].append(shortened_reporte)
 
         return HttpResponse(json.dumps(json_map, indent=6, sort_keys=True, ensure_ascii=False),
                             'application/json', )
