@@ -160,28 +160,126 @@
                                     $te('#tr-{{ field.field.name}}').tooltip({html:true});});</script>
                                 </td>
                             </tr>
+                     </table>
 
                 {% endif %}
-                {% if field.field.name == "get_accion" %}
-                  <tr>
-                        <td width="170" height="10" class="txtlabel">
-                          Acción a Realizar:</td>
+                {% if field.field.name == "get_enero" %}
 
-                        <td width="170" height="10" colspan="3" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
-                                     {% if field.field.errors %}
-                                         {{ field.field|addcss:"border-error" }}
-                                       {% else %}
+
+                          <table class="subtituloTABLA" style="text-align: center" width="995">
+                             <tr>
+                                <td width="105" height="10" >Meta Estatal:</td>
+                                <td width="90" height="10">Ene</td>
+                                <td width="90" height="10">Feb</td>
+                                <td width="84" height="10">Mar</td>
+                                <td width="86" height="10">Abr</td>
+                                <td width="82" height="10">May</td>
+                                <td width="80" height="10">Jun</td>
+                                <td width="90" height="10">Jul</td>
+                                <td width="90" height="10">Ago</td>
+                                <td width="90" height="10">Sep</td>
+                                <td width="90" height="10">Oct</td>
+                                <td width="90" height="10">Nov</td>
+                                <td width="90" height="10">Dic</td>
+                             </tr>
+                             <tr>
+                                <td width="100" height="10">
+                                          &nbsp;
+                                </td>
+                                <td width="59" height="10">
                                           {{ field.contents }}
-                                       {% endif %}
-                                <script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
-                                <script> $(document).ready(function($) {
-                                    var $te = jQuery.noConflict();
-                                    $te('#tr-{{ field.field.name}}').tooltip({html:true});});</script>
-                        </td>
-                  </tr>
-                    </table>
-  </div>
+                                </td>
+
                 {% endif %}
+
+                {% if field.field.name == "get_febrero" %}
+
+                                <td width="59" height="10">
+                                          {{ field.contents }}
+                                </td>
+
+                {% endif %}
+
+                 {% if field.field.name == "get_marzo" %}
+
+                                <td width="59" height="10">
+                                          {{ field.contents }}
+                                </td>
+
+                {% endif %}
+                 {% if field.field.name == "get_abril" %}
+
+                                <td width="59" height="10">
+                                          {{ field.contents }}
+                                </td>
+
+                {% endif %}
+                 {% if field.field.name == "get_mayo" %}
+
+                                <td width="59" height="10">
+                                          {{ field.contents }}
+                                </td>
+
+                {% endif %}
+
+                 {% if field.field.name == "get_junio" %}
+
+                                <td width="59" height="10">
+                                          {{ field.contents }}
+                                </td>
+
+                {% endif %}
+
+                 {% if field.field.name == "get_julio" %}
+
+                                <td width="59" height="10">
+                                          {{ field.contents }}
+                                </td>
+
+                {% endif %}
+
+                 {% if field.field.name == "get_agosto" %}
+
+                                <td width="59" height="10">
+                                          {{ field.contents }}
+                                </td>
+
+                {% endif %}
+
+                 {% if field.field.name == "get_septiembre" %}
+
+                                <td width="59" height="10">
+                                          {{ field.contents }}
+                                </td>
+
+                {% endif %}
+
+                 {% if field.field.name == "get_octubre" %}
+
+                                <td width="59" height="10">
+                                          {{ field.contents }}
+                                </td>
+
+                {% endif %}
+
+                 {% if field.field.name == "get_noviembre" %}
+
+                                <td width="59" height="10">
+                                          {{ field.contents }}
+                                </td>
+
+                {% endif %}
+
+                 {% if field.field.name == "get_diciembre" %}
+
+                                <td width="59" height="10">
+                                          {{ field.contents }}
+                                </td>
+                        </tr>
+                     </table>
+                 </div>
+                {% endif %}
+
             {% endfor %}
 
     {% endfor %}

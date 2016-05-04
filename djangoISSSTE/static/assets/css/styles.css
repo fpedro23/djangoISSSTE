@@ -504,7 +504,7 @@
 	border: 2px solid #327451;
 	border-radius: 2px;
 	width: 1024px;
-	height: 101px;
+	height: 121px;
 	font-family: 'soberana_sanslight';
 	font-size: 15px;
 	color: #6A6B6C;
@@ -523,7 +523,7 @@
 	color: #6A6B6C;
 	position: absolute;
 	left: -1px;
-	top: 124px;
+	top: 144px;
 }
 
 .subtituloTABLA{
@@ -1018,6 +1018,9 @@
 
 .txtlabel{
     font-weight: bold;
+    font-family: 'soberana_sanslight';
+    font-size: 13px;
+    color: #6A6B6C;
 }
 
 input{
@@ -1027,4 +1030,5 @@ input{
 
 .obs-field{
     width: 99%;
+    height: 30px;
 }
