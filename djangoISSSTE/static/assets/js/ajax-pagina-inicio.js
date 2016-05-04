@@ -43,7 +43,7 @@ function verDatos() {
                 datosJson = data;
 
                 graficas();
-                //datosConcluidas();
+                datosAvances();
                 // MAPA
                 var mapOptions = {
                 zoom: 4,
@@ -68,12 +68,20 @@ function verDatos() {
 
 
 
-function datosConcluidas() {
+function datosAvances() {
+    var suma=0;
+    $j('#A_Educacion').html(formato_numero(datosJson.reporte2016.avance_educacion.total, 0, '.', ','));
+    $j('#A_Salud').html(formato_numero(datosJson.reporte2016.avance_salud.total, 0, '.', ','));
+    $j('#A_Vivienda').html(formato_numero(datosJson.reporte2016.avance_vivienda.total, 0, '.', ','));
+    $j('#A_Alimentacion').html(formato_numero(datosJson.reporte2016.avance_alimentacion.total, 0, '.', ','));
 
-    $j('#info2012').html(formato_numero(datosJson.reporte2012.obras_concluidas.total, 0, '.', ','));
-    $j('#info2013').html(formato_numero(datosJson.reporte2013.obras_concluidas.total, 0, '.', ','));
-    $j('#info2014').html(formato_numero(datosJson.reporte2014.obras_concluidas.total, 0, '.', ','));
-    $j('#info2015').html(formato_numero(datosJson.reporte2015.obras_concluidas.total, 0, '.', ','));
+    suma +=datosJson.reporte2016.avance_educacion.total;
+    suma +=datosJson.reporte2016.avance_salud.total;
+    suma +=datosJson.reporte2016.avance_vivienda.total;
+    suma +=datosJson.reporte2016.avance_alimentacion.total;
+
+    $j('#A_Total').html(formato_numero(suma, 0, '.', ','));
+
 
 }
 
