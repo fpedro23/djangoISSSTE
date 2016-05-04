@@ -20,7 +20,7 @@ var ajax_datatoken = {
 
 
     $j.ajax({
-        url: '/visitas/register-by-token',
+        url: '/register-by-token',
         type: 'get',
         data: ajax_datatoken,
         success: function(data) {

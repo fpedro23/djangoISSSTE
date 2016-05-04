@@ -1,0 +1,305 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static %}
+{% block extrastyle %}{{ block.super }}
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="{% static "assets/bootstrap/css/bootstrap.css"%}" />
+
+     <script>
+
+    $(document).on('ready', inicio);
+     function inicio(){
+
+        $('#tabla').removeClass("mfp-hide");
+        $('#tabla').addClass("mfp-show");
+        $('#load1').addClass("mfp-hide")
+         $('#load2').addClass("mfp-hide")
+         $('#load3').addClass("mfp-hide")
+     }
+     </script>
+
+
+	<script src="{% static "js/presentaciones.js" %} "></script>
+
+    <script>
+      $(function(){
+    $(".dropdown").hover(
+            function() {
+                $('.dropdown-menu', this).stop( true, true ).fadeIn("fast");
+                $(this).toggleClass('open');
+                $('b', this).toggleClass("caret caret-up");
+            },
+            function() {
+                $('.dropdown-menu', this).stop( true, true ).fadeOut("fast");
+                $(this).toggleClass('open');
+                $('b', this).toggleClass("caret caret-up");
+            });
+    });
+    </script>
+
+    <script type="text/javascript" src="{% static "assets/tablesorter/jquery-latest.min.js"%}"></script>
+    <script src="{% static "assets/tablesorter/js/prettify.js"%}"></script>
+
+    <link class="ui-theme" rel="stylesheet" href="{% static "assets/tablesorter/css/jquery-ui.min.css"%}" >
+    <link class="theme blue" rel="stylesheet" href="{% static "assets/tablesorter/themes/blue/theme.blue.css"%}">
+
+
+
+    <script type="text/javascript" src="{% static "assets/tablesorter/jquery.tablesorter.js"%}"></script>
+    <script src="{% static "assets/tablesorter/widget-scroller.js"%}"></script>
+	<script type="text/javascript" src="{% static "assets/tablesorter/widget-pager.js"%}"></script>
+
+
+
+    <script id="js" type="text/javascript">
+    var $ts = jQuery.noConflict();
+	$ts(function() {
+        $ts('.tablesorter').tablesorter({
+		theme: 'blue',
+		// widthFixed: true, // <- now automatically set by the scroller widget
+		showProcessing: true,
+		headerTemplate : '{content} {icon}',
+		widgets: [ 'uitheme', 'zebra', 'pager', 'scroller' ],
+		widgetOptions : {
+			scroller_height : 190,
+			// scroll tbody to top after sorting
+			scroller_upAfterSort: true,
+			// pop table header into view while scrolling up the page
+			scroller_jumpToHeader: true,
+			// In tablesorter v2.19.0 the scroll bar width is auto-detected
+			// add a value here to override the auto-detected setting
+			scroller_barWidth : null
+			// scroll_idPrefix was removed in v2.18.0
+			// scroller_idPrefix : 's_'
+		}
+    });
+	});
+</script>
+    <!-- Magnific Popup core CSS file -->
+    <link rel="stylesheet" href="{% static "assets/Popup/magnific-popup.css"%}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <!-- Magnific Popup core JS file -->
+    <script src="{% static "assets/Popup/jquery.magnific-popup.js"%}"></script>
+    <!-- Magnific Popup core CSS file -->
+    <link rel="stylesheet" href="{% static "assets/Popup/site.css"%}">
+
+
+<script>
+    var $pop = jQuery.noConflict();
+        $pop( document ).ready(function() {
+      $pop('#div-grafica').addClass("mfp-hide");
+    });
+
+    $pop('#tabla-exporta').hide();
+
+
+    $pop(function () {
+          $pop('.popup-modal').magnificPopup({
+            type: 'inline',
+            preloader: true,
+            modal: true,
+              fixedContentPos: false,
+            fixedBgPos: true,
+            overflowY: 'auto',
+            closeBtnInside: true,
+            preloader: false,
+            midClick: true,
+            removalDelay: 300,
+            mainClass: 'my-mfp-zoom-in'
+          });
+          $pop(document).on('click', '.popup-modal-dismiss', function (e) {
+            e.preventDefault();
+            $pop.magnificPopup.close();
+          });
+          $pop('.popup-exporta').magnificPopup({
+            type: 'inline',
+            preloader: false,
+            modal: true,
+              fixedContentPos: false,
+            fixedBgPos: true,
+            overflowY: 'auto',
+            closeBtnInside: true,
+            preloader: false,
+            midClick: true,
+            removalDelay: 300,
+            mainClass: 'my-mfp-zoom-in'
+          });
+          $pop(document).on('click', '.popup-exporta-dismiss', function (e) {
+            e.preventDefault();
+            $pop.magnificPopup.close();
+          });
+
+        });
+
+	</script>
+
+    <!--libs para exportar a excel, pdf y power point -->
+    <script type="text/javascript" src="{% static "assets/export/tableExport.js"%}"></script>
+	<script type="text/javascript" src="{% static "assets/export/jquery.base64.js"%}"></script>
+	<script type="text/javascript" src="{% static "assets/export/html2canvas.js"%}"></script>
+	<script type="text/javascript" src="{% static "assets/export/jspdf/libs/sprintf.js"%}"}></script>
+	<script type="text/javascript" src="{% static "assets/export/jspdf/jspdf.js"%}"></script>
+	<script type="text/javascript" src="{% static "assets/export/jspdf/libs/base64.js"%}"></script>
+    <script type="text/javascript" src="{% static "assets/export/FileSaver.min.js"%}"></script>
+
+
+
+<script type="text/javascript" src="{% static "assets/js/jspdf.js"%}"></script>
+    <script type="text/javascript" src="{% static "assets/js/jspdf.min.js"%}"></script>
+<script>
+
+$( document ).ready(function() {
+  $('#cmd').on('click', PDF)
+});
+
+
+function PDF () {
+    var doc = new jsPDF();
+    var specialElementHandlers = {
+        '#editor': function (element, renderer) {
+            return true;
+        }
+    };
+
+    doc.fromHTML($('#datos').html(), 15, 15, {
+        'width': 200,
+            'elementHandlers': specialElementHandlers
+    });
+    doc.save('sample-file.pdf');
+}
+
+</script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="{% static "assets/export/jquery.table2excel.js"%}"></script>
+<script>
+var et$ = jQuery.noConflict();
+et$(function() {
+				et$("#enviaEXCEL2").click(function(){
+
+				et$(".table2excel").table2excel({
+					exclude: ".noExl",
+    				name: "Resultados"
+
+				});
+				 });
+});
+
+
+</script>
+    <link href="{% static "css/styles.css"%}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static "assets/css/menu-predefinidos.css"%}" />
+    <script type="text/javascript" src="{% static "assets/js/menu-predefinidos.js"%}"></script>
+
+    <script type="text/javascript" src="{% static "assets/js/ajax-predefinidos.js"%}"></script>
+
+{% endblock %}
+{% block breadcrumbs %}
+{% endblock %}
+
+{% block content %}
+    <div id="tabla-exporta" >
+
+    </div>
+    <div id="modal-exporta" class="green-popup-block mfp-hide centerDiv"  style="width: 40%;">
+        <div class="row" style="background:linear-gradient(#206341,#206341,#1E613F,#276947,#206341)  ;border: 2px solid #ffffff;">
+            <div class="row exportarALERTA" style="padding-top: 15px;padding-left: 20px;width:100%"> EXPORTAR RESULTADOS </div>
+            <div class="row textoEXPORTAR" style="padding-left: 20px;width:100%;padding-top: 15px;">Seleccionar el formato en el que se exportarán los resultados. </div>
+                    <div class="row " style="width: 60%;padding-top: 15px;margin-left: auto;margin-right: auto">
+                        <div class="col-md-4" >
+                            <article id="ver_datos">
+                                {% csrf_token %}
+                                <div class="pdf"  id="enviaPDF2" ></div>
+                            </article>
+                        </div>
+                        <div class="col-md-4" >
+                            <article id="ver_datos">
+                                {% csrf_token %}
+                                <!--<div class="excel" id="enviaEXCEL2" onClick ="$pp('#tabla-exporta2').show();$pp('#tablaExporta2').tableExport({type:'excel',escape:'false'}); $pp('#tabla-exporta2').hide();"></div>-->
+                                <div class="excel" id="enviaEXCEL2"></div>
+                            </article>
+                        </div>
+                        <div class="col-md-4" >
+                            <article id="ver_datos">
+                                {% csrf_token %}
+                                <!--<div class="ppt"  id="enviaPPT2" onClick ="$pp('#tabla-exporta2').show();$pp('#tablaExporta2').tableExport({type:'powerpoint',escape:'false'}); $pp('#tabla-exporta2').hide();"></div>-->
+                                <div class="ppt"  id="enviaPPT2"></div>
+
+                            </article>
+                        </div>
+            </div>
+            <div class="row" style="width: 60%;padding-top: 15px;margin-left: auto;margin-right: auto">
+                <article id="salir_exporta">
+                    {% csrf_token %}
+                    <div class="salirBTN popup-exporta-dismiss" id="salirExporta" style="height: 30px">
+                    </div>
+                </article>
+            </div><br>
+        </div>
+    </div>
+
+    <div id="regresarBTN" onclick="location.href='/obras/consultas'">
+    </div>   <!--AGREGAR A DONDE SE VA A REGRESAR CON ESTA URL REGRESA A LA PÀGINA PRINCIPAL-->
+
+    <div id="welcome">Consultas Predefinidas</div>
+    <input type="hidden" name="historico" id="historico"/>
+    <div class="row" style="padding-right: 18px; padding-left: 0px; padding-bottom: 0px; padding-top: 0px ">
+       <div class="col-md-3">
+           <div class="panel-group">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h6 class="panel-title">Reportes</h6>
+                                </div>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li style="height: 25px"><a href="#" id="obrasIniciadas">Avances por Municipio <span id="load1" class="glyphicon glyphicon-refresh glyphicon-refresh-animate mfp-hide"></span></a></li>
+                                    <li style="height: 25px"><a href="#" id="obrasVencidas">Metas sin Avances <span id="load2" class="glyphicon glyphicon-refresh glyphicon-refresh-animate mfp-hide"></span></a></li>
+                                    <li style="height: 35px"><a href="#" id="obrasPorAutorizar">Avances sin actividad <span id="load3" class="glyphicon glyphicon-refresh glyphicon-refresh-animate mfp-hide"></span></a></li>
+                                </ul>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h6 class="panel-title">Predefinidos</h6>
+                                </div>
+                                    <ul class="nav nav-pills nav-stacked">
+                                    <li style="height: 25px"><a href="/obras/balance-general-ppt" >Balance General</a></li>
+                                    <li style="height: 25px"><a href="/obras/hiper-info-general-ppt" >Hiperv&iacute;nculo Informaci&oacute;n General</a></li>
+                                    <li style="height: 25px"><a href="/obras/hiper-concluidas-ppt" >Hiperv&iacute;nculo Concluidas</a></li>
+                                    <li style="height: 35px"><a href="/obras/hiper-inauguradas-ppt" >Hiperv&iacute;nculo Inauguradas y Señalizadas</a></li>
+                                    {%  if user.usuario.rol == 'SA' %}
+                                        <li style="height: 25px"><a href="/obras/hiper-por-sector-ppt" >Hiperv&iacute;nculo Por Sector</a></li>
+                                        <li style="height: 25px"><a href="/obras/hiper-por-entidad-ppt/" >Hiperv&iacute;nculo Por Entidad</a></li>
+                                        <li style="height: 25px"><a href="#" id="prsentacionAPF" >Presentaci&oacute;n Obras APF</a></li>
+                                        <li style="height: 25px"><a href="/obras/logros_resultados_ppt"  >Principales Logros y Resultados</a></li>
+                                    {% endif %}
+                                    <li style="height: 25px"><a href="/obras/hiper-interestatal-ppt" >Hiperv&iacute;nculo Interestatal</a></li>
+                                    <li style="height: 25px"><a href="/obras/hiper-nacional-ppt" >Hiperv&iacute;nculo Nacional</a></li>
+                                    <li style="height: 35px"><a href="/obras/hiper-rangos-ppt" >Hiperv&iacute;nculo Rangos</a></li>
+
+                                </ul>
+                            </div>
+
+           </div>
+
+       </div>
+
+       <div class="col-md-9-box" style="height: 433px">
+            </br>
+            <div class="col-md-8 titulo" id="titulo"></div>
+            <div class="col-md-2">
+                <article id="ver_exporta">
+                    {% csrf_token %}
+                    <div class="col-xs-2 exportarBTN popup-exporta" href="#modal-exporta" id="exportar" style="height: 30px"></div>
+                </article>
+            </div>
+            <div class="col-md-12 mfp-hide" id="tabla">
+
+            </div>
+           </br>
+            <div class="col-md-12" id="descripcion"></div>
+       </div>
+    </div>
+
+
+{% endblock %}

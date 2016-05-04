@@ -64,6 +64,10 @@ def usuarios(request):
 def catalogos(request):
     return render_to_response('admin/djangoISSSTE/catalogos.html', locals(),
                               context_instance=RequestContext(request))
+@login_required()
+def consulta_predefinidos(request):
+    return render_to_response('admin/djangoISSSTE/consulta_predefinidos/consulta-predefinidos.html', locals(),
+                              context_instance=RequestContext(request))
 
 @login_required()
 def meta(request):

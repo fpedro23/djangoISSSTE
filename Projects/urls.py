@@ -44,4 +44,5 @@ urlpatterns = [
     url(r'^test', djangoISSSTE.views.test, name='test'),
     url(r'^register-by-token',views.register_by_access_token, name='register_by_access_token'),
     url(r'^djangoISSSTE/consulta_filtros', djangoISSSTE.views.consulta_web, name='consulta_filtros'),
+    url(r'^djangoISSSTE/consulta_predefinidos', djangoISSSTE.views.consulta_predefinidos, name='consulta_filtros'),
 ]
