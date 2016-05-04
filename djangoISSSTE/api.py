@@ -24,7 +24,7 @@ def get_array_or_none(the_string):
 
 
 # Api para regresar todas las carencias
-class CarenciasEndpoint(ListView):
+class CarenciasEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         return HttpResponse(
             json.dumps((map(lambda carencia: carencia.to_serializable_dict(), Carencia.objects.all())),
@@ -33,7 +33,7 @@ class CarenciasEndpoint(ListView):
 
 
 # Api para regresar subcarencias pertenecientes a una carencia en especial
-class SubcarenciasForCarenciasEndpoint(ListView):
+class SubcarenciasForCarenciasEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         carencia_ids = get_array_or_none(request.GET.get('carencias'))
         all_carencias = False
@@ -90,7 +90,7 @@ class ResponsablesEndpoint(ProtectedResourceView):
 
 
 # Clase EndPoint (oauth2) para devolver los estados
-class EstadosEndpoint(ListView):
+class EstadosEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         usuario = AccessToken.objects.get(token=request.GET.get('access_token')).user.usuario
         if usuario.rol == "FE" or usuario.rol == "UE":
@@ -107,7 +107,7 @@ class EstadosEndpoint(ListView):
 
 
 # Clase EndPoint (oauth2) para devolver los municipios, dado un estado
-class MunicipiosForEstadosEndpoint(ListView):
+class MunicipiosForEstadosEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         # Obteniendo los datos de la url
         estado_ids = get_array_or_none(request.GET.get('estados'))
@@ -131,7 +131,7 @@ class MunicipiosForEstadosEndpoint(ListView):
 
 
 # Clase EndPoint (oauth2) para devolver los periodos
-class PeriodosEndpoint(ListView):
+class PeriodosEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         return HttpResponse(
             json.dumps((map(lambda periodo: periodo.to_serializable_dict(), Periodo.objects.all())), ensure_ascii=False,
@@ -139,7 +139,7 @@ class PeriodosEndpoint(ListView):
 
 
 # Clase EndPoint (oauth2) para devolver los mese
-class MesesEndpoint(ListView):
+class MesesEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         return HttpResponse(
             json.dumps((map(lambda mes: mes.to_serializable_dict(), Mes.objects.all())), ensure_ascii=False,
@@ -147,7 +147,7 @@ class MesesEndpoint(ListView):
 
 
 # Clase EndPoint (oauth2) para devolver las metas
-class MetasEndpoint(ListView):
+class MetasEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         return HttpResponse(
             json.dumps((map(lambda meta: meta.to_serializable_dict(), Meta.objects.all())), ensure_ascii=False,
@@ -185,7 +185,7 @@ class MetasMensualesPorAccionEndpoint(ProtectedResourceView):
 
 
 # Clase EndPoint (oauth2) para devolver los avances mensuales dada una acción
-class AvancesMensualesPorAccionEndpoint(ListView):
+class AvancesMensualesPorAccionEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         # Obteniendo los datos de la url
         accion_ids = get_array_or_none(request.GET.get('acciones'))
@@ -215,7 +215,7 @@ class AvancesMensualesPorAccionEndpoint(ListView):
 
         return HttpResponse(json.dumps(the_list, indent=4, sort_keys=True, ensure_ascii=False, cls=DjangoJSONEncoder),
                         'application/json', )  # Clase EndPoint (oauth2) para devolver las metas mensuales dada una meta
-class MetasMensualesPorMetaEndpoint(ListView):
+class MetasMensualesPorMetaEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         # Obteniendo los datos de la url
         meta_ids = get_array_or_none(request.GET.get('metas'))
@@ -240,7 +240,7 @@ class MetasMensualesPorMetaEndpoint(ListView):
 
 
 # Clase EndPoint (oauth2) para devolver los avances mensuales dada una meta
-class avancesMensualesPorMetaEndpoint(ListView):
+class avancesMensualesPorMetaEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         # Obteniendo los datos de la url
         meta_ids = get_array_or_none(request.GET.get('metas'))
@@ -257,6 +257,7 @@ class avancesMensualesPorMetaEndpoint(ListView):
         else:
             for avancePorMunicipo in AvancePorMunicipio.objects.filter(meta_id__in=meta_ids):
                 arreglo_avance_municipio.append(avancePorMunicipo.id)
+                print arreglo_avance_municipio
 
             avances_mensuales = AvanceMensual.objects.filter(avancePorMunicipio__id__in=arreglo_avance_municipio)
 
@@ -269,7 +270,7 @@ class avancesMensualesPorMetaEndpoint(ListView):
 
 
 # Clase EndPoint (oauth2) para implementar el buscador en base al filtro grande
-class BuscadorEndpoint(generic.ListView):
+class BuscadorEndpoint(ProtectedResourceView):
     def get(self, request):
         myObj = BuscarAvances(
             carencias=get_array_or_none(request.GET.get('carencias')),
@@ -434,7 +435,31 @@ class BuscadorEndpoint(generic.ListView):
                         'application/json', )
 
 
-class ExcelAvancesEndpoint(ListView):
+#Clase EndPoint (oauth2) para implementar la captra de avances, recibe un perdiodo, accion y un estado y devuelve el id del avance
+class AvanceForPeriodo(ProtectedResourceView):
+    def get(self, request, *args, **kwargs):
+        # Obteniendo los datos de la url
+        periodo_id = get_array_or_none(request.GET.get('periodo'))
+        accion_id = get_array_or_none(request.GET.get('accion'))
+        estados_id = get_array_or_none(request.GET.get('estado'))
+        arreglo_avance_municipio = []
+
+        for avanceMunicipio in AvancePorMunicipio.objects.filter(periodo__in=periodo_id):
+            arreglo_avance_municipio.append(avanceMunicipio.id)
+            print arreglo_avance_municipio
+
+        avances = AvancePorMunicipio.objects.filter(id__in=arreglo_avance_municipio, meta__accionEstrategica_id__in=accion_id, estado_id__in = estados_id)
+        print avances.values()
+
+        the_list = []
+        for avance in avances.values('id'):
+            the_list.append(avance)
+
+        return HttpResponse(json.dumps(the_list, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
+                            'application/json', )
+
+
+class ExcelAvancesEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         # Obteniendo los datos de la url
         periodo_id = get_array_or_none(request.GET.get('periodos'))
@@ -463,7 +488,7 @@ class ExcelAvancesEndpoint(ListView):
                             'application/json', )
 
 
-class ExcelMetasEndpoint(ListView):
+class ExcelMetasEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         # Obteniendo los datos de la url
         periodo_id = get_array_or_none(request.GET.get('periodo'))

@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^api/busqueda', api.BuscadorEndpoint.as_view()),
     url(r'^api/excelAvances', api.ExcelAvancesEndpoint.as_view()),
     url(r'^api/excelMetas', api.ExcelMetasEndpoint.as_view()),
+    url(r'^api/avancePorPeriodo', api.AvanceForPeriodo.as_view()),
 
 
     # url(r'^api/hora_ultima_actualizacion', api.HoraUltimaActualizacion.as_view()),
