@@ -3,6 +3,8 @@
 <html lang="{{ LANGUAGE_CODE|default:"es" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
 <title>{% block title %}{% endblock %}</title>
+
+
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 <link href="{% static "assets/bootstrap/css/bootstrap.min.css"%}" rel="stylesheet">
 <!-- Optional theme -->
@@ -158,16 +160,38 @@
 
     {% block messages %}
         {% if messages %}
-        <ul class="messagelist">{% for message in messages %}
-          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|capfirst }}</li>
-        {% endfor %}</ul>
-        {% endif %}
+            <script>
+                var $ppma=jQuery.noConflict();
+                    $ppma.magnificPopup.open({
+                        items: {
+                            src:  '<div id="test-modal" class="alertaVENTANA" style="top:0px; left: 450px;">'
+                                  + '<div>'
+                                  + ' <ul class="messagelist">{% for message in messages %}'
+                                  + '{% if forloop.first %}'
+                                    + '  <li{% if message.tags %} class="textoALERTA"{% endif %}>{{ message|capfirst }}</li>'
+                                    + '{% endif %} '
+                                  + '          {% endfor %}</ul>'
+                                  + ' <a class="popup-modal-dismiss" href="#"><div class="aceptarBTN" style="left:150px;"> </div></a>'
+                                + '</div>'
+                                + '</div>'
+                        },
+                        type: 'inline',
+                        preloader: true,
+                        modal: true
+                    });
+                    $ppma(document).on('click', '.popup-modal-dismiss', function (e) {
+                        e.preventDefault();
+                        $ppma.magnificPopup.close();
+                    });
+            </script>
+
+            {% endif %}
     {% endblock messages %}
 
     <!-- Content -->
 
         {% block pretitle %}{% endblock %}
-        {% block content_title %}{% if title %}<h1></h1>{% endif %}{% endblock %}
+        {% block content_title %}{% if title %}{% endif %}{% endblock %}
         {% block content %}
         {% block object-tools %}{% endblock %}
         {{ content }}

@@ -894,3 +894,27 @@ class ReportePptxEndpoint(ProtectedResourceView):
 
         return response
 
+		return HttpResponse(json.dumps(json_map, ensure_ascii=False), 'application/json')
+
+#Clase EndPoint (oauth2) para implementar la captra de avances, recibe un perdiodo, accion y un estado y devuelve el id del avance
+class AvanceForPeriodo(ProtectedResourceView):
+    def get(self, request, *args, **kwargs):
+        # Obteniendo los datos de la url
+        periodo_id = get_array_or_none(request.GET.get('periodo'))
+        accion_id = get_array_or_none(request.GET.get('accion'))
+        estados_id = get_array_or_none(request.GET.get('estado'))
+        arreglo_avance_municipio = []
+
+        for avanceMunicipio in AvancePorMunicipio.objects.filter(periodo__in=periodo_id):
+            arreglo_avance_municipio.append(avanceMunicipio.id)
+            print arreglo_avance_municipio
+
+        avances = AvancePorMunicipio.objects.filter(id__in=arreglo_avance_municipio, meta__accionEstrategica_id__in=accion_id, estado_id__in = estados_id)
+        print avances.values()
+
+        the_list = []
+        for avance in avances.values('id'):
+            the_list.append(avance)
+
+        return HttpResponse(json.dumps(the_list, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
+                            'application/json', )

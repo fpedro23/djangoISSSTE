@@ -1,0 +1,20 @@
+input{
+    width: 95%;
+    height: 21px;
+}
+
+.vTextField {
+    width: 95%;
+}
+
+.usurol{
+    width: 95%;
+}
+
+.usuestado{
+    width: 95%;
+}
+
+.related-widget-wrapper{
+    float: left;
+}
