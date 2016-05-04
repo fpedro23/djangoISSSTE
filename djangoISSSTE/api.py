@@ -85,6 +85,13 @@ class ResponsablesEndpoint(ProtectedResourceView):
 # Clase EndPoint (oauth2) para devolver los estados
 class EstadosEndpoint(ProtectedResourceView):
 	def get(self, request):
+		usuario = AccessToken.objects.get(token=request.GET.get('access_token')).user.usuario
+		if usuario.rol == "FE" or usuario.rol == "UE":
+			return HttpResponse(
+				json.dumps((map(lambda estado: estado.to_serializable_dict(),
+								Estado.objects.filter(id = usuario.estado_id))),ensure_ascii=False),'application/json')
+
+
 		return HttpResponse(
 				json.dumps((map(lambda estado: estado.to_serializable_dict(), Estado.objects.all())),
 						   ensure_ascii=False),
@@ -273,18 +280,20 @@ class BuscadorEndpoint(generic.ListView):
 			inversion_minima = get_array_or_none(request.GET.get('inversionMinima')),
 			inversion_maxima = get_array_or_none(request.GET.get('inversionMaxima')),
 			unidad_de_medida = request.GET.get('unidadDeMedida'),
+			limite_inferior = request.GET.get('limiteInferior'),
+			limite_superior = request.GET.get('limiteSuperior')
 		)
-		#user = AccessToken.objects.get(token=request.GET.get('access_token')).user
-		resultados = myObj.buscar()
 
+		resultados = myObj.buscar()
 		json_map = {}
-		json_map['reporte_general'] = []
-		json_map['reporte_por_estado'] = []
+		json_map['reporte_general'] = []		# Entrega avances mensuales con la información solicitada
+		json_map['reporte_por_estado'] = []		# Entrega avances mensuales por estado
 
 		for reporte in resultados['reporte_general']:
 			shortened_reporte = {}
+			add = True
 			
-			shortened_reporte['suma_avance'] = 0
+			shortened_reporte['suma_avance'] = 0			# Utilizado para mejorar el aspecto de las llaves del json
 			avance_mensual = AvanceMensual.objects.get(id=reporte['id'])
 			if myObj.meses is not  None:
 				for mes in myObj.meses:
@@ -314,10 +323,19 @@ class BuscadorEndpoint(generic.ListView):
 			shortened_reporte['periodo'] = reporte['avancePorMunicipio__periodo__nombrePeriodo']
 			shortened_reporte['latitud'] = reporte['municipio__latitud']
 			shortened_reporte['longitud'] = reporte['municipio__longitud']
-			json_map['reporte_general'].append(shortened_reporte)
+
+			#Validando que la suma de los avances se encuentre dentro del rango solicitado
+			if myObj.avance_minimo is not None and myObj.avance_maximo is not None:
+				if shortened_reporte['suma_avance'] < myObj.avance_minimo[0] or shortened_reporte['suma_avance'] > myObj.avance_maximo[0]:
+					add = False
+
+			# Si existieron los límites del avance y se estuvo dentro de ellos, se añade
+			if add == True:
+				json_map['reporte_general'].append(shortened_reporte)
 
 
 		for reporte_estado in resultados['reporte_por_estado']:
+			add = True
 			shortened_reporte = {}
 			shortened_reporte['avance'] = 0
 			if myObj.meses is not None:
@@ -353,6 +371,14 @@ class BuscadorEndpoint(generic.ListView):
 			shortened_reporte['carencia'] = reporte_estado['meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
 			shortened_reporte['montoPromedio'] = reporte_estado['meta__montoPromedio']
 			shortened_reporte['inversion_aproximada'] = shortened_reporte['avance'] * reporte_estado['meta__montoPromedio']
-			json_map['reporte_por_estado'].append(shortened_reporte)
+
+			# Validando que la suma de los avances se encuentre dentro del rango solicitado
+			if myObj.avance_minimo is not None and myObj.avance_maximo is not None:
+				if shortened_reporte['avance'] < myObj.avance_minimo[0] or shortened_reporte['avance'] > myObj.avance_maximo[0]:
+					add = False
+
+			# Si existieron los límites del avance y se estuvo dentro de ellos, se añade
+			if add == True:
+				json_map['reporte_por_estado'].append(shortened_reporte)
 
 		return HttpResponse(json.dumps(json_map, ensure_ascii=False), 'application/json')

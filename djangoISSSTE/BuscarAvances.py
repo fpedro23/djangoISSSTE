@@ -19,7 +19,9 @@ class BuscarAvances:
 			avance_maximo,
 			inversion_minima,
 			inversion_maxima,
-			unidad_de_medida
+			unidad_de_medida,
+			limite_inferior,
+			limite_superior,
 	):
 		self.carencias = carencias
 		self.subcarencias = subcarencias
@@ -34,6 +36,8 @@ class BuscarAvances:
 		self.inversion_minima = inversion_minima
 		self.inversion_maxima = inversion_maxima
 		self.unidad_de_medida = unidad_de_medida
+		self.limite_inferior = limite_inferior
+		self.limite_superior = limite_superior
 
 	def buscar(self):
 		query = Q()
@@ -58,8 +62,8 @@ class BuscarAvances:
 			query_estado = query_estado & Q(periodo__id__in=self.periodos)
 
 		if self.inversion_minima is not None and self.inversion_maxima is not None:
-			query = query & Q(avancePorMunicipio__inversionAprox__range = (self.avance_minimo, self.avance_maximo))
-			query_estado = query_estado & Q(inversionAprox__range = (self.avance_minimo, self.avance_maximo))
+			query = query & Q(avancePorMunicipio__inversionAprox__range = (self.inversion_minima, self.inversion_maxima))
+			query_estado = query_estado & Q(inversionAprox__range = (self.inversion_minima, self.inversion_maxima))
 
 		if self.observaciones is not None:
 			query = query & Q(avancePorMunicipio__meta__observaciones__contains = self.observaciones)
@@ -71,8 +75,8 @@ class BuscarAvances:
 
 		avances_mensuales = None
 		avances_por_municipio = None
-		if query is not  None:
-			avances_mensuales =AvanceMensual.objects.filter(query)
+		if query is not None:
+			avances_mensuales = AvanceMensual.objects.filter(query)
 		else:
 			avances_mensuales = AvanceMensual.objects.all()
 
@@ -91,14 +95,14 @@ class BuscarAvances:
 			'avancePorMunicipio__periodo__nombrePeriodo',
 			'municipio__latitud',
 			'municipio__longitud',
-		)
+		)[self.limite_inferior:self.limite_superior]
 
 		reporte_por_estado = avances_por_municipio.values(
 			'id',
 			'estado__nombreEstado',
 			'meta__accionEstrategica__subCarencia__carencia__nombreCarencia',
 			'meta__montoPromedio'
-		)
+		)[self.limite_inferior:self.limite_superior]
 
 		reportes = {
 			"reporte_general" : reporte_general,
