@@ -568,16 +568,16 @@ class ResultadosPptxEndpoint(ProtectedResourceView):
 		municipios = get_array_or_none(request.GET.get('municipios'))
 
 		if estados is None or len(estados) == 0:
-			if usuario.rol == 'AG' or usuario.rol == 'UR' or usuario.rol == 'FR':
+			if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
 				estados = None
 			else:
-				estados = [usuario.estado.id]
+				estados = [usuario.usuario.estado.id]
 
 		if municipios is None or len(municipios) == 0:
-			if usuario.rol == 'AG' or usuario.rol == 'UR' or usuario.rol == 'FR':
+			if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
 				municipios = None
 			else:
-				municipios = [Municipio.objects.filter(estado_id = usuario.estado.id)]
+				municipios = [Municipio.objects.filter(estado_id = usuario.estado.usuario.id)]
 
 		myObj =  BuscarAvances(
 			carencias = get_array_or_none(request.GET.get('carencias')),
@@ -738,10 +738,10 @@ class ReportePptxEndpoint(ProtectedResourceView):
 
         estados = get_array_or_none(request.GET.get('estados'))
         if estados is None or len(estados) == 0:
-            if usuario.rol == 'AG':
+            if usuario.usuario.rol == 'AG':
                 estados = None
             else:
-                estados = [usuario.estado.id]
+                estados = [usuario.usuario.estado.id]
 
         myObj =  BuscarAvances(
 			carencias = get_array_or_none(request.GET.get('carencias')),
