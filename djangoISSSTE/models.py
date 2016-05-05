@@ -225,7 +225,7 @@ class MetaMensual(models.Model):
 class AvancePorMunicipio(models.Model):
     meta = models.ForeignKey(Meta, null=False, blank=False, verbose_name="Acción Estratégica")
     estado = models.ForeignKey(Estado, null=False, blank=False)
-    periodo = models.ForeignKey(Periodo, null=False, blank=False)
+    periodo = models.ForeignKey(Periodo, null=False, blank=False, verbose_name="Año")
     inversionAprox = models.FloatField(default=0)
 
     def __str__(self):
@@ -300,4 +300,4 @@ class Usuario(models.Model):
 
     user = models.OneToOneField(User)
     rol = models.CharField(max_length=2, choices=ROLES_CHOICES, default=User)
-    estado = models.ForeignKey(Estado, null=False, blank=False)
+    estado = models.ForeignKey(Estado, null = True, blank = True)
