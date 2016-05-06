@@ -238,7 +238,7 @@ class MetaMensual(models.Model):
 class AvancePorMunicipio(models.Model):
     meta = models.ForeignKey(Meta, null=False, blank=False, verbose_name="Acción Estratégica")
     estado = models.ForeignKey(Estado, null=False, blank=False)
-    periodo = models.ForeignKey(Periodo, null=False, blank=False, default=getPeriodoActual().nombrePeriodo)
+    periodo = models.ForeignKey(Periodo, null=False, blank=False, verbose_name="Año", default=getPeriodoActual().nombrePeriodo)
     inversionAprox = models.FloatField(default=0)
 
     def __str__(self):
@@ -266,7 +266,6 @@ class AvancePorMunicipio(models.Model):
         super(AvancePorMunicipio, self).save(*args, **kwargs)
 
 
-
 class AvanceMensual(models.Model):
     avancePorMunicipio = models.ForeignKey(AvancePorMunicipio, null=False, blank=False)
     municipio = models.ForeignKey(Municipio, null=False, blank=False)
@@ -283,7 +282,6 @@ class AvanceMensual(models.Model):
     oct = models.FloatField(null=False, default=0)
     nov = models.FloatField(null=False, default=0)
     dic = models.FloatField(null=False, default=0)
-
 
     def to_serializable_dict(self):
         ans = model_to_dict(self)
@@ -317,4 +315,4 @@ class Usuario(models.Model):
 
     user = models.OneToOneField(User)
     rol = models.CharField(max_length=2, choices=ROLES_CHOICES, default=User)
-    estado = models.ForeignKey(Estado, null=False, blank=False)
+    estado = models.ForeignKey(Estado, null = True, blank = True)

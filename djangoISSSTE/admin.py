@@ -361,16 +361,13 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 	# Esta funcion se ejecuta al desplegar la lista de Avances por municipio. Dentro
 	# de ella se aplica un filtro por el rol del usuario y de su estado
 	def get_queryset(self, request):
-		queryEstado = request.user.usuario.estado.id
-
 		qs = super(AvancePorMunicipioAdmin, self).get_queryset(request)
 		if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UC' or request.user.usuario.rol == 'FC':
 			return qs
 		elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
 			print 'Query Set Administrador dependenciasub'
-			print queryEstado
 			return qs.filter(
-				Q(estado__id=queryEstado)
+				Q(estado__id=request.user.usuario.estado.id)
 			)
 
 	# Define los estados visibles dependiendo del rol del usuario
