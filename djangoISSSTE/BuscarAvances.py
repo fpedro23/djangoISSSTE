@@ -85,8 +85,10 @@ class BuscarAvances:
 		else:
 			avances_por_municipio = AvancePorMunicipio.objects.all()
 
+		# Reporte general (devuelve avances en base a los filtros)
 		reporte_general = avances_mensuales.values(
 			'id',
+			'avancePorMunicipio__meta__id',
 			'avancePorMunicipio__meta__accionEstrategica__nombreAccion',
 			'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia',
 			'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia',
@@ -97,16 +99,27 @@ class BuscarAvances:
 			'municipio__longitud',
 		)[self.limite_inferior:self.limite_superior]
 
+		#Reporte por estados
 		reporte_por_estado = avances_por_municipio.values(
-			'id',
+			'estado__id',
 			'estado__nombreEstado',
 			'meta__accionEstrategica__subCarencia__carencia__nombreCarencia',
-			'meta__montoPromedio'
-		)[self.limite_inferior:self.limite_superior]
+		).annotate(inversionAprox=Sum('inversionAprox'))[self.limite_inferior:self.limite_superior]
+
+		reporte_por_carencia = avances_mensuales.values(
+			'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id',
+			'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia',
+		).annotate(ene=Sum('ene'),feb=Sum('feb'),mar=Sum('mar'),abr=Sum('abr'),may=Sum('may'),
+				   jun=Sum('jun'),jul=Sum('jul'),ago=Sum('ago'),sep=Sum('sep'),oct=Sum('oct'),
+				   nov=Sum('nov'),dic=Sum('dic'))[self.limite_inferior:self.limite_superior]
 
 		reportes = {
-			"reporte_general" : reporte_general,
-			"reporte_por_estado" : reporte_por_estado
+			#"reporte_general" : reporte_general,
+			#"reporte_por_estado" : reporte_por_estado,
+			"reporte_por_carencia": reporte_por_carencia,
+			"reporte_general" : [],
+			"reporte_por_estado" : [],
+			#"reporte_por_carencia": []
 		}
 
 		return reportes
