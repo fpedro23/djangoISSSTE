@@ -114,12 +114,12 @@ class BuscarAvances:
 				   nov=Sum('nov'),dic=Sum('dic'))[self.limite_inferior:self.limite_superior]
 
 		reportes = {
-			"reporte_general" : reporte_general,
-			"reporte_por_estado" : reporte_por_estado,
-			#"reporte_por_carencia": reporte_por_carencia
-			#"reporte_general" : [],
-			#"reporte_por_estado" : [],
-			"reporte_por_carencia": []
+			#"reporte_general" : reporte_general,
+			#"reporte_por_estado" : reporte_por_estado,
+			"reporte_por_carencia": reporte_por_carencia,
+			"reporte_general" : [],
+			"reporte_por_estado" : [],
+			#"reporte_por_carencia": []
 		}
 
 		return reportes
