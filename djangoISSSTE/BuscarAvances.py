@@ -113,13 +113,22 @@ class BuscarAvances:
 				   jun=Sum('jun'),jul=Sum('jul'),ago=Sum('ago'),sep=Sum('sep'),oct=Sum('oct'),
 				   nov=Sum('nov'),dic=Sum('dic'))[self.limite_inferior:self.limite_superior]
 
+		reporte_por_accion = avances_mensuales.values(
+			'avancePorMunicipio__meta__accionEstrategica__id',
+			'avancePorMunicipio__meta__accionEstrategica__nombreAccion',
+		).annotate(ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'),
+				   jun=Sum('jun'), jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'),
+				   nov=Sum('nov'), dic=Sum('dic'))[self.limite_inferior:self.limite_superior]
+
 		reportes = {
 			#"reporte_general" : reporte_general,
 			#"reporte_por_estado" : reporte_por_estado,
-			"reporte_por_carencia": reporte_por_carencia,
+			#"reporte_por_carencia": reporte_por_carencia,
+			"reporte_por_accion" : reporte_por_accion,
 			"reporte_general" : [],
 			"reporte_por_estado" : [],
-			#"reporte_por_carencia": []
+			"reporte_por_carencia": [],
+			#"reporte_por_accion" : []
 		}
 
 		return reportes
