@@ -14,6 +14,8 @@ class Estado(models.Model):
     claveEstado = models.CharField(max_length=2, null=False, blank=False)
     nombreEstado = models.CharField(max_length=45, null=False, blank=False)
     abrevEstado = models.CharField(max_length=16, null=False, blank=False)
+    latitud = models.FloatField()
+    longitud = models.FloatField()
 
     def __str__(self):  # __unicode__ on Python 2
         return self.nombreEstado
