@@ -267,6 +267,8 @@ class avancesMensualesPorMetaEndpoint(ProtectedResourceView):
 # Clase EndPoint (oauth2) para implementar el buscador en base al filtro grande
 class BuscadorEndpoint(generic.ListView):
 	def get(self, request):
+		# myObj: objeto a construir con lo parámetros obtenidos en la URL y que serán
+		# mandados al buscador para que éste los filtre
 		myObj = BuscarAvances(
 			carencias = get_array_or_none(request.GET.get('carencias')),
 			subcarencias = get_array_or_none(request.GET.get('subcarencias')),
@@ -285,20 +287,23 @@ class BuscadorEndpoint(generic.ListView):
 			limite_superior = request.GET.get('limiteSuperior')
 		)
 
-		resultados = myObj.buscar()
-		json_map = {}
+		resultados = myObj.buscar()				# Obteniendo los reportes del buscador
+		json_map = {}							# Json a devolver
 		json_map['reporte_general'] = []		# Entrega avances mensuales con la información solicitada
 		json_map['reporte_por_estado'] = []		# Entrega avances mensuales por estado
 		json_map['reporte_por_carencia'] = []	# Entrega avances mensuales por carencia
 		json_map['reporte_por_accion'] = []  	# Entrega avances mensuales por accion
 
 		for reporte in resultados['reporte_general']:
-			shortened_reporte = {}
-			add = True
+			shortened_reporte = {}				# Utilizado para mejorar el aspecto de las llaves del json
+			add = True							# Bandera para decidir si el valor del avace está dentro del rango
 
-			shortened_reporte['suma_avance'] = 0			# Utilizado para mejorar el aspecto de las llaves del json
+			shortened_reporte['suma_avance'] = 0
 			shortened_reporte['suma_meta'] = 0
+
+			# ID de cada avance mensual en el reporte para poder obtener el valor del avance cada mes
 			avance_mensual = AvanceMensual.objects.get(id=reporte['id'])
+			# ID de cada meta en el reporte para poder obtener el valor del avance cada mes
 			meta = MetaMensual.objects.get(meta__id=reporte['avancePorMunicipio__meta__id'],
 												   estado__nombreEstado = reporte['avancePorMunicipio__estado__nombreEstado'])
 			if myObj.meses is not  None:
@@ -340,7 +345,7 @@ class BuscadorEndpoint(generic.ListView):
 						shortened_reporte['suma_avance'] += avance_mensual.dic
 						shortened_reporte['suma_meta'] += meta.dic
 			else:
-
+				# Si no se indicaron meses. habrá que obtener el valor de todos
 				shortened_reporte['suma_avance'] += (avance_mensual.ene + avance_mensual.feb + avance_mensual.mar +
 													 avance_mensual.abr + avance_mensual.may + avance_mensual.jun +
 													 avance_mensual.jul + avance_mensual.ago + avance_mensual.sep +

@@ -435,4 +435,5 @@ admin.site.register(Estado)
 admin.site.register(Municipio)
 admin.site.register(Mes)
 admin.site.register(Periodo)
+admin.site.register(UnidadDeMedida)
 
