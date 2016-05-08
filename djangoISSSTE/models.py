@@ -111,9 +111,26 @@ class Responsable(models.Model):
 
 
 @python_2_unicode_compatible
+class UnidadDeMedida(models.Model):
+    descripcionUnidad = models.CharField(max_length=300, null=False, blank=False, verbose_name="Descripción")
+
+    def __str__(self):  # __unicode__ on Python 2
+        return self.descripcionUnidad
+
+    def to_serializable_dict(self):
+        ans = model_to_dict(self)
+        ans['id'] = str(self.id)
+        ans['descripcionUnidad'] = str(self.descripcionUnidad)
+
+    class Meta:
+        verbose_name = "Unidad de Medida"
+        verbose_name_plural = "Unidades de Medida"
+
+
+@python_2_unicode_compatible
 class AccionEstrategica(models.Model):
     nombreAccion = models.CharField(max_length=200, null=False, blank=False, verbose_name='Acción')
-    unidadDeMedida = models.CharField(max_length=200, null=False, blank=False, verbose_name='Unidad de medida')
+    unidadDeMedida = models.ForeignKey(UnidadDeMedida, null=False, blank=False, verbose_name="Unidad de Medida")
     subCarencia = models.ForeignKey(SubCarencia, null=False, blank=False)
     responsable = models.ForeignKey(Responsable)
 

@@ -5,6 +5,7 @@ from django.db.models import Count, Sum
 from djangoISSSTE.models import *
 
 class BuscarAvances:
+	# Constructor del buscador de avances
 	def __init__(
 			self,
 			carencias,
@@ -25,7 +26,7 @@ class BuscarAvances:
 	):
 		self.carencias = carencias
 		self.subcarencias = subcarencias
-		self.accions = acciones
+		self.acciones = acciones
 		self.estados = estados
 		self.municipios = municipios
 		self.periodos = periodos
@@ -39,7 +40,7 @@ class BuscarAvances:
 		self.limite_inferior = limite_inferior
 		self.limite_superior = limite_superior
 
-	def buscar(self):
+	def buscar(self):			# Formando el query que filtrará los avances por municipio
 		query = Q()
 		query_estado = Q()
 		if self.carencias is not  None:
@@ -49,6 +50,10 @@ class BuscarAvances:
 		if self.subcarencias is not None:
 			query = query & Q(avancePorMunicipio__meta__accionEstrategica__subCarencia__id__in = self.subcarencias)
 			query_estado = query_estado & Q(meta__accionEstrategica__subCarencia__id__in=self.subcarencias)
+
+		if self.acciones is not None:
+			query = query & Q(avancePorMunicipio__meta__accionEstrategica__id__in=self.acciones)
+			query_estado = query_estado & Q(meta__accionEstrategica__id__in=self.acciones)
 
 		if self.estados is not None:
 			query = query & Q(avancePorMunicipio__estado__id__in = self.estados)
@@ -70,8 +75,8 @@ class BuscarAvances:
 			query_estado = query_estado & Q(meta__observaciones__contains = self.observaciones)
 
 		if self.unidad_de_medida is not None:
-			query = query & Q(avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__contains=self.unidad_de_medida)
-			query_estado = query_estado & Q(meta__accionEstrategica__unidadDeMedida__contains=self.unidad_de_medida)
+			query = query & Q(avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad__contains=self.unidad_de_medida)
+			query_estado = query_estado & Q(meta__accionEstrategica__unidadDeMedida__descripcionUnidad__contains=self.unidad_de_medida)
 
 		avances_mensuales = None
 		avances_por_municipio = None
@@ -113,13 +118,22 @@ class BuscarAvances:
 				   jun=Sum('jun'),jul=Sum('jul'),ago=Sum('ago'),sep=Sum('sep'),oct=Sum('oct'),
 				   nov=Sum('nov'),dic=Sum('dic'))[self.limite_inferior:self.limite_superior]
 
+		reporte_por_accion = avances_mensuales.values(
+			'avancePorMunicipio__meta__accionEstrategica__id',
+			'avancePorMunicipio__meta__accionEstrategica__nombreAccion',
+		).annotate(ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'),
+				   jun=Sum('jun'), jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'),
+				   nov=Sum('nov'), dic=Sum('dic'))[self.limite_inferior:self.limite_superior]
+
 		reportes = {
-			#"reporte_general" : reporte_general,
-			#"reporte_por_estado" : reporte_por_estado,
+			"reporte_general" : reporte_general,
+			"reporte_por_estado" : reporte_por_estado,
 			"reporte_por_carencia": reporte_por_carencia,
-			"reporte_general" : [],
-			"reporte_por_estado" : [],
-			#"reporte_por_carencia": []
+			"reporte_por_accion" : reporte_por_accion,
+			#"reporte_general" : [],
+			#"reporte_por_estado" : [],
+			#"reporte_por_carencia": [],
+			#"reporte_por_accion" : []
 		}
 
 		return reportes

@@ -92,7 +92,7 @@ class ResponsablesEndpoint(ProtectedResourceView):
 
 # Clase EndPoint (oauth2) para devolver los estados
 class EstadosEndpoint(ProtectedResourceView):
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
         usuario = AccessToken.objects.get(token=request.GET.get('access_token')).user.usuario
         if usuario.rol == "FE" or usuario.rol == "UE":
             return HttpResponse(
@@ -154,7 +154,6 @@ class MetasEndpoint(ProtectedResourceView):
             json.dumps((map(lambda meta: meta.to_serializable_dict(), Meta.objects.all())), ensure_ascii=False,
                        indent=4, separators=(',', ': '), sort_keys=True, ), 'application/json')
 
-
 # Clase EndPoint (oauth2) para devolver las metas mensuales dada una acción
 class MetasMensualesPorAccionEndpoint(ProtectedResourceView):
     def get(self, request):
@@ -187,7 +186,7 @@ class MetasMensualesPorAccionEndpoint(ProtectedResourceView):
 
 # Clase EndPoint (oauth2) para devolver los avances mensuales dada una acción
 class AvancesMensualesPorAccionEndpoint(ProtectedResourceView):
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
         # Obteniendo los datos de la url
         accion_ids = get_array_or_none(request.GET.get('acciones'))
         all_avances_mensuales = False
@@ -218,6 +217,7 @@ class AvancesMensualesPorAccionEndpoint(ProtectedResourceView):
                         'application/json', )  # Clase EndPoint (oauth2) para devolver las metas mensuales dada una meta
 
 
+# Clase EndPoint (oauth2) para devolver las metas mensuales dada una meta
 class MetasMensualesPorMetaEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         # Obteniendo los datos de la url
@@ -260,7 +260,6 @@ class avancesMensualesPorMetaEndpoint(ProtectedResourceView):
         else:
             for avancePorMunicipo in AvancePorMunicipio.objects.filter(meta_id__in=meta_ids):
                 arreglo_avance_municipio.append(avancePorMunicipo.id)
-                print arreglo_avance_municipio
 
             avances_mensuales = AvanceMensual.objects.filter(avancePorMunicipio__id__in=arreglo_avance_municipio)
 
@@ -273,8 +272,10 @@ class avancesMensualesPorMetaEndpoint(ProtectedResourceView):
 
 
 # Clase EndPoint (oauth2) para implementar el buscador en base al filtro grande
-class BuscadorEndpoint(ProtectedResourceView):
+class BuscadorEndpoint(generic.ListView):
     def get(self, request):
+        # myObj: objeto a construir con lo parámetros obtenidos en la URL y que serán
+        # mandados al buscador para que éste los filtre
         myObj = BuscarAvances(
             carencias=get_array_or_none(request.GET.get('carencias')),
             subcarencias=get_array_or_none(request.GET.get('subcarencias')),
@@ -293,19 +294,23 @@ class BuscadorEndpoint(ProtectedResourceView):
             limite_superior=request.GET.get('limiteSuperior')
         )
 
-        resultados = myObj.buscar()
-        json_map = {}
+        resultados = myObj.buscar()  # Obteniendo los reportes del buscador
+        json_map = {}  # Json a devolver
         json_map['reporte_general'] = []  # Entrega avances mensuales con la información solicitada
         json_map['reporte_por_estado'] = []  # Entrega avances mensuales por estado
         json_map['reporte_por_carencia'] = []  # Entrega avances mensuales por carencia
+        json_map['reporte_por_accion'] = []  # Entrega avances mensuales por accion
 
         for reporte in resultados['reporte_general']:
-            shortened_reporte = {}
-            add = True
+            shortened_reporte = {}  # Utilizado para mejorar el aspecto de las llaves del json
+            add = True  # Bandera para decidir si el valor del avace está dentro del rango
 
-            shortened_reporte['suma_avance'] = 0  # Utilizado para mejorar el aspecto de las llaves del json
+            shortened_reporte['suma_avance'] = 0
             shortened_reporte['suma_meta'] = 0
+
+            # ID de cada avance mensual en el reporte para poder obtener el valor del avance cada mes
             avance_mensual = AvanceMensual.objects.get(id=reporte['id'])
+            # ID de cada meta en el reporte para poder obtener el valor del avance cada mes
             meta = MetaMensual.objects.get(meta__id=reporte['avancePorMunicipio__meta__id'],
                                            estado__nombreEstado=reporte['avancePorMunicipio__estado__nombreEstado'])
             if myObj.meses is not None:
@@ -347,7 +352,7 @@ class BuscadorEndpoint(ProtectedResourceView):
                         shortened_reporte['suma_avance'] += avance_mensual.dic
                         shortened_reporte['suma_meta'] += meta.dic
             else:
-
+                # Si no se indicaron meses. habrá que obtener el valor de todos
                 shortened_reporte['suma_avance'] += (avance_mensual.ene + avance_mensual.feb + avance_mensual.mar +
                                                      avance_mensual.abr + avance_mensual.may + avance_mensual.jun +
                                                      avance_mensual.jul + avance_mensual.ago + avance_mensual.sep +
@@ -599,9 +604,84 @@ class BuscadorEndpoint(ProtectedResourceView):
                 'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
             json_map['reporte_por_carencia'].append(shortened_reporte)
 
+        for reporte in resultados['reporte_por_accion']:
+            shortened_reporte = {}
+            shortened_reporte['avance'] = 0
+            shortened_reporte['inversion'] = 0
+            shortened_reporte['suma_meta'] = 0
+            if myObj.meses is not None:
+                for mes in myObj.meses:
+                    if mes == 1: shortened_reporte['avance'] += reporte["ene"]
+                    if mes == 2: shortened_reporte['avance'] += reporte["feb"]
+                    if mes == 3: shortened_reporte['avance'] += reporte["mar"]
+                    if mes == 4: shortened_reporte['avance'] += reporte["abr"]
+                    if mes == 5: shortened_reporte['avance'] += reporte["may"]
+                    if mes == 6: shortened_reporte['avance'] += reporte["jun"]
+                    if mes == 7: shortened_reporte['avance'] += reporte["jul"]
+                    if mes == 8: shortened_reporte['avance'] += reporte["ago"]
+                    if mes == 9: shortened_reporte['avance'] += reporte["sep"]
+                    if mes == 10: shortened_reporte['avance'] += reporte["oct"]
+                    if mes == 11: shortened_reporte['avance'] += reporte["nov"]
+                    if mes == 12: shortened_reporte['avance'] += reporte["dic"]
+            else:
+                shortened_reporte['avance'] += reporte["ene"]
+                shortened_reporte['avance'] += reporte["feb"]
+                shortened_reporte['avance'] += reporte["mar"]
+                shortened_reporte['avance'] += reporte["abr"]
+                shortened_reporte['avance'] += reporte["may"]
+                shortened_reporte['avance'] += reporte["jun"]
+                shortened_reporte['avance'] += reporte["jul"]
+                shortened_reporte['avance'] += reporte["ago"]
+                shortened_reporte['avance'] += reporte["sep"]
+                shortened_reporte['avance'] += reporte["oct"]
+                shortened_reporte['avance'] += reporte["nov"]
+                shortened_reporte['avance'] += reporte["dic"]
 
-        return HttpResponse(json.dumps(json_map, indent=6, sort_keys=True, ensure_ascii=False),
-                    'application/json', )  # Clase EndPoint (oauth2) para implementar la captra de avances, recibe un perdiodo, accion y un estado y devuelve el id del avance
+            accionId = reporte['avancePorMunicipio__meta__accionEstrategica__id']
+            for avance in AvancePorMunicipio.objects.filter(
+                    meta__accionEstrategica__id=accionId):
+                shortened_reporte['inversion'] += avance.inversionAprox
+
+            for meta_mensual in MetaMensual.objects.filter(
+                    meta__accionEstrategica__id=accionId):
+                if myObj.meses is not None:
+                    for mes in myObj.meses:
+                        if mes == 1: shortened_reporte['suma_meta'] += meta_mensual.ene
+                        if mes == 2: shortened_reporte['suma_meta'] += meta_mensual.feb
+                        if mes == 3: shortened_reporte['suma_meta'] += meta_mensual.mar
+                        if mes == 4: shortened_reporte['suma_meta'] += meta_mensual.abr
+                        if mes == 5: shortened_reporte['suma_meta'] += meta_mensual.may
+                        if mes == 6: shortened_reporte['suma_meta'] += meta_mensual.jun
+                        if mes == 7: shortened_reporte['suma_meta'] += meta_mensual.jul
+                        if mes == 8: shortened_reporte['suma_meta'] += meta_mensual.ago
+                        if mes == 9: shortened_reporte['suma_meta'] += meta_mensual.sep
+                        if mes == 10: shortened_reporte['suma_meta'] += meta_mensual.oct
+                        if mes == 11: shortened_reporte['suma_meta'] += meta_mensual.nov
+                        if mes == 12: shortened_reporte['suma_meta'] += meta_mensual.dic
+                else:
+                    shortened_reporte['suma_meta'] += meta_mensual.ene
+                    shortened_reporte['suma_meta'] += meta_mensual.feb
+                    shortened_reporte['suma_meta'] += meta_mensual.mar
+                    shortened_reporte['suma_meta'] += meta_mensual.abr
+                    shortened_reporte['suma_meta'] += meta_mensual.may
+                    shortened_reporte['suma_meta'] += meta_mensual.jun
+                    shortened_reporte['suma_meta'] += meta_mensual.jul
+                    shortened_reporte['suma_meta'] += meta_mensual.ago
+                    shortened_reporte['suma_meta'] += meta_mensual.sep
+                    shortened_reporte['suma_meta'] += meta_mensual.oct
+                    shortened_reporte['suma_meta'] += meta_mensual.nov
+                    shortened_reporte['suma_meta'] += meta_mensual.dic
+
+            shortened_reporte['accionId'] = reporte[
+                'avancePorMunicipio__meta__accionEstrategica__id']
+            shortened_reporte['nombreAccion'] = reporte[
+                'avancePorMunicipio__meta__accionEstrategica__nombreAccion']
+            json_map['reporte_por_accion'].append(shortened_reporte)
+
+            return HttpResponse(json.dumps(json_map, indent=6, sort_keys=True, ensure_ascii=False),
+                                'application/json', )
+
+
 class AvanceForPeriodo(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         # Obteniendo los datos de la url
@@ -623,59 +703,4 @@ class AvanceForPeriodo(ProtectedResourceView):
             the_list.append(avance)
 
         return HttpResponse(json.dumps(the_list, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
-                            'application/json', )
-
-
-class ExcelAvancesEndpoint(ProtectedResourceView):
-    def get(self, request, *args, **kwargs):
-        # Obteniendo los datos de la url
-        periodo_id = get_array_or_none(request.GET.get('periodos'))
-
-        if periodo_id is None:
-            avances_mensuales = AvanceMensual.objects.all()
-        else:
-            avances_mensuales = AvanceMensual.objects.filter(avancePorMunicipio__periodo_id__in=periodo_id).all()
-
-        the_list = []
-
-        for avance_mensual in avances_mensuales.values('avancePorMunicipio__periodo__nombrePeriodo',
-                                                       'municipio__nombreMunicipio', 'ene',
-                                                       'feb', 'mar', 'abr', 'may', 'jun',
-                                                       'jul', 'ago', 'sep', 'oct', 'nov',
-                                                       'dic',
-                                                       'avancePorMunicipio__periodo__nombrePeriodo',
-                                                       'avancePorMunicipio__inversionAprox',
-                                                       'avancePorMunicipio__meta__accionEstrategica__nombreAccion',
-                                                       'avancePorMunicipio__meta__accionEstrategica__unidadDeMedida',
-                                                       'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia',
-                                                       'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia'):
-            the_list.append(avance_mensual)
-
-        return HttpResponse(json.dumps(the_list, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
-                            'application/json', )
-
-
-class ExcelMetasEndpoint(ProtectedResourceView):
-    def get(self, request, *args, **kwargs):
-        # Obteniendo los datos de la url
-        periodo_id = get_array_or_none(request.GET.get('periodo'))
-
-        if periodo_id is None:
-            metas_mensuales = MetaMensual.objects.all()
-        else:
-            metas_mensuales = MetaMensual.objects.filter(meta__periodo_id__in=periodo_id).all()
-
-        the_list = []
-        for meta_mensual in metas_mensuales.values('meta__periodo__nombrePeriodo', 'estado__nombreEstado', 'ene',
-                                                   'feb', 'mar', 'abr', 'may', 'jun',
-                                                   'jul', 'ago', 'sep', 'oct', 'nov',
-                                                   'dic',
-                                                   'inversionAprox',
-                                                   'meta__accionEstrategica__nombreAccion',
-                                                   'meta__accionEstrategica__unidadDeMedida',
-                                                   'meta__accionEstrategica__subCarencia__nombreSubCarencia',
-                                                   'meta__accionEstrategica__subCarencia__carencia__nombreCarencia'):
-            the_list.append(meta_mensual)
-
-        return HttpResponse(json.dumps(the_list, indent=4, sort_keys=True, ensure_ascii=False),
                             'application/json', )
