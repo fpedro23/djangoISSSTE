@@ -446,13 +446,13 @@ class AccionEstrategicaAdmin(admin.ModelAdmin):
 	get_cargoResponsable.short_description = 'Cargo del Responsable'
 	get_inversionTotal.short_description = "Inversión Aproximada"
 
-	class SubcarenciaAdmin(admin.ModelAdmin):
-		model = SubCarencia
-		list_display = ('nombreSubCarencia', 'carencia')
+class SubcarenciaAdmin(admin.ModelAdmin):
+	model = SubCarencia
+	list_display = ('nombreSubCarencia', 'carencia')
 
-	class AvanceMensualAdmin(admin.ModelAdmin):
-		model = AvanceMensual
-		list_display = ('avancePorMunicipio', 'fecha_ultima_modificacion')
+class AvanceMensualAdmin(admin.ModelAdmin):
+	model = AvanceMensual
+	list_display = ('avancePorMunicipio', 'fecha_ultima_modificacion')
 
 
 # admin.site.register(LogEntry)
