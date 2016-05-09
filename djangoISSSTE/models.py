@@ -11,7 +11,6 @@ from time import gmtime, strftime
 from django.forms import model_to_dict
 
 
-
 ## Seleccionar el año actual (2016)
 def getPeriodoActual():
     periodoActual = date.today().year
@@ -22,6 +21,7 @@ def getPeriodoActual():
         # periodo = Periodo.objects.latest('nombrePeriodo')
         periodo = None;
         return periodo;
+
 
 @python_2_unicode_compatible
 class Estado(models.Model):
@@ -193,7 +193,7 @@ class Meta(models.Model):
     accionEstrategica = models.ForeignKey(AccionEstrategica, null=False, blank=False, verbose_name='Acción Estrategica')
     periodo = models.ForeignKey(Periodo, null=False, blank=False, default=getPeriodoActual())
     observaciones = models.TextField(max_length=500, default="", blank=True)
-    montoPromedio = models.FloatField(null=False, default=0, verbose_name= 'Monto Promedio')
+    montoPromedio = models.FloatField(null=False, default=0, verbose_name='Monto Promedio')
 
     def to_serializable_dict(self):
         ans = model_to_dict(self)
@@ -285,7 +285,6 @@ class AvancePorMunicipio(models.Model):
         super(AvancePorMunicipio, self).save(*args, **kwargs)
 
 
-
 class AvanceMensual(models.Model):
     avancePorMunicipio = models.ForeignKey(AvancePorMunicipio, null=False, blank=False)
     municipio = models.ForeignKey(Municipio, null=False, blank=False)
@@ -302,7 +301,6 @@ class AvanceMensual(models.Model):
     oct = models.FloatField(null=False, default=0)
     nov = models.FloatField(null=False, default=0)
     dic = models.FloatField(null=False, default=0)
-
 
     def to_serializable_dict(self):
         ans = model_to_dict(self)
@@ -339,5 +337,4 @@ class Usuario(models.Model):
 
     user = models.OneToOneField(User)
     rol = models.CharField(max_length=2, choices=ROLES_CHOICES, default=User)
-    estado = models.ForeignKey(Estado, null = True, blank = True)
-
+    estado = models.ForeignKey(Estado, null=True, blank=True)
