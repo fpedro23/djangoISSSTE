@@ -2,7 +2,7 @@
 from django import forms
 from django.contrib import admin
 import json
-#from django.contrib.admin.models import LogEntry
+# from django.contrib.admin.models import LogEntry
 
 # Register your models here.
 from django.contrib.auth.admin import UserAdmin
@@ -24,7 +24,7 @@ class UsuarioInLine(admin.StackedInline):
 
 class UserAdmin(UserAdmin):
 	inlines = (UsuarioInLine,)
-	list_display = ('username', 'first_name', 'last_name', 'email','get_estado', 'get_rol')
+	list_display = ('username', 'first_name', 'last_name', 'email', 'get_estado', 'get_rol')
 	fieldsets = (
 		(('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
 		(('AuthInfo'), {'fields': ('username', 'password')}),
@@ -54,10 +54,9 @@ class UserAdmin(UserAdmin):
 		else:
 			return super(UserAdmin, self).response_add(request, obj, post_url_continue)
 
-
 	# Ejecutado cuando el nuevo usuario es guardado
 	def save_model(self, request, obj, form, change):
-		obj.is_staff = True	 # True para tener acceso al admin
+		obj.is_staff = True  # True para tener acceso al admin
 		usuario = obj
 		usuario.save()
 
@@ -122,16 +121,18 @@ class MetaMensualInLine(admin.TabularInline):
 	# y del estado al que pertenece en la pantalla para añadir una nueva
 	# meta mensual
 
+
 class MetaMensualInLine(admin.TabularInline):
 	model = MetaMensual
 	form = MetaMensualForm
 	readonly_fields = ('inversionAprox',)
 	extra = 0
 
+
 class MetaAdmin(admin.ModelAdmin):
 	model = Meta
-	fields = ('accionEstrategica', 'periodo', 'montoPromedio','observaciones',)
-	list_display = ('get_carencia','get_subcarencia','accionEstrategica', 'periodo','get_inversion')
+	fields = ('accionEstrategica', 'periodo', 'montoPromedio', 'observaciones',)
+	list_display = ('get_carencia', 'get_subcarencia', 'accionEstrategica', 'periodo', 'get_inversion')
 	inlines = [MetaMensualInLine, ]
 	can_delete = True
 
@@ -185,7 +186,6 @@ class AvanceMensualInLine(admin.TabularInline):
 
 
 class AvancePorMunicipioAdmin(admin.ModelAdmin):
-
 	# La entidad de meta se desplegará con el label de "Acción Estratégica"
 	# y con el nombre de su llave foránea "acción estratégica".	Esto con la
 	# intención de cumplir con los requerimientos del cliente, sin embargo,
@@ -193,15 +193,38 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 
 	model = AvancePorMunicipio
 	inlines = [AvanceMensualInLine, ]
-	fields = ('periodo','meta', 'estado','get_carencia', 'get_unidad_medida', 'get_subcarencia',
-              'inversionAprox', 'get_observaciones', 'get_accion', 'get_enero','get_febrero',
-              'get_marzo', 'get_abril', 'get_mayo', 'get_junio', 'get_julio', 'get_agosto',
-              'get_septiembre', 'get_octubre', 'get_noviembre', 'get_diciembre')
-	readonly_fields = ('get_carencia', 'get_subcarencia', 'get_unidad_medida', 'get_observaciones', 'get_enero',
-					   'get_febrero', 'get_marzo', 'get_abril', 'get_mayo','get_junio', 'get_julio', 'get_agosto',
-					   'get_septiembre', 'get_octubre', 'get_noviembre', 'get_diciembre','get_accion', 'inversionAprox')
 
-	list_display = ('id','get_carencia','get_subcarencia','meta', 'periodo','estado', 'inversionAprox')
+	'''('Meta', {
+				('get_enero', 'get_febrero', 'get_marzo', 'get_abril', 'get_mayo',
+				 'get_junio', 'get_julio', 'get_agosto', 'get_septiembre', 'get_octubre', 'get_noviembre',
+				 'get_diciembre'),
+			}),
+			(None,{
+				'inversionAprox', 'get_accion'
+			}),'''
+
+	fieldsets = (
+		('Avance', {
+			'fields': (
+				'periodo', 'meta', 'estado', 'get_carencia', 'get_unidad_medida', 'get_observaciones',
+				'get_subcarencia','inversionAprox', 'get_accion',
+			)
+		}),
+		('Meta', {
+			'fields': (
+				'get_enero', 'get_febrero', 'get_marzo', 'get_abril', 'get_mayo',
+				'get_junio', 'get_julio', 'get_agosto', 'get_septiembre', 'get_octubre', 'get_noviembre',
+				'get_diciembre',
+			)
+		}),
+	)
+
+	readonly_fields = ('get_carencia', 'get_subcarencia', 'get_unidad_medida', 'get_observaciones', 'get_enero',
+					   'get_febrero', 'get_marzo', 'get_abril', 'get_mayo', 'get_junio', 'get_julio', 'get_agosto',
+					   'get_septiembre', 'get_octubre', 'get_noviembre', 'get_diciembre', 'get_accion',
+					   'inversionAprox')
+
+	list_display = ('id', 'get_carencia', 'get_subcarencia', 'meta', 'periodo', 'estado', 'inversionAprox')
 	ordering = ['meta__nombreMeta', ]
 
 	# Obteniendo el campo de la SuCarencia para la lista de avances por municipio
@@ -222,7 +245,7 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 		arreglo_metas = []
 		val_meta = obj.meta.id
 		val_estado = obj.estado.id
-		meta_mensual = MetaMensual.objects.filter(meta__id = val_meta, estado__id = val_estado)
+		meta_mensual = MetaMensual.objects.filter(meta__id=val_meta, estado__id=val_estado)
 		to_print = ""
 		for meta in meta_mensual:
 			to_print = str(meta.ene)
@@ -341,7 +364,6 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 	def get_accion(self, obj):
 		return obj.meta.accionEstrategica.nombreAccion
 
-
 	get_subcarencia.short_description = "Sub Carencia"
 	get_carencia.short_description = "Carencia"
 	get_unidad_medida.short_description = "Unidad de Medida"
@@ -358,20 +380,18 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 	get_octubre.short_description = "Octubre"
 	get_noviembre.short_description = "Noviembre"
 	get_diciembre.short_description = "Diciembre"
+	get_accion.short_description = "Acción Estratégica"
 
 	# Esta funcion se ejecuta al desplegar la lista de Avances por municipio. Dentro
 	# de ella se aplica un filtro por el rol del usuario y de su estado
 	def get_queryset(self, request):
-		queryEstado = request.user.usuario.estado.id
-
 		qs = super(AvancePorMunicipioAdmin, self).get_queryset(request)
 		if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UC' or request.user.usuario.rol == 'FC':
 			return qs
 		elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
 			print 'Query Set Administrador dependenciasub'
-			print queryEstado
 			return qs.filter(
-				Q(estado__id=queryEstado)
+				Q(estado__id=request.user.usuario.estado.id)
 			)
 
 	# Define los estados visibles dependiendo del rol del usuario
@@ -394,7 +414,7 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 
 class AccionEstrategicaAdmin(admin.ModelAdmin):
 	model = AccionEstrategica
-	list_display = ('nombreAccion','get_carencia', 'subCarencia','unidadDeMedida', 'responsable',
+	list_display = ('nombreAccion', 'get_carencia', 'subCarencia', 'unidadDeMedida', 'responsable',
 					'get_cargoResponsable', 'get_inversionTotal')
 	readonly_fields = ('get_carencia',)
 
@@ -417,7 +437,7 @@ class AccionEstrategicaAdmin(admin.ModelAdmin):
 			arregloMetas.append(singleMeta.id)
 
 		for singleMetaMensual in MetaMensual.objects.filter(
-			Q(meta__id__in = arregloMetas)
+				Q(meta__id__in=arregloMetas)
 		):
 			inversionAprox += singleMetaMensual.inversionAprox
 		return inversionAprox
@@ -426,11 +446,20 @@ class AccionEstrategicaAdmin(admin.ModelAdmin):
 	get_cargoResponsable.short_description = 'Cargo del Responsable'
 	get_inversionTotal.short_description = "Inversión Aproximada"
 
-#admin.site.register(LogEntry)
+class SubcarenciaAdmin(admin.ModelAdmin):
+	model = SubCarencia
+	list_display = ('nombreSubCarencia', 'carencia')
+
+class AvanceMensualAdmin(admin.ModelAdmin):
+	model = AvanceMensual
+	list_display = ('avancePorMunicipio', 'fecha_ultima_modificacion')
+
+
+# admin.site.register(LogEntry)
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 admin.site.register(Carencia)
-admin.site.register(SubCarencia)
+admin.site.register(SubCarencia, SubcarenciaAdmin)
 admin.site.register(AccionEstrategica, AccionEstrategicaAdmin)
 admin.site.register(Meta, MetaAdmin)
 admin.site.register(AvancePorMunicipio, AvancePorMunicipioAdmin)
@@ -439,4 +468,4 @@ admin.site.register(Estado)
 admin.site.register(Municipio)
 admin.site.register(Mes)
 admin.site.register(Periodo)
-
+admin.site.register(UnidadDeMedida)

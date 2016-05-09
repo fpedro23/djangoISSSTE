@@ -4,16 +4,32 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.encoding import python_2_unicode_compatible
+from datetime import date
+from time import gmtime, strftime
 
 # Create your models here.
 from django.forms import model_to_dict
 
+
+
+## Seleccionar el año actual (2016)
+def getPeriodoActual():
+    periodoActual = date.today().year
+    try:
+        periodo = Periodo.objects.get(nombrePeriodo=periodoActual)
+        return periodo.id
+    except Periodo.DoesNotExist:
+        # periodo = Periodo.objects.latest('nombrePeriodo')
+        periodo = None;
+        return periodo;
 
 @python_2_unicode_compatible
 class Estado(models.Model):
     claveEstado = models.CharField(max_length=2, null=False, blank=False)
     nombreEstado = models.CharField(max_length=45, null=False, blank=False)
     abrevEstado = models.CharField(max_length=16, null=False, blank=False)
+    latitud = models.FloatField()
+    longitud = models.FloatField()
 
     def __str__(self):  # __unicode__ on Python 2
         return self.nombreEstado
@@ -98,9 +114,26 @@ class Responsable(models.Model):
 
 
 @python_2_unicode_compatible
+class UnidadDeMedida(models.Model):
+    descripcionUnidad = models.CharField(max_length=300, null=False, blank=False, verbose_name="Descripción")
+
+    def __str__(self):  # __unicode__ on Python 2
+        return self.descripcionUnidad
+
+    def to_serializable_dict(self):
+        ans = model_to_dict(self)
+        ans['id'] = str(self.id)
+        ans['descripcionUnidad'] = str(self.descripcionUnidad)
+
+    class Meta:
+        verbose_name = "Unidad de Medida"
+        verbose_name_plural = "Unidades de Medida"
+
+
+@python_2_unicode_compatible
 class AccionEstrategica(models.Model):
     nombreAccion = models.CharField(max_length=200, null=False, blank=False, verbose_name='Acción')
-    unidadDeMedida = models.CharField(max_length=200, null=False, blank=False, verbose_name='Unidad de medida')
+    unidadDeMedida = models.ForeignKey(UnidadDeMedida, null=False, blank=False, verbose_name="Unidad de Medida")
     subCarencia = models.ForeignKey(SubCarencia, null=False, blank=False)
     responsable = models.ForeignKey(Responsable)
 
@@ -136,6 +169,15 @@ class Periodo(models.Model):
 
         return ans
 
+## Seleccionar el año actual (2016)
+def getPeriodoActual():
+    periodoActual = date.today().year
+    try:
+        periodo = Periodo.objects.get(nombrePeriodo=periodoActual)
+    except Periodo.DoesNotExist:
+        periodo = Periodo.objects.latest('nombrePeriodo')
+    return periodo.id
+
 
 @python_2_unicode_compatible
 class Mes(models.Model):
@@ -158,7 +200,7 @@ class Mes(models.Model):
 class Meta(models.Model):
     nombreMeta = models.CharField(max_length=200, null=False, )
     accionEstrategica = models.ForeignKey(AccionEstrategica, null=False, blank=False, verbose_name='Acción Estrategica')
-    periodo = models.ForeignKey(Periodo, null=False, blank=False)
+    periodo = models.ForeignKey(Periodo, null=False, blank=False, default=getPeriodoActual())
     observaciones = models.TextField(max_length=500, default="", blank=True)
     montoPromedio = models.FloatField(null=False, default=0, verbose_name= 'Monto Promedio')
 
@@ -166,7 +208,6 @@ class Meta(models.Model):
         ans = model_to_dict(self)
         ans['id'] = str(self.id)
         ans['accionEstrategica'] = self.accionEstrategica.nombreAccion
-        ans['estado'] = self.estado.nombreEstado
         ans['periodo'] = self.periodo.nombrePeriodo
         return ans
 
@@ -225,7 +266,7 @@ class MetaMensual(models.Model):
 class AvancePorMunicipio(models.Model):
     meta = models.ForeignKey(Meta, null=False, blank=False, verbose_name="Acción Estratégica")
     estado = models.ForeignKey(Estado, null=False, blank=False)
-    periodo = models.ForeignKey(Periodo, null=False, blank=False)
+    periodo = models.ForeignKey(Periodo, null=False, blank=False, default=getPeriodoActual(), verbose_name="Año")
     inversionAprox = models.FloatField(default=0)
 
     def __str__(self):
@@ -261,6 +302,7 @@ class AvancePorMunicipio(models.Model):
 class AvanceMensual(models.Model):
     avancePorMunicipio = models.ForeignKey(AvancePorMunicipio, null=False, blank=False)
     municipio = models.ForeignKey(Municipio, null=False, blank=False)
+    fecha_ultima_modificacion = models.DateField(auto_now=True)
     ene = models.FloatField(null=False, default=0)
     feb = models.FloatField(null=False, default=0)
     mar = models.FloatField(null=False, default=0)
@@ -279,6 +321,10 @@ class AvanceMensual(models.Model):
         ans['id'] = str(self.id)
         ans['meta'] = "meta_ISSTE"
         ans['municipio'] = self.municipio.nombreMunicipio
+        if self.fecha_ultima_modificacion is None:
+            ans['fecha_ultima_modificacion'] = None
+        else:
+            ans['fecha_ultima_modificacion'] = self.fecha_ultima_modificacion.isoformat()
         return ans
 
     class Meta:
@@ -305,4 +351,5 @@ class Usuario(models.Model):
 
     user = models.OneToOneField(User)
     rol = models.CharField(max_length=2, choices=ROLES_CHOICES, default=User)
-    estado = models.ForeignKey(Estado, null=False, blank=False)
+    estado = models.ForeignKey(Estado, null = True, blank = True)
+
