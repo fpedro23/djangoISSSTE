@@ -683,7 +683,7 @@ class BuscadorEndpoint(generic.ListView):
                                 'application/json', )
 
 
-class AvanceForPeriodo(ProtectedResourceView):
+class AvanceForPeriodoEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         # Obteniendo los datos de la url
         periodo_id = get_array_or_none(request.GET.get('periodo'))
@@ -704,4 +704,55 @@ class AvanceForPeriodo(ProtectedResourceView):
             the_list.append(avance)
 
         return HttpResponse(json.dumps(the_list, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
+                            'application/json', )
+
+
+# Clase EndPoint (oauth2) para devolver los avances dado uno o varios ids
+class AvancesEndpoint(ProtectedResourceView):
+    def get(self, request, *args, **kwargs):
+        avances_ids = get_array_or_none(request.GET.get('avances'))
+        print avances_ids
+        arreglo_avances = []
+        json_map = {}
+        json_map['avances'] = []
+        if avances_ids is None:
+            avances_mensuales = AvanceMensual.objects.order_by('municipio').all()
+        else:
+            print 'else'
+            for avance in AvanceMensual.objects.filter(id__in=avances_ids):
+                arreglo_avances.append(avance.id)
+                print arreglo_avances
+            avances_mensuales = AvanceMensual.objects.filter(id__in=arreglo_avances)
+
+
+        the_list = []
+        for avance_mensual in avances_mensuales.values('id', 'municipio__nombreMunicipio',
+                                                       'avancePorMunicipio__inversionAprox',
+                                                       'avancePorMunicipio__estado__nombreEstado',
+                                                       'avancePorMunicipio__periodo__nombrePeriodo',
+                                                       'ene','feb','mar','abr','may','jun','jul','ago',
+                                                       'sep','oct','nov','dic',):
+            #the_list.append(avance_mensual)
+            #print avance_mensual['id']
+            shortened_reporte = {}
+            shortened_reporte['id'] = avance_mensual['id']
+            shortened_reporte['municipio'] = avance_mensual['municipio__nombreMunicipio']
+            shortened_reporte['inversionAprox'] = avance_mensual['avancePorMunicipio__inversionAprox']
+            shortened_reporte['nombreEstado'] = avance_mensual['avancePorMunicipio__estado__nombreEstado']
+            shortened_reporte['nombrePeriodo'] = avance_mensual['avancePorMunicipio__periodo__nombrePeriodo']
+            shortened_reporte['enero'] = avance_mensual['ene']
+            shortened_reporte['febrero'] = avance_mensual['feb']
+            shortened_reporte['marzo'] = avance_mensual['mar']
+            shortened_reporte['abril'] = avance_mensual['abr']
+            shortened_reporte['mayo'] = avance_mensual['may']
+            shortened_reporte['junio'] = avance_mensual['jun']
+            shortened_reporte['julio'] = avance_mensual['jul']
+            shortened_reporte['agosto'] = avance_mensual['ago']
+            shortened_reporte['septiembre'] = avance_mensual['sep']
+            shortened_reporte['octubre'] = avance_mensual['oct']
+            shortened_reporte['noviembre'] = avance_mensual['nov']
+            shortened_reporte['diciembre'] = avance_mensual['dic']
+            json_map['avances'].append(shortened_reporte)
+
+        return HttpResponse(json.dumps(json_map, indent=4, sort_keys=True, ensure_ascii=False, ),
                             'application/json', )
