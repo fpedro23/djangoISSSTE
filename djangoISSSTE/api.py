@@ -713,6 +713,8 @@ class AvancesEndpoint(ProtectedResourceView):
         avances_ids = get_array_or_none(request.GET.get('avances'))
         print avances_ids
         arreglo_avances = []
+        json_map = {}
+        json_map['avances'] = []
         if avances_ids is None:
             avances_mensuales = AvanceMensual.objects.order_by('municipio').all()
         else:
@@ -730,7 +732,27 @@ class AvancesEndpoint(ProtectedResourceView):
                                                        'avancePorMunicipio__periodo__nombrePeriodo',
                                                        'ene','feb','mar','abr','may','jun','jul','ago',
                                                        'sep','oct','nov','dic',):
-            the_list.append(avance_mensual)
+            #the_list.append(avance_mensual)
+            #print avance_mensual['id']
+            shortened_reporte = {}
+            shortened_reporte['id'] = avance_mensual['id']
+            shortened_reporte['municipio'] = avance_mensual['municipio__nombreMunicipio']
+            shortened_reporte['inversionAprox'] = avance_mensual['avancePorMunicipio__inversionAprox']
+            shortened_reporte['nombreEstado'] = avance_mensual['avancePorMunicipio__estado__nombreEstado']
+            shortened_reporte['nombrePeriodo'] = avance_mensual['avancePorMunicipio__periodo__nombrePeriodo']
+            shortened_reporte['enero'] = avance_mensual['ene']
+            shortened_reporte['febrero'] = avance_mensual['feb']
+            shortened_reporte['marzo'] = avance_mensual['mar']
+            shortened_reporte['abril'] = avance_mensual['abr']
+            shortened_reporte['mayo'] = avance_mensual['may']
+            shortened_reporte['junio'] = avance_mensual['jun']
+            shortened_reporte['julio'] = avance_mensual['jul']
+            shortened_reporte['agosto'] = avance_mensual['ago']
+            shortened_reporte['septiembre'] = avance_mensual['sep']
+            shortened_reporte['octubre'] = avance_mensual['oct']
+            shortened_reporte['noviembre'] = avance_mensual['nov']
+            shortened_reporte['diciembre'] = avance_mensual['dic']
+            json_map['avances'].append(shortened_reporte)
 
-        return HttpResponse(json.dumps(the_list, indent=4, sort_keys=True, ensure_ascii=False, cls=DjangoJSONEncoder),
+        return HttpResponse(json.dumps(json_map, indent=4, sort_keys=True, ensure_ascii=False, ),
                             'application/json', )
