@@ -11,17 +11,6 @@ from time import gmtime, strftime
 from django.forms import model_to_dict
 
 
-## Seleccionar el año actual (2016)
-def getPeriodoActual():
-    periodoActual = date.today().year
-    try:
-        periodo = Periodo.objects.get(nombrePeriodo=periodoActual)
-    except Periodo.DoesNotExist:
-        periodo = Periodo.objects.latest('nombrePeriodo')
-    #print periodo.nombrePeriodo
-    return periodo.id
-
-
 @python_2_unicode_compatible
 class Estado(models.Model):
     claveEstado = models.CharField(max_length=2, null=False, blank=False)
@@ -165,6 +154,15 @@ class Periodo(models.Model):
         ans['nombrePeriodo'] = str(self.nombrePeriodo)
 
         return ans
+
+## Seleccionar el año actual (2016)
+def getPeriodoActual():
+    periodoActual = date.today().year
+    try:
+        periodo = Periodo.objects.get(nombrePeriodo=periodoActual)
+    except Periodo.DoesNotExist:
+        periodo = Periodo.objects.latest('nombrePeriodo')
+    return periodo.id
 
 
 @python_2_unicode_compatible
@@ -335,3 +333,4 @@ class Usuario(models.Model):
     user = models.OneToOneField(User)
     rol = models.CharField(max_length=2, choices=ROLES_CHOICES, default=User)
     estado = models.ForeignKey(Estado, null = True, blank = True)
+
