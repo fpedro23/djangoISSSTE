@@ -12,16 +12,7 @@ from django.forms import model_to_dict
 
 
 
-## Seleccionar el año actual (2016)
-def getPeriodoActual():
-    periodoActual = date.today().year
-    try:
-        periodo = Periodo.objects.get(nombrePeriodo=periodoActual)
-        return periodo.id
-    except Periodo.DoesNotExist:
-        # periodo = Periodo.objects.latest('nombrePeriodo')
-        periodo = None;
-        return periodo;
+
 
 @python_2_unicode_compatible
 class Estado(models.Model):
@@ -154,7 +145,7 @@ class AccionEstrategica(models.Model):
 
 
 class Periodo(models.Model):
-    nombrePeriodo = models.IntegerField(null=False, blank=False)
+    nombrePeriodo = models.IntegerField(null=False, blank=False, default=date.today().year)
 
     def __str__(self):
         return self.nombrePeriodo.__str__()
@@ -169,15 +160,16 @@ class Periodo(models.Model):
 
         return ans
 
-## Seleccionar el año actual (2016)
-def getPeriodoActual():
-    periodoActual = date.today().year
-    try:
-        periodo = Periodo.objects.get(nombrePeriodo=periodoActual)
-    except Periodo.DoesNotExist:
-        periodo = Periodo.objects.latest('nombrePeriodo')
-    return periodo.id
-
+    ## Seleccionar el año actual (2016)
+    #def getPeriodoActual(self):
+    #    periodoActual = date.today().year
+    #    try:
+    #       periodo = self.nombrePeriodo=periodoActual
+    #       return periodo.id
+    #    except Periodo.DoesNotExist:
+    #       # periodo = Periodo.objects.latest('nombrePeriodo')
+    #       periodo = None
+    #    return periodo
 
 @python_2_unicode_compatible
 class Mes(models.Model):
@@ -200,7 +192,7 @@ class Mes(models.Model):
 class Meta(models.Model):
     nombreMeta = models.CharField(max_length=200, null=False, )
     accionEstrategica = models.ForeignKey(AccionEstrategica, null=False, blank=False, verbose_name='Acción Estrategica')
-    periodo = models.ForeignKey(Periodo, null=False, blank=False, default=getPeriodoActual())
+    periodo = models.ForeignKey(Periodo, null=False, blank=False)
     observaciones = models.TextField(max_length=500, default="", blank=True)
     montoPromedio = models.FloatField(null=False, default=0, verbose_name= 'Monto Promedio')
 
@@ -266,7 +258,7 @@ class MetaMensual(models.Model):
 class AvancePorMunicipio(models.Model):
     meta = models.ForeignKey(Meta, null=False, blank=False, verbose_name="Acción Estratégica")
     estado = models.ForeignKey(Estado, null=False, blank=False)
-    periodo = models.ForeignKey(Periodo, null=False, blank=False, default=getPeriodoActual(), verbose_name="Año")
+    periodo = models.ForeignKey(Periodo, null=False, blank=False,  verbose_name="Año")
     inversionAprox = models.FloatField(default=0)
 
     def __str__(self):

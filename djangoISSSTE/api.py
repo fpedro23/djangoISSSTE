@@ -740,7 +740,7 @@ class AvanceForPeriodo(ProtectedResourceView):
             the_list.append(avance)
 
         return HttpResponse(json.dumps(the_list, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
-                            'application/json', )		return HttpResponse(json.dumps(json_map, ensure_ascii=False), 'application/json')
+                            'application/json', )
 
 def get_avance_values(modelo):
     return modelo.values('avancemensual__municipio__latitud', 'avancemensual__municipio__longitud', 'avancemensual__municipio__nombreMunicipio',

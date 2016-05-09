@@ -62,8 +62,8 @@ function main_consulta() {
     $j('#ver_tabla_dependencia #dependencia').on('click', mostrarTablas)
     $j('#ver_tabla_subdependencia #subdependencia').on('click', mostrarTablas)
     $j('#ver_grafica_estado #estado').on('click', graficas);
-    $j('#ver_grafica_dependencia #dependencia').on('click', graficas);
-    $j('#ver_grafica_subdependencia #subdependencia').on('click', graficas);
+    $j('#ver_grafica_carencia #carencia').on('click', graficas);
+    $j('#ver_grafica_accion #accion').on('click', graficas);
     $j('#ver_grafica_tipos #tipoGrafica').on('change', graficas);
     $j('#ver_grafica_datos #datosGrafica').on('change', graficas);
 
@@ -522,22 +522,36 @@ function graficas(){
         for (var i = 0; i < datosJson.reporte_por_estado.length; i++) {
             categorias.push(datosJson.reporte_por_estado[i].estado);
             datas.push(datosJson.reporte_por_estado[i].avance);
-            montos.push(datosJson.reporte_por_estado[i].inversion_aproximada);
-            titulo="Total de alcances por Estado";
+            montos.push(datosJson.reporte_por_estado[i].suma_meta);
+            titulo="Total de avances por Estado";
         }
         Series=jsonSeries(datosJson,tipoReporte);
         SeriesCategorias = jsonSeriesCategorias(datosJson,tipoReporte);
         SeriesTipeadas = jsonSeriesTipeada(datosJson,tipoReporte,datosGrafica);
     }else{
-         for (var i = 0; i < datosJson.reporte_por_estado.length; i++) {
-                categorias.push(datosJson.reporte_estado[i].estado);
-                datas.push(datosJson.reporte_estado[i].numero_visitas);
-                montos.push(datosJson.reporte_estado[i].numero_apariciones);
-                titulo="Total de alcances por Estado";
-         }
-         Series = jsonSeries(datosJson, tipoReporte);
-         SeriesCategorias = jsonSeriesCategorias(datosJson, tipoReporte);
-         SeriesTipeadas = jsonSeriesTipeada(datosJson, tipoReporte, datosGrafica);
+        if (tipoReporte=="Carencia") {
+            for (var i = 0; i < datosJson.reporte_por_carencia.length; i++) {
+                categorias.push(datosJson.reporte_por_carencia[i].nombreCarencia);
+                datas.push(datosJson.reporte_por_carencia[i].avance);
+                montos.push(datosJson.reporte_por_carencia[i].suma_meta);
+                titulo="Total de alcances por Carencia";
+            }
+            Series = jsonSeries(datosJson, tipoReporte);
+            SeriesCategorias = jsonSeriesCategorias(datosJson, tipoReporte);
+            SeriesTipeadas = jsonSeriesTipeada(datosJson, tipoReporte, datosGrafica);
+        }else{
+            for (var i = 0; i < datosJson.reporte_por_accion.length; i++) {
+                categorias.push(datosJson.reporte_por_accion[i].nombreAccion);
+                datas.push(datosJson.reporte_por_accion[i].avance);
+                montos.push(datosJson.reporte_por_accion[i].suma_meta);
+                titulo="Total de alcances por Acción";
+            }
+            Series = jsonSeries(datosJson, tipoReporte);
+            SeriesCategorias = jsonSeriesCategorias(datosJson, tipoReporte);
+            SeriesTipeadas = jsonSeriesTipeada(datosJson, tipoReporte, datosGrafica);
+
+        }
+
 
     }
 
@@ -561,14 +575,14 @@ function graficas(){
             if(datosGrafica=="Numero"){
                 columnaGrafica(categorias,datas,titulo,"Total de Avances");
             }else{
-                columnaGrafica(categorias,montos,titulo,"Inversión Aproximada");
+                columnaGrafica(categorias,montos,titulo,"Meta Total");
             }
             break;
         case "Columna2D":
             if(datosGrafica=="Numero"){
                 columna2DGrafica(categorias,datas,titulo,"Total de Avances");
             }else{
-                columna2DGrafica(categorias,montos,titulo,"Inversión Aproximada");
+                columna2DGrafica(categorias,montos,titulo,"Meta Total");
             }
 
             break;
@@ -576,28 +590,28 @@ function graficas(){
             if(datosGrafica=="Numero") {
                 pieGrafica(arregloDataGrafica(datosJson, tipoReporte,datosGrafica), titulo, 0,"Total de Avances");
             }else{
-                pieGrafica(arregloDataGrafica(datosJson, tipoReporte,datosGrafica), titulo, 0,"Inversión Aproximada");
+                pieGrafica(arregloDataGrafica(datosJson, tipoReporte,datosGrafica), titulo, 0,"Meta Total");
             }
             break;
         case "Dona":
             if(datosGrafica=="Numero") {
                 pieGrafica(arregloDataGrafica(datosJson, tipoReporte,datosGrafica), titulo, 100,"Total de Avances");
             }else{
-                pieGrafica(arregloDataGrafica(datosJson, tipoReporte,datosGrafica), titulo, 100,"Inversión Aproximada");
+                pieGrafica(arregloDataGrafica(datosJson, tipoReporte,datosGrafica), titulo, 100,"Meta Total");
             }
             break;
         case "Barra":
             if(datosGrafica=="Numero"){
-                barraGrafica(categorias,datas,titulo,"Total de Avances","","");
+                barraGrafica(categorias,datas,titulo,"Total de Avances","unidades"," unidad");
             }else{
-                barraGrafica(categorias,montos,titulo,"Inversión Aproximada","miles"," mil");
+                barraGrafica(categorias,montos,titulo,"Meta Total","unidades"," unidad");
             }
             break;
         case "columnaTipeada":
             if(datosGrafica=="Numero") {
                 columnaTipeada(SeriesTipeadas,"Total de Avances");
             }else{
-                columnaTipeada(SeriesTipeadas,"Inversión Aproximada");
+                columnaTipeada(SeriesTipeadas,"Meta Total");
             }
             break;
         case "BarraApiladaBarra":
@@ -640,11 +654,11 @@ function jsonSeriesTipeada(Datos,tipoReporte,datosGrafica) {
             if(datosGrafica=="Numero") {
                 arregloSimple.push([Datos.reporte_por_estado[i].Estado, Datos.reporte_por_estado[i].avance]);
             }else{
-                arregloSimple.push([Datos.reporte_por_estado[i].Estado, Datos.reporte_por_estado[i].inversion_aproximada]);
+                arregloSimple.push([Datos.reporte_por_estado[i].Estado, Datos.reporte_por_estado[i].suma_meta]);
             }
         }
         Series.serie.push({
-           'name': 'Total de Avances',
+           'name': 'Total de Avances y Metas',
            'data': arregloSimple,
            'dataLabels': {
                 enabled: true,
@@ -661,29 +675,55 @@ function jsonSeriesTipeada(Datos,tipoReporte,datosGrafica) {
         });
 
     } else {
-        for (var i = 0; i < datosJson.reporte_estado.length; i++) {
-            if(datosGrafica=="Numero") {
-                arregloSimple.push([Datos.reporte_por_estado[i].estado, Datos.reporte_por_estado[i].avance]);
-            }else{
-                arregloSimple.push([Datos.reporte_por_estado[i].estado, Datos.reporte_por_estado[i].inversion_aproximada]);
-            }
-        }
-        Series.serie.push({
-           'name': 'Total de Avances',
-           'data': arregloSimple,
-           'dataLabels': {
-                enabled: true,
-                rotation: -90,
-                color: '#FFFFFF',
-                align: 'right',
-                format: '{point.y:.1f}', // one decimal
-                y: -50, // 10 pixels down from the top
-                style: {
-                    fontSize: '10px',
-                    fontFamily: 'Verdana, sans-serif'
+        if (tipoReporte == "Carencia") {
+            for (var i = 0; i < datosJson.reporte_por_carencia.length; i++) {
+                if (datosGrafica == "Numero") {
+                    arregloSimple.push([Datos.reporte_por_carencia[i].nombreCarencia, Datos.reporte_por_carencia[i].avance]);
+                } else {
+                    arregloSimple.push([Datos.reporte_por_carencia[i].nombreCarencia, Datos.reporte_por_carencia[i].suma_meta]);
                 }
             }
-        });
+            Series.serie.push({
+                'name': 'Total de Avances y Metas',
+                'data': arregloSimple,
+                'dataLabels': {
+                    enabled: true,
+                    rotation: -90,
+                    color: '#FFFFFF',
+                    align: 'right',
+                    format: '{point.y:.1f}', // one decimal
+                    y: -50, // 10 pixels down from the top
+                    style: {
+                        fontSize: '10px',
+                        fontFamily: 'Verdana, sans-serif'
+                    }
+                }
+            });
+        }else{
+            for (var i = 0; i < datosJson.reporte_por_accion.length; i++) {
+                if (datosGrafica == "Numero") {
+                    arregloSimple.push([Datos.reporte_por_accion[i].nombreAccion, Datos.reporte_por_accion[i].avance]);
+                } else {
+                    arregloSimple.push([Datos.reporte_por_accion[i].nombreAccion, Datos.reporte_por_accion[i].suma_meta]);
+                }
+            }
+            Series.serie.push({
+                'name': 'Total de Avances y Metas',
+                'data': arregloSimple,
+                'dataLabels': {
+                    enabled: true,
+                    rotation: -90,
+                    color: '#FFFFFF',
+                    align: 'right',
+                    format: '{point.y:.1f}', // one decimal
+                    y: -50, // 10 pixels down from the top
+                    style: {
+                        fontSize: '10px',
+                        fontFamily: 'Verdana, sans-serif'
+                    }
+                }
+            });
+        }
     }
     console.log(Series.serie[0]);
     return Series;
@@ -701,7 +741,7 @@ function jsonSeriesCategorias(Datos,tipoReporte) {
 
     if (tipoReporte == "Estado") {
         for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
-            arregloTotal.push(Datos.reporte_por_estado[i].inversion_aproximada);
+            arregloTotal.push(Datos.reporte_por_estado[i].suma_meta);
             arregloSimple.push(-1*Datos.reporte_por_estado[i].avances);
             arregloCategoria.push(Datos.reporte_por_estado[i].estado);
         }
@@ -710,27 +750,43 @@ function jsonSeriesCategorias(Datos,tipoReporte) {
            'data': arregloSimple
         });
         Series.serie.push({
-           'name': 'Inversión Aproximada',
+           'name': 'Meta Total',
            'data': arregloTotal
         });
         Series.categories.push(arregloCategoria);
 
     } else {
-        for (var i = 0; i < datosJson.reporte_por_estado.length; i++) {
-            arregloTotal.push(Datos.reporte_por_estado[i].inversion_aproximada);
-            arregloSimple.push(-1*Datos.reporte_por_estado[i].avances);
-            arregloCategoria.push(Datos.reporte_por_estado[i].estado);
+        if (tipoReporte == "Carencia") {
+            for (var i = 0; i < datosJson.reporte_por_carencia.length; i++) {
+                arregloTotal.push(Datos.reporte_por_carencia[i].suma_meta);
+                arregloSimple.push(-1 * Datos.reporte_por_carencia[i].avances);
+                arregloCategoria.push(Datos.reporte_por_carencia[i].nombreCarencia);
+            }
+            Series.serie.push({
+                'name': 'Total de Avances',
+                'data': arregloSimple
+            });
+            Series.serie.push({
+                'name': 'Meta Total',
+                'data': arregloTotal
+            });
+            Series.categories.push(arregloCategoria);
+        }else{
+            for (var i = 0; i < datosJson.reporte_por_accion.length; i++) {
+                arregloTotal.push(Datos.reporte_por_accion[i].suma_meta);
+                arregloSimple.push(-1 * Datos.reporte_por_accion[i].avances);
+                arregloCategoria.push(Datos.reporte_por_accion[i].nombreAccion);
+            }
+            Series.serie.push({
+                'name': 'Total de Avances',
+                'data': arregloSimple
+            });
+            Series.serie.push({
+                'name': 'Meta Total',
+                'data': arregloTotal
+            });
+            Series.categories.push(arregloCategoria);
         }
-        Series.serie.push({
-           'name': 'Total de Avances',
-           'data': arregloSimple
-        });
-        Series.serie.push({
-           'name': 'Inversión Aproximada',
-           'data': arregloTotal
-        });
-        Series.categories.push(arregloCategoria);
-
     }
     //console.log(Series.serie);
     //console.log(Series.categories[0]);
@@ -744,11 +800,23 @@ function jsonSeries(Datos,tipoReporte) {
 
     if (tipoReporte=="Estado") {
         for(var i= 0;i<Datos.reporte_por_estado.length;i++){
-            Series.serie.push({ 'name': Datos.reporte_por_estado[i].estado, 'data': [Datos.reporte_por_estado[i].avance,Datos.reporte_por_estado[i].inversion_aproximada] });
+            Series.serie.push({ 'name': Datos.reporte_por_estado[i].estado, 'data': [Datos.reporte_por_estado[i].avance,Datos.reporte_por_estado[i].suma_meta] });
         }
     }else{
-        for (var i = 0; i < datosJson.reporte_por_estado.length; i++) {
-            Series.serie.push({ 'name': Datos.reporte_por_estado[i].estado, 'data': [Datos.reporte_por_estado[i].avance,Datos.reporte_por_estado[i].inversion_aproximada] });
+        if (tipoReporte=="Carencia") {
+            for (var i = 0; i < datosJson.reporte_por_carencia.length; i++) {
+                Series.serie.push({
+                    'name': Datos.reporte_por_carencia[i].nombreCarencia,
+                    'data': [Datos.reporte_por_carencia[i].avance, Datos.reporte_por_carencia[i].suma_meta]
+                });
+            }
+        }else{
+            for (var i = 0; i < datosJson.reporte_por_accion.length; i++) {
+                Series.serie.push({
+                    'name': Datos.reporte_por_accion[i].nombreAccion,
+                    'data': [Datos.reporte_por_accion[i].avance, Datos.reporte_por_accion[i].suma_meta]
+                });
+            }
         }
     }
     //console.log(Series.serie);
@@ -767,20 +835,33 @@ function arregloDataGrafica(Datos,tipoReporte,datosGrafica) {
             if(datosGrafica=="Numero") {
                 arregloSimple.push(Datos.reporte_por_estado[i].avance);
             }else{
-                arregloSimple.push(Datos.reporte_por_estado[i].inversion_aproximada);
+                arregloSimple.push(Datos.reporte_por_estado[i].suma_meta);
             }
             arregloDoble.push(arregloSimple);
         }
     }else{
-        for (var i = 0; i < datosJson.reporte_por_estado.length; i++) {
-            var arregloSimple=new Array();
-            arregloSimple.push(Datos.reporte_por_estado[i].estado);
-            if(datosGrafica=="Numero") {
-                arregloSimple.push(Datos.reporte_por_estado[i].avance);
-            }else{
-                arregloSimple.push(Datos.reporte_por_estado[i].inversion_aproximada);
+        if (tipoReporte=="Carencia") {
+            for (var i = 0; i < datosJson.reporte_por_carencia.length; i++) {
+                var arregloSimple = new Array();
+                arregloSimple.push(Datos.reporte_por_carencia[i].nombreCarencia);
+                if (datosGrafica == "Numero") {
+                    arregloSimple.push(Datos.reporte_por_carencia[i].avance);
+                } else {
+                    arregloSimple.push(Datos.reporte_por_carencia[i].suma_meta);
+                }
+                arregloDoble.push(arregloSimple);
             }
-            arregloDoble.push(arregloSimple);
+        }else{
+            for (var i = 0; i < datosJson.reporte_por_accion.length; i++) {
+                var arregloSimple = new Array();
+                arregloSimple.push(Datos.reporte_por_accion[i].nombreAccion);
+                if (datosGrafica == "Numero") {
+                    arregloSimple.push(Datos.reporte_por_accion[i].avance);
+                } else {
+                    arregloSimple.push(Datos.reporte_por_accion[i].suma_meta);
+                }
+                arregloDoble.push(arregloSimple);
+            }
         }
     }
     arregloObjeto = arregloDoble;
@@ -1045,7 +1126,7 @@ function Area(Series) {
             text: 'Area'
         },
         xAxis: {
-            categories: ['No.Visitas', 'Apariciones Totales']
+            categories: ['Avance', 'Meta']
         },
         credits: {
             enabled: false
@@ -1066,7 +1147,7 @@ function Piramide(Series) {
                 panKey: 'shift'
             },
             title: {
-                text: 'Pirámide para Total de Avances e Inversión Aproximada'
+                text: 'Pirámide para Total de Avances y Meta Total'
             },
             credits: {
                 enabled: false
@@ -1134,12 +1215,12 @@ function barrasApiladas(series,tipo) {
             enabled: false
         },
         xAxis: {
-            categories: ['Total de Avances', 'Inversión Aproximada']
+            categories: ['Total de Avances', 'Meta Total']
         },
         yAxis: {
             min: 0,
             title: {
-                text: 'Total de Avances e Inversión Aproximada'
+                text: 'Total de Avances y Meta Total'
             }
         },
         legend: {
@@ -1598,12 +1679,12 @@ function tablaD(Datos){
     if (tipoReporte=="Estado") {
         for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
             totalAvances += Datos.reporte_por_estado[i].avance
-            totalInversion += Datos.reporte_por_estado[i].inversion_aproximada
+            totalInversion += Datos.reporte_por_estado[i].suma_meta
         }
     }else{
         for (var i = 0; i < Datos.reporte_estado.length; i++) {
             totalAvances += Datos.reporte_por_estado[i].avance
-            totalInversion += Datos.reporte_por_estado[i].inversion_aproximada
+            totalInversion += Datos.reporte_por_estado[i].suma_meta
         }
     }
 
@@ -1619,7 +1700,7 @@ function tablaD(Datos){
                             +'<th>Carencia</th>'
                             +'<th>Estado</th>'
                             +'<th>Avance Total</th>'
-                            +'<th>Inversión Aprox.</th>'
+                            +'<th>Meta Total</th>'
                         +'</tr>'
                 +'</thead>'
                 +'<tbody>';
@@ -1637,7 +1718,7 @@ function tablaD(Datos){
                             +'<th width= "40%">Carencia</th>'
                             +'<th width= "20%">Estado</th>'
                             +'<th width= "20%">Avance Total</th>'
-                            +'<th width= "20%">Inversión Aprox.</th>'
+                            +'<th width= "20%">Meta Total</th>'
                         +'</tr>'
                     +'</thead>'
                     +'<tfoot>'
@@ -1672,14 +1753,14 @@ function tablaD(Datos){
             + '<td width= "40%">' + Datos.reporte_por_estado[i].carencia + '</td>'
             + '<td width= "20%" align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
             + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].avance, 0, '.', ',') + '</td>'
-            + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].inversion_aproximada, 0, '.', ',') + '</td>'
+            + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].suma_meta, 0, '.', ',') + '</td>'
             + '</tr>'
 
             sHtmlExporta += '<tr>'
             + '<td width= "40%">' + Datos.reporte_por_estado[i].carencia + '</td>'
             + '<td width= "20%" align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
             + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].avance, 0, '.', ',') + '</td>'
-            + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].inversion_aproximada, 2, '.', ',') + '</td>'
+            + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].suma_meta, 2, '.', ',') + '</td>'
             + '</tr>'
         }
     }
@@ -1798,12 +1879,19 @@ $j.tablaGrafica = function(Datos){
     if (tipoReporte=="Estado") {
         for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
             totalAvances += Datos.reporte_por_estado[i].avance
-            totalInversion += Datos.reporte_por_estado[i].inversion_aproximada
+            totalInversion += Datos.reporte_por_estado[i].suma_meta
         }
     }else{
-        for (var i = 0; i < Datos.reporte_estado.length; i++) {
-            totalAvances += Datos.reporte_por_estado[i].avance
-            totalInversion += Datos.reporte_por_estado[i].inversion_aproximada
+        if (tipoReporte=="Carencia") {
+            for (var i = 0; i < Datos.reporte_por_carencia.length; i++) {
+                totalAvances += Datos.reporte_por_carencia[i].avance
+                totalInversion += Datos.reporte_por_carencia[i].suma_meta
+            }
+        }else{
+           for (var i = 0; i < Datos.reporte_por_accion.length; i++) {
+                totalAvances += Datos.reporte_por_accion[i].avance
+                totalInversion += Datos.reporte_por_accion[i].suma_meta
+            }
         }
     }
     //alert($j('input:radio[name=tipoReporte]:checked').val());
@@ -1818,7 +1906,7 @@ $j.tablaGrafica = function(Datos){
                             +'<th>Carencia</th>'
                             +'<th>Estado</th>'
                             +'<th>Avances</th>'
-                            +'<th>Inversi&oacute;n Aproximada</th>'
+                            +'<th>Meta</th>'
                         +'</tr>'
                     +'</thead>'
                     +'<tfoot>'
@@ -1845,19 +1933,6 @@ $j.tablaGrafica = function(Datos){
                     +'</tfoot>'
                     +'<tbody>';
 
-    if (tipoReporte=="Dependencia") {
-        dependenciasChecked="checked";
-        for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
-            sHtml += '<tr>'
-            + '<td>' + Datos.reporte_por_estado[i].carencia + '</td>'
-            + '<td align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
-            + '<td align="right">' + formato_numero(Datos.reporte_por_estado[i].avance, 0, '.', ',') + '</td>'
-            + '<td align="right">' + formato_numero(Datos.reporte_por_estado[i].inversion_aproximada, 0, '.', ',') + '</td>'
-            + '</tr>'
-        }
-    }
-
-
     if (tipoReporte=="Estado") {
         estadosChecked="checked";
         for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
@@ -1865,8 +1940,30 @@ $j.tablaGrafica = function(Datos){
             + '<td>' + Datos.reporte_por_estado[i].carencia + '</td>'
             + '<td align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
             + '<td align="right">' + formato_numero(Datos.reporte_por_estado[i].avance, 0, '.', ',') + '</td>'
-            + '<td align="right">' + formato_numero(Datos.reporte_por_estado[i].inversion_aproximada, 0, '.', ',') + '</td>'
+            + '<td align="right">' + formato_numero(Datos.reporte_por_estado[i].suma_meta, 0, '.', ',') + '</td>'
             + '</tr>'
+        }
+    }else{
+        if (tipoReporte=="Carencia") {
+            estadosChecked="checked";
+            for (var i = 0; i < Datos.reporte_por_carencia.length; i++) {
+                sHtml += '<tr>'
+                + '<td></td>'
+                + '<td align="right">' + Datos.reporte_por_carencia[i].nombreCarencia + '</td>'
+                + '<td align="right">' + formato_numero(Datos.reporte_por_carencia[i].avance, 0, '.', ',') + '</td>'
+                + '<td align="right">' + formato_numero(Datos.reporte_por_carencia[i].suma_meta, 0, '.', ',') + '</td>'
+                + '</tr>'
+            }
+        }else{
+            estadosChecked="checked";
+            for (var i = 0; i < Datos.reporte_por_accion.length; i++) {
+                sHtml += '<tr>'
+                + '<td></td>'
+                + '<td align="right">' + Datos.reporte_por_accion[i].nombreAccion + '</td>'
+                + '<td align="right">' + formato_numero(Datos.reporte_por_accion[i].avance, 0, '.', ',') + '</td>'
+                + '<td align="right">' + formato_numero(Datos.reporte_por_accion[i].suma_meta, 0, '.', ',') + '</td>'
+                + '</tr>'
+            }
         }
     }
 
