@@ -683,7 +683,7 @@ class BuscadorEndpoint(generic.ListView):
                                 'application/json', )
 
 
-class AvanceForPeriodo(ProtectedResourceView):
+class AvanceForPeriodoEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         # Obteniendo los datos de la url
         periodo_id = get_array_or_none(request.GET.get('periodo'))
@@ -704,4 +704,33 @@ class AvanceForPeriodo(ProtectedResourceView):
             the_list.append(avance)
 
         return HttpResponse(json.dumps(the_list, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
+                            'application/json', )
+
+
+# Clase EndPoint (oauth2) para devolver los avances dado uno o varios ids
+class AvancesEndpoint(ProtectedResourceView):
+    def get(self, request, *args, **kwargs):
+        avances_ids = get_array_or_none(request.GET.get('avances'))
+        print avances_ids
+        arreglo_avances = []
+        if avances_ids is None:
+            avances_mensuales = AvanceMensual.objects.order_by('municipio').all()
+        else:
+            print 'else'
+            for avance in AvanceMensual.objects.filter(id__in=avances_ids):
+                arreglo_avances.append(avance.id)
+                print arreglo_avances
+            avances_mensuales = AvanceMensual.objects.filter(id__in=arreglo_avances)
+
+
+        the_list = []
+        for avance_mensual in avances_mensuales.values('id', 'municipio__nombreMunicipio',
+                                                       'avancePorMunicipio__inversionAprox',
+                                                       'avancePorMunicipio__estado__nombreEstado',
+                                                       'avancePorMunicipio__periodo__nombrePeriodo',
+                                                       'ene','feb','mar','abr','may','jun','jul','ago',
+                                                       'sep','oct','nov','dic',):
+            the_list.append(avance_mensual)
+
+        return HttpResponse(json.dumps(the_list, indent=4, sort_keys=True, ensure_ascii=False, cls=DjangoJSONEncoder),
                             'application/json', )
