@@ -7,5 +7,9 @@ env/
 .idea/
 djangoISSSTE/migrations/
 Projects/settingsOscar.py
+<<<<<<< HEAD
 djangoISSSTE/buscadorTest.py
 *.sqlite3
+=======
+*.sqlite3
+>>>>>>> a9f758f7feb786b1ad092a465ef5514a47aa7b5f
