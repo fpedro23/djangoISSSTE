@@ -16,10 +16,12 @@ def getPeriodoActual():
     periodoActual = date.today().year
     try:
         periodo = Periodo.objects.get(nombrePeriodo=periodoActual)
+        return periodo.id
     except Periodo.DoesNotExist:
-        periodo = Periodo.objects.latest('nombrePeriodo')
-    #print periodo.nombrePeriodo
-    return periodo.id
+        # periodo = Periodo.objects.latest('nombrePeriodo')
+        periodo = None;
+        return periodo;
+
 
 
 @python_2_unicode_compatible
