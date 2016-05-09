@@ -11,6 +11,18 @@ from time import gmtime, strftime
 from django.forms import model_to_dict
 
 
+
+## Seleccionar el año actual (2016)
+def getPeriodoActual():
+    periodoActual = date.today().year
+    try:
+        periodo = Periodo.objects.get(nombrePeriodo=periodoActual)
+        return periodo.id
+    except Periodo.DoesNotExist:
+        # periodo = Periodo.objects.latest('nombrePeriodo')
+        periodo = None;
+        return periodo;
+
 @python_2_unicode_compatible
 class Estado(models.Model):
     claveEstado = models.CharField(max_length=2, null=False, blank=False)

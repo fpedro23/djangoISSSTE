@@ -214,7 +214,7 @@ class AvancesMensualesPorAccionEndpoint(ProtectedResourceView):
             the_list.append(avance_mensual)
 
         return HttpResponse(json.dumps(the_list, indent=4, sort_keys=True, ensure_ascii=False, cls=DjangoJSONEncoder),
-                        'application/json', )  # Clase EndPoint (oauth2) para devolver las metas mensuales dada una meta
+                        'application/json', )
 
 
 # Clase EndPoint (oauth2) para devolver las metas mensuales dada una meta
@@ -239,7 +239,8 @@ class MetasMensualesPorMetaEndpoint(ProtectedResourceView):
         for meta_mensual in metas_mensuales.values():
             the_list.append(meta_mensual)
 
-        return HttpResponse(json.dumps((the_list), ensure_ascii=False), 'application/json')
+        return HttpResponse(json.dumps(the_list, indent=4, sort_keys=True, ensure_ascii=False, ),
+                            'application/json', )
 
 
 # Clase EndPoint (oauth2) para devolver los avances mensuales dada una meta
