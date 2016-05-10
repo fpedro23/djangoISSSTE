@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^api/busqueda', api.BuscadorEndpoint.as_view()),
     url(r'^api/avancePorPeriodo', api.AvanceForPeriodoEndpoint.as_view()),
     url(r'^api/avances', api.AvancesEndpoint.as_view()),
+    url(r'^api/fichaAvances', api.FichaTecnicaAvancesEndpoint.as_view()),
 
 
     # url(r'^api/hora_ultima_actualizacion', api.HoraUltimaActualizacion.as_view()),

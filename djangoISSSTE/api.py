@@ -780,3 +780,53 @@ class AvancesEndpoint(ProtectedResourceView):
 
         return HttpResponse(json.dumps(json_map, indent=4, sort_keys=True, ensure_ascii=False, ),
                             'application/json', )
+
+
+#Clase para devolver datos de la ficha técnica
+class FichaTecnicaAvancesEndpoint(generic.ListView):
+    def get(self, request, *args, **kwargs):
+        # Obteniendo los datos de la url
+        periodo_id = get_array_or_none(request.GET.get('periodo'))
+        accion_id = get_array_or_none(request.GET.get('accion'))
+        estado_id = get_array_or_none(request.GET.get('estado'))
+
+        avances = AvanceMensual.objects.filter(Q(avancePorMunicipio__periodo__nombrePeriodo__in = periodo_id)&
+                                               Q(avancePorMunicipio__meta__accionEstrategica__id__in = accion_id)&
+                                               Q(avancePorMunicipio__estado__id__in=estado_id))
+        resultados = avances.values(
+            'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia',
+            'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia',
+            'avancePorMunicipio__meta__accionEstrategica__nombreAccion',
+            'avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad',
+            'avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable',
+            'avancePorMunicipio__meta__observaciones',
+            'avancePorMunicipio__inversionAprox',
+        ).annotate(ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'),
+				   jun=Sum('jun'), jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'),
+				   nov=Sum('nov'), dic=Sum('dic'))
+
+        the_list = {}
+        for datos in resultados:
+            the_list = {}
+            the_list['carencia'] = datos['avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
+            the_list['subCarencia'] = datos['avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
+            the_list['accion'] = datos['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
+            the_list['unidad'] = datos['avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad']
+            the_list['responsable'] = datos['avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable']
+            the_list['observaciones'] = datos['avancePorMunicipio__meta__observaciones']
+            the_list['inversion'] = datos['avancePorMunicipio__inversionAprox']
+            the_list['ene'] = datos['ene']
+            the_list['feb'] = datos['feb']
+            the_list['mar'] = datos['mar']
+            the_list['abr'] = datos['abr']
+            the_list['may'] = datos['may']
+            the_list['jun'] = datos['jun']
+            the_list['jul'] = datos['jul']
+            the_list['ago'] = datos['ago']
+            the_list['sep'] = datos['sep']
+            the_list['oct'] = datos['oct']
+            the_list['nov'] = datos['nov']
+            the_list['dic'] = datos['dic']
+
+        return HttpResponse(json.dumps(the_list, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
+                            'application/json', )
