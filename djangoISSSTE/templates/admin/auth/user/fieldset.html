@@ -99,7 +99,7 @@
 
                     <div class="col-md-4">
 
-                        <label class="" for="id_password1"><span class="error__msg">*</span> Contraseña:</label>
+                        <label class="txtlabel" for="id_password1"><span class="error__msg">*</span> Contraseña:</label>
                     </div>
                     <div class="col-md-8" >
 
@@ -120,7 +120,7 @@
 
                     <div class="col-md-4">
 
-                        <label class="" for="id_password2"><span class="error__msg">*</span> Contraseña:</label>
+                        <label class="txtlabel" for="id_password2"><span class="error__msg">*</span> Contraseña:</label>
                     </div>
                     <div class="col-md-8" >
                         <input id="id_password1" {% if field.field.errors %} class="border-error" data-toggle="tooltip" data-placement="top"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}"{% endif %} name="password2" type="password" value="{{ field.field.value|default_if_none:"" }}"/>

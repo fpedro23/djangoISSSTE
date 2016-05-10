@@ -57,7 +57,15 @@
 
 {% block field_sets %}
 {% for fieldset in adminform %}
+
+    {% if fieldset.name == "Meta" %}
+         <div class="captura_AVANCES">
+            <div id="tituloCUADROS">
+    			AVANCES DE LA ACCION
+	        </div>
+    {% endif %}
   {% include "admin/djangoISSSTE/avancepormunicipio/fieldset.html" %}
+
 {% endfor %}
 {% endblock %}
 
@@ -67,6 +75,7 @@
 
 {% for inline_admin_formset in inline_admin_formsets %}
     {% include inline_admin_formset.opts.template %}
+     </div>
 {% endfor %}
 {% endblock %}
 

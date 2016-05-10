@@ -1,7 +1,7 @@
 {% load  admin_static app_filters%}
  <link rel="stylesheet" type="text/css" href="{% static "assets/css/restricted_styles.css" %}" />
-<fieldset style="padding-top: 10px;">
-    {% if fieldset.name %}<h2>{{ fieldset.name }}</h2>{% endif %}
+<fieldset style="padding-top: 1px;">
+    {% if fieldset.name %}{#  fieldset.name #}{% endif %}
     {% if fieldset.description %}
         <div class="description">{{ fieldset.description|safe }}</div>
     {% endif %}
@@ -15,7 +15,7 @@
                          <table width="1022">
                             <tr>
                                 <td width="170" height="21" class="txtlabel">
-                                   Periodo:
+                                   Año:
                                 </td>
 
                                 <td width="170" height="21" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
@@ -149,7 +149,7 @@
 
                 {% endif %}
                  {% if field.field.name == "get_observaciones" %}
-                                <td width="170" height="10" rowspan="2" colspan="2" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                                <td width="170" height="10" rowspan="2" colspan="2" class="labelreadonly" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
                                      {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}
@@ -164,6 +164,7 @@
                      </table>
 
                 {% endif %}
+
                 {% if field.field.name == "get_enero" %}
 
 

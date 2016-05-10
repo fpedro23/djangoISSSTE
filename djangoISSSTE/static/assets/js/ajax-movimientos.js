@@ -156,8 +156,10 @@ function verHistoria() {
 $j(function() {
     $j('#id_estado').bind('change', function () {
         var valor = $(this).val();
-        if (valor != null) {
-            getAvanceForPeriodo(valor, function (ans) {
+        var periodo = $('#id_periodo').find('option:selected').val();
+        var meta = $('#id_meta').find('option:selected').val();
+        if (valor != null &&  periodo != null && meta != null) {
+            getAvanceForPeriodo(valor,periodo,meta, function (ans) {
             });
         }
     });
@@ -166,7 +168,7 @@ $j(function() {
 });
 
 // PARA CARGA DE DISTRITO ELECTORAL DEPENDIENDO DE ESTADO SELECCIONADO
-function getAvanceForPeriodo(estadoId, onSuccess) {
+function getAvanceForPeriodo(estadoId,anioid,metaid,onSuccess) {
     // Setup CSRF tokens and all that good stuff so we don't get hacked
     $j.ajaxSetup(
         {
@@ -182,7 +184,7 @@ function getAvanceForPeriodo(estadoId, onSuccess) {
     // Get an Oauth2 access token and then do the ajax call, because SECURITY
     $.get('/register-by-token', function(ans) {
         // TODO: add a failure function
-        var ajaxData = { access_token: ans.access_token, periodo:(2016).toString(),accion:(1).toString(), estado: estadoId.toString() };
+        var ajaxData = { access_token: ans.access_token, periodo:(anioid).toString(),accion:(metaid).toString(), estado: estadoId.toString() };
 
         $j.ajax({
             url: '/issste/api/avancePorPeriodo',

@@ -1,12 +1,17 @@
 {% load i18n admin_urls admin_static admin_modify app_filters %}
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/restricted_styles.css" %}" />
 <div class="inline-group" id="{{ inline_admin_formset.formset.prefix }}-group">
   <div class="tabular inline-related {% if forloop.last %}last-related{% endif %}">
 {{ inline_admin_formset.formset.management_form }}
 <fieldset class="module">
-   <div class= "{% if inline_admin_formset.formset.prefix == "metamensual_set" %}mensuales_META{% else %}captura_AVANCES{% endif %}">
-   	<div id="tituloCUADROS">
-    			{% if inline_admin_formset.formset.prefix == "metamensual_set" %}METAS MENSUALES{% else %}AVANCES DE LA ACCION{% endif %}
-	</div>
+   {% if inline_admin_formset.formset.prefix == "metamensual_set" %}
+       <div class= "mensuales_META">
+   {% else %}
+       <div class= "inavance_MENSUAL">
+   {% endif %}
+
+    {% if inline_admin_formset.formset.prefix == "metamensual_set" %}<div id="tituloCUADROS">METAS MENSUALES</div>{% else %}{% endif %}
+
    {{ inline_admin_formset.formset.non_form_errors }}
    <table width="100%">
      <thead ><tr>

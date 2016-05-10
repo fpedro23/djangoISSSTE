@@ -23,3 +23,18 @@ input{
 
     width: 95%;
 }
+
+#id_estado{
+      width: 95%;
+}
+
+#id_meta{
+      width: 75%;
+}
+
+#id_accionEstrategica{
+    width: 95%;
+}
+.inline-group .tabular tr.has_original td {
+    padding-top: 0em;
+}

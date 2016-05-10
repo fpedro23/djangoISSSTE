@@ -816,7 +816,7 @@ class AvancesEndpoint(ProtectedResourceView):
 
         return HttpResponse(json.dumps(json_map, indent=4, sort_keys=True, ensure_ascii=False, ),
                             'application/json', )
-		return HttpResponse(json.dumps(json_map, ensure_ascii=False), 'application/json')
+
 
 def get_avance_values(modelo):
     return modelo.values('avancemensual__municipio__latitud', 'avancemensual__municipio__longitud', 'avancemensual__municipio__nombreMunicipio',

@@ -496,8 +496,9 @@
 	font-family: 'soberana_sanslight';
 	font-size: 15px;
 	color: #6A6B6C;
+    position: absolute;
 	left: -1px;
-	top: 52px;
+	top: 40px;
 }
 
 .caracteristicas_ACCION{
@@ -510,7 +511,7 @@
 	color: #6A6B6C;
 	position: absolute;
 	left: -1px;
-	top: 119px;
+	top: 105px;
 }
 
 .captura_AVANCES{
@@ -523,7 +524,21 @@
 	color: #6A6B6C;
 	position: absolute;
 	left: -1px;
-	top: 154px;
+	top: 234px;
+}
+
+.inavance_MENSUAL{
+	border: 0px solid #740e11;
+	border-radius: 0px;
+	width: 1015px;
+	height: 225px;
+	font-family: 'soberana_sanslight';
+	font-size: 15px;
+	color: #6A6B6C;
+	position: absolute;
+    padding-top: 0px;
+	left: 3px;
+	top: 280px;
 }
 
 .subtituloTABLA{
@@ -565,7 +580,7 @@
 	background-position: -1755px 0px;
 	position: absolute;
 	top: 149px;
-	left: 611px;
+	left: 421px;
 }
 
 .predefinidaCONSULTAS:hover{
@@ -576,14 +591,14 @@
 	width: 180px;
 	height: 190px;
 	background-image: url(../Imagenes/bigBackground.fw.png);
-	background-position: -1034px -379px;
+	background-position: -1035px -380px;
 	position: absolute;
 	top: 149px;
-	left: 421px;
+	left: 611px;
 }
 
 .listaCONSULTAS:hover{
-	background-position:-1034px -570px;
+	background-position:-1035px -570px;
 }
 /*cierre de elementos correspondientes a la PAGINA de CONSULTAS*/
 
@@ -786,6 +801,7 @@
 	position: absolute;
 	top: 202px;
 	left: -2px;
+    overflow: scroll;
 }
 /*cierre de elementos correspondientes a la ALTA de METAS*/
 
@@ -1076,13 +1092,18 @@
 }
 
 .txtlabel{
-    font-weight: bold;
+    font-weight: normal;
     font-family: 'soberana_sanslight';
     font-size: 13px;
     color: #6A6B6C;
 }
 
-
+.labelreadonly{
+    font-weight: bold;
+    font-family: 'soberana_textobold';
+    font-size: 12px;
+    color: #020203;
+}
 
 .obs-field{
     width: 99%;

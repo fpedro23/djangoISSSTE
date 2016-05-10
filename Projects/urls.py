@@ -35,7 +35,7 @@ urlpatterns = [
 
     url(r'^secrets', djangoISSSTE.views.secret_page, name='secret'),
     url(r'^test', djangoISSSTE.views.test, name='test'),
-    url(r'^catalogos$', djangoISSSTE.views.catalogos, name='catalogos'),
+    url(r'^catalogos$', djangoISSSTE.views.meta, name='meta'),
     url(r'^meta$', djangoISSSTE.views.meta, name='meta'),
     url(r'^consultas', djangoISSSTE.views.consultas, name='consultas'),
     url(r'^usuarios', djangoISSSTE.views.usuarios, name='usuarios'),
