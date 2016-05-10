@@ -20,6 +20,11 @@ urlpatterns = [
 	url(r'^api/ResultadosPptx', api.ResultadosPptxEndpoint.as_view()),
 	url(r'^api/ReportePptx', api.ReportePptxEndpoint.as_view()),
     url(r'^api/avancePorPeriodo', api.AvanceForPeriodo.as_view()),
+	url(r'^api/PD_AvancePorMunicipio', api.PD_AvancePorMunicipioEndpoint.as_view()),
+	url(r'^api/PD_MetasSinAvances', api.PD_MetasSinAvancesEndpoint.as_view()),
+
+
+
 
 
     # url(r'^api/hora_ultima_actualizacion', api.HoraUltimaActualizacion.as_view()),

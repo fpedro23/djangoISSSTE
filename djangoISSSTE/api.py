@@ -1273,3 +1273,136 @@ class AvanceForPeriodo(ProtectedResourceView):
             the_list.append(avance)
 
         return HttpResponse(json.dumps(the_list, ensure_ascii=False), 'application/json')
+
+#predefinido de avances por municipio
+class PD_AvancePorMunicipioEndpoint(ProtectedResourceView):
+    def get(self, request):
+
+        usuario = get_usuario_for_token(request.GET.get('access_token'))
+        if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
+			avancesRol = AvanceMensual.objects.all()
+        else:
+            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__estado__id = usuario.usuario.estado.id)
+
+        avances = avancesRol
+
+        # Reporte gpor munucipios
+        reporte_municipio = avances.values(
+			'id',
+			'avancePorMunicipio__meta__id',
+			'avancePorMunicipio__meta__accionEstrategica__nombreAccion',
+			'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia',
+			'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia',
+			'avancePorMunicipio__estado__nombreEstado',
+			'municipio__nombreMunicipio',
+			'avancePorMunicipio__periodo__nombrePeriodo',
+			'municipio__latitud',
+			'municipio__longitud',
+		)
+        resultados = {"reporte_por_municipio" : reporte_municipio,}
+
+        json_map = {}
+        json_map['reporte_por_municipio'] = []
+
+        for reporte in resultados['reporte_por_municipio']:
+            shortened_reporte = {}  # Utilizado para mejorar el aspecto de las llaves del json
+            add = True  # Bandera para decidir si el valor del avace está dentro del rango
+
+            shortened_reporte['suma_avance'] = 0
+            shortened_reporte['suma_meta'] = 0
+
+            # ID de cada avance mensual en el reporte para poder obtener el valor del avance cada mes
+            avance_mensual = AvanceMensual.objects.get(id=reporte['id'])
+            # ID de cada meta en el reporte para poder obtener el valor del avance cada mes
+            meta = MetaMensual.objects.get(meta__id=reporte['avancePorMunicipio__meta__id'],
+                                           estado__nombreEstado=reporte['avancePorMunicipio__estado__nombreEstado'])
+
+            # Si no se indicaron meses. habrá que obtener el valor de todos
+            shortened_reporte['suma_avance'] += (avance_mensual.ene + avance_mensual.feb + avance_mensual.mar +
+                                                avance_mensual.abr + avance_mensual.may + avance_mensual.jun +
+                                                avance_mensual.jul + avance_mensual.ago + avance_mensual.sep +
+                                                avance_mensual.oct + avance_mensual.nov + avance_mensual.dic)
+            shortened_reporte['suma_meta'] += (meta.ene + meta.feb + meta.mar + meta.abr +
+                                               meta.may + meta.jun + meta.jul + meta.ago +
+                                               meta.sep + meta.oct + meta.nov + meta.dic)
+            shortened_reporte['id'] = reporte['id']
+            shortened_reporte['accion'] = reporte['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
+            shortened_reporte['carencia'] = reporte[
+                'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
+            shortened_reporte['subCarencia'] = reporte[
+                'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
+            shortened_reporte['estado'] = reporte['avancePorMunicipio__estado__nombreEstado']
+            shortened_reporte['municipio'] = reporte['municipio__nombreMunicipio']
+            shortened_reporte['periodo'] = reporte['avancePorMunicipio__periodo__nombrePeriodo']
+            shortened_reporte['latitud'] = reporte['municipio__latitud']
+            shortened_reporte['longitud'] = reporte['municipio__longitud']
+            json_map['reporte_por_municipio'].append(shortened_reporte)
+
+
+
+
+        return HttpResponse(json.dumps(json_map, ensure_ascii=False), 'application/json')
+
+#predefinido de metas sin avances
+class PD_MetasSinAvancesEndpoint(ProtectedResourceView):
+    def get(self, request):
+
+        usuario = get_usuario_for_token(request.GET.get('access_token'))
+        if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
+            avancesRol = AvanceMensual.objects.all()
+            metasRol = MetaMensual.objects.all()
+        else:
+            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__estado__id = usuario.usuario.estado.id)
+            metasRol = MetaMensual.objects.filter(estado__id = usuario.usuario.estado.id)
+
+        avances = avancesRol.values('avancePorMunicipio__meta__accionEstrategica__id')
+        metas = metasRol.exclude(meta__accionEstrategica__id__in=avances)
+
+        # Reporte gpor munucipios
+        reporte_metas = metas.values(
+			'id',
+			'meta__id',
+			'meta__accionEstrategica__nombreAccion',
+			'meta__accionEstrategica__subCarencia__carencia__nombreCarencia',
+			'meta__accionEstrategica__subCarencia__nombreSubCarencia',
+			'estado__nombreEstado',
+			'meta__periodo__nombrePeriodo',
+			'estado__latitud',
+			'estado__longitud',
+		)
+        resultados = {"reporte_metas" : reporte_metas,}
+
+        json_map = {}
+        json_map['reporte_metas'] = []
+
+        for reporte in resultados['reporte_metas']:
+            shortened_reporte = {}  # Utilizado para mejorar el aspecto de las llaves del json
+            add = True  # Bandera para decidir si el valor del avace está dentro del rango
+
+            shortened_reporte['suma_avance'] = 0
+            shortened_reporte['suma_meta'] = 0
+
+            # ID de cada meta en el reporte para poder obtener el valor del avance cada mes
+            meta = MetaMensual.objects.get(meta__id=reporte['meta__id'],
+                                           estado__nombreEstado=reporte['estado__nombreEstado'])
+
+            # Si no se indicaron meses. habrá que obtener el valor de todos
+            shortened_reporte['suma_meta'] += (meta.ene + meta.feb + meta.mar + meta.abr +
+                                               meta.may + meta.jun + meta.jul + meta.ago +
+                                               meta.sep + meta.oct + meta.nov + meta.dic)
+            shortened_reporte['id'] = reporte['id']
+            shortened_reporte['accion'] = reporte['meta__accionEstrategica__nombreAccion']
+            shortened_reporte['carencia'] = reporte[
+                'meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
+            shortened_reporte['subCarencia'] = reporte[
+                'meta__accionEstrategica__subCarencia__nombreSubCarencia']
+            shortened_reporte['estado'] = reporte['estado__nombreEstado']
+            shortened_reporte['periodo'] = reporte['meta__periodo__nombrePeriodo']
+            shortened_reporte['latitud'] = reporte['estado__latitud']
+            shortened_reporte['longitud'] = reporte['estado__longitud']
+            json_map['reporte_metas'].append(shortened_reporte)
+
+
+
+
+        return HttpResponse(json.dumps(json_map, ensure_ascii=False), 'application/json')

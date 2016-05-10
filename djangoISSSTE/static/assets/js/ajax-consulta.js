@@ -59,8 +59,8 @@ function main_consulta() {
 
 
     $j('#ver_tabla_estado #estado').on('click', mostrarTablas);
-    $j('#ver_tabla_dependencia #dependencia').on('click', mostrarTablas)
-    $j('#ver_tabla_subdependencia #subdependencia').on('click', mostrarTablas)
+    $j('#ver_tabla_carencia #carencia').on('click', mostrarTablas)
+    $j('#ver_tabla_accion #accion').on('click', mostrarTablas)
     $j('#ver_grafica_estado #estado').on('click', graficas);
     $j('#ver_grafica_carencia #carencia').on('click', graficas);
     $j('#ver_grafica_accion #accion').on('click', graficas);
@@ -1682,9 +1682,16 @@ function tablaD(Datos){
             totalInversion += Datos.reporte_por_estado[i].suma_meta
         }
     }else{
-        for (var i = 0; i < Datos.reporte_estado.length; i++) {
-            totalAvances += Datos.reporte_por_estado[i].avance
-            totalInversion += Datos.reporte_por_estado[i].suma_meta
+        if (tipoReporte=="Carencia") {
+            for (var i = 0; i < Datos.reporte_por_carencia.length; i++) {
+                totalAvances += Datos.reporte_por_carencia[i].avance
+                totalInversion += Datos.reporte_por_carencia[i].suma_meta
+            }
+        }else{
+            for (var i = 0; i < Datos.reporte_por_accion.length; i++) {
+                totalAvances += Datos.reporte_por_accion[i].avance
+                totalInversion += Datos.reporte_por_accion[i].suma_meta
+            }
         }
     }
 
@@ -1747,7 +1754,7 @@ function tablaD(Datos){
                     +'<tbody>';
 
     if (tipoReporte=="Estado") {
-        dependenciasChecked="checked";
+        estadosChecked="checked";
         for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
             sHtml += '<tr>'
             + '<td width= "40%">' + Datos.reporte_por_estado[i].carencia + '</td>'
@@ -1762,6 +1769,42 @@ function tablaD(Datos){
             + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].avance, 0, '.', ',') + '</td>'
             + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].suma_meta, 2, '.', ',') + '</td>'
             + '</tr>'
+        }
+    }else{
+        if (tipoReporte=="Carencia") {
+            carenciasChecked="checked";
+            for (var i = 0; i < Datos.reporte_por_carencia.length; i++) {
+                sHtml += '<tr>'
+                + '<td width= "40%"></td>'
+                + '<td width= "20%" align="right">' + Datos.reporte_por_carencia[i].nombreCarencia + '</td>'
+                + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_carencia[i].avance, 0, '.', ',') + '</td>'
+                + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_carencia[i].suma_meta, 0, '.', ',') + '</td>'
+                + '</tr>'
+
+                sHtmlExporta += '<tr>'
+                + '<td width= "40%"></td>'
+                + '<td width= "20%" align="right">' + Datos.reporte_por_carencia[i].nombreCarencia + '</td>'
+                + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_carencia[i].avance, 0, '.', ',') + '</td>'
+                + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_carencia[i].suma_meta, 2, '.', ',') + '</td>'
+                + '</tr>'
+            }
+        }else{
+            accionesChecked="checked";
+            for (var i = 0; i < Datos.reporte_por_accion.length; i++) {
+                sHtml += '<tr>'
+                + '<td width= "40%"></td>'
+                + '<td width= "20%" align="right">' + Datos.reporte_por_accion[i].nombreAccion + '</td>'
+                + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_accion[i].avance, 0, '.', ',') + '</td>'
+                + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_accion[i].suma_meta, 0, '.', ',') + '</td>'
+                + '</tr>'
+
+                sHtmlExporta += '<tr>'
+                + '<td width= "40%"></td>'
+                + '<td width= "20%" align="right">' + Datos.reporte_por_accion[i].nombreAccion + '</td>'
+                + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_accion[i].avance, 0, '.', ',') + '</td>'
+                + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_accion[i].suma_meta, 2, '.', ',') + '</td>'
+                + '</tr>'
+            }
         }
     }
 
