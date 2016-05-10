@@ -37,8 +37,13 @@ class EstadoListFilter(SimpleListFilter):
         """
 
         list_tuple = []
-        for estado in Estado.objects.all():
-            list_tuple.append((estado.id, estado.nombreEstado))
+        if request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
+            for estado in Estado.objects.filter(id = request.user.usuario.estado.id):
+                list_tuple.append((estado.id, estado.nombreEstado))
+        else:
+            for estado in Estado.objects.all():
+                list_tuple.append((estado.id, estado.nombreEstado))
+
         return list_tuple
 
     def queryset(self, request, queryset):
