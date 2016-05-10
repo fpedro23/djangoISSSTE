@@ -952,5 +952,3 @@ class ReporteExcelMetasEndpoint(generic.ListView):
 
         return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
                             'application/json', )
-
-

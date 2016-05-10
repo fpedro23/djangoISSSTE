@@ -16,25 +16,63 @@ from djangoISSSTE.models import *
 
 
 # -------------- Filters --------------
+class CarenciasFilter(SimpleListFilter):
+    title = 'Carencia'
+
+    parameter_name = 'carencia'
+
+    def lookups(self, request, model_admin):
+
+        list_tuple = []
+        for carencia in Carencia.objects.all():
+            list_tuple.append((carencia.id, carencia.nombreCarencia))
+
+        return list_tuple
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(meta__accionEstrategica__subCarencia__carencia__id=self.value())
+
+class SubCarenciasFilter(SimpleListFilter):
+    title = 'SubCarencia'
+
+    parameter_name = 'subCarencia'
+
+    def lookups(self, request, model_admin):
+
+        list_tuple = []
+        for subCarencia in SubCarencia.objects.all():
+            list_tuple.append((subCarencia.id, subCarencia.nombreSubCarencia))
+
+        return list_tuple
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(meta__accionEstrategica__subCarencia__id=self.value())
+
+class MetasFilter(SimpleListFilter):
+    title = 'Acción'
+
+    parameter_name = 'metas'
+
+    def lookups(self, request, model_admin):
+
+        list_tuple = []
+        for meta in Meta.objects.all():
+            list_tuple.append((meta.id, meta.nombreMeta))
+
+        return list_tuple
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(meta__id=self.value())
+
 class EstadoListFilter(SimpleListFilter):
-    # USAGE
-    # In your admin class, pass three filter class as tuple for the list_filter attribute:
-    #
-    # list_filter = (CategoryListFilter,)
-    # Human-readable title which will be displayed in the
-    # right admin sidebar just above the filter options.
     title = 'Estado'
 
     parameter_name = 'estado'
 
     def lookups(self, request, model_admin):
-        """
-        Returns a list of tuples. The first element in each
-        tuple is the coded value for the option that will
-        appear in the URL query. The second element is the
-        human-readable name for the option that will appear
-        in the right sidebar.
-        """
 
         list_tuple = []
         if request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
@@ -47,14 +85,25 @@ class EstadoListFilter(SimpleListFilter):
         return list_tuple
 
     def queryset(self, request, queryset):
-        """
-        Returns the filtered queryset based on the value
-        provided in the query string and retrievable via
-        `self.value()`.
-        """
-
         if self.value():
             return queryset.filter(estado__id=self.value())
+
+class PeriodosFilter(SimpleListFilter):
+    title = 'Periodo'
+
+    parameter_name = 'periodos'
+
+    def lookups(self, request, model_admin):
+
+        list_tuple = []
+        for periodo in Periodo.objects.all():
+            list_tuple.append((periodo.id, periodo.nombrePeriodo))
+
+        return list_tuple
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(periodo__id=self.value())
 
 #------------- Ends Filters -----------
 
@@ -233,7 +282,7 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 
     model = AvancePorMunicipio
     inlines = [AvanceMensualInLine, ]
-    list_filter = [EstadoListFilter,]
+    list_filter = [CarenciasFilter, SubCarenciasFilter, MetasFilter, PeriodosFilter, EstadoListFilter, ]
 
     fieldsets = (
         ('Avance', {
