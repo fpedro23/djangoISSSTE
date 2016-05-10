@@ -849,11 +849,18 @@ class FichaTecnicaAvancesEndpoint(generic.ListView):
             'avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable',
             'avancePorMunicipio__meta__observaciones',
             'avancePorMunicipio__inversionAprox',
+            'avancePorMunicipio__estado__nombreEstado',
+			'municipio__nombreMunicipio',
+			'avancePorMunicipio__periodo__nombrePeriodo',
+			'municipio__latitud',
+			'municipio__longitud',
         ).annotate(ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'),
 				   jun=Sum('jun'), jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'),
 				   nov=Sum('nov'), dic=Sum('dic'))
 
-        the_list = {}
+
+
+        the_json = []
         for datos in resultados:
             the_list = {}
             the_list['carencia'] = datos['avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
@@ -863,6 +870,12 @@ class FichaTecnicaAvancesEndpoint(generic.ListView):
             the_list['responsable'] = datos['avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable']
             the_list['observaciones'] = datos['avancePorMunicipio__meta__observaciones']
             the_list['inversion'] = datos['avancePorMunicipio__inversionAprox']
+            the_list['estado'] = datos['avancePorMunicipio__estado__nombreEstado']
+            the_list['municipio'] = datos['municipio__nombreMunicipio']
+            the_list['periodo'] = datos['avancePorMunicipio__periodo__nombrePeriodo']
+            the_list['latitud'] = datos['municipio__latitud']
+            the_list['longitud'] = datos['municipio__longitud']
+
             the_list['ene'] = datos['ene']
             the_list['feb'] = datos['feb']
             the_list['mar'] = datos['mar']
@@ -875,8 +888,9 @@ class FichaTecnicaAvancesEndpoint(generic.ListView):
             the_list['oct'] = datos['oct']
             the_list['nov'] = datos['nov']
             the_list['dic'] = datos['dic']
+            the_json.append(the_list)
 
-        return HttpResponse(json.dumps(the_list, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
+        return HttpResponse(json.dumps(the_json, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
                             'application/json', )
 
 def get_avance_values(modelo):
