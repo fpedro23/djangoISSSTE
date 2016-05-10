@@ -313,8 +313,12 @@ class BuscadorEndpoint(generic.ListView):
             # ID de cada avance mensual en el reporte para poder obtener el valor del avance cada mes
             avance_mensual = AvanceMensual.objects.get(id=reporte['id'])
             # ID de cada meta en el reporte para poder obtener el valor del avance cada mes
-            meta = MetaMensual.objects.get(meta__id=reporte['avancePorMunicipio__meta__id'],
-                                           estado__nombreEstado=reporte['avancePorMunicipio__estado__nombreEstado'])
+
+            print "Printing: "
+            print reporte['avancePorMunicipio__meta__id']
+            print reporte['avancePorMunicipio__estado__nombreEstado']
+            meta = MetaMensual.objects.get(Q(meta__id=reporte['avancePorMunicipio__meta__id'])&
+                                           Q(estado__nombreEstado=reporte['avancePorMunicipio__estado__nombreEstado']))
             if myObj.meses is not None:
                 for mes in myObj.meses:
                     if mes == 1:
@@ -542,8 +546,8 @@ class BuscadorEndpoint(generic.ListView):
                         'dic__sum']
 
             shortened_reporte['estado'] = reporte_estado['estado__nombreEstado']
-            shortened_reporte['carencia'] = reporte_estado[
-                'meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
+            shortened_reporte['latitud'] = reporte_estado['estado__latitud']
+            shortened_reporte['longitud'] = reporte_estado['estado__longitud']
             shortened_reporte['inversion_aproximada'] = reporte_estado['inversionAprox']
 
             # Validando que la suma de los avances se encuentre dentro del rango solicitado

@@ -190,15 +190,6 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
     model = AvancePorMunicipio
     inlines = [AvanceMensualInLine, ]
 
-    '''('Meta', {
-                ('get_enero', 'get_febrero', 'get_marzo', 'get_abril', 'get_mayo',
-                 'get_junio', 'get_julio', 'get_agosto', 'get_septiembre', 'get_octubre', 'get_noviembre',
-                 'get_diciembre'),
-            }),
-            (None,{
-                'inversionAprox', 'get_accion'
-            }),'''
-
     fieldsets = (
         ('Avance', {
             'fields': (
@@ -222,6 +213,18 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 
     list_display = ('id', 'get_carencia', 'get_subcarencia', 'meta', 'periodo', 'estado', 'inversionAprox')
     ordering = ['meta__nombreMeta', ]
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        query_estado = request.user.usuario.estado.id
+        if db_field.name == "estado":
+            if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UR' or request.user.usuario.rol == 'FR':
+                kwargs["queryset"] = Estado.objects.all()
+            elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
+                kwargs["queryset"] = Estado.objects.filter(
+                    Q(id=query_estado)
+                )
+
+        return super(AvancePorMunicipioAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
     # Obteniendo el campo de la SuCarencia para la lista de avances por municipio
     def get_subcarencia(self, obj):
