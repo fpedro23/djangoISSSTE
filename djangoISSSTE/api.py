@@ -906,3 +906,51 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
                             'application/json', )
 
 
+#Clase para devolver datos de metas para la hoja de excel
+class ReporteExcelMetasEndpoint(generic.ListView):
+    def get(self, request, *args, **kwargs):
+        # Obteniendo los datos de la url
+        periodo_id = request.GET.get('periodo')
+        accion_id = request.GET.get('accion')
+
+        json_map = {}
+        json_map['datos'] = []
+        json_map['metas'] = []
+
+        datos = {}
+        meta =  Meta.objects.get(Q(periodo__nombrePeriodo = periodo_id)&Q(accionEstrategica__id = accion_id))
+        datos['carencia'] = meta.accionEstrategica.subCarencia.carencia.nombreCarencia
+        datos['subCarencia'] = meta.accionEstrategica.subCarencia.nombreSubCarencia
+        datos['periodo'] = meta.periodo.nombrePeriodo
+        datos['unidad'] = meta.accionEstrategica.unidadDeMedida.descripcionUnidad
+        datos['accion'] = meta.accionEstrategica.nombreAccion
+        datos['responsable'] = meta.accionEstrategica.responsable.nombreResponsable
+        datos['metaID'] = meta.id
+        datos['meta'] = meta.nombreMeta
+        datos['accion'] = meta.accionEstrategica.nombreAccion
+        json_map['datos'].append(datos)
+
+
+        for meta in MetaMensual.objects.filter(meta__id = meta.id):
+            metasDatos = {}
+            metasDatos['estado'] = meta.estado.nombreEstado
+            metasDatos['clave'] = meta.estado.claveEstado
+            metasDatos['inversion'] = meta.inversionAprox
+            metasDatos['ene'] = meta.ene
+            metasDatos['feb'] = meta.feb
+            metasDatos['mar'] = meta.mar
+            metasDatos['abr'] = meta.abr
+            metasDatos['may'] = meta.may
+            metasDatos['jun'] = meta.jun
+            metasDatos['jul'] = meta.jul
+            metasDatos['ago'] = meta.ago
+            metasDatos['sep'] = meta.sep
+            metasDatos['oct'] = meta.oct
+            metasDatos['nov'] = meta.nov
+            metasDatos['dic'] = meta.dic
+            json_map['metas'].append(metasDatos)
+
+        return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
+                            'application/json', )
+
+

@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^api/avances', api.AvancesEndpoint.as_view()),
     url(r'^api/fichaAvances', api.FichaTecnicaAvancesEndpoint.as_view()),
     url(r'^api/reporteExcelAvances', api.ReporteExcelAvancesEndpoint.as_view()),
+    url(r'^api/reporteExcelMetas', api.ReporteExcelMetasEndpoint.as_view()),
 
 
     # url(r'^api/hora_ultima_actualizacion', api.HoraUltimaActualizacion.as_view()),
