@@ -108,9 +108,8 @@ class BuscarAvances:
 		reporte_por_estado = avances_por_municipio.values(
 			'estado__id',
 			'estado__nombreEstado',
-				'estado__latitud',
-				'estado__longitud',
-			'meta__accionEstrategica__subCarencia__carencia__nombreCarencia',
+			'estado__latitud',
+			'estado__longitud',
 		).annotate(inversionAprox=Sum('inversionAprox'))[self.limite_inferior:self.limite_superior]
 
 		reporte_por_carencia = avances_mensuales.values(
