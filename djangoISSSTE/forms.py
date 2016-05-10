@@ -4,30 +4,31 @@ from django import forms
 from djangoISSSTE.models import *
 from django.db.models.query_utils import Q
 
+
 class MetaMensualForm(forms.ModelForm):
-	class Meta:
-		model = MetaMensual
-		#can_delete = False
-		fields = "__all__"
-		#extra = 0
+    class Meta:
+        model = MetaMensual
+        # can_delete = False
+        fields = "__all__"
 
-	# Define los estados visibles dependiendo del rol del usuario
-	# y del estado al que pertenece en la pantalla para añadir una nueva
-	# meta mensual
-	def formfield_for_foreignkey(self, db_field, request, **kwargs):
-		query_estado = request.user.usuario.estado.id
+    # extra = 0
 
-		if db_field.name == "estado":
-			if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UR' or request.user.usuario.rol == 'FR':
-				kwargs["queryset"] = Estado.objects.all()
-			elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
-				kwargs["queryset"] = Estado.objects.filter(
-					Q(id=query_estado)
-				)
+    # Define los estados visibles dependiendo del rol del usuario
+    # y del estado al que pertenece en la pantalla para añadir una nueva
+    # meta mensual
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        query_estado = request.user.usuario.estado.id
 
-	def save(self, commit=True):
-		instance = super(MetaMensualForm, self).save(commit=False)
-		print instance.estado
+        if db_field.name == "estado":
+            if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UR' or request.user.usuario.rol == 'FR':
+                kwargs["queryset"] = Estado.objects.all()
+            elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
+                kwargs["queryset"] = Estado.objects.filter(
+                    Q(id=query_estado)
+                )
 
-		return super(MetaMensualForm, self).save(commit)
+    def save(self, commit=True):
+        instance = super(MetaMensualForm, self).save(commit=False)
+        print instance.estado
 
+        return super(MetaMensualForm, self).save(commit)
