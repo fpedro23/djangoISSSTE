@@ -63,8 +63,10 @@
                   {{ field.field.errors.as_ul }}
                   {% if field.field.name == "ene" or field.field.name == "feb" or field.field.name == "mar" or field.field.name == "abr" or field.field.name == "may" or field.field.name == "jun" or field.field.name == "jul" or field.field.name == "ago" or field.field.name == "sep" or field.field.name == "oct" or field.field.name == "nov" or field.field.name == "dic"%}
                        {{ field.field|addcss:"tamcontrol" }}
+                  {% elif field.field.name == "municipio" %}
+                       {{ field.field|addcss:"tamcontrolsel" }}
                   {% else %}
-                    {{ field.field }}
+                         {{ field.field }}
                   {% endif %}
               {% endif %}
               </td>

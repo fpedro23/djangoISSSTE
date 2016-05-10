@@ -769,7 +769,7 @@ class AvanceForPeriodoEndpoint(ProtectedResourceView):
             print arreglo_avance_municipio
 
         avances = AvancePorMunicipio.objects.filter(id__in=arreglo_avance_municipio,
-                                                    meta__accionEstrategica_id__in=accion_id, estado_id__in=estados_id)
+                                                    meta__id__in=accion_id, estado_id__in=estados_id)
         print avances.values()
 
         the_list = []

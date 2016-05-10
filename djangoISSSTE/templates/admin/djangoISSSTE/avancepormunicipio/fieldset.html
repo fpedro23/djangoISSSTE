@@ -74,12 +74,12 @@
     			            CARACTERÍSTICAS DE LA ACCIÓN
 	                    </div>
 
-                        <table width="1022">
+                        <table width="1022" valign="top" style="text-align: left">
                             <tr>
-                                <td width="170" height="10" class="txtlabel">
+                                <td width="170" class="txtlabel">
                                     Carencia:</td>
 
-                                <td width="170" height="10" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                                <td width="170" class="labelreadonly" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
                                     {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}
@@ -92,10 +92,10 @@
                                 </td>
                 {% endif %}
                 {% if field.field.name == "get_unidad_medida" %}
-                                <td width="170" height="10" class="txtlabel">
+                                <td width="170" class="txtlabel">
                                     Unidad de Medida:</td>
 
-                                <td width="170" height="10" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                                <td width="170" class="labelreadonly"  id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
                                      {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}
@@ -106,17 +106,17 @@
                                     var $te = jQuery.noConflict();
                                     $te('#tr-{{ field.field.name}}').tooltip({html:true});});</script>
                                 </td>
-                    <td width="170" height="10" class="txtlabel">
+                    <td width="170" class="txtlabel">
                                     OBSERVACIONES:</td>
-                    <td width="170" height="10">
+                    <td width="170">
                                     </td>
                 {% endif %}
                 {% if field.field.name == "get_subcarencia" %}
                         <tr>
-                            <td width="170" height="10" class="txtlabel">
+                            <td width="170" class="txtlabel">
                                Sub Carencia:</td>
 
-                            <td width="170" height="10" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                            <td width="170" class="labelreadonly" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
                                      {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}
@@ -130,10 +130,10 @@
 
                 {% endif %}
                 {% if field.field.name == "inversionAprox" %}
-                        <td width="170" height="10" class="txtlabel">
+                        <td width="170" class="txtlabel">
                             Inversión:</td>
 
-                        <td width="170" height="10" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                        <td width="170" class="labelreadonly" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
                                      {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}
@@ -149,8 +149,9 @@
 
                 {% endif %}
                  {% if field.field.name == "get_observaciones" %}
-                                <td width="170" height="10" rowspan="2" colspan="2" class="labelreadonly" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
-                                     {% if field.field.errors %}
+                                <td width="170" rowspan="2" colspan="2" class="labelreadonly" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                                    <table valign="top"><tr><td>
+                                        <div style="overflow: scroll; height:70px; top: 44px;position: absolute;"> {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}
                                           {{ field.contents }}
@@ -159,6 +160,8 @@
                                 <script> $(document).ready(function($) {
                                     var $te = jQuery.noConflict();
                                     $te('#tr-{{ field.field.name}}').tooltip({html:true});});</script>
+                                    </div>
+                                    </td></tr></table>
                                 </td>
                             </tr>
                      </table>
@@ -168,27 +171,27 @@
                 {% if field.field.name == "get_enero" %}
 
 
-                          <table class="subtituloTABLA" style="text-align: center" width="995">
+                          <table class="subtituloTABLA" valign="top" style="text-align: center;margin-left: 10px" width="97%">
                              <tr>
-                                <td width="105" height="10" >Meta Estatal:</td>
-                                <td width="90" height="10">Ene</td>
-                                <td width="90" height="10">Feb</td>
-                                <td width="84" height="10">Mar</td>
-                                <td width="86" height="10">Abr</td>
-                                <td width="82" height="10">May</td>
-                                <td width="80" height="10">Jun</td>
-                                <td width="90" height="10">Jul</td>
-                                <td width="90" height="10">Ago</td>
-                                <td width="90" height="10">Sep</td>
-                                <td width="90" height="10">Oct</td>
-                                <td width="90" height="10">Nov</td>
-                                <td width="90" height="10">Dic</td>
+                                <td width="125">Meta Estatal:</td>
+                                <td width="93">Ene</td>
+                                <td width="93">Feb</td>
+                                <td width="93">Mar</td>
+                                <td width="93">Abr</td>
+                                <td width="93">May</td>
+                                <td width="93">Jun</td>
+                                <td width="93">Jul</td>
+                                <td width="93">Ago</td>
+                                <td width="93">Sep</td>
+                                <td width="93">Oct</td>
+                                <td width="93">Nov</td>
+                                <td width="93">Dic</td>
                              </tr>
-                             <tr>
-                                <td width="100" height="10">
+                             <tr valign="top">
+                                <td width="100">
                                           &nbsp;
                                 </td>
-                                <td width="59" height="10">
+                                <td width="59" class="labelreadonly">
                                           {{ field.contents }}
                                 </td>
 
@@ -196,7 +199,7 @@
 
                 {% if field.field.name == "get_febrero" %}
 
-                                <td width="59" height="10">
+                                <td width="59" class="labelreadonly">
                                           {{ field.contents }}
                                 </td>
 
@@ -204,21 +207,21 @@
 
                  {% if field.field.name == "get_marzo" %}
 
-                                <td width="59" height="10">
+                                <td width="59" class="labelreadonly">
                                           {{ field.contents }}
                                 </td>
 
                 {% endif %}
                  {% if field.field.name == "get_abril" %}
 
-                                <td width="59" height="10">
+                                <td width="59" class="labelreadonly">
                                           {{ field.contents }}
                                 </td>
 
                 {% endif %}
                  {% if field.field.name == "get_mayo" %}
 
-                                <td width="59" height="10">
+                                <td width="59" class="labelreadonly">
                                           {{ field.contents }}
                                 </td>
 
@@ -226,7 +229,7 @@
 
                  {% if field.field.name == "get_junio" %}
 
-                                <td width="59" height="10">
+                                <td width="59" class="labelreadonly">
                                           {{ field.contents }}
                                 </td>
 
@@ -234,7 +237,7 @@
 
                  {% if field.field.name == "get_julio" %}
 
-                                <td width="59" height="10">
+                                <td width="59" class="labelreadonly">
                                           {{ field.contents }}
                                 </td>
 
@@ -242,7 +245,7 @@
 
                  {% if field.field.name == "get_agosto" %}
 
-                                <td width="59" height="10">
+                                <td width="59" class="labelreadonly">
                                           {{ field.contents }}
                                 </td>
 
@@ -250,7 +253,7 @@
 
                  {% if field.field.name == "get_septiembre" %}
 
-                                <td width="59" height="10">
+                                <td width="59" class="labelreadonly">
                                           {{ field.contents }}
                                 </td>
 
@@ -258,7 +261,7 @@
 
                  {% if field.field.name == "get_octubre" %}
 
-                                <td width="59" height="10">
+                                <td width="59" class="labelreadonly">
                                           {{ field.contents }}
                                 </td>
 
@@ -266,7 +269,7 @@
 
                  {% if field.field.name == "get_noviembre" %}
 
-                                <td width="59" height="10">
+                                <td width="59" class="labelreadonly">
                                           {{ field.contents }}
                                 </td>
 
@@ -274,7 +277,7 @@
 
                  {% if field.field.name == "get_diciembre" %}
 
-                                <td width="59" height="10">
+                                <td width="59" class="labelreadonly">
                                           {{ field.contents }}
                                 </td>
                         </tr>

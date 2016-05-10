@@ -537,8 +537,9 @@
 	color: #6A6B6C;
 	position: absolute;
     padding-top: 0px;
+    overflow: scroll;
 	left: 3px;
-	top: 280px;
+	top: 265px;
 }
 
 .subtituloTABLA{
@@ -1088,7 +1089,11 @@
 	cursor: pointer;
 }
 .tamcontrol{
-    width: 60px;
+    width: 70px;
+}
+.tamcontrolsel{
+    width:100px;
+    
 }
 
 .txtlabel{
@@ -1096,6 +1101,7 @@
     font-family: 'soberana_sanslight';
     font-size: 13px;
     color: #6A6B6C;
+    vertical-align: top;
 }
 
 .labelreadonly{
@@ -1103,6 +1109,7 @@
     font-family: 'soberana_textobold';
     font-size: 12px;
     color: #020203;
+    vertical-align: top;
 }
 
 .obs-field{
