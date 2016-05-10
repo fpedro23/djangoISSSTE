@@ -5,6 +5,7 @@ import json
 # from django.contrib.admin.models import LogEntry
 
 # Register your models here.
+from django.contrib.admin.filters import SimpleListFilter
 from django.contrib.auth.admin import UserAdmin
 from django.db.models.query_utils import Q
 from django.http import HttpResponseRedirect
@@ -13,6 +14,44 @@ from django.contrib.auth.models import Group
 from djangoISSSTE.forms import *
 from djangoISSSTE.models import *
 
+
+# -------------- Filters --------------
+class EstadoListFilter(SimpleListFilter):
+    # USAGE
+    # In your admin class, pass three filter class as tuple for the list_filter attribute:
+    #
+    # list_filter = (CategoryListFilter,)
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'Estado'
+
+    parameter_name = 'estado'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+
+        list_tuple = []
+        for estado in Estado.objects.all():
+            list_tuple.append((estado.id, estado.nombreEstado))
+        return list_tuple
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+
+        if self.value():
+            return queryset.filter(estado__id=self.value())
+
+#------------- Ends Filters -----------
 
 class UsuarioInLine(admin.StackedInline):
     model = Usuario
@@ -189,6 +228,7 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 
     model = AvancePorMunicipio
     inlines = [AvanceMensualInLine, ]
+    list_filter = [EstadoListFilter,]
 
     fieldsets = (
         ('Avance', {

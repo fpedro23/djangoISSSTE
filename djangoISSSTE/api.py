@@ -148,6 +148,14 @@ class MesesEndpoint(ProtectedResourceView):
 
 
 # Clase EndPoint (oauth2) para devolver las metas
+class MetasPorPeriodoEndpoint(generic.ListView):
+    def get(self, request, *args, **kwargs):
+        periodos = get_array_or_none(request.GET.get('periodos'))
+        return HttpResponse(
+            json.dumps((map(lambda meta: meta.to_serializable_dict(), Meta.objects.filter(Q(periodo__nombrePeriodo__in = periodos)))), ensure_ascii=False,
+                       indent=4, separators=(',', ': '), sort_keys=True, ), 'application/json')
+
+# Clase EndPoint (oauth2) para devolver las metas
 class MetasEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         return HttpResponse(
