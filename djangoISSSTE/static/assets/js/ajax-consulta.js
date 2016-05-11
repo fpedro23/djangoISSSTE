@@ -1757,14 +1757,14 @@ function tablaD(Datos){
         estadosChecked="checked";
         for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
             sHtml += '<tr>'
-            + '<td width= "40%">' + Datos.reporte_por_estado[i].carencia + '</td>'
+            + '<td width= "40%"></td>'
             + '<td width= "20%" align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
             + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].avance, 0, '.', ',') + '</td>'
             + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].suma_meta, 0, '.', ',') + '</td>'
             + '</tr>'
 
             sHtmlExporta += '<tr>'
-            + '<td width= "40%">' + Datos.reporte_por_estado[i].carencia + '</td>'
+            + '<td width= "40%"></td>'
             + '<td width= "20%" align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
             + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].avance, 0, '.', ',') + '</td>'
             + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].suma_meta, 2, '.', ',') + '</td>'
