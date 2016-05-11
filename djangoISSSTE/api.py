@@ -5,6 +5,7 @@ from _ast import List
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.http import HttpResponse, StreamingHttpResponse
+from django.db.models.aggregates import Count
 from django.db.models.query_utils import Q
 from django.http import HttpResponse
 from django.views import generic
@@ -849,20 +850,34 @@ class FichaTecnicaAvancesEndpoint(generic.ListView):
             'avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable',
             'avancePorMunicipio__meta__observaciones',
             'avancePorMunicipio__inversionAprox',
+            'avancePorMunicipio__estado__nombreEstado',
+            'municipio__nombreMunicipio',
+            'avancePorMunicipio__periodo__nombrePeriodo',
+            'municipio__latitud',
+            'municipio__longitud',
         ).annotate(ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'),
-				   jun=Sum('jun'), jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'),
-				   nov=Sum('nov'), dic=Sum('dic'))
+                   jun=Sum('jun'), jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'),
+                   nov=Sum('nov'), dic=Sum('dic'))
 
-        the_list = {}
+        the_json = []
         for datos in resultados:
             the_list = {}
-            the_list['carencia'] = datos['avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
-            the_list['subCarencia'] = datos['avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
+            the_list['carencia'] = datos[
+                'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
+            the_list['subCarencia'] = datos[
+                'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
             the_list['accion'] = datos['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
             the_list['unidad'] = datos['avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad']
-            the_list['responsable'] = datos['avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable']
+            the_list['responsable'] = datos[
+                'avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable']
             the_list['observaciones'] = datos['avancePorMunicipio__meta__observaciones']
             the_list['inversion'] = datos['avancePorMunicipio__inversionAprox']
+            the_list['estado'] = datos['avancePorMunicipio__estado__nombreEstado']
+            the_list['municipio'] = datos['municipio__nombreMunicipio']
+            the_list['periodo'] = datos['avancePorMunicipio__periodo__nombrePeriodo']
+            the_list['latitud'] = datos['municipio__latitud']
+            the_list['longitud'] = datos['municipio__longitud']
+
             the_list['ene'] = datos['ene']
             the_list['feb'] = datos['feb']
             the_list['mar'] = datos['mar']
@@ -875,9 +890,150 @@ class FichaTecnicaAvancesEndpoint(generic.ListView):
             the_list['oct'] = datos['oct']
             the_list['nov'] = datos['nov']
             the_list['dic'] = datos['dic']
+            the_json.append(the_list)
 
         return HttpResponse(json.dumps(the_list, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
                             'application/json', )
+
+#Clase para devolver datos de avances para la hoja de excel
+class ReporteExcelAvancesEndpoint(generic.ListView):
+    def get(self, request, *args, **kwargs):
+        # Obteniendo los datos de la url
+        periodo_id = request.GET.get('periodo')
+        carencia_id = request.GET.get('carencia')
+        json_map ={}
+        json_map['resultados'] = []
+
+        subCarencias = AvanceMensual.objects.filter(
+            Q(avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia = carencia_id)&
+            Q(avancePorMunicipio__meta__periodo__nombrePeriodo = periodo_id)
+        ).values('avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia')\
+            .annotate(subCarencias = Count('avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia'))
+
+        json_map = {}
+        carenciaDatos = Carencia.objects.get(id=carencia_id)
+        json_map['carencia'] = carenciaDatos.nombreCarencia
+        json_map['resultados'] = []
+        for subCarencia in subCarencias:
+            #print "SubCarencia"
+            datos = {}
+            datos['subCarencias'] = subCarencia['avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
+            datos['acciones'] = []
+            for accionesDatos in AvanceMensual.objects.filter(
+                Q(avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia=carencia_id) &
+                Q(avancePorMunicipio__meta__periodo__nombrePeriodo=periodo_id)&
+                Q(avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia =
+                  subCarencia['avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']))\
+                    .values('avancePorMunicipio__meta__accionEstrategica__nombreAccion',
+                            'avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad',
+                            'avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable')\
+                    .annotate(acciones=Count('avancePorMunicipio__meta__accionEstrategica__nombreAccion')):
+
+                #print "Accion"
+                accion = {}
+                accion['accion'] = accionesDatos['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
+                accion['unidad'] = accionesDatos['avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad']
+                accion['responable'] = accionesDatos['avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable']
+                accion['avances'] = []
+                for avance in AvanceMensual.objects.filter(
+                                Q(avancePorMunicipio__meta__accionEstrategica__nombreAccion=
+                                  accionesDatos['avancePorMunicipio__meta__accionEstrategica__nombreAccion']) &
+                                Q(avancePorMunicipio__meta__periodo__nombrePeriodo=periodo_id)
+                ):
+                    #print "Avance"
+                    avances = {}
+                    avances['ene'] = avance.ene
+                    avances['feb'] = avance.feb
+                    avances['mar'] = avance.mar
+                    avances['abr'] = avance.abr
+                    avances['may'] = avance.may
+                    avances['jun'] = avance.jun
+                    avances['jul'] = avance.jul
+                    avances['ago'] = avance.ago
+                    avances['sep'] = avance.sep
+                    avances['oct'] = avance.oct
+                    avances['nov'] = avance.nov
+                    avances['dic'] = avance.dic
+
+                    accion['avances'].append(avances)
+                datos['acciones'].append(accion)
+            json_map['resultados'].append(datos)
+
+        return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
+                            'application/json', )
+
+
+#Clase para devolver datos de metas para la hoja de excel
+class ReporteExcelMetasEndpoint(generic.ListView):
+    def get(self, request, *args, **kwargs):
+        # Obteniendo los datos de la url
+        periodo_id = request.GET.get('periodo')
+        carencia_id = request.GET.get('carencia')
+        json_map = {}
+        json_map['resultados'] = []
+
+        subCarencias = MetaMensual.objects.filter(
+            Q(meta__accionEstrategica__subCarencia__carencia=carencia_id) &
+            Q(meta__periodo__nombrePeriodo=periodo_id)
+        ).values('meta__accionEstrategica__subCarencia__nombreSubCarencia') \
+            .annotate(subCarencias=Count('meta__accionEstrategica__subCarencia__nombreSubCarencia'))
+
+        json_map = {}
+        carenciaDatos = Carencia.objects.get(id=carencia_id)
+        json_map['carencia'] = carenciaDatos.nombreCarencia
+        json_map['resultados'] = []
+        for subCarencia in subCarencias:
+            # print "SubCarencia"
+            datos = {}
+            datos['subCarencias'] = subCarencia[
+                'meta__accionEstrategica__subCarencia__nombreSubCarencia']
+            datos['acciones'] = []
+            for accionesDatos in MetaMensual.objects.filter(
+                                    Q(meta__accionEstrategica__subCarencia__carencia=carencia_id) &
+                                    Q(meta__periodo__nombrePeriodo=periodo_id) &
+                            Q(meta__accionEstrategica__subCarencia__nombreSubCarencia=
+                              subCarencia[
+                                  'meta__accionEstrategica__subCarencia__nombreSubCarencia'])) \
+                    .values('meta__accionEstrategica__nombreAccion',
+                            'meta__accionEstrategica__unidadDeMedida__descripcionUnidad',
+                            'meta__accionEstrategica__responsable__nombreResponsable') \
+                    .annotate(acciones=Count('meta__accionEstrategica__nombreAccion')):
+
+                # print "Accion"
+                accion = {}
+                accion['accion'] = accionesDatos['meta__accionEstrategica__nombreAccion']
+                accion['unidad'] = accionesDatos[
+                    'meta__accionEstrategica__unidadDeMedida__descripcionUnidad']
+                accion['responable'] = accionesDatos[
+                    'meta__accionEstrategica__responsable__nombreResponsable']
+                accion['metas'] = []
+                for meta in MetaMensual.objects.filter(
+                                Q(meta__accionEstrategica__nombreAccion=
+                                  accionesDatos['meta__accionEstrategica__nombreAccion']) &
+                                Q(meta__periodo__nombrePeriodo=periodo_id)
+                ):
+                    # print "Avance"
+                    metas = {}
+                    metas['ene'] = meta.ene
+                    metas['feb'] = meta.feb
+                    metas['mar'] = meta.mar
+                    metas['abr'] = meta.abr
+                    metas['may'] = meta.may
+                    metas['jun'] = meta.jun
+                    metas['jul'] = meta.jul
+                    metas['ago'] = meta.ago
+                    metas['sep'] = meta.sep
+                    metas['oct'] = meta.oct
+                    metas['nov'] = meta.nov
+                    metas['dic'] = meta.dic
+                    metas['inversion'] = meta.inversionAprox
+
+                    accion['metas'].append(metas)
+                datos['acciones'].append(accion)
+            json_map['resultados'].append(datos)
+
+        return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
+                            'application/json', )                            'application/json', )
 
 def get_avance_values(modelo):
     return modelo.values('avancemensual__municipio__latitud', 'avancemensual__municipio__longitud', 'avancemensual__municipio__nombreMunicipio',
