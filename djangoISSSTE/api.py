@@ -1,6 +1,8 @@
 # coding=utf-8
 import json
 from _ast import List
+import mimetypes
+import os
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
@@ -833,6 +835,8 @@ class AvancesEndpoint(ProtectedResourceView):
 #Clase para devolver datos de la ficha técnica
 class FichaTecnicaAvancesEndpoint(generic.ListView):
     def get(self, request, *args, **kwargs):
+        prs = Presentation('djangoISSSTE/static/ppt/Ficha_Tecnica_Avance.pptx')
+        #prs = Presentation('/home/sisefenlin/visitas/static/ppt/fichaTecnica_sisef.pptx')
         # Obteniendo los datos de la url
         periodo_id = get_array_or_none(request.GET.get('periodo'))
         accion_id = get_array_or_none(request.GET.get('accion'))
@@ -849,6 +853,7 @@ class FichaTecnicaAvancesEndpoint(generic.ListView):
             'avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable',
             'avancePorMunicipio__meta__observaciones',
             'avancePorMunicipio__inversionAprox',
+            'avancePorMunicipio__meta__montoPromedio',
             'avancePorMunicipio__estado__nombreEstado',
             'municipio__nombreMunicipio',
             'avancePorMunicipio__periodo__nombrePeriodo',
@@ -876,6 +881,7 @@ class FichaTecnicaAvancesEndpoint(generic.ListView):
             the_list['periodo'] = datos['avancePorMunicipio__periodo__nombrePeriodo']
             the_list['latitud'] = datos['municipio__latitud']
             the_list['longitud'] = datos['municipio__longitud']
+            the_list['montoPromedio'] = datos['avancePorMunicipio__meta__montoPromedio']
 
             the_list['ene'] = datos['ene']
             the_list['feb'] = datos['feb']
@@ -889,10 +895,80 @@ class FichaTecnicaAvancesEndpoint(generic.ListView):
             the_list['oct'] = datos['oct']
             the_list['nov'] = datos['nov']
             the_list['dic'] = datos['dic']
+            suma=datos['ene']+datos['ene']+datos['feb']+datos['mar']+datos['abr']+datos['may']+datos['jun']+datos['jul']+datos['ago']+datos['sep']+datos['oct']+datos['nov']+datos['dic']
+            the_list['suma'] =suma
+            the_list['inversion'] =suma*datos['avancePorMunicipio__meta__montoPromedio']
             the_json.append(the_list)
 
-        return HttpResponse(json.dumps(the_list, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
-                            'application/json', )
+
+        table = prs.slides[0].shapes[0].table
+        for x in range(0, 3):
+            cell = table.rows[x].cells[1]
+            paragraph = cell.textframe.paragraphs[0]
+            paragraph.font.size = Pt(8)
+            paragraph.font.name = 'Arial'
+            paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+        table.cell(0, 1).text = the_json[0]['carencia']
+        table.cell(1, 1).text = the_json[0]['subCarencia']
+        table.cell(2, 1).text = the_json[0]['accion']
+
+        table = prs.slides[0].shapes[1].table
+        for x in range(0, 4):
+            cell = table.rows[x].cells[1]
+            paragraph = cell.textframe.paragraphs[0]
+            paragraph.font.size = Pt(8)
+            paragraph.font.name = 'Arial'
+            paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+        table.cell(0, 1).text = the_json[0]['unidad']
+        table.cell(1, 1).text = the_json[0]['responsable']
+        table.cell(2, 1).text = str(the_json[0]['periodo'])
+        table.cell(3, 1).text = the_json[0]['observaciones']
+
+        table = prs.slides[0].shapes[2].table
+        indice = 2
+        for avance in the_json:
+            for x in range(0, 16):
+                cell = table.rows[indice].cells[x]
+                paragraph = cell.textframe.paragraphs[0]
+                paragraph.font.size = Pt(8)
+                paragraph.font.name = 'Arial'
+                paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+            # write body cells
+            table.cell(indice, 1).text = avance['municipio']
+            table.cell(indice, 2).text = str(avance['ene'])
+            table.cell(indice, 3).text = str(avance['feb'])
+            table.cell(indice, 4).text = str(avance['mar'])
+            table.cell(indice, 5).text = str(avance['abr'])
+            table.cell(indice, 6).text = str(avance['may'])
+            table.cell(indice, 7).text = str(avance['jun'])
+            table.cell(indice, 8).text = str(avance['jul'])
+            table.cell(indice, 9).text = str(avance['ago'])
+            table.cell(indice, 10).text = str(avance['sep'])
+            table.cell(indice, 11).text = str(avance['oct'])
+            table.cell(indice, 12).text = str(avance['nov'])
+            table.cell(indice, 13).text = str(avance['dic'])
+            table.cell(indice, 14).text = str(avance['suma'])
+            table.cell(indice, 15).text = str(avance['inversion'])
+            indice += 1
+
+        usuario = get_usuario_for_token(request.GET.get('access_token'))
+
+        prs.save('djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = 'djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx'
+
+        #prs.save('/home/sisefenlin/visitas/static/ppt/ppt-generados/FichaTecnicaVisitas_' + str(usuario.user.id) + '.pptx')
+        #the_file = '/home/sisefenlin/visitas/static/ppt/ppt-generados/FichaTecnicaVisitas_' + str(usuario.user.id) + '.pptx'
+
+        filename = os.path.basename(the_file)
+        chunk_size = 8192
+        response = StreamingHttpResponse(FileWrapper(open(the_file,"rb"), chunk_size),
+                               content_type=mimetypes.guess_type(the_file)[0])
+        response['Content-Length'] = os.path.getsize(the_file)
+        response['Content-Disposition'] = "attachment; filename=%s" % filename
+        return response
 
 #Clase para devolver datos de avances para la hoja de excel
 class ReporteExcelAvancesEndpoint(generic.ListView):
