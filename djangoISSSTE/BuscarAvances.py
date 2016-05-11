@@ -66,6 +66,7 @@ class BuscarAvances:
 			query = query & Q(avancePorMunicipio__periodo__id__in=self.periodos)
 			query_estado = query_estado & Q(periodo__id__in=self.periodos)
 
+
 		if self.inversion_minima is not None and self.inversion_maxima is not None:
 			query = query & Q(avancePorMunicipio__inversionAprox__range = (self.inversion_minima, self.inversion_maxima))
 			query_estado = query_estado & Q(inversionAprox__range = (self.inversion_minima, self.inversion_maxima))
@@ -75,8 +76,8 @@ class BuscarAvances:
 			query_estado = query_estado & Q(meta__observaciones__contains = self.observaciones)
 
 		if self.unidad_de_medida is not None:
-			query = query & Q(avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad__contains=self.unidad_de_medida)
-			query_estado = query_estado & Q(meta__accionEstrategica__unidadDeMedida__descripcionUnidad__contains=self.unidad_de_medida)
+			query = query & Q(avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__id=self.unidad_de_medida)
+			query_estado = query_estado & Q(meta__accionEstrategica__unidadDeMedida__id=self.unidad_de_medida)
 
 		avances_mensuales = None
 		avances_por_municipio = None
