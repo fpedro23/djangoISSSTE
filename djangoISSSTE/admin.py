@@ -490,15 +490,6 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
         return super(
             AvancePorMunicipioAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
-    def save_formset(self, request, form, formset, change):
-        formset.save()
-        for f in formset.forms:
-            obj = f.instance
-            obj.save()
-
-
-
-
 class AccionEstrategicaAdmin(admin.ModelAdmin):
     model = AccionEstrategica
     list_display = ('nombreAccion', 'get_carencia', 'subCarencia', 'unidadDeMedida', 'responsable',
