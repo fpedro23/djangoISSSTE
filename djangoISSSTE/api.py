@@ -4,6 +4,7 @@ from _ast import List
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
+from django.db.models.aggregates import Count
 from django.db.models.query_utils import Q
 from django.http import HttpResponse
 from django.views import generic
@@ -863,46 +864,62 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
     def get(self, request, *args, **kwargs):
         # Obteniendo los datos de la url
         periodo_id = request.GET.get('periodo')
-        accion_id = request.GET.get('accion')
+        carencia_id = request.GET.get('carencia')
+        json_map ={}
+        json_map['resultados'] = []
+
+        subCarencias = AvanceMensual.objects.filter(
+            Q(avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia = carencia_id)&
+            Q(avancePorMunicipio__meta__periodo__nombrePeriodo = periodo_id)
+        ).values('avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia')\
+            .annotate(subCarencias = Count('avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia'))
 
         json_map = {}
-        json_map['datos'] = []
-        json_map['avances'] = []
+        carenciaDatos = Carencia.objects.get(id=carencia_id)
+        json_map['carencia'] = carenciaDatos.nombreCarencia
+        json_map['resultados'] = []
+        for subCarencia in subCarencias:
+            #print "SubCarencia"
+            datos = {}
+            datos['subCarencias'] = subCarencia['avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
+            datos['acciones'] = []
+            for accionesDatos in AvanceMensual.objects.filter(
+                Q(avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia=carencia_id) &
+                Q(avancePorMunicipio__meta__periodo__nombrePeriodo=periodo_id)&
+                Q(avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia =
+                  subCarencia['avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']))\
+                    .values('avancePorMunicipio__meta__accionEstrategica__nombreAccion')\
+                    .annotate(acciones=Count('avancePorMunicipio__meta__accionEstrategica__nombreAccion')):
 
-        datos = {}
-        meta =  Meta.objects.get(Q(periodo__nombrePeriodo = periodo_id)&Q(accionEstrategica__id = accion_id))
-        datos['carencia'] = meta.accionEstrategica.subCarencia.carencia.nombreCarencia
-        datos['subCarencia'] = meta.accionEstrategica.subCarencia.nombreSubCarencia
-        datos['periodo'] = meta.periodo.nombrePeriodo
-        datos['unidad'] = meta.accionEstrategica.unidadDeMedida.descripcionUnidad
-        datos['accion'] = meta.accionEstrategica.nombreAccion
-        datos['responsable'] = meta.accionEstrategica.responsable.nombreResponsable
-        datos['metaID'] = meta.id
-        datos['meta'] = meta.nombreMeta
-        datos['accion'] = meta.accionEstrategica.nombreAccion
-        json_map['datos'].append(datos)
+                #print "Accion"
+                accion = {}
+                accion['accion'] = accionesDatos['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
+                accion['avances'] = []
+                for avance in AvanceMensual.objects.filter(
+                                Q(avancePorMunicipio__meta__accionEstrategica__nombreAccion=
+                                  accionesDatos['avancePorMunicipio__meta__accionEstrategica__nombreAccion']) &
+                                Q(avancePorMunicipio__meta__periodo__nombrePeriodo=periodo_id)
+                ):
+                    #print "Avance"
+                    avances = {}
+                    avances['ene'] = avance.ene
+                    avances['feb'] = avance.feb
+                    avances['mar'] = avance.mar
+                    avances['abr'] = avance.abr
+                    avances['may'] = avance.may
+                    avances['jun'] = avance.jun
+                    avances['jul'] = avance.jul
+                    avances['ago'] = avance.ago
+                    avances['sep'] = avance.sep
+                    avances['oct'] = avance.oct
+                    avances['nov'] = avance.nov
+                    avances['dic'] = avance.dic
 
+                    accion['avances'].append(avances)
+                datos['acciones'].append(accion)
+            json_map['resultados'].append(datos)
 
-        for avance in AvanceMensual.objects.filter(avancePorMunicipio__meta__id = meta.id):
-            avanceDatos = {}
-            avanceDatos['municipio'] = avance.municipio.nombreMunicipio
-            avanceDatos['estado'] = avance.municipio.estado.nombreEstado
-            avanceDatos['clave'] = avance.municipio.estado.claveEstado + avance.municipio.claveMunicipio
-            avanceDatos['ene'] = avance.ene
-            avanceDatos['feb'] = avance.feb
-            avanceDatos['mar'] = avance.mar
-            avanceDatos['abr'] = avance.abr
-            avanceDatos['may'] = avance.may
-            avanceDatos['jun'] = avance.jun
-            avanceDatos['jul'] = avance.jul
-            avanceDatos['ago'] = avance.ago
-            avanceDatos['sep'] = avance.sep
-            avanceDatos['oct'] = avance.oct
-            avanceDatos['nov'] = avance.nov
-            avanceDatos['dic'] = avance.dic
-            json_map['avances'].append(avanceDatos)
-
-        return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
+        return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=False, ensure_ascii=False),
                             'application/json', )
 
 
