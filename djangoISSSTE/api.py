@@ -888,12 +888,16 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
                 Q(avancePorMunicipio__meta__periodo__nombrePeriodo=periodo_id)&
                 Q(avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia =
                   subCarencia['avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']))\
-                    .values('avancePorMunicipio__meta__accionEstrategica__nombreAccion')\
+                    .values('avancePorMunicipio__meta__accionEstrategica__nombreAccion',
+                            'avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad',
+                            'avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable')\
                     .annotate(acciones=Count('avancePorMunicipio__meta__accionEstrategica__nombreAccion')):
 
                 #print "Accion"
                 accion = {}
                 accion['accion'] = accionesDatos['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
+                accion['unidad'] = accionesDatos['avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad']
+                accion['responable'] = accionesDatos['avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable']
                 accion['avances'] = []
                 for avance in AvanceMensual.objects.filter(
                                 Q(avancePorMunicipio__meta__accionEstrategica__nombreAccion=
@@ -919,7 +923,7 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
                 datos['acciones'].append(accion)
             json_map['resultados'].append(datos)
 
-        return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=False, ensure_ascii=False),
+        return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
                             'application/json', )
 
 
