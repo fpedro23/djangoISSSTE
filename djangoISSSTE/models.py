@@ -3,9 +3,11 @@
 from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import User
+from django.dispatch.dispatcher import receiver
 from django.utils.encoding import python_2_unicode_compatible
 from datetime import date
 from smart_selects.db_fields import ChainedForeignKey
+from django.db.models.signals import post_save
 from time import gmtime, strftime
 
 # Create your models here.
@@ -256,15 +258,14 @@ class MetaMensual(models.Model):
 
 @python_2_unicode_compatible
 class AvancePorMunicipio(models.Model):
-    meta = models.ForeignKey(Meta, null=False, blank=False, verbose_name="Acción Estratégica")
     estado = models.ForeignKey(Estado, null=False, blank=False)
-    '''meta = ChainedForeignKey(Periodo,
-                                       chained_field="estado",
-                                       chained_model_field="nombreMeta",
+    periodo = models.ForeignKey(Periodo, null=False, blank=False, default=getPeriodoActual(), verbose_name="Año")
+    meta = ChainedForeignKey(Meta,
+                                       chained_field="periodo",
+                                       chained_model_field="periodo",
                                        null=True,
                                        blank=True,
-                                       )'''
-    periodo = models.ForeignKey(Periodo, null=False, blank=False, default=getPeriodoActual(), verbose_name="Año")
+                                       )
     inversionAprox = models.FloatField(default=0)
 
     def __str__(self):
@@ -345,3 +346,28 @@ class Usuario(models.Model):
     user = models.OneToOneField(User)
     rol = models.CharField(max_length=2, choices=ROLES_CHOICES, default=User)
     estado = models.ForeignKey(Estado, null=True, blank=True)
+
+
+# SIGNALS
+
+# Cada que haya un cambio en el monto promedio en metas, cambia el valor de la inversión en
+# el avance
+@receiver(post_save, sender=Meta, dispatch_uid="update_inversion_avanceMensual_metaMensual")
+def update_inversion_avanceMensual_metaMensual(sender, instance, **kwargs):
+    for avanceMunicipio in AvancePorMunicipio.objects.filter(meta__id = instance.id):
+        suma_avance = 0
+        for avanceMensual in AvanceMensual.objects.filter(avancePorMunicipio__id = avanceMunicipio.id):
+            suma_avance = suma_avance + avanceMensual.ene + avanceMensual.feb + avanceMensual.mar \
+                          + avanceMensual.abr + avanceMensual.may + avanceMensual.jun + avanceMensual.jul \
+                          + avanceMensual.ago + avanceMensual.sep + avanceMensual.oct + avanceMensual.nov \
+                          + avanceMensual.dic
+        avanceMunicipio.inversionAprox = suma_avance * instance.montoPromedio
+        avanceMunicipio.save()
+
+# Actualiza la inversión cada vez que se agregan avances mensuales
+@receiver(post_save, sender=AvanceMensual, dispatch_uid="update_inversion")
+def update_inversion(sender, instance, **kwargs):
+    instance.avancePorMunicipio.inversionAprox = 5
+    instance.avancePorMunicipio.save()
+    periodo = Periodo.objects.get(id=1)
+    periodo.save()

@@ -1,5 +1,5 @@
 # coding=utf-8
-from django.forms.models import BaseInlineFormSet
+from django.forms.models import BaseInlineFormSet, ModelForm
 from django import forms
 from djangoISSSTE.models import *
 from django.db.models.query_utils import Q
@@ -32,3 +32,33 @@ class MetaMensualForm(forms.ModelForm):
         print instance.estado
 
         return super(MetaMensualForm, self).save(commit)
+
+
+class AvanceMensualForm(ModelForm):
+    class Meta:
+        model = AvanceMensual
+        # can_delete = False
+        fields = "__all__"
+
+    # extra = 0
+
+    # Define los estados visibles dependiendo del rol del usuario
+    # y del estado al que pertenece en la pantalla para añadir una nueva
+    # meta mensual
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        query_estado = request.user.usuario.estado.id
+        if db_field.name == "municipio":
+            if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UR' or request.user.usuario.rol == 'FR':
+                kwargs["queryset"] = Municipio.objects.all()
+            elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
+                kwargs["queryset"] = Municipio.objects.filter(
+                    Q(estado=query_estado)
+                )
+
+    def save(self, commit=True):
+        instance = super(AvanceMensualForm, self).save(commit=True)
+        print "Saving"
+        return super(AvanceMensualForm, self).save(commit)
+
+    def has_changed(self):
+        return False

@@ -27,6 +27,7 @@ urlpatterns = [
     url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'issste/', include(djangoISSSTE.urls)),
 
+    url(r'^chaining/', include('smart_selects.urls')),
     url(r'^secrets', djangoISSSTE.views.secret_page, name='secret'),
     url(r'^test', djangoISSSTE.views.test, name='test')
 ]

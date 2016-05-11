@@ -8,6 +8,7 @@ import json
 from django.contrib.admin.filters import SimpleListFilter
 from django.contrib.auth.admin import UserAdmin
 from django.db.models.query_utils import Q
+from django.forms.models import ModelForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import Group
 
@@ -241,37 +242,22 @@ class MetaAdmin(admin.ModelAdmin):
             inversionAprox += singleMetaMensual.inversionAprox
         return inversionAprox
 
-        get_subcarencia.short_description = "SubCarencia"
-        get_carencia.short_description = "Carencia"
-        get_inversion.short_description = "Inversion Aproximada"
+    get_subcarencia.short_description = "SubCarencia"
+    get_carencia.short_description = "Carencia"
+    get_inversion.short_description = "Inversion Aproximada"
 
-        def save_formset(self, request, form, formset, change):
-            formset.save()
-            if change:
-                for f in formset.forms:
-                    obj = f.instance
-                    obj.save()
+    def save_formset(self, request, form, formset, change):
+        formset.save()
+        if change:
+            for f in formset.forms:
+                obj = f.instance
+                obj.save()
 
 
 class AvanceMensualInLine(admin.TabularInline):
+    form = AvanceMensualForm
     model = AvanceMensual
     extra = 0
-
-    # Define los municipios visibles dependiendo del rol del usuario
-    # y del estado al que pertenece en la pantalla para añadir un nuevo
-    # avance mensual
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        query_estado = request.user.usuario.estado.id
-        if db_field.name == "municipio":
-            if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UR' or request.user.usuario.rol == 'FR':
-                kwargs["queryset"] = Municipio.objects.all()
-            elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
-                kwargs["queryset"] = Municipio.objects.filter(
-                    Q(estado=query_estado)
-                )
-
-        return super(
-            AvanceMensualInLine, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 class AvancePorMunicipioAdmin(admin.ModelAdmin):
@@ -503,6 +489,14 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 
         return super(
             AvancePorMunicipioAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
+    def save_formset(self, request, form, formset, change):
+        formset.save()
+        for f in formset.forms:
+            obj = f.instance
+            obj.save()
+
+
 
 
 class AccionEstrategicaAdmin(admin.ModelAdmin):
