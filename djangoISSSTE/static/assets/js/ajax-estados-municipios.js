@@ -16,26 +16,26 @@ $j(document).on('ready', function() {
     var estadoId = $('#id_estado').find('option:selected').val();
     var municipioId = $j('.tamcontrolsel').find('option:selected').val();
     var munlenght = $j('.tamcontrolsel').length;
-    alert("municipioID "+$j('.tamcontrolsel').length);
+    //alert("municipioID "+$j('.tamcontrolsel').length);
     var mismun=[];
 
     for(i=0;i<$j('.tamcontrolsel').length-1;i++)
     {
-        alert(i+',value:'+$j('.tamcontrolsel')[i].value);
+       // alert(i+',value:'+$j('.tamcontrolsel')[i].value);
         $j("select#id_avancemensual_set-"+i+"-municipio").attr('disabled','disabled');
-        alert($j("select#id_avancemensual_set-"+i+"-municipio").val());
+        //alert($j("select#id_avancemensual_set-"+i+"-municipio").val());
         mismun[i]=$j("select#id_avancemensual_set-"+i+"-municipio").val();
     }
 
     if ( municipioId == "" && munlenght ==1 ) {
         clearMunicipios();
-        alert("no municipios previos")
+        //alert("no municipios previos")
     }
     else {
         // No need to check for nulls here, wel already did in the first if
         if (estadoId != "") {
              //obtiene municipios
-            alert("si municipios previos")
+           // alert("si municipios previos")
             getMunicipiosForEstado(estadoId, function (ans) {
                 populateMunicpiosSelect(ans);
 
@@ -142,7 +142,7 @@ function clearMunicipios() {
 
 function populateMunicpiosSelect2(municipios,mismun) {
     // Clean the field
-    alert('lenght de mis municipios selected'+mismun.length);
+    //alert('lenght de mis municipios selected'+mismun.length);
     clearMunicipios2(mismun);
 
     for (var i = 0; i < municipios.length; i++) {
@@ -154,7 +154,7 @@ function populateMunicpiosSelect2(municipios,mismun) {
         );
     }
     for (var i = 0; i < mismun.length; i++) {
-        alert(mismun[i]);
+        //alert(mismun[i]);
         $j("select#id_avancemensual_set-" + mismun.length + "-municipio").find("option[value='" + mismun[i] + "']").hide();
     }
 

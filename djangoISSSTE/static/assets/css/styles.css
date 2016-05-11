@@ -1231,4 +1231,27 @@ a:hover {
 	background-position:-724px -2287px;
 }
 
+.errornote {
+        font-family: Verdana, Geneva, sans-serif;
+        font-size: 10px !important;
+        font-weight: bold;
+        top:8px;
+        left: 100px;
+        color: #c11;
+    position: absolute;
+    }
 
+
+
+.errorlist {
+  position: absolute;
+  font-size: 10px;
+    right: -100px;
+  padding: 2px;
+  background-color: red;
+  color: white;
+    z-index: 50;
+  margin-top: 0px;
+  /* left: 10%; */
+
+}
