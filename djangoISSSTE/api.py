@@ -932,44 +932,69 @@ class ReporteExcelMetasEndpoint(generic.ListView):
     def get(self, request, *args, **kwargs):
         # Obteniendo los datos de la url
         periodo_id = request.GET.get('periodo')
-        accion_id = request.GET.get('accion')
+        carencia_id = request.GET.get('carencia')
+        json_map = {}
+        json_map['resultados'] = []
+
+        subCarencias = MetaMensual.objects.filter(
+            Q(meta__accionEstrategica__subCarencia__carencia=carencia_id) &
+            Q(meta__periodo__nombrePeriodo=periodo_id)
+        ).values('meta__accionEstrategica__subCarencia__nombreSubCarencia') \
+            .annotate(subCarencias=Count('meta__accionEstrategica__subCarencia__nombreSubCarencia'))
 
         json_map = {}
-        json_map['datos'] = []
-        json_map['metas'] = []
+        carenciaDatos = Carencia.objects.get(id=carencia_id)
+        json_map['carencia'] = carenciaDatos.nombreCarencia
+        json_map['resultados'] = []
+        for subCarencia in subCarencias:
+            # print "SubCarencia"
+            datos = {}
+            datos['subCarencias'] = subCarencia[
+                'meta__accionEstrategica__subCarencia__nombreSubCarencia']
+            datos['acciones'] = []
+            for accionesDatos in MetaMensual.objects.filter(
+                                    Q(meta__accionEstrategica__subCarencia__carencia=carencia_id) &
+                                    Q(meta__periodo__nombrePeriodo=periodo_id) &
+                            Q(meta__accionEstrategica__subCarencia__nombreSubCarencia=
+                              subCarencia[
+                                  'meta__accionEstrategica__subCarencia__nombreSubCarencia'])) \
+                    .values('meta__accionEstrategica__nombreAccion',
+                            'meta__accionEstrategica__unidadDeMedida__descripcionUnidad',
+                            'meta__accionEstrategica__responsable__nombreResponsable') \
+                    .annotate(acciones=Count('meta__accionEstrategica__nombreAccion')):
 
-        datos = {}
-        meta =  Meta.objects.get(Q(periodo__nombrePeriodo = periodo_id)&Q(accionEstrategica__id = accion_id))
-        datos['carencia'] = meta.accionEstrategica.subCarencia.carencia.nombreCarencia
-        datos['subCarencia'] = meta.accionEstrategica.subCarencia.nombreSubCarencia
-        datos['periodo'] = meta.periodo.nombrePeriodo
-        datos['unidad'] = meta.accionEstrategica.unidadDeMedida.descripcionUnidad
-        datos['accion'] = meta.accionEstrategica.nombreAccion
-        datos['responsable'] = meta.accionEstrategica.responsable.nombreResponsable
-        datos['metaID'] = meta.id
-        datos['meta'] = meta.nombreMeta
-        datos['accion'] = meta.accionEstrategica.nombreAccion
-        json_map['datos'].append(datos)
+                # print "Accion"
+                accion = {}
+                accion['accion'] = accionesDatos['meta__accionEstrategica__nombreAccion']
+                accion['unidad'] = accionesDatos[
+                    'meta__accionEstrategica__unidadDeMedida__descripcionUnidad']
+                accion['responable'] = accionesDatos[
+                    'meta__accionEstrategica__responsable__nombreResponsable']
+                accion['metas'] = []
+                for meta in MetaMensual.objects.filter(
+                                Q(meta__accionEstrategica__nombreAccion=
+                                  accionesDatos['meta__accionEstrategica__nombreAccion']) &
+                                Q(meta__periodo__nombrePeriodo=periodo_id)
+                ):
+                    # print "Avance"
+                    metas = {}
+                    metas['ene'] = meta.ene
+                    metas['feb'] = meta.feb
+                    metas['mar'] = meta.mar
+                    metas['abr'] = meta.abr
+                    metas['may'] = meta.may
+                    metas['jun'] = meta.jun
+                    metas['jul'] = meta.jul
+                    metas['ago'] = meta.ago
+                    metas['sep'] = meta.sep
+                    metas['oct'] = meta.oct
+                    metas['nov'] = meta.nov
+                    metas['dic'] = meta.dic
+                    metas['inversion'] = meta.inversionAprox
 
-
-        for meta in MetaMensual.objects.filter(meta__id = meta.id):
-            metasDatos = {}
-            metasDatos['estado'] = meta.estado.nombreEstado
-            metasDatos['clave'] = meta.estado.claveEstado
-            metasDatos['inversion'] = meta.inversionAprox
-            metasDatos['ene'] = meta.ene
-            metasDatos['feb'] = meta.feb
-            metasDatos['mar'] = meta.mar
-            metasDatos['abr'] = meta.abr
-            metasDatos['may'] = meta.may
-            metasDatos['jun'] = meta.jun
-            metasDatos['jul'] = meta.jul
-            metasDatos['ago'] = meta.ago
-            metasDatos['sep'] = meta.sep
-            metasDatos['oct'] = meta.oct
-            metasDatos['nov'] = meta.nov
-            metasDatos['dic'] = meta.dic
-            json_map['metas'].append(metasDatos)
+                    accion['metas'].append(metas)
+                datos['acciones'].append(accion)
+            json_map['resultados'].append(datos)
 
         return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
                             'application/json', )
