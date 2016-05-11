@@ -64,6 +64,8 @@ MIDDLEWARE_CLASSES = [
 	'oauth2_provider.middleware.OAuth2TokenMiddleware',
 ]
 
+
+
 CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'Projects.urls'
