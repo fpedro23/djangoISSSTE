@@ -17,17 +17,17 @@ $j(document).on('ready', function() {
     var municipioId = $j('.tamcontrolsel').find('option:selected').val();
     var munlenght = $j('.tamcontrolsel').length;
     alert("municipioID "+$j('.tamcontrolsel').length);
-
-    var arrmun;
+    var mismun=[];
 
     for(i=0;i<$j('.tamcontrolsel').length-1;i++)
     {
-        alert($j('.tamcontrolsel')[i].value);
+        alert(i+',value:'+$j('.tamcontrolsel')[i].value);
         $j("select#id_avancemensual_set-"+i+"-municipio").attr('disabled','disabled');
-          arrmun =$j('.tamcontrolsel')[i];
+        alert($j("select#id_avancemensual_set-"+i+"-municipio").val());
+        mismun[i]=$j("select#id_avancemensual_set-"+i+"-municipio").val();
     }
 
-    if ( municipioId == "" && munlenght ==0 ) {
+    if ( municipioId == "" && munlenght ==1 ) {
         clearMunicipios();
         alert("no municipios previos")
     }
@@ -37,7 +37,7 @@ $j(document).on('ready', function() {
              //obtiene municipios
             alert("si municipios previos")
             getMunicipiosForEstado(estadoId, function (ans) {
-                populateMunicpiosSelect(ans,arrmun);
+                populateMunicpiosSelect(ans);
 
             });
 
@@ -58,7 +58,7 @@ $j(document).on('ready', function() {
             }
             else {
                 getMunicipiosForEstado(parseInt(estadoId), function (ans) {
-                    populateMunicpiosSelect(ans,arrmun);
+                    populateMunicpiosSelect(ans);
                 });
 
             }
@@ -66,8 +66,15 @@ $j(document).on('ready', function() {
     });
 
     $j("tr.add-row").on("click",function(){
+        var estadoId = $('#id_estado').find('option:selected').val();
+        var mismun=[];
+
+        for(i=0;i<$j('.tamcontrolsel').length-2;i++)
+        {
+            mismun[i]=$j("select#id_avancemensual_set-"+i+"-municipio").val();
+        }
         getMunicipiosForEstado(parseInt(estadoId), function (ans) {
-                    populateMunicpiosSelect2(ans,arrmun);
+                    populateMunicpiosSelect2(ans,mismun);
                 });
     });
 
@@ -104,7 +111,7 @@ function getMunicipiosForEstado(estadoId, onSuccess) {
 
 
 // Once we're done filtering, we just put the results where they belong
-function populateMunicpiosSelect(municipios,arrmun) {
+function populateMunicpiosSelect(municipios) {
     // Clean the field
     //clearMunicipios();
 
@@ -133,26 +140,30 @@ function clearMunicipios() {
 
 
 
-function populateMunicpiosSelect2(municipios,munlenght) {
+function populateMunicpiosSelect2(municipios,mismun) {
     // Clean the field
-    clearMunicipios2(munlenght-1);
+    alert('lenght de mis municipios selected'+mismun.length);
+    clearMunicipios2(mismun);
 
     for (var i = 0; i < municipios.length; i++) {
 
-       $j("select#id_avancemensual_set-"+(munlenght-1)+"-municipio").append(
+       $j("select#id_avancemensual_set-"+(mismun.length)+"-municipio").append(
             '<option value="'+municipios[i].id+'">' +
             municipios[i].nombreMunicipio +
             '</option>'
         );
     }
-    for (var i = 0; i < munlenght.length; i++)
-    $("select#id_detalleclasificacion_set-"+(munlenght-1)+"-tipoClasificacion").find("option[value='"+munlenght[i].value+"']").hide();
+    for (var i = 0; i < mismun.length; i++) {
+        alert(mismun[i]);
+        $j("select#id_avancemensual_set-" + mismun.length + "-municipio").find("option[value='" + mismun[i] + "']").hide();
+    }
+
 }
 
-function clearMunicipios2(munlenght) {
+function clearMunicipios2(mismun) {
 
 
-    $j("select#id_avancemensual_set-"+munlenght+"-municipio")
+    $j("select#id_avancemensual_set-"+mismun.length+"-municipio")
         .empty()
         .append('<option value>---------</option>');
 }
