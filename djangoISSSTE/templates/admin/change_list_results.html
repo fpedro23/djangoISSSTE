@@ -11,6 +11,7 @@
 
 </script>
 
+      <link rel="stylesheet" type="text/css" href="{% static "assets/css/restricted_styles.css" %}" />
 
 
 {% if result_hidden_fields %}
@@ -21,7 +22,7 @@
 {% endif %}
 {% if results %}
 
-    <div class="camposRL" id="RLT" hidden="true" {% if cl.opts.verbose_name == "obra" %} {{ "style='width: 887px; left:5px; top:60px; height:430px;'"}}{% endif %}>
+    <div class="camposRL" id="RLT" hidden="true" {% if cl.opts.verbose_name == "Avance por Municipio" %} {{ "style='width: 887px; left:5px; top:60px; height:430px;'"}}{% endif %}>
         <table id="result_list" class="changelist" style="border-bottom:1px; border-top: 1px; border-right: 1px; border-left: 1px; padding:0px; border-color: #e4e5e6; ">
            <thead style="background-color: #e4e5e6; border-color: #e4e5e6; border-left-color: #e4e5e6; border-top-color: #e4e5e6; border-right-color: #e4e5e6; border-top: 1px; border-right: 1px; border-left: 1px; border-bottom:0px;">
                 <tr style="border-bottom:1px; border-top: 1px; border-right: 1px; border-left: 1px; padding:0px; border-color: #e4e5e6; ">

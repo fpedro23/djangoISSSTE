@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'oauth2_provider',
     'corsheaders',
     'nested_inline',
+    'smart_selects',
 ]
 
 AUTHENTICATION_BACKENDS = (

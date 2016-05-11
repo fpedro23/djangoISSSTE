@@ -1,5 +1,5 @@
 # coding=utf-8
-from django.forms.models import BaseInlineFormSet
+from django.forms.models import BaseInlineFormSet, ModelForm
 from django import forms
 from djangoISSSTE.models import *
 from django.db.models.query_utils import Q
