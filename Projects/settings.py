@@ -127,10 +127,15 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# vida del token
+SESSION_COOKIE_AGE = 35900
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+LOGIN_URL = '/admin/login/'
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-MX'
 
 TIME_ZONE = 'America/Mexico_City'
 
