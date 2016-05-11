@@ -5,6 +5,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.encoding import python_2_unicode_compatible
 from datetime import date
+from smart_selects.db_fields import ChainedForeignKey
 from time import gmtime, strftime
 
 # Create your models here.
@@ -268,6 +269,12 @@ class MetaMensual(models.Model):
 class AvancePorMunicipio(models.Model):
     meta = models.ForeignKey(Meta, null=False, blank=False, verbose_name="Acción Estratégica")
     estado = models.ForeignKey(Estado, null=False, blank=False)
+    '''meta = ChainedForeignKey(Periodo,
+                                       chained_field="estado",
+                                       chained_model_field="nombreMeta",
+                                       null=True,
+                                       blank=True,
+                                       )'''
     periodo = models.ForeignKey(Periodo, null=False, blank=False, default=getPeriodoActual(), verbose_name="Año")
     inversionAprox = models.FloatField(default=0)
 
