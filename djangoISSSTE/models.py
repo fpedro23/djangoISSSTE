@@ -205,7 +205,7 @@ class Mes(models.Model):
 class Meta(models.Model):
     nombreMeta = models.CharField(max_length=200, null=False, )
     accionEstrategica = models.ForeignKey(AccionEstrategica, null=False, blank=False, verbose_name='Acción Estrategica')
-    periodo = models.ForeignKey(Periodo, null=False, blank=False, default=getPeriodoActual())
+    periodo = models.ForeignKey(Periodo, null=False, blank=False, verbose_name="Año")
     observaciones = models.TextField(max_length=500, default="", blank=True)
     montoPromedio = models.FloatField(null=False, default=0, verbose_name='Monto Promedio')
 
@@ -232,7 +232,7 @@ class Meta(models.Model):
 class MetaMensual(models.Model):
     meta = models.ForeignKey(Meta, null=False, blank=False)
     estado = models.ForeignKey(Estado, null=False, blank=False)
-    inversionAprox = models.FloatField(default=0)
+    inversionAprox = models.FloatField(default=0, verbose_name= "Inversión Aproximada")
     ene = models.FloatField(null=False, default=0)
     feb = models.FloatField(null=False, default=0)
     mar = models.FloatField(null=False, default=0)
@@ -270,7 +270,7 @@ class MetaMensual(models.Model):
 @python_2_unicode_compatible
 class AvancePorMunicipio(models.Model):
     estado = models.ForeignKey(Estado, null=False, blank=False)
-    periodo = models.ForeignKey(Periodo, null=False, blank=False, default=getPeriodoActual(), verbose_name="Año")
+    periodo = models.ForeignKey(Periodo, null=False, blank=False, verbose_name="Año")
     meta = ChainedForeignKey(Meta,
                                        chained_field="periodo",
                                        chained_model_field="periodo",

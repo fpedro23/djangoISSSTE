@@ -90,7 +90,7 @@ class EstadoListFilter(SimpleListFilter):
             return queryset.filter(estado__id=self.value())
 
 class PeriodosFilter(SimpleListFilter):
-    title = 'Periodo'
+    title = 'Año'
 
     parameter_name = 'periodos'
 
