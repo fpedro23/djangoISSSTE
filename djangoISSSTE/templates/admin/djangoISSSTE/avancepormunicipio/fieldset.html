@@ -14,11 +14,11 @@
                         </div>
                          <table width="1022">
                             <tr>
-                                <td width="170" height="21" class="txtlabel">
+                                <td width="170" height="23" class="txtlabel">
                                    Año:
                                 </td>
 
-                                <td width="170" height="21" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                                <td width="170" height="23" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
                                      {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}
@@ -31,11 +31,11 @@
                                 </td>
                 {% endif %}
                 {% if field.field.name == "meta" %}
-                                 <td width="170" height="21" class="txtlabel">
+                                 <td width="170" height="23" class="txtlabel">
                                     Acción Estratégica:
                                  </td>
 
-                                <td width="170" height="21" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                                <td width="170" height="23" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
                                      {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}
@@ -49,11 +49,11 @@
                 {% endif %}
                 {% if field.field.name == "estado" %}
 
-                                <td width="170" height="21" class="txtlabel">
+                                <td width="170" height="23" class="txtlabel">
                                     Estado:
                                 </td>
 
-                                <td width="170" height="21" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                                <td width="170" height="23" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
                                      {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}

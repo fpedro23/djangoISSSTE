@@ -158,7 +158,7 @@ $j(function() {
         var valor = $(this).val();
         var periodo = $('#id_periodo').find('option:selected').val();
         var meta = $('#id_meta').find('option:selected').val();
-        alert(valor+','+ periodo+','+meta);
+        //alert(valor+','+ periodo+','+meta);
         if (valor != null &&  periodo != null && meta != null) {
             getAvanceForPeriodo(valor,periodo,meta, function (ans) {
             });
@@ -169,7 +169,7 @@ $j(function() {
         var meta = $(this).val();
         var periodo = $('#id_periodo').find('option:selected').val();
         var valor = $('#id_estado').find('option:selected').val();
-         alert(valor+','+ periodo+','+meta);
+         //alert(valor+','+ periodo+','+meta);
         if (valor != null &&  periodo != null && meta != null) {
             getAvanceForPeriodo(valor,periodo,meta, function (ans) {
             });
@@ -206,7 +206,7 @@ function getAvanceForPeriodo(estadoId,anioid,metaid,onSuccess) {
                 location.href="/admin/djangoISSSTE/avancepormunicipio/"+data[0].id+"/change";
             },
         error: function(data) {
-            alert('error!! ' + data.status);
+            //alert('error!! ' + data.status);
         }
         });
 

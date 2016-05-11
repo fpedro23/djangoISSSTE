@@ -38,3 +38,24 @@ input{
 .inline-group .tabular tr.has_original td {
     padding-top: 0em;
 }
+
+.paginator a:link, .paginator a:visited {
+    padding: 2px 6px;
+    background: #6A6B6C;
+    text-decoration: none;
+    color: #fff;
+}
+
+#changelist-filter {
+    position: absolute;
+    top: 63px;
+    left: 907px;
+    z-index: 1000;
+    width: 110px;
+    border-left: 1px solid #ddd;
+    background: #e4e5e6;
+    margin: 0;
+    overflow: auto;
+    height: 430px;
+    font-family: "soberana_sanslight";
+}

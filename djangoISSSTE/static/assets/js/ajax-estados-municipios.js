@@ -22,7 +22,7 @@ $j(document).on('ready', function() {
     for(i=0;i<$j('.tamcontrolsel').length-1;i++)
     {
        // alert(i+',value:'+$j('.tamcontrolsel')[i].value);
-        $j("select#id_avancemensual_set-"+i+"-municipio").attr('disabled','disabled');
+        //$j("select#id_avancemensual_set-"+i+"-municipio").attr('disabled','disabled');
         //alert($j("select#id_avancemensual_set-"+i+"-municipio").val());
         mismun[i]=$j("select#id_avancemensual_set-"+i+"-municipio").val();
     }

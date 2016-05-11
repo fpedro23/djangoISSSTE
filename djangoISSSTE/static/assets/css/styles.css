@@ -1232,7 +1232,7 @@ a:hover {
 }
 
 .errornote {
-        font-family: Verdana, Geneva, sans-serif;
+        font-family: 'soberana_sansregular';
         font-size: 10px !important;
         font-weight: bold;
         top:8px;
@@ -1255,3 +1255,56 @@ a:hover {
   /* left: 10%; */
 
 }
+
+.border-error {
+   outline: none;
+   border: 1px solid #b00b12;
+   box-shadow: 0 0 3px red;
+    background-color: #FFFFFF;
+    font-size: 12px;
+    font-family: soberana_textoregular;
+}
+
+.botCAMBIAR2{
+	width:130px;
+	height:48px;
+	position:absolute;
+	top: 290px;
+	left: 335px;
+	background-image:url(../Imagenes/bigBackground.fw.png);
+	background-position: 0px -524px;
+}
+
+.botCAMBIAR2:hover{
+	background-position:0px -569px;
+}
+
+
+.botENVIAR{
+	width:126px;
+	height:45px;
+	position:absolute;
+	top: 340px;
+	left: 365px;
+	background-image:url(../Imagenes/bigBackground.fw.png);
+	background-position: 0px -184px;
+}
+
+.botENVIAR:hover{
+	background-position:0px -229px;
+}
+
+.recuperarCon{
+	 position:relative;
+	 width:460px;
+	 height:330px;
+	 margin-top:33px;
+	 margin-left:50px;
+
+	font-family: "soberana_sanslight";
+    font-size:18px;
+
+    color: #6A6B6C;
+
+}
+
