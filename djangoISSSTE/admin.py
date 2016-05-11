@@ -255,7 +255,6 @@ class MetaAdmin(admin.ModelAdmin):
 
 
 class AvanceMensualInLine(admin.TabularInline):
-    form = AvanceMensualForm
     model = AvanceMensual
     extra = 0
 
