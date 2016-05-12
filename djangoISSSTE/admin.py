@@ -295,11 +295,11 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
     ordering = ['meta__nombreMeta', ]
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        query_estado = request.user.usuario.estado.id
         if db_field.name == "estado":
             if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UR' or request.user.usuario.rol == 'FR':
                 kwargs["queryset"] = Estado.objects.all()
             elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
+                query_estado = request.user.usuario.estado.id
                 kwargs["queryset"] = Estado.objects.filter(
                     Q(id=query_estado)
                 )
@@ -483,12 +483,12 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
     # y del estado al que pertenece en la pantalla para añadir un nuevo
     # avance por municipio
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        query_estado = request.user.usuario.estado.id
 
         if db_field.name == "estado":
             if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UR' or request.user.usuario.rol == 'FR':
                 kwargs["queryset"] = Estado.objects.all()
             elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
+                query_estado = request.user.usuario.estado.id
                 kwargs["queryset"] = Estado.objects.filter(
                     Q(id=query_estado)
                 )
