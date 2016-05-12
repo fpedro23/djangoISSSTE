@@ -14,9 +14,13 @@ from django.views import generic
 from django.views.generic.list import ListView
 from oauth2_provider.models import AccessToken
 
+
+from xlsxwriter.workbook import Workbook
+#from django.core.servers.basehttp import FileWrapper
+from django.http import StreamingHttpResponse
+
 from djangoISSSTE.BuscarAvances import BuscarAvances
 from oauth2_provider.views.generic import ProtectedResourceView
-from wsgiref.util import FileWrapper
 from django.core.serializers.json import DjangoJSONEncoder
 from wsgiref.util import FileWrapper
 
@@ -939,6 +943,9 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
                 ):
                     #print "Avance"
                     avances = {}
+                    avances['clave'] = avance.municipio.claveMunicipio
+                    avances['estado'] = avance.avancePorMunicipio.estado.nombreEstado
+                    avances['municipio'] = avance.municipio.nombreMunicipio
                     avances['ene'] = avance.ene
                     avances['feb'] = avance.feb
                     avances['mar'] = avance.mar
@@ -956,8 +963,93 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
                 datos['acciones'].append(accion)
             json_map['resultados'].append(datos)
 
-        return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False),
-                            'application/json', )
+        output = StringIO.StringIO()
+        book = Workbook(output)
+        sheet = book.add_worksheet('avances')
+
+        # Add a bold format to use to highlight cells.
+        bold = book.add_format({'bold': True})
+
+        # Create a format to use in the merged range.
+        merge_format = book.add_format({
+            'bold': 1,
+            'border': 1,
+            'align': 'left',
+            'valign': 'vcenter',
+            'fg_color': 'A62A2A'})
+
+        merge_format2 = book.add_format({
+            'bold': 1,
+            'border': 1,
+            'align': 'center',
+            'valign': 'vcenter',
+            'fg_color': 'BFBFBF'})
+
+
+        # Merge 2 cells.
+        sheet.merge_range('A1:B1', 'Carencia', merge_format)
+        sheet.merge_range('A2:B2', 'SubCarencia', merge_format)
+        sheet.merge_range('A3:B3', 'Accion Estrategica', merge_format)
+        sheet.merge_range('A4:B4', 'Unidad de Medida', merge_format)
+        sheet.merge_range('A5:B5', 'Avances', merge_format)
+        sheet.merge_range('C5:O5', "Avance Mensual", merge_format2)
+
+
+        # avances
+
+        sheet.write(5, 0, "Clave", bold)
+        sheet.write(5, 1, "Entidad", bold)
+        sheet.write(5, 2, "Municipio", bold)
+        sheet.write(5, 3, "Enero", bold)
+        sheet.write(5, 4, "Febrero", bold)
+        sheet.write(5, 5, "Marzo", bold)
+        sheet.write(5, 6, "Abril", bold)
+        sheet.write(5, 7, "Mayo", bold)
+        sheet.write(5, 8, "Junio", bold)
+        sheet.write(5, 9, "Julio", bold)
+        sheet.write(5, 10, "Agosto", bold)
+        sheet.write(5, 11, "Septiembre", bold)
+        sheet.write(5, 12, "Octubre", bold)
+        sheet.write(5, 13, "Noviembre", bold)
+        sheet.write(5, 14, "Diciembre", bold)
+
+
+        sheet.merge_range('C1:O1', json_map['carencia'], merge_format2)
+        for reporte in json_map['resultados']:
+            sheet.merge_range('C2:O2', reporte['subCarencias'], merge_format2)
+            for accion in reporte['acciones']:
+                sheet.merge_range('C3:O3', accion['accion'], merge_format2)
+                sheet.merge_range('C4:O4', accion['unidad'], merge_format2)
+                renAvance=6
+                for avance in accion['avances']:
+                    sheet.write(renAvance, 0, avance["clave"], bold)
+                    sheet.write(renAvance, 1, avance["estado"], bold)
+                    sheet.write(renAvance, 2, avance["municipio"], bold)
+                    sheet.write(renAvance, 3, avance["ene"], bold)
+                    sheet.write(renAvance, 4, avance["feb"], bold)
+                    sheet.write(renAvance, 5, avance["mar"], bold)
+                    sheet.write(renAvance, 6, avance["abr"], bold)
+                    sheet.write(renAvance, 7, avance["may"], bold)
+                    sheet.write(renAvance, 8, avance["jun"], bold)
+                    sheet.write(renAvance, 9, avance["jul"], bold)
+                    sheet.write(renAvance, 10, avance["ago"], bold)
+                    sheet.write(renAvance, 11, avance["sep"], bold)
+                    sheet.write(renAvance, 12, avance["oct"], bold)
+                    sheet.write(renAvance, 13, avance["nov"], bold)
+                    sheet.write(renAvance, 14, avance["dic"], bold)
+                    renAvance+=1
+
+
+        book.close()
+
+        response = StreamingHttpResponse(FileWrapper(output),
+                                         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="listado_avances_metas.xlsx"'
+        response['Content-Length'] = output.tell()
+
+        output.seek(0)
+
+        return response
 
 
 #Clase para devolver datos de metas para la hoja de excel

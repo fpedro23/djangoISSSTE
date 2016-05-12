@@ -137,7 +137,7 @@
                                      {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}
-                                          {{ field.contents }}
+                                          {{ field.contents|floatFormat }}
                                        {% endif %}
                                 <script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
                                 <script> $(document).ready(function($) {

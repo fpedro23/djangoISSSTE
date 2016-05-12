@@ -165,7 +165,7 @@ $j(function() {
         }
     });
 
-    $j('#id_meta').bind('change', function () {
+    /*$j('#id_meta').bind('change', function () {
         var meta = $(this).val();
         var periodo = $('#id_periodo').find('option:selected').val();
         var valor = $('#id_estado').find('option:selected').val();
@@ -174,7 +174,7 @@ $j(function() {
             getAvanceForPeriodo(valor,periodo,meta, function (ans) {
             });
         }
-    });
+    });*/
 
 
 });
