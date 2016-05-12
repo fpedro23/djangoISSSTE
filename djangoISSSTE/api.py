@@ -525,7 +525,7 @@ class BuscadorEndpoint(generic.ListView):
             shortened_reporte['estado'] = reporte['avancePorMunicipio__estado__nombreEstado']
             shortened_reporte['latitud'] = reporte['avancePorMunicipio__estado__latitud']
             shortened_reporte['longitud'] = reporte['avancePorMunicipio__estado__longitud']
-            json_map['reporte_por_carencia'].append(shortened_reporte)
+            json_map['reporte_por_estado'].append(shortened_reporte)
 
 
         for reporte in resultados['reporte_por_carencia']:

@@ -22,8 +22,8 @@ def getPeriodoActual():
         return periodo.id
     except Periodo.DoesNotExist:
         # periodo = Periodo.objects.latest('nombrePeriodo')
-        periodo = None;
-        return periodo;
+        periodo = None
+        return periodo
 
 
 
