@@ -444,15 +444,7 @@ class BuscadorEndpoint(generic.ListView):
             shortened_reporte['latitud'] = reporte['municipio__latitud']
             shortened_reporte['longitud'] = reporte['municipio__longitud']
 
-            # Validando que la suma de los avances se encuentre dentro del rango solicitado
-            if myObj.avance_minimo is not None and myObj.avance_maximo is not None:
-                if shortened_reporte['suma_avance'] < myObj.avance_minimo[0] or shortened_reporte['suma_avance'] > \
-                        myObj.avance_maximo[0]:
-                    add = False
-
-            # Si existieron los límites del avance y se estuvo dentro de ellos, se añade
-            if add == True:
-                json_map['reporte_general'].append(shortened_reporte)
+            json_map['reporte_general'].append(shortened_reporte)
 
         for reporte in resultados['reporte_por_estado']:
             shortened_reporte = {}
@@ -657,18 +649,18 @@ class BuscadorEndpoint(generic.ListView):
                         if mes == 11: shortened_reporte['suma_meta'] += meta_mensual['nov']
                         if mes == 12: shortened_reporte['suma_meta'] += meta_mensual['dic']
                 else:
-                    shortened_reporte['avance'] += meta_mensual["ene"]
-                    shortened_reporte['avance'] += meta_mensual["feb"]
-                    shortened_reporte['avance'] += meta_mensual["mar"]
-                    shortened_reporte['avance'] += meta_mensual["abr"]
-                    shortened_reporte['avance'] += meta_mensual["may"]
-                    shortened_reporte['avance'] += meta_mensual["jun"]
-                    shortened_reporte['avance'] += meta_mensual["jul"]
-                    shortened_reporte['avance'] += meta_mensual["ago"]
-                    shortened_reporte['avance'] += meta_mensual["sep"]
-                    shortened_reporte['avance'] += meta_mensual["oct"]
-                    shortened_reporte['avance'] += meta_mensual["nov"]
-                    shortened_reporte['avance'] += meta_mensual["dic"]
+                    shortened_reporte['suma_meta'] += meta_mensual["ene"]
+                    shortened_reporte['suma_meta'] += meta_mensual["feb"]
+                    shortened_reporte['suma_meta'] += meta_mensual["mar"]
+                    shortened_reporte['suma_meta'] += meta_mensual["abr"]
+                    shortened_reporte['suma_meta'] += meta_mensual["may"]
+                    shortened_reporte['suma_meta'] += meta_mensual["jun"]
+                    shortened_reporte['suma_meta'] += meta_mensual["jul"]
+                    shortened_reporte['suma_meta'] += meta_mensual["ago"]
+                    shortened_reporte['suma_meta'] += meta_mensual["sep"]
+                    shortened_reporte['suma_meta'] += meta_mensual["oct"]
+                    shortened_reporte['suma_meta'] += meta_mensual["nov"]
+                    shortened_reporte['suma_meta'] += meta_mensual["dic"]
 
             shortened_reporte['accionId'] = reporte[
                 'avancePorMunicipio__meta__accionEstrategica__id']
