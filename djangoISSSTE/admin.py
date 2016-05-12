@@ -256,6 +256,7 @@ class MetaAdmin(admin.ModelAdmin):
 
 class AvanceMensualInLine(admin.TabularInline):
     model = AvanceMensual
+    exclude = ['porcentajeAvance']
     extra = 0
 
 
@@ -273,7 +274,7 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
         ('Avance', {
             'fields': (
                 'periodo', 'meta', 'estado', 'get_carencia', 'get_unidad_medida',
-                'get_subcarencia', 'inversionAprox','get_observaciones', 'get_accion',
+                'get_subcarencia', 'inversionAprox','get_observaciones', 'get_accion','get_monto_promedio',
             )
         }),
         ('Meta', {
@@ -288,9 +289,9 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
     readonly_fields = ('get_carencia', 'get_subcarencia', 'get_unidad_medida', 'get_observaciones', 'get_enero',
                        'get_febrero', 'get_marzo', 'get_abril', 'get_mayo', 'get_junio', 'get_julio', 'get_agosto',
                        'get_septiembre', 'get_octubre', 'get_noviembre', 'get_diciembre', 'get_accion',
-                       'inversionAprox')
+                       'inversionAprox', 'get_monto_promedio',)
 
-    list_display = ('id', 'get_carencia', 'get_subcarencia', 'meta', 'periodo', 'estado', 'inversionAprox')
+    list_display = ('id', 'get_carencia', 'get_subcarencia', 'meta', 'periodo', 'estado', 'inversionAprox', 'get_monto_promedio',)
     ordering = ['meta__nombreMeta', ]
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
@@ -442,6 +443,10 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
     def get_accion(self, obj):
         return obj.meta.accionEstrategica.nombreAccion
 
+    def get_monto_promedio(self, obj):
+        return obj.meta.montoPromedio
+
+
     get_subcarencia.short_description = "Sub Carencia"
     get_carencia.short_description = "Carencia"
     get_unidad_medida.short_description = "Unidad de Medida"
@@ -459,6 +464,8 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
     get_noviembre.short_description = "Noviembre"
     get_diciembre.short_description = "Diciembre"
     get_accion.short_description = "Acción Estratégica"
+    get_monto_promedio.short_description = "Monto promedio"
+
 
     # Esta funcion se ejecuta al desplegar la lista de Avances por municipio. Dentro
     # de ella se aplica un filtro por el rol del usuario y de su estado
