@@ -67,6 +67,8 @@ class BuscarAvances:
 			query = query & Q(avancePorMunicipio__periodo__id__in=self.periodos)
 			query_estado = query_estado & Q(periodo__id__in=self.periodos)
 
+		if self.avance_minimo is not None and self.avance_maximo is not None:
+			query = query & Q(porcentajeAvance__range=(self.avance_minimo, self.avance_maximo))
 
 		if self.inversion_minima is not None and self.inversion_maxima is not None:
 			query = query & Q(avancePorMunicipio__inversionAprox__range = (self.inversion_minima, self.inversion_maxima))
@@ -108,12 +110,15 @@ class BuscarAvances:
 		)[self.limite_inferior:self.limite_superior]
 
 		#Reporte por estados
-		reporte_por_estado = avances_por_municipio.values(
-			'estado__id',
-			'estado__nombreEstado',
-			'estado__latitud',
-			'estado__longitud',
-		).annotate(inversionAprox=Sum('inversionAprox'))[self.limite_inferior:self.limite_superior]
+		reporte_por_estado = avances_mensuales.values(
+			'avancePorMunicipio__estado__id',
+			'avancePorMunicipio__estado__nombreEstado',
+			'avancePorMunicipio__estado__latitud',
+			'avancePorMunicipio__estado__longitud',
+		).annotate(ene=Sum('ene'),feb=Sum('feb'),mar=Sum('mar'),abr=Sum('abr'),may=Sum('may'),
+				   jun=Sum('jun'),jul=Sum('jul'),ago=Sum('ago'),sep=Sum('sep'),oct=Sum('oct'),
+				   nov=Sum('nov'),dic=Sum('dic'))[self.limite_inferior:self.limite_superior]
+
 
 		reporte_por_carencia = avances_mensuales.values(
 			'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id',
