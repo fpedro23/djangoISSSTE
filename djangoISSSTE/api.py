@@ -365,55 +365,73 @@ class BuscadorEndpoint(generic.ListView):
             print "Printing: "
             print reporte['avancePorMunicipio__meta__id']
             print reporte['avancePorMunicipio__estado__nombreEstado']
-            meta = MetaMensual.objects.get(Q(meta__id=reporte['avancePorMunicipio__meta__id'])&
-                                           Q(estado__nombreEstado=reporte['avancePorMunicipio__estado__nombreEstado']))
+
             if myObj.meses is not None:
                 for mes in myObj.meses:
                     if mes == 1:
                         shortened_reporte['suma_avance'] += avance_mensual.ene
-                        shortened_reporte['suma_meta'] += meta.ene
                     if mes == 2:
                         shortened_reporte['suma_avance'] += avance_mensual.feb
-                        shortened_reporte['suma_meta'] += meta.feb
                     if mes == 3:
                         shortened_reporte['suma_avance'] += avance_mensual.mar
-                        shortened_reporte['suma_meta'] += meta.mar
                     if mes == 4:
                         shortened_reporte['suma_avance'] += avance_mensual.abr
-                        shortened_reporte['suma_meta'] += meta.abr
                     if mes == 5:
                         shortened_reporte['suma_avance'] += avance_mensual.may
-                        shortened_reporte['suma_meta'] += meta.may
                     if mes == 6:
                         shortened_reporte['suma_avance'] += avance_mensual.jun
-                        shortened_reporte['suma_meta'] += meta.jun
                     if mes == 7:
                         shortened_reporte['suma_avance'] += avance_mensual.jul
-                        shortened_reporte['suma_meta'] += meta.jul
                     if mes == 8:
                         shortened_reporte['suma_avance'] += avance_mensual.ago
-                        shortened_reporte['suma_meta'] += meta.ago
                     if mes == 9:
                         shortened_reporte['suma_avance'] += avance_mensual.sep
-                        shortened_reporte['suma_meta'] += meta.sep
                     if mes == 10:
                         shortened_reporte['suma_avance'] += avance_mensual.oct
-                        shortened_reporte['suma_meta'] += meta.oct
                     if mes == 11:
                         shortened_reporte['suma_avance'] += avance_mensual.nov
-                        shortened_reporte['suma_meta'] += meta.nov
                     if mes == 12:
                         shortened_reporte['suma_avance'] += avance_mensual.dic
-                        shortened_reporte['suma_meta'] += meta.dic
             else:
                 # Si no se indicaron meses. habrá que obtener el valor de todos
                 shortened_reporte['suma_avance'] += (avance_mensual.ene + avance_mensual.feb + avance_mensual.mar +
                                                      avance_mensual.abr + avance_mensual.may + avance_mensual.jun +
                                                      avance_mensual.jul + avance_mensual.ago + avance_mensual.sep +
                                                      avance_mensual.oct + avance_mensual.nov + avance_mensual.dic)
-                shortened_reporte['suma_meta'] += (meta.ene + meta.feb + meta.mar + meta.abr +
-                                                   meta.may + meta.jun + meta.jul + meta.ago +
-                                                   meta.sep + meta.oct + meta.nov + meta.dic)
+
+            metaId = reporte['avancePorMunicipio__meta__id']
+            estadoId = reporte['avancePorMunicipio__estado__id']
+            metas = myObj.getMetasFiltradas(carenciaID=None, accionID=None, estadoID=estadoId, metaID = metaId)
+            for meta_mensual in metas['meta']:
+                if myObj.meses is not None:
+                    for mes in myObj.meses:
+                        if mes == 1: shortened_reporte['suma_meta'] += meta_mensual['ene']
+                        if mes == 2: shortened_reporte['suma_meta'] += meta_mensual['feb']
+                        if mes == 3: shortened_reporte['suma_meta'] += meta_mensual['mar']
+                        if mes == 4: shortened_reporte['suma_meta'] += meta_mensual['abr']
+                        if mes == 5: shortened_reporte['suma_meta'] += meta_mensual['may']
+                        if mes == 6: shortened_reporte['suma_meta'] += meta_mensual['jun']
+                        if mes == 7: shortened_reporte['suma_meta'] += meta_mensual['jul']
+                        if mes == 8: shortened_reporte['suma_meta'] += meta_mensual['ago']
+                        if mes == 9: shortened_reporte['suma_meta'] += meta_mensual['sep']
+                        if mes == 10: shortened_reporte['suma_meta'] += meta_mensual['oct']
+                        if mes == 11: shortened_reporte['suma_meta'] += meta_mensual['nov']
+                        if mes == 12: shortened_reporte['suma_meta'] += meta_mensual['dic']
+                else:
+                    shortened_reporte['suma_meta'] += meta_mensual['ene']
+                    shortened_reporte['suma_meta'] += meta_mensual['feb']
+                    shortened_reporte['suma_meta'] += meta_mensual['mar']
+                    shortened_reporte['suma_meta'] += meta_mensual['abr']
+                    shortened_reporte['suma_meta'] += meta_mensual['may']
+                    shortened_reporte['suma_meta'] += meta_mensual['jun']
+                    shortened_reporte['suma_meta'] += meta_mensual['jul']
+                    shortened_reporte['suma_meta'] += meta_mensual['ago']
+                    shortened_reporte['suma_meta'] += meta_mensual['sep']
+                    shortened_reporte['suma_meta'] += meta_mensual['oct']
+                    shortened_reporte['suma_meta'] += meta_mensual['nov']
+                    shortened_reporte['suma_meta'] += meta_mensual['dic']
+
+
             shortened_reporte['id'] = reporte['id']
             shortened_reporte['accion'] = reporte['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
             shortened_reporte['carencia'] = reporte[
@@ -529,69 +547,36 @@ class BuscadorEndpoint(generic.ListView):
                     AvanceMensual.objects.filter(avancePorMunicipio__estado__id=reporte_estado['estado__id']).aggregate(
                         Sum('dic'))['dic__sum']
 
-            if myObj.meses is not None:
-                for mes in myObj.meses:
-                    if mes == 1: shortened_reporte['suma_meta'] += MetaMensual.objects.filter(
-                        estado__id=reporte_estado['estado__id']).aggregate(Sum('ene'))['ene__sum']
-                    if mes == 2: shortened_reporte['suma_meta'] += MetaMensual.objects.filter(
-                        estado__id=reporte_estado['estado__id']).aggregate(Sum('feb'))['feb__sum']
-                    if mes == 3: shortened_reporte['suma_meta'] += MetaMensual.objects.filter(
-                        estado__id=reporte_estado['estado__id']).aggregate(Sum('mar'))['mar__sum']
-                    if mes == 4: shortened_reporte['suma_meta'] += MetaMensual.objects.filter(
-                        estado__id=reporte_estado['estado__id']).aggregate(Sum('abr'))['abr__sum']
-                    if mes == 5: shortened_reporte['suma_meta'] += MetaMensual.objects.filter(
-                        estado__id=reporte_estado['estado__id']).aggregate(Sum('may'))['may__sum']
-                    if mes == 6: shortened_reporte['suma_meta'] += MetaMensual.objects.filter(
-                        estado__id=reporte_estado['estado__id']).aggregate(Sum('jun'))['jun__sum']
-                    if mes == 7: shortened_reporte['suma_meta'] += MetaMensual.objects.filter(
-                        estado__id=reporte_estado['estado__id']).aggregate(Sum('jul'))['jul__sum']
-                    if mes == 8: shortened_reporte['suma_meta'] += MetaMensual.objects.filter(
-                        estado__id=reporte_estado['estado__id']).aggregate(Sum('ago'))['ago']
-                    if mes == 9: shortened_reporte['suma_meta'] += MetaMensual.objects.filter(
-                        estado__id=reporte_estado['estado__id']).aggregate(Sum('sep'))['sep__sum']
-                    if mes == 10: shortened_reporte['suma_meta'] += MetaMensual.objects.filter(
-                        estado__id=reporte_estado['estado__id']).aggregate(Sum('oct'))['oct__sum']
-                    if mes == 11: shortened_reporte['suma_meta'] += MetaMensual.objects.filter(
-                        estado__id=reporte_estado['estado__id']).aggregate(Sum('nov'))['nov__sum']
-                    if mes == 12: shortened_reporte['suma_meta'] += MetaMensual.objects.filter(
-                        estado__id=reporte_estado['estado__id']).aggregate(Sum('dic'))['dic__sum']
-            else:
-                shortened_reporte['suma_meta'] += \
-                    MetaMensual.objects.filter(estado__id=reporte_estado['estado__id']).aggregate(Sum('ene'))[
-                        'ene__sum']
-                shortened_reporte['suma_meta'] += \
-                    MetaMensual.objects.filter(estado__id=reporte_estado['estado__id']).aggregate(Sum('feb'))[
-                        'feb__sum']
-                shortened_reporte['suma_meta'] += \
-                    MetaMensual.objects.filter(estado__id=reporte_estado['estado__id']).aggregate(Sum('mar'))[
-                        'mar__sum']
-                shortened_reporte['suma_meta'] += \
-                    MetaMensual.objects.filter(estado__id=reporte_estado['estado__id']).aggregate(Sum('abr'))[
-                        'abr__sum']
-                shortened_reporte['suma_meta'] += \
-                    MetaMensual.objects.filter(estado__id=reporte_estado['estado__id']).aggregate(Sum('may'))[
-                        'may__sum']
-                shortened_reporte['suma_meta'] += \
-                    MetaMensual.objects.filter(estado__id=reporte_estado['estado__id']).aggregate(Sum('jun'))[
-                        'jun__sum']
-                shortened_reporte['suma_meta'] += \
-                    MetaMensual.objects.filter(estado__id=reporte_estado['estado__id']).aggregate(Sum('jul'))[
-                        'jul__sum']
-                shortened_reporte['suma_meta'] += \
-                    MetaMensual.objects.filter(estado__id=reporte_estado['estado__id']).aggregate(Sum('ago'))[
-                        'ago__sum']
-                shortened_reporte['suma_meta'] += \
-                    MetaMensual.objects.filter(estado__id=reporte_estado['estado__id']).aggregate(Sum('sep'))[
-                        'sep__sum']
-                shortened_reporte['suma_meta'] += \
-                    MetaMensual.objects.filter(estado__id=reporte_estado['estado__id']).aggregate(Sum('oct'))[
-                        'oct__sum']
-                shortened_reporte['suma_meta'] += \
-                    MetaMensual.objects.filter(estado__id=reporte_estado['estado__id']).aggregate(Sum('nov'))[
-                        'nov__sum']
-                shortened_reporte['suma_meta'] += \
-                    MetaMensual.objects.filter(estado__id=reporte_estado['estado__id']).aggregate(Sum('dic'))[
-                        'dic__sum']
+            estadoId = reporte_estado['estado__id']
+            metas = myObj.getMetasFiltradas(carenciaID=None, accionID=None, estadoID=estadoId, metaID=None)
+            for meta_mensual in metas['meta']:
+                if myObj.meses is not None:
+                    for mes in myObj.meses:
+                        if mes == 1: shortened_reporte['suma_meta'] += meta_mensual['ene']
+                        if mes == 2: shortened_reporte['suma_meta'] += meta_mensual['feb']
+                        if mes == 3: shortened_reporte['suma_meta'] += meta_mensual['mar']
+                        if mes == 4: shortened_reporte['suma_meta'] += meta_mensual['abr']
+                        if mes == 5: shortened_reporte['suma_meta'] += meta_mensual['may']
+                        if mes == 6: shortened_reporte['suma_meta'] += meta_mensual['jun']
+                        if mes == 7: shortened_reporte['suma_meta'] += meta_mensual['jul']
+                        if mes == 8: shortened_reporte['suma_meta'] += meta_mensual['ago']
+                        if mes == 9: shortened_reporte['suma_meta'] += meta_mensual['sep']
+                        if mes == 10: shortened_reporte['suma_meta'] += meta_mensual['oct']
+                        if mes == 11: shortened_reporte['suma_meta'] += meta_mensual['nov']
+                        if mes == 12: shortened_reporte['suma_meta'] += meta_mensual['dic']
+                else:
+                    shortened_reporte['suma_meta'] += meta_mensual['ene']
+                    shortened_reporte['suma_meta'] += meta_mensual['feb']
+                    shortened_reporte['suma_meta'] += meta_mensual['mar']
+                    shortened_reporte['suma_meta'] += meta_mensual['abr']
+                    shortened_reporte['suma_meta'] += meta_mensual['may']
+                    shortened_reporte['suma_meta'] += meta_mensual['jun']
+                    shortened_reporte['suma_meta'] += meta_mensual['jul']
+                    shortened_reporte['suma_meta'] += meta_mensual['ago']
+                    shortened_reporte['suma_meta'] += meta_mensual['sep']
+                    shortened_reporte['suma_meta'] += meta_mensual['oct']
+                    shortened_reporte['suma_meta'] += meta_mensual['nov']
+                    shortened_reporte['suma_meta'] += meta_mensual['dic']
 
             shortened_reporte['estado'] = reporte_estado['estado__nombreEstado']
             shortened_reporte['latitud'] = reporte_estado['estado__latitud']
@@ -641,40 +626,40 @@ class BuscadorEndpoint(generic.ListView):
                 shortened_reporte['avance'] += reporte["nov"]
                 shortened_reporte['avance'] += reporte["dic"]
 
-            carenciaId = reporte['avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id']
             for avance in AvancePorMunicipio.objects.filter(
                     meta__accionEstrategica__subCarencia__carencia__id=carenciaId):
                 shortened_reporte['inversion'] += avance.inversionAprox
 
-            for meta_mensual in MetaMensual.objects.filter(
-                    meta__accionEstrategica__subCarencia__carencia__id=carenciaId):
+            carenciaId = reporte['avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id']
+            metas = myObj.getMetasFiltradas(carenciaID = carenciaId, accionID=None, estadoID=None, metaID=None)
+            for meta_mensual in metas['meta']:
                 if myObj.meses is not None:
                     for mes in myObj.meses:
-                        if mes == 1: shortened_reporte['suma_meta'] += meta_mensual.ene
-                        if mes == 2: shortened_reporte['suma_meta'] += meta_mensual.feb
-                        if mes == 3: shortened_reporte['suma_meta'] += meta_mensual.mar
-                        if mes == 4: shortened_reporte['suma_meta'] += meta_mensual.abr
-                        if mes == 5: shortened_reporte['suma_meta'] += meta_mensual.may
-                        if mes == 6: shortened_reporte['suma_meta'] += meta_mensual.jun
-                        if mes == 7: shortened_reporte['suma_meta'] += meta_mensual.jul
-                        if mes == 8: shortened_reporte['suma_meta'] += meta_mensual.ago
-                        if mes == 9: shortened_reporte['suma_meta'] += meta_mensual.sep
-                        if mes == 10: shortened_reporte['suma_meta'] += meta_mensual.oct
-                        if mes == 11: shortened_reporte['suma_meta'] += meta_mensual.nov
-                        if mes == 12: shortened_reporte['suma_meta'] += meta_mensual.dic
+                        if mes == 1: shortened_reporte['suma_meta'] += meta_mensual['ene']
+                        if mes == 2: shortened_reporte['suma_meta'] += meta_mensual['feb']
+                        if mes == 3: shortened_reporte['suma_meta'] += meta_mensual['mar']
+                        if mes == 4: shortened_reporte['suma_meta'] += meta_mensual['abr']
+                        if mes == 5: shortened_reporte['suma_meta'] += meta_mensual['may']
+                        if mes == 6: shortened_reporte['suma_meta'] += meta_mensual['jun']
+                        if mes == 7: shortened_reporte['suma_meta'] += meta_mensual['jul']
+                        if mes == 8: shortened_reporte['suma_meta'] += meta_mensual['ago']
+                        if mes == 9: shortened_reporte['suma_meta'] += meta_mensual['sep']
+                        if mes == 10: shortened_reporte['suma_meta'] += meta_mensual['oct']
+                        if mes == 11: shortened_reporte['suma_meta'] += meta_mensual['nov']
+                        if mes == 12: shortened_reporte['suma_meta'] += meta_mensual['dic']
                 else:
-                    shortened_reporte['suma_meta'] += meta_mensual.ene
-                    shortened_reporte['suma_meta'] += meta_mensual.feb
-                    shortened_reporte['suma_meta'] += meta_mensual.mar
-                    shortened_reporte['suma_meta'] += meta_mensual.abr
-                    shortened_reporte['suma_meta'] += meta_mensual.may
-                    shortened_reporte['suma_meta'] += meta_mensual.jun
-                    shortened_reporte['suma_meta'] += meta_mensual.jul
-                    shortened_reporte['suma_meta'] += meta_mensual.ago
-                    shortened_reporte['suma_meta'] += meta_mensual.sep
-                    shortened_reporte['suma_meta'] += meta_mensual.oct
-                    shortened_reporte['suma_meta'] += meta_mensual.nov
-                    shortened_reporte['suma_meta'] += meta_mensual.dic
+                    shortened_reporte['suma_meta'] += meta_mensual['ene']
+                    shortened_reporte['suma_meta'] += meta_mensual['feb']
+                    shortened_reporte['suma_meta'] += meta_mensual['mar']
+                    shortened_reporte['suma_meta'] += meta_mensual['abr']
+                    shortened_reporte['suma_meta'] += meta_mensual['may']
+                    shortened_reporte['suma_meta'] += meta_mensual['jun']
+                    shortened_reporte['suma_meta'] += meta_mensual['jul']
+                    shortened_reporte['suma_meta'] += meta_mensual['ago']
+                    shortened_reporte['suma_meta'] += meta_mensual['sep']
+                    shortened_reporte['suma_meta'] += meta_mensual['oct']
+                    shortened_reporte['suma_meta'] += meta_mensual['nov']
+                    shortened_reporte['suma_meta'] += meta_mensual['dic']
 
             shortened_reporte['carenciaId'] = reporte[
                 'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id']
@@ -715,40 +700,40 @@ class BuscadorEndpoint(generic.ListView):
                 shortened_reporte['avance'] += reporte["nov"]
                 shortened_reporte['avance'] += reporte["dic"]
 
-            accionId = reporte['avancePorMunicipio__meta__accionEstrategica__id']
             for avance in AvancePorMunicipio.objects.filter(
                     meta__accionEstrategica__id=accionId):
                 shortened_reporte['inversion'] += avance.inversionAprox
 
-            for meta_mensual in MetaMensual.objects.filter(
-                    meta__accionEstrategica__id=accionId):
+            accionId = reporte['avancePorMunicipio__meta__accionEstrategica__id']
+            metas = myObj.getMetasFiltradas(carenciaID=None, accionID=accionId, estadoID=None, metaID=None)
+            for meta_mensual in metas['meta']:
                 if myObj.meses is not None:
                     for mes in myObj.meses:
-                        if mes == 1: shortened_reporte['suma_meta'] += meta_mensual.ene
-                        if mes == 2: shortened_reporte['suma_meta'] += meta_mensual.feb
-                        if mes == 3: shortened_reporte['suma_meta'] += meta_mensual.mar
-                        if mes == 4: shortened_reporte['suma_meta'] += meta_mensual.abr
-                        if mes == 5: shortened_reporte['suma_meta'] += meta_mensual.may
-                        if mes == 6: shortened_reporte['suma_meta'] += meta_mensual.jun
-                        if mes == 7: shortened_reporte['suma_meta'] += meta_mensual.jul
-                        if mes == 8: shortened_reporte['suma_meta'] += meta_mensual.ago
-                        if mes == 9: shortened_reporte['suma_meta'] += meta_mensual.sep
-                        if mes == 10: shortened_reporte['suma_meta'] += meta_mensual.oct
-                        if mes == 11: shortened_reporte['suma_meta'] += meta_mensual.nov
-                        if mes == 12: shortened_reporte['suma_meta'] += meta_mensual.dic
+                        if mes == 1: shortened_reporte['suma_meta'] += meta_mensual['ene']
+                        if mes == 2: shortened_reporte['suma_meta'] += meta_mensual['feb']
+                        if mes == 3: shortened_reporte['suma_meta'] += meta_mensual['mar']
+                        if mes == 4: shortened_reporte['suma_meta'] += meta_mensual['abr']
+                        if mes == 5: shortened_reporte['suma_meta'] += meta_mensual['may']
+                        if mes == 6: shortened_reporte['suma_meta'] += meta_mensual['jun']
+                        if mes == 7: shortened_reporte['suma_meta'] += meta_mensual['jul']
+                        if mes == 8: shortened_reporte['suma_meta'] += meta_mensual['ago']
+                        if mes == 9: shortened_reporte['suma_meta'] += meta_mensual['sep']
+                        if mes == 10: shortened_reporte['suma_meta'] += meta_mensual['oct']
+                        if mes == 11: shortened_reporte['suma_meta'] += meta_mensual['nov']
+                        if mes == 12: shortened_reporte['suma_meta'] += meta_mensual['dic']
                 else:
-                    shortened_reporte['suma_meta'] += meta_mensual.ene
-                    shortened_reporte['suma_meta'] += meta_mensual.feb
-                    shortened_reporte['suma_meta'] += meta_mensual.mar
-                    shortened_reporte['suma_meta'] += meta_mensual.abr
-                    shortened_reporte['suma_meta'] += meta_mensual.may
-                    shortened_reporte['suma_meta'] += meta_mensual.jun
-                    shortened_reporte['suma_meta'] += meta_mensual.jul
-                    shortened_reporte['suma_meta'] += meta_mensual.ago
-                    shortened_reporte['suma_meta'] += meta_mensual.sep
-                    shortened_reporte['suma_meta'] += meta_mensual.oct
-                    shortened_reporte['suma_meta'] += meta_mensual.nov
-                    shortened_reporte['suma_meta'] += meta_mensual.dic
+                    shortened_reporte['suma_meta'] += meta_mensual['ene']
+                    shortened_reporte['suma_meta'] += meta_mensual['feb']
+                    shortened_reporte['suma_meta'] += meta_mensual['mar']
+                    shortened_reporte['suma_meta'] += meta_mensual['abr']
+                    shortened_reporte['suma_meta'] += meta_mensual['may']
+                    shortened_reporte['suma_meta'] += meta_mensual['jun']
+                    shortened_reporte['suma_meta'] += meta_mensual['jul']
+                    shortened_reporte['suma_meta'] += meta_mensual['ago']
+                    shortened_reporte['suma_meta'] += meta_mensual['sep']
+                    shortened_reporte['suma_meta'] += meta_mensual['oct']
+                    shortened_reporte['suma_meta'] += meta_mensual['nov']
+                    shortened_reporte['suma_meta'] += meta_mensual['dic']
 
             shortened_reporte['accionId'] = reporte[
                 'avancePorMunicipio__meta__accionEstrategica__id']
@@ -756,7 +741,7 @@ class BuscadorEndpoint(generic.ListView):
                 'avancePorMunicipio__meta__accionEstrategica__nombreAccion']
             json_map['reporte_por_accion'].append(shortened_reporte)
 
-            return HttpResponse(json.dumps(json_map, indent=6, sort_keys=True, ensure_ascii=False),
+        return HttpResponse(json.dumps(json_map, indent=6, sort_keys=True, ensure_ascii=False),
                                 'application/json', )
 
 
