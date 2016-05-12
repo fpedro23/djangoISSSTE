@@ -1571,7 +1571,7 @@ function tablaI(Datos){
                             +'<th>Avance Total</th>'
                         +'</tr>'
 
-                        +'<tr><td class="pager" id="pagerI" colspan="3">'
+                        +'<tr><td class="pager" id="pagerI" colspan="5">'
                         +'<img src="../../static/assets/tablesorter/addons/pager/icons/first.png" class="first" id="firstI"/>'
                         +'<img src="../../static/assets/tablesorter/addons/pager/icons/prev.png" class="prev" id="prevI"/>'
                         +'<span class="pagedisplay" id="pagedisplayI"></span>'
@@ -1634,7 +1634,7 @@ function tablaI(Datos){
                 +'    headerTemplate : "{content} {icon}",'
                 +'    widgets: [ "uitheme", "zebra", "pager", "scroller" ],'
                 +'    widgetOptions : {'
-                +'        scroller_height : 190,'
+                +'        scroller_height : 180,'
                 +'        scroller_upAfterSort: true,'
                 +'        scroller_jumpToHeader: true,'
                 +'        scroller_barWidth : null,'
