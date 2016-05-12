@@ -257,7 +257,7 @@ class MetaAdmin(admin.ModelAdmin):
 class AvanceMensualInLine(admin.TabularInline):
     model = AvanceMensual
     extra = 0
-    can_delete = False
+
 
 
 class AvancePorMunicipioAdmin(admin.ModelAdmin):

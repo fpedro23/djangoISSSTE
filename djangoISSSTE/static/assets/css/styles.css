@@ -530,7 +530,7 @@
 .inavance_MENSUAL{
 	border: 0px solid #740e11;
 	border-radius: 0px;
-	width: 1015px;
+	width: 1010px;
 	height: 225px;
 	font-family: 'soberana_sanslight';
 	font-size: 15px;
@@ -538,7 +538,7 @@
 	position: absolute;
     padding-top: 0px;
     overflow: scroll;
-	left: 3px;
+	left: 2px;
 	top: 265px;
 }
 
@@ -1299,19 +1299,15 @@ a:hover {
 	 height:330px;
 	 margin-top:33px;
 	 margin-left:50px;
-
 	font-family: "soberana_sanslight";
     font-size:18px;
-
     color: #6A6B6C;
 
 }
 
-.guardar_Continuar {
+.guardar_ContinuarB {
     width: 187px;
     height: 30px;
-    background-image: url(../Imagenes/bigBackground.fw.png);
-    background-position: -1159px -1861px;
     position: absolute;
     top: 550px;
     left: 675px;
@@ -1320,8 +1316,10 @@ a:hover {
     border-width: 0px;
     border-style: none;
     border-color: inherit;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -1159px -1861px;
 }
 
-.botCAMBIAR2:hover{
+.guardar_ContinuarB:hover{
 	background-position:1159px -1891px;
 }
