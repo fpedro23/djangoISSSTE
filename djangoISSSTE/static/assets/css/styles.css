@@ -1105,9 +1105,8 @@
 }
 
 .labelreadonly{
-    font-weight: bold;
-    font-family: 'soberana_textobold';
-    font-size: 12px;
+    font-family: 'soberana_sans_lightbold';
+    font-size: 11px;
     color: #020203;
     vertical-align: top;
 }
@@ -1308,3 +1307,21 @@ a:hover {
 
 }
 
+.guardar_Continuar {
+    width: 187px;
+    height: 30px;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -1159px -1861px;
+    position: absolute;
+    top: 550px;
+    left: 675px;
+    background-color: transparent;
+    border-radius: 0px;
+    border-width: 0px;
+    border-style: none;
+    border-color: inherit;
+}
+
+.botCAMBIAR2:hover{
+	background-position:1159px -1891px;
+}

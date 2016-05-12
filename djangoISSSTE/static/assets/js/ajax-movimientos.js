@@ -158,14 +158,14 @@ $j(function() {
         var valor = $(this).val();
         var periodo = $('#id_periodo').find('option:selected').val();
         var meta = $('#id_meta').find('option:selected').val();
-        alert('ESTADO: '+valor+', '+ periodo+', '+meta);
+       // alert('ESTADO: '+valor+', '+ periodo+', '+meta);
         if (valor != null &&  periodo != null && meta != null) {
             getAvanceForPeriodo(valor,periodo,meta, function (ans) {
             });
         }
     });
 
-    $j('#id_meta').bind('change', function () {
+    /*$j('#id_meta').bind('change', function () {
         var meta = $(this).val();
         var periodo = $('#id_periodo').find('option:selected').val();
         var valor = $('#id_estado').find('option:selected').val();
@@ -174,7 +174,7 @@ $j(function() {
             getAvanceForPeriodo(valor,periodo,meta, function (ans) {
             });
         }
-    });
+    });*/
 
 
 });
