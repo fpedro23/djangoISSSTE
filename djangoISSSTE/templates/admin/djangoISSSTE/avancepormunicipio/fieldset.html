@@ -7,6 +7,7 @@
     {% endif %}
     {% for line in fieldset %}
             {% for field in line %}
+
                 {% if field.field.name == "periodo" %}
                     <div class= "general">
                         <div id="tituloCUADROS">
@@ -137,7 +138,7 @@
                                      {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}
-                                          {{ field.contents }}
+                                          {{ field.contents|floatFormat }}
                                        {% endif %}
                                 <script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
                                 <script> $(document).ready(function($) {
@@ -167,6 +168,29 @@
                      </table>
 
                 {% endif %}
+
+
+                {% if field.field.name == "get_monto_promedio" %}
+                                    <div class="txtlabel" style="overflow: scroll; height:20px; top: 97px;left:339px;position: absolute;">
+
+                                        Monto  Promedio: </div>
+
+                     <div class="labelreadonly" style="overflow: scroll; height:20px; top: 97px;left:479px;position: absolute;">
+
+                                        {% if field.field.errors %}
+                                         {{ field.field|addcss:"border-error" }}
+                                       {% else %}
+                                          {{ field.contents|floatFormat }}
+                                       {% endif %}
+                                <script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
+                                <script> $(document).ready(function($) {
+                                    var $te = jQuery.noConflict();
+                                    $te('#tr-{{ field.field.name}}').tooltip({html:true});});</script>
+                                    </div>
+
+                {% endif %}
+
+
 
                 {% if field.field.name == "get_enero" %}
 

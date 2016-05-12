@@ -37,6 +37,7 @@ $nums(document).ready(function() {
 
     $nums('.tamcontrol').numeric({ decimalPlaces: 2 });
 
+
     $nums(".numeric").numeric();
 	$nums(".integer").numeric(false, function() { alert("Integers only"); this.value = ""; this.focus(); });
 	$nums(".positive").numeric({ negative: false }, function() { alert("No negative values"); this.value = ""; this.focus(); });

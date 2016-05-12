@@ -5,6 +5,32 @@
 <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
 
 {{ media }}
+    <script>
+
+
+         var $ttd = jQuery.noConflict();
+
+        $ttd(document).ready(function($) {
+var $ttd = jQuery.noConflict();
+    $ttd(document).on('keypress','input[type=number]',function(event) {
+  if ((event.which != 46 || $(this).val().indexOf('.') != -1) &&
+    ((event.which < 48 || event.which > 57) &&
+      (event.which != 0 && event.which != 8))) {
+    event.preventDefault();
+  }
+
+  var text = $ttd(this).val();
+
+  if ((text.indexOf('.') != -1) &&
+    (text.substring(text.indexOf('.')).length > 2) &&
+    (event.which != 0 && event.which != 8) ) {
+    event.preventDefault();
+  }
+});
+        });
+
+
+    </script>
 {% endblock %}
 
 {% block extrastyle %}{{ block.super }}
@@ -81,7 +107,8 @@
 
 {% block after_related_objects %}{% endblock %}
 
-{% block submit_buttons_bottom %}{% submit_row %}{% endblock %}
+{% block submit_buttons_bottom %}{% submit_row %}
+  <div class = "salirBTN" onclick="location.href='/admin';"></div>{% endblock %}
 
 {% block admin_change_form_document_ready %}
     <script type="text/javascript">

@@ -937,8 +937,10 @@
 	height: 30px;
 	background-image: url(../Imagenes/bigBackground.fw.png);
 	background-position: -726px -1925px;
-	position: relative;
 	display: inline-block;
+        position: absolute;
+    top: 550px;
+    left: 597px;
 }
 
 .salirBTN:hover{
@@ -1210,8 +1212,8 @@ a:hover {
 	height:60px;
 
 	position:absolute;
-	left:26px;
-	top:100px;
+	left:13px;
+	top:73px;
 }
 
 .aceptarBTN{
@@ -1229,6 +1231,32 @@ a:hover {
 .aceptarBTN:hover{
 	background-position:-724px -2287px;
 }
+/* MESSAGES & ERRORS */
+
+ul.messagelist {
+    padding: 0;
+    margin: 0;
+}
+
+ul.messagelist li {
+    font-size: 12px;
+    font-weight: bold;
+    display: block;
+    padding: 5px 5px 4px 25px;
+    margin: 0 0 3px 0;
+    border-bottom: 0px solid #ddd;
+    color: #ffffff;
+    background: transparent url(../img/icon_success.gif) 5px .3em no-repeat;
+}
+
+ul.messagelist li.warning {
+    background: transparent url(../img/icon_alert.gif) 5px .3em no-repeat;
+}
+
+ul.messagelist li.error {
+    background: transparent url(../img/icon_error.gif) 5px .3em no-repeat;
+}
+
 
 .errornote {
         font-family: 'soberana_sansregular';
@@ -1321,5 +1349,5 @@ a:hover {
 }
 
 .guardar_ContinuarB:hover{
-	background-position:1159px -1891px;
+	background-position:-1159px -1891px;
 }
