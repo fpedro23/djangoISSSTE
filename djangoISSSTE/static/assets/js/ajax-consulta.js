@@ -1679,18 +1679,22 @@ function tablaD(Datos){
 
     var totalAvances = 0
     var totalInversion = 0
+    var tituloColumna = "";
     if (tipoReporte=="Estado") {
+        tituloColumna = "Estado";
         for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
             totalAvances += Datos.reporte_por_estado[i].avance
             totalInversion += Datos.reporte_por_estado[i].suma_meta
         }
     }else{
         if (tipoReporte=="Carencia") {
+            tituloColumna = "Carencia";
             for (var i = 0; i < Datos.reporte_por_carencia.length; i++) {
                 totalAvances += Datos.reporte_por_carencia[i].avance
                 totalInversion += Datos.reporte_por_carencia[i].suma_meta
             }
         }else{
+            tituloColumna = "Acción";
             for (var i = 0; i < Datos.reporte_por_accion.length; i++) {
                 totalAvances += Datos.reporte_por_accion[i].avance
                 totalInversion += Datos.reporte_por_accion[i].suma_meta
@@ -1701,14 +1705,14 @@ function tablaD(Datos){
     sHtmlExporta= '<table id="tablaExporta" class="table table-striped">'
                 +' <colgroup>'
                 +' <col width="40%">'
-                +' <col width="20%">'
+                //+' <col width="20%">'
                 +' <col width="20%">'
                 +' <col width="20%">'
                 +' </colgroup> '
                 +'<thead>'
                         +'<tr>'
-                            +'<th>Carencia</th>'
-                            +'<th>Estado</th>'
+                            +'<th>' + tituloColumna + '</th>'
+                            //+'<th>Estado</th>'
                             +'<th>Avance Total</th>'
                             +'<th>Meta Total</th>'
                         +'</tr>'
@@ -1717,7 +1721,7 @@ function tablaD(Datos){
     sHtmlShorter ='<table cellspacing="1"  id="tablaDerecha">'
                 +' <colgroup>'
                 +' <col width="40%">'
-                +' <col width="20%">'
+                //+' <col width="20%">'
                 +' <col width="20%">'
                 +' <col width="20%">'
                 +' </colgroup> ';
@@ -1725,21 +1729,21 @@ function tablaD(Datos){
 
     var sHtml='<thead>'
                         +'<tr>'
-                            +'<th width= "40%">Carencia</th>'
-                            +'<th width= "20%">Estado</th>'
+                            +'<th width= "40%">' + tituloColumna + '</th>'
+                           // +'<th width= "20%">Estado</th>'
                             +'<th width= "20%">Avance Total</th>'
                             +'<th width= "20%">Meta Total</th>'
                         +'</tr>'
                     +'</thead>'
                     +'<tfoot>'
                         +'<tr>'
-                            +'<th></th>'
+                            //+'<th></th>'
                             +'<th>TOTALES</th>'
                             +'<th style="text-align:right;">'+ formato_numero(totalAvances, 0, '.', ',') +'</th>'
                             +'<th style="text-align:right; padding-right:10px;">'+ formato_numero(totalInversion, 0, '.', ',') +'</th>'
                         +'</tr>'
 
-                        +'<tr><td class="pager" id="pagerD" colspan="4">'
+                        +'<tr><td class="pager" id="pagerD" colspan="3">'
                         //+'<div class="first principioFLECHA" id="firstD" style="height:11px"></div>'
                         +'<img src="../../static/assets/tablesorter/addons/pager/icons/first.png" class="first" id="firstD"/>'
                         +'<img src="../../static/assets/tablesorter/addons/pager/icons/prev.png" class="prev" id="prevD"/>'
@@ -1760,15 +1764,15 @@ function tablaD(Datos){
         estadosChecked="checked";
         for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
             sHtml += '<tr>'
-            + '<td width= "40%"></td>'
-            + '<td width= "20%" align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
+            //+ '<td width= "40%"></td>'
+            + '<td width= "40%" align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
             + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].avance, 0, '.', ',') + '</td>'
             + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].suma_meta, 0, '.', ',') + '</td>'
             + '</tr>'
 
             sHtmlExporta += '<tr>'
-            + '<td width= "40%"></td>'
-            + '<td width= "20%" align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
+            //+ '<td width= "40%"></td>'
+            + '<td width= "40%" align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
             + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].avance, 0, '.', ',') + '</td>'
             + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].suma_meta, 2, '.', ',') + '</td>'
             + '</tr>'
@@ -1778,15 +1782,15 @@ function tablaD(Datos){
             carenciasChecked="checked";
             for (var i = 0; i < Datos.reporte_por_carencia.length; i++) {
                 sHtml += '<tr>'
-                + '<td width= "40%"></td>'
-                + '<td width= "20%" align="right">' + Datos.reporte_por_carencia[i].nombreCarencia + '</td>'
+                //+ '<td width= "40%"></td>'
+                + '<td width= "40%" align="right">' + Datos.reporte_por_carencia[i].nombreCarencia + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_carencia[i].avance, 0, '.', ',') + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_carencia[i].suma_meta, 0, '.', ',') + '</td>'
                 + '</tr>'
 
                 sHtmlExporta += '<tr>'
-                + '<td width= "40%"></td>'
-                + '<td width= "20%" align="right">' + Datos.reporte_por_carencia[i].nombreCarencia + '</td>'
+                //+ '<td width= "40%"></td>'
+                + '<td width= "40%" align="right">' + Datos.reporte_por_carencia[i].nombreCarencia + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_carencia[i].avance, 0, '.', ',') + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_carencia[i].suma_meta, 2, '.', ',') + '</td>'
                 + '</tr>'
@@ -1795,15 +1799,15 @@ function tablaD(Datos){
             accionesChecked="checked";
             for (var i = 0; i < Datos.reporte_por_accion.length; i++) {
                 sHtml += '<tr>'
-                + '<td width= "40%"></td>'
-                + '<td width= "20%" align="right">' + Datos.reporte_por_accion[i].nombreAccion + '</td>'
+               // + '<td width= "40%"></td>'
+                + '<td width= "40%" align="right">' + Datos.reporte_por_accion[i].nombreAccion + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_accion[i].avance, 0, '.', ',') + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_accion[i].suma_meta, 0, '.', ',') + '</td>'
                 + '</tr>'
 
                 sHtmlExporta += '<tr>'
-                + '<td width= "40%"></td>'
-                + '<td width= "20%" align="right">' + Datos.reporte_por_accion[i].nombreAccion + '</td>'
+                //+ '<td width= "40%"></td>'
+                + '<td width= "40%" align="right">' + Datos.reporte_por_accion[i].nombreAccion + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_accion[i].avance, 0, '.', ',') + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_accion[i].suma_meta, 2, '.', ',') + '</td>'
                 + '</tr>'
@@ -1833,8 +1837,8 @@ function tablaD(Datos){
     }*/
 
         sHtml += '<tr>'
-            + '<td width= "40%"></td>'
-            + '<td width= "20%" align="right"></td>'
+            //+ '<td width= "40%"></td>'
+            + '<td width= "40%" align="right"></td>'
             + '<td width= "20%" align="right"></td>'
             + '<td width= "20%" align="right"></td>'
             + '</tr>'
@@ -1885,7 +1889,7 @@ function tablaD(Datos){
                 +'    headerTemplate : "{content} {icon}",'
                 +'    widgets: [ "uitheme", "zebra", "pager", "scroller" ],'
                 +'    widgetOptions : {'
-                +'        scroller_height : 130,'
+                +'        scroller_height : 120,'
                 +'        scroller_upAfterSort: true,'
                 +'        scroller_jumpToHeader: true,'
                 +'        scroller_barWidth : null,'
@@ -1922,18 +1926,22 @@ $j.tablaGrafica = function(Datos){
 
     var totalAvances = 0
     var totalInversion = 0
+    var tituloColumna="";
     if (tipoReporte=="Estado") {
+        tituloColumna="Estado";
         for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
             totalAvances += Datos.reporte_por_estado[i].avance
             totalInversion += Datos.reporte_por_estado[i].suma_meta
         }
     }else{
         if (tipoReporte=="Carencia") {
+            tituloColumna="Carencia";
             for (var i = 0; i < Datos.reporte_por_carencia.length; i++) {
                 totalAvances += Datos.reporte_por_carencia[i].avance
                 totalInversion += Datos.reporte_por_carencia[i].suma_meta
             }
         }else{
+            tituloColumna="Acción";
            for (var i = 0; i < Datos.reporte_por_accion.length; i++) {
                 totalAvances += Datos.reporte_por_accion[i].avance
                 totalInversion += Datos.reporte_por_accion[i].suma_meta
@@ -1949,15 +1957,15 @@ $j.tablaGrafica = function(Datos){
                     +'<table cellspacing="1"   id="tablaGrafica">'
                     +'<thead>'
                         +'<tr>'
-                            +'<th>Carencia</th>'
-                            +'<th>Estado</th>'
+                            //+'<th>Carencia</th>'
+                            +'<th>' + tituloColumna +'</th>'
                             +'<th>Avances</th>'
                             +'<th>Meta</th>'
                         +'</tr>'
                     +'</thead>'
                     +'<tfoot>'
                         +'<tr>'
-                            +'<th></th>'
+                            //+'<th></th>'
                             +'<th>TOTALES</th>'
                             +'<th style="text-align:right;">'+ formato_numero(totalAvances, 0, '.', ',') +'</th>'
                             +'<th style="text-align:right; padding-right:10px;">'+ formato_numero(totalInversion, 0, '.', ',') +'</th>'
@@ -1983,7 +1991,7 @@ $j.tablaGrafica = function(Datos){
         estadosChecked="checked";
         for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
             sHtml += '<tr>'
-            + '<td>' + Datos.reporte_por_estado[i].carencia + '</td>'
+            //+ '<td>' + Datos.reporte_por_estado[i].carencia + '</td>'
             + '<td align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
             + '<td align="right">' + formato_numero(Datos.reporte_por_estado[i].avance, 0, '.', ',') + '</td>'
             + '<td align="right">' + formato_numero(Datos.reporte_por_estado[i].suma_meta, 0, '.', ',') + '</td>'
@@ -1994,7 +2002,7 @@ $j.tablaGrafica = function(Datos){
             estadosChecked="checked";
             for (var i = 0; i < Datos.reporte_por_carencia.length; i++) {
                 sHtml += '<tr>'
-                + '<td></td>'
+                //+ '<td></td>'
                 + '<td align="right">' + Datos.reporte_por_carencia[i].nombreCarencia + '</td>'
                 + '<td align="right">' + formato_numero(Datos.reporte_por_carencia[i].avance, 0, '.', ',') + '</td>'
                 + '<td align="right">' + formato_numero(Datos.reporte_por_carencia[i].suma_meta, 0, '.', ',') + '</td>'
@@ -2004,7 +2012,7 @@ $j.tablaGrafica = function(Datos){
             estadosChecked="checked";
             for (var i = 0; i < Datos.reporte_por_accion.length; i++) {
                 sHtml += '<tr>'
-                + '<td></td>'
+                //+ '<td></td>'
                 + '<td align="right">' + Datos.reporte_por_accion[i].nombreAccion + '</td>'
                 + '<td align="right">' + formato_numero(Datos.reporte_por_accion[i].avance, 0, '.', ',') + '</td>'
                 + '<td align="right">' + formato_numero(Datos.reporte_por_accion[i].suma_meta, 0, '.', ',') + '</td>'
