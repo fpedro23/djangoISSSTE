@@ -279,6 +279,8 @@ function ResultadosPptx() {
     var arrayPeriodos= $l("#msPeriodos").multiselect("getChecked").map(function(){return this.value;}).get();
     var arrayMeses = $l("#msMeses").multiselect("getChecked").map(function(){return this.value;}).get();
     var arrayAcciones = $l("#msAcciones").multiselect("getChecked").map(function(){return this.value;}).get();
+    var arrayUnidades = $l("#msUnidadMedida").multiselect("getChecked").map(function(){return this.value;}).get();
+
 
     var inversionInicial = $l("#inversionInicial").val();
     var inversionFinal = $l("#inversionFinal").val();
@@ -290,7 +292,7 @@ function ResultadosPptx() {
     var metaFinal = $l("#metaFinal").val();
 
     var observaciones = $l("#observaciones").val();
-    var unidadMedida = $l("#unidadmedida").val();
+
 
 
     var URL="/issste/api/ResultadosPptx?access_token=" + newToken;
@@ -304,17 +306,17 @@ function ResultadosPptx() {
     if(arrayEstados.toString()!=""){URL += "&estados=" + arrayEstados.toString();}
     if(arrayMeses.toString()!=""){URL += "&meses=" + arrayMeses.toString();}
     if(arrayAcciones.toString()!=""){URL += "&acciones=" + arrayAcciones.toString();}
+    if(arrayUnidades.toString()!=""){ajax_data.unidadDeMedida=arrayUnidades.toString();}
 
     if(inversionInicial!=""){URL += "&inversionMinima=" + inversionInicial;}
     if(inversionFinal!=""){URL += "&inversionMaxima=" + inversionFinal;}
     if(avanceInicial!=""){URL += "&avanceMinimo=" + avanceInicial;}
     if(avanceFinal!=""){URL += "&avanceMaximo=" + avanceFinal;}
-    //if(metaInicial!=""){ajax_data.inversionMinima=metaInicial;}
-    //if(metaFinal!=""){ajax_data.inversionMaxima=metaFinal;}
+
 
 
     if(observaciones!=""){URL += "&observaciones=" + observaciones;}
-    if(unidadMedida!=""){URL += "&unidadDeMedida=" + unidadMedida;}
+
 
     location.href = URL
 
@@ -331,7 +333,7 @@ function ReportePptx() {
     var arrayPeriodos= $l("#msPeriodos").multiselect("getChecked").map(function(){return this.value;}).get();
     var arrayMeses = $l("#msMeses").multiselect("getChecked").map(function(){return this.value;}).get();
     var arrayAcciones = $l("#msAcciones").multiselect("getChecked").map(function(){return this.value;}).get();
-
+    var arrayUnidades = $l("#msUnidadMedida").multiselect("getChecked").map(function(){return this.value;}).get();
     var inversionInicial = $l("#inversionInicial").val();
     var inversionFinal = $l("#inversionFinal").val();
 
@@ -342,7 +344,7 @@ function ReportePptx() {
     var metaFinal = $l("#metaFinal").val();
 
     var observaciones = $l("#observaciones").val();
-    var unidadMedida = $l("#unidadmedida").val();
+
 
 
     var URL="/issste/api/ReportePptx?access_token=" + newToken;
@@ -356,6 +358,7 @@ function ReportePptx() {
     if(arrayEstados.toString()!=""){URL += "&estados=" + arrayEstados.toString();}
     if(arrayMeses.toString()!=""){URL += "&meses=" + arrayMeses.toString();}
     if(arrayAcciones.toString()!=""){URL += "&acciones=" + arrayAcciones.toString();}
+    if(arrayUnidades.toString()!=""){ajax_data.unidadDeMedida=arrayUnidades.toString();}
 
     if(inversionInicial!=""){URL += "&inversionMinima=" + inversionInicial;}
     if(inversionFinal!=""){URL += "&inversionMaxima=" + inversionFinal;}
@@ -366,7 +369,7 @@ function ReportePptx() {
 
 
     if(observaciones!=""){URL += "&observaciones=" + observaciones;}
-    if(unidadMedida!=""){URL += "&unidadDeMedida=" + unidadMedida;}
+
 
     location.href = URL
 
@@ -384,6 +387,7 @@ function verDatos() {
     var arrayPeriodos= $l("#msPeriodos").multiselect("getChecked").map(function(){return this.value;}).get();
     var arrayMeses = $l("#msMeses").multiselect("getChecked").map(function(){return this.value;}).get();
     var arrayAcciones = $l("#msAcciones").multiselect("getChecked").map(function(){return this.value;}).get();
+    var arrayUnidades = $l("#msUnidadMedida").multiselect("getChecked").map(function(){return this.value;}).get();
 
     var inversionInicial = $l("#inversionInicial").val();
     var inversionFinal = $l("#inversionFinal").val();
@@ -395,7 +399,7 @@ function verDatos() {
     var metaFinal = $l("#metaFinal").val();
 
     var observaciones = $l("#observaciones").val();
-    var unidadMedida = $l("#unidadmedida").val();
+
 
 
     var ajax_data = {
@@ -410,17 +414,16 @@ function verDatos() {
     if(arrayEstados.toString()!=""){ajax_data.estados=arrayEstados.toString();}
     if(arrayMeses.toString()!=""){ajax_data.meses=arrayMeses.toString();}
     if(arrayAcciones.toString()!=""){ajax_data.acciones=arrayAcciones.toString();}
+    if(arrayUnidades.toString()!=""){ajax_data.unidadDeMedida=arrayUnidades.toString();}
 
     if(inversionInicial!=""){ajax_data.inversionMinima=inversionInicial;}
     if(inversionFinal!=""){ajax_data.inversionMaxima=inversionFinal;}
     if(avanceInicial!=""){ajax_data.avanceMinimo=avanceInicial;}
     if(avanceFinal!=""){ajax_data.avanceMaximo=avanceFinal;}
-    //if(metaInicial!=""){ajax_data.inversionMinima=metaInicial;}
-    //if(metaFinal!=""){ajax_data.inversionMaxima=metaFinal;}
 
 
     if(observaciones!=""){ajax_data.observaciones=observaciones;}
-    if(unidadMedida!=""){ajax_data.unidadDeMedida=unidadMedida;}
+
 
 
 

@@ -22,7 +22,7 @@ $nums(document).ready(function() {
     $nums('#id_totalBeneficiarios').numeric({ decimal: false });
     $nums('#id_inversionTotal').numeric({ decimalPlaces: 2 });
     $nums('#id_montoRegistroHacendario').numeric({ decimalPlaces: 2 });
-    $nums('#id_porcentajeAvance').numeric({ decimalPlaces: 2 , negative:false });
+    $nums('.decimal').numeric({ decimalPlaces: 2 , negative:false });
     $nums('#id_latitud').numeric({ decimalPlaces: 10 });
     $nums('#id_longitud').numeric({ decimalPlaces: 10 });
     $nums('#id_detalleinversion_set-__prefix__-monto').numeric({ decimalPlaces: 2 });
