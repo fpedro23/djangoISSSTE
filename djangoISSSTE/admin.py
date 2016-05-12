@@ -11,6 +11,7 @@ from django.db.models.query_utils import Q
 from django.forms.models import ModelForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import Group
+from django.contrib import messages
 
 from djangoISSSTE.forms import *
 from djangoISSSTE.models import *
@@ -253,12 +254,33 @@ class MetaAdmin(admin.ModelAdmin):
                 obj = f.instance
                 obj.save()
 
+    # Redireccionamiento cuando se guarda una nueva meta
+    def response_add(self, request, obj, post_url_continue=None):
+        if not request.POST.has_key('_addanother'):
+            success_message = 'La meta \"%s\" se ha creado exitosamente.' % obj.__str__()
+            self.message_user(request, success_message, level=messages.SUCCESS)
+            return HttpResponseRedirect('/catalogos')
+        else:
+            success_message = 'La meta \"%s\" se ha creado exitosamente.' % obj.__str__()
+            self.message_user(request, success_message, level=messages.SUCCESS)
+            return super(MetaAdmin, self).response_add(request, obj, post_url_continue)
+
+    # Redireccionamiento cuando se guarda una nueva meta
+    def response_change(self, request, obj, post_url_continue=None):
+        if not request.POST.has_key('_addanother'):
+            success_message = 'La meta \"%s\" se ha modificado exitosamente.' % obj.__str__()
+            self.message_user(request, success_message, level=messages.SUCCESS)
+            return HttpResponseRedirect('/catalogos')
+        else:
+            success_message = 'La meta \"%s\" se ha modificado exitosamente.' % obj.__str__()
+            self.message_user(request, success_message, level=messages.SUCCESS)
+            return super(MetaAdmin, self).response_add(request, obj, post_url_continue)
+
 
 class AvanceMensualInLine(admin.TabularInline):
     model = AvanceMensual
     exclude = ['porcentajeAvance']
     extra = 0
-
 
 class AvancePorMunicipioAdmin(admin.ModelAdmin):
     # La entidad de meta se desplegará con el label de "Acción Estratégica"
@@ -496,6 +518,23 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
         return super(
             AvancePorMunicipioAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
+    # Redireccionamiento cuando se guarda un nuevo avance
+    def response_add(self, request, obj, post_url_continue=None):
+        if not request.POST.has_key('_addanother'):
+            return HttpResponseRedirect('/movimientos')
+        else:
+            return super(AvancePorMunicipioAdmin, self).response_add(request, obj, post_url_continue)
+
+    # Redireccionamiento cuando se guarda un nuevo avance
+    def response_change(self, request, obj, post_url_continue=None):
+        if not request.POST.has_key('_addanother'):
+            success_message = 'El avance \"%s\" se ha modificado exitosamente.' % obj.__str__()
+            self.message_user(request, success_message, level=messages.SUCCESS)
+            return HttpResponseRedirect('/movimientos')
+        else:
+            success_message = 'El avance \"%s\" se ha modificado exitosamente.' % obj.__str__()
+            self.message_user(request, success_message, level=messages.SUCCESS)
+            return super(AvancePorMunicipioAdmin, self).response_add(request, obj, post_url_continue)
 
 class AccionEstrategicaAdmin(admin.ModelAdmin):
     model = AccionEstrategica
