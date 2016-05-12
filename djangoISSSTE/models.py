@@ -233,18 +233,18 @@ class MetaMensual(models.Model):
     meta = models.ForeignKey(Meta, null=False, blank=False)
     estado = models.ForeignKey(Estado, null=False, blank=False)
     inversionAprox = models.FloatField(default=0, verbose_name= "Inversión Aproximada")
-    ene = models.FloatField(null=False, default=0)
-    feb = models.FloatField(null=False, default=0)
-    mar = models.FloatField(null=False, default=0)
-    abr = models.FloatField(null=False, default=0)
-    may = models.FloatField(null=False, default=0)
-    jun = models.FloatField(null=False, default=0)
-    jul = models.FloatField(null=False, default=0)
-    ago = models.FloatField(null=False, default=0)
-    sep = models.FloatField(null=False, default=0)
-    oct = models.FloatField(null=False, default=0)
-    nov = models.FloatField(null=False, default=0)
-    dic = models.FloatField(null=False, default=0)
+    ene = models.FloatField(default=0, blank=0)
+    feb = models.FloatField(default=0, blank=0)
+    mar = models.FloatField(default=0, blank=0)
+    abr = models.FloatField(default=0, blank=0)
+    may = models.FloatField(default=0, blank=0)
+    jun = models.FloatField(default=0, blank=0)
+    jul = models.FloatField(default=0, blank=0)
+    ago = models.FloatField(default=0, blank=0)
+    sep = models.FloatField(default=0, blank=0)
+    oct = models.FloatField(default=0, blank=0)
+    nov = models.FloatField(default=0, blank=0)
+    dic = models.FloatField(default=0, blank=0)
 
     class Meta:
         unique_together = [("meta", "estado",)]
@@ -281,11 +281,6 @@ class AvancePorMunicipio(models.Model):
 
     def __str__(self):
         return self.meta.accionEstrategica.nombreAccion + " - " + self.estado.nombreEstado
-	avanceMunicipio = models.ManyToManyField(Municipio,
-                                           through='AvanceMensual',)
-
-	def __str__(self):
-		return self.meta.accionEstrategica.nombreAccion + " - " + self.estado.nombreEstado
 
     class Meta:
         unique_together = [("meta", "periodo", "estado")]
@@ -313,18 +308,19 @@ class AvanceMensual(models.Model):
     avancePorMunicipio = models.ForeignKey(AvancePorMunicipio, null=False, blank=False)
     municipio = models.ForeignKey(Municipio, null=False, blank=False)
     fecha_ultima_modificacion = models.DateField(auto_now=True)
-    ene = models.FloatField(null=False, default=0)
-    feb = models.FloatField(null=False, default=0)
-    mar = models.FloatField(null=False, default=0)
-    abr = models.FloatField(null=False, default=0)
-    may = models.FloatField(null=False, default=0)
-    jun = models.FloatField(null=False, default=0)
-    jul = models.FloatField(null=False, default=0)
-    ago = models.FloatField(null=False, default=0)
-    sep = models.FloatField(null=False, default=0)
-    oct = models.FloatField(null=False, default=0)
-    nov = models.FloatField(null=False, default=0)
-    dic = models.FloatField(null=False, default=0)
+    ene = models.FloatField(default=0, blank=0)
+    feb = models.FloatField(default=0, blank=0)
+    mar = models.FloatField(default=0, blank=0)
+    abr = models.FloatField(default=0, blank=0)
+    may = models.FloatField(default=0, blank=0)
+    jun = models.FloatField(default=0, blank=0)
+    jul = models.FloatField(default=0, blank=0)
+    ago = models.FloatField(default=0, blank=0)
+    sep = models.FloatField(default=0, blank=0)
+    oct = models.FloatField(default=0, blank=0)
+    nov = models.FloatField(default=0, blank=0)
+    dic = models.FloatField(default=0, blank=0)
+    porcentajeAvance = models.FloatField(default=0, blank=0)
 
     def to_serializable_dict(self):
         ans = model_to_dict(self)
@@ -383,7 +379,17 @@ def update_inversion_avanceMensual_metaMensual(sender, instance, **kwargs):
 # Actualiza la inversión cada vez que se agregan avances mensuales
 @receiver(post_save, sender=AvanceMensual, dispatch_uid="update_inversion")
 def update_inversion(sender, instance, **kwargs):
-    instance.avancePorMunicipio.inversionAprox = 5
+    suma = instance.ene + instance.feb + instance.mar + instance.abr + instance.may + instance.jun + \
+            instance.jul + instance.ago + instance.sep + instance.oct + instance.nov + instance.dic
+
+    instance.avancePorMunicipio.inversionAprox = suma * instance.avancePorMunicipio.meta.montoPromedio
     instance.avancePorMunicipio.save()
-    periodo = Periodo.objects.get(id=1)
-    periodo.save()
+
+    meta = MetaMensual.objects.get(meta__id=instance.avancePorMunicipio.meta.id,
+                                   estado__id=instance.avancePorMunicipio.estado.id)
+
+    suma_meta = meta.ene + meta.feb + meta.mar + meta.abr + meta.may + meta.jun + meta.jul + meta.ago + meta.sep + \
+                meta.oct + meta.nov + meta.dic
+
+    instance.porcentajeAvance = (suma * 100) / suma_meta
+    instance.save()

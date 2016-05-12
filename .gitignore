@@ -6,4 +6,4 @@ env/
 .idea/
 djangoISSSTE/migrations/
 local_settings.py
-
+Projects/settingsOscar.py
