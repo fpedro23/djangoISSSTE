@@ -3,7 +3,7 @@
 
 {% block extrastyle %}
   {{ block.super }}
-  <link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}" />
+  <link rel="stylesheet" type="text/css" href="{% static "assets/css/changelists.css" %}" />
   {% if cl.formset %}
     <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />
   {% endif %}
@@ -24,8 +24,73 @@
 {% if action_form %}{% if actions_on_top or actions_on_bottom %}
 <script type="text/javascript">
 (function($) {
+
+    function $_GET(param)
+{
+/* Obtener la url completa */
+url = document.URL;
+/* Buscar a partir del signo de interrogación ? */
+url = String(url.match(/\?+.+/));
+/* limpiar la cadena quitándole el signo ? */
+url = url.replace("?", "");
+/* Crear un array con parametro=valor */
+url = url.split("&");
+
+/*
+Recorrer el array url
+obtener el valor y dividirlo en dos partes a través del signo =
+0 = parametro
+1 = valor
+Si el parámetro existe devolver su valor
+*/
+x = 0;
+while (x < url.length)
+{
+p = url[x].split("=");
+if (p[0] == param)
+{
+return decodeURIComponent(p[1]);
+}
+x++;
+}
+
+
+
+}
+
     $(document).ready(function($) {
         $("tr input.action-select").actions();
+
+         $("#action-toggle").hide();
+        if ($_GET("e")==1) {
+            $("#target").show();
+            $("#elmmsg").show();
+            $("#modmsg").hide();
+            $("#elmmsgins").show();
+            $("#modmsgins").hide();
+            $("#action-toggle").hide();
+            $('.action-checkbox').show();
+            $('.action-select').show();
+            $('.action-checkbox-column').show();;
+        }
+        else if($_GET("e")==2){
+            $("#target").hide();
+            $("#elmmsg").hide();
+            $('#modmsg').show();
+            $("#elmmsgins").hide();
+            $('#modmsgins').show();
+            $(".action-select").hide();
+            $('.action-checkbox-column').hide();
+             $('.action-checkbox').hide();
+        }
+        else{
+            $('#cons').show();
+            $('#consins').show();
+            $('.action-select').hide();
+            $('.action-checkbox-column').hide();
+             $('.action-checkbox').hide();
+        }
+
     });
 })(django.jQuery);
 </script>
@@ -43,6 +108,21 @@
 {% block coltype %}flex{% endblock %}
 
 {% block content %}
+     <div id="regresarBTN" onclick="window.history.go(-1);">
+   </div>
+
+  <div id="welcome">
+      <span id="elmmsg" hidden="true">Eliminar</span>
+      <span id="modmsg" hidden="true">Modificar</span>
+      <span id="cons" hidden="true">Consulta</span>
+      Meta
+  </div>
+  <div class="bienvenida">
+        <span id="elmmsgins" hidden="true">Bienvenido a Eliminar Meta. Le pedimos seleccione el registro y presione el botón Eliminar.</span>
+        <span id="modmsgins" hidden="true">Bienvenido a Modificar Meta. Le pedimos seleccione el ID de una Meta para editarlo.</span>
+        <span id="consins" hidden="true">Bienvenido al Catálogo de Meta; presione sobre el ID de una Meta para consultar sus detalles.</span>
+  <p>&nbsp;</p>
+  </div>
   <div id="content-main">
     {% block object-tools %}
 
