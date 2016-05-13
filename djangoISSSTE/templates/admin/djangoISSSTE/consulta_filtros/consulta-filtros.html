@@ -85,6 +85,14 @@
             selectedText: '# Acciones'
         });
         // off
+        $l("#msUnidadMedida").multiselect({
+            header: true,
+            checkAllText: 'Marcar todas',
+            uncheckAllText: 'Desmarcar todas',
+            noneSelectedText: 'Unidad de Medida',
+            selectedText: '# Unidades de Medida'
+        });
+        // off
         $l("#msEstados").multiselect({
             header: true,
             checkAllText: 'Marcar todos',
@@ -105,8 +113,8 @@
             header: true,
             checkAllText: 'Marcar todos',
             uncheckAllText: 'Desmarcar todos',
-            noneSelectedText: 'Periodo',
-            selectedText: '# Periodos'
+            noneSelectedText: 'Año',
+            selectedText: '# Años'
         });
         // off
         $l("#msMeses").multiselect({
@@ -472,7 +480,7 @@ et$(function() {
             <div class="row" style="width: 60%;padding-top: 15px;margin-left: auto;margin-right: auto">
                 <article id="salir_exporta">
                     {% csrf_token %}
-                    <div class="salirBTN popup-exporta-dismiss" id="salirExporta" style="height: 30px">
+                    <div class="salirBTNC popup-exporta-dismiss" id="salirExporta" style="height: 30px">
                     </div>
                 </article>
             </div><br>
@@ -508,9 +516,9 @@ et$(function() {
                         </div>
             </div>
             <div class="row" style="width: 60%;padding-top: 15px;margin-left: auto;margin-right: auto">
-                <article id="salir_exporta">q
+                <article id="salir_exporta">
                     {% csrf_token %}
-                    <div class="salirBTN popup-exporta-dismiss" id="salirExporta" style="height: 30px">
+                    <div class="salirBTNC popup-exporta-dismiss" id="salirExporta" style="height: 30px">
                     </div>
                 </article>
             </div><br>
@@ -696,6 +704,15 @@ et$(function() {
                                                 </div>
                                             </div>
                                             <div class="row">
+                                                <div class="col-md-10"  style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+                                                    <select id="msUnidadMedida" multiple="multiple" style="width: 100%;height: auto;">
+                                                        {% for dep in unidadesMedida %}
+                                                             <option value={{dep.id}}>{{dep.descripcionUnidad}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
                                                 <div class="col-md-10" id="divSubDep" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
                                                     <select id="msResponsables" multiple="multiple" style="width: 100%;height: auto;">
                                                         {% for dep in responsables %}
@@ -766,37 +783,7 @@ et$(function() {
 
                     <div class="col-md-6" style="padding-right: 10px; padding-left: 25px; padding-bottom: 0px; padding-top: 0px ">
                         <div class="row">
-                            <div class="col-md-6" style="padding-right: 4px; padding-left: 4px; padding-bottom: 0px; padding-top: 0px ">
-                                <div class="panel panel-default panel-table" style="padding-right: 3px; padding-left: 3px; padding-bottom: 0px; padding-top: 0px ">
-                                <div class="panel-body" style="padding-right: 4px; padding-left: 4px; padding-bottom: 4px; padding-top: 4px ">
-                                    <div class="tr" style="padding-right: 4px; padding-left: 4px; padding-bottom: 3px; padding-top: 3px ">
-                                        <div class="row" >
-                                            <div class="col-md-12" style="padding-right: 4px; padding-left: 15px; padding-bottom: 1px; padding-top: 1px ">
-                                                Observaciones
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-12" style="padding-right: 15px; padding-left: 15px; padding-bottom: 4px; padding-top: 1px "><center>
-                                                <input type="text" class="form-control2" id="observaciones" placeholder="Texto Observaciones"></center>
-                                            </div>
-                                        </div>
 
-                                        <div class="row" >
-                                            <div class="col-md-12" style="padding-right: 4px; padding-left: 15px; padding-bottom: 1px; padding-top: 1px ">
-                                                Unidad de Medida
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-12" style="padding-right: 15px; padding-left: 15px; padding-bottom: 4px; padding-top: 1px "><center>
-                                                <input type="text" class="form-control2" id="unidadmedida" placeholder="Texto Unidad de Medida"></center>
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-                                </div>
-                            </div>
-                            </div>
                             <div class="col-md-6" style="padding-right: 3px; padding-left: 3px; padding-bottom: 0px; padding-top: 0px ">
                                 <div class="panel panel-default panel-table ">
                                 <div class="panel-body " style="padding-right: 4px; padding-left: 4px; padding-bottom: 4px; padding-top: 4px ">
@@ -804,7 +791,7 @@ et$(function() {
 
                                         <div class="row">
                                             <div class="col-md-12 " style="padding-right: 4px; padding-left: 4px; padding-bottom: 0px; padding-top: 0px ">
-                                                <center>Rango de Avance</center>
+                                                <center>Rango de Avance VS Meta (%)</center>
                                             </div>
                                         </div>
                                         <div class="row"><center>
@@ -812,13 +799,13 @@ et$(function() {
                                                De:
                                             </div>
                                             <div class="col-md-5" style=" padding-bottom: 0px; padding-top: 0px ">
-                                                    <input type="text" class="form-control2" id="avanceInicial" placeholder="0.00">
+                                                    <input type="text" class="form-control2 positive-integer" id="avanceInicial" placeholder="0 %">
                                             </div></center>
                                             <div class="col-md-1 " style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
                                                 A:
                                             </div>
                                             <div class="col-md-5 " style=" padding-bottom: 0px; padding-top: 0px ">
-                                                    <input type="text" class="form-control2" id="avanceFinal" placeholder="0.00">
+                                                    <input type="text" class="form-control2 positive-integer " id="avanceFinal" placeholder="0 %">
                                             </div></center>
 
                                         </div>
@@ -846,6 +833,28 @@ et$(function() {
                                     </div>
                                 </div>
                              </div>
+                            </div>
+                            <div class="col-md-6" style="padding-right: 4px; padding-left: 4px; padding-bottom: 0px; padding-top: 0px ">
+                                <div class="panel panel-default panel-table" style="padding-right: 3px; padding-left: 3px; padding-bottom: 0px; padding-top: 0px ">
+                                <div class="panel-body" style="padding-right: 4px; padding-left: 4px; padding-bottom: 4px; padding-top: 4px ">
+                                    <div class="tr" style="padding-right: 4px; padding-left: 4px; padding-bottom: 3px; padding-top: 3px ">
+                                        <div class="row" >
+                                            <div class="col-md-12" style="padding-right: 4px; padding-left: 15px; padding-bottom: 1px; padding-top: 1px ">
+                                                Observaciones
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12" style="padding-right: 15px; padding-left: 15px; padding-bottom: 4px; padding-top: 1px "><center>
+                                                <input type="text" class="form-control2" id="observaciones" placeholder="Texto Observaciones"></center>
+                                            </div>
+                                        </div>
+
+
+
+
+                                    </div>
+                                </div>
+                            </div>
                             </div>
                         </div>
                         <div class="row">
@@ -917,7 +926,7 @@ et$(function() {
                                     <th>Municipio</th>
                                     <th>Avance Total</th>
                                 </tr>
-                                <tr><td class="pager" id="pagerI" colspan="3">
+                                <tr><td class="pager" id="pagerI" colspan="5">
 
                                 <img src="../../static/assets/tablesorter/addons/pager/icons/first.png" class="first" id="firstI"/>
                                 <img src="../../static/assets/tablesorter/addons/pager/icons/prev.png" class="prev" id="prevI"/>
@@ -1027,16 +1036,15 @@ et$(function() {
                         <thead>
 
                             <tr>
-                                <th>Carencia</th>
-                                <th>Estado</th>
+                                <th>Concepto</th>
                                 <th>Avance Total</th>
                                 <th>Meta Total</th>
                             </tr>
                         </thead>
                         <tfoot>
                             <tr>
-                                <th>Carencia</th>
-                                <th>Estado</th>
+
+                                <th>Concepto</th>
                                 <th>Avance Total</th>
                                 <th>Meta Total</th>
                             </tr>
@@ -1055,43 +1063,37 @@ et$(function() {
                         </tfoot>
                         <tbody>
                             <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
+
                                 <td></td>
                                 <td></td>
                                 <td></td>
                             </tr>
                             <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
+
                                 <td></td>
                                 <td></td>
                                 <td></td>
                             </tr>
                             <tr>
-                                <td></td>
-                                <td></td>
+
                                 <td></td>
                                 <td></td>
                                 <td></td>
                             </tr>
                             <tr>
+
                                 <td></td>
                                 <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+
                                 <td></td>
                                 <td></td>
                                 <td></td>

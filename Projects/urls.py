@@ -22,6 +22,8 @@ import djangoISSSTE
 from djangoISSSTE import views
 from djangoISSSTE import urls
 from djangoISSSTE import api
+from django.http import HttpResponseRedirect
+from django.conf import settings
 
 admin.autodiscover()
 
@@ -54,4 +56,7 @@ urlpatterns = [
     url(r'^register-by-token',views.register_by_access_token, name='register_by_access_token'),
     url(r'^djangoISSSTE/consulta_filtros', djangoISSSTE.views.consulta_web, name='consulta_filtros'),
     url(r'^djangoISSSTE/consulta_predefinidos', djangoISSSTE.views.consulta_predefinidos, name='consulta_filtros'),
+
+    url(r'^ico_pequenio_ISSSTE.png/$', lambda x: HttpResponseRedirect(settings.STATIC_URL+'/assets/Imagenes/ico_pequenio_ISSSTE.png')), #google chrome favicon fix
+
 ]

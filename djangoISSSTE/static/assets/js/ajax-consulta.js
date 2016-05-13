@@ -279,6 +279,8 @@ function ResultadosPptx() {
     var arrayPeriodos= $l("#msPeriodos").multiselect("getChecked").map(function(){return this.value;}).get();
     var arrayMeses = $l("#msMeses").multiselect("getChecked").map(function(){return this.value;}).get();
     var arrayAcciones = $l("#msAcciones").multiselect("getChecked").map(function(){return this.value;}).get();
+    var arrayUnidades = $l("#msUnidadMedida").multiselect("getChecked").map(function(){return this.value;}).get();
+
 
     var inversionInicial = $l("#inversionInicial").val();
     var inversionFinal = $l("#inversionFinal").val();
@@ -290,7 +292,7 @@ function ResultadosPptx() {
     var metaFinal = $l("#metaFinal").val();
 
     var observaciones = $l("#observaciones").val();
-    var unidadMedida = $l("#unidadmedida").val();
+
 
 
     var URL="/issste/api/ResultadosPptx?access_token=" + newToken;
@@ -304,17 +306,17 @@ function ResultadosPptx() {
     if(arrayEstados.toString()!=""){URL += "&estados=" + arrayEstados.toString();}
     if(arrayMeses.toString()!=""){URL += "&meses=" + arrayMeses.toString();}
     if(arrayAcciones.toString()!=""){URL += "&acciones=" + arrayAcciones.toString();}
+    if(arrayUnidades.toString()!=""){ajax_data.unidadDeMedida=arrayUnidades.toString();}
 
     if(inversionInicial!=""){URL += "&inversionMinima=" + inversionInicial;}
     if(inversionFinal!=""){URL += "&inversionMaxima=" + inversionFinal;}
     if(avanceInicial!=""){URL += "&avanceMinimo=" + avanceInicial;}
     if(avanceFinal!=""){URL += "&avanceMaximo=" + avanceFinal;}
-    //if(metaInicial!=""){ajax_data.inversionMinima=metaInicial;}
-    //if(metaFinal!=""){ajax_data.inversionMaxima=metaFinal;}
+
 
 
     if(observaciones!=""){URL += "&observaciones=" + observaciones;}
-    if(unidadMedida!=""){URL += "&unidadDeMedida=" + unidadMedida;}
+
 
     location.href = URL
 
@@ -331,7 +333,7 @@ function ReportePptx() {
     var arrayPeriodos= $l("#msPeriodos").multiselect("getChecked").map(function(){return this.value;}).get();
     var arrayMeses = $l("#msMeses").multiselect("getChecked").map(function(){return this.value;}).get();
     var arrayAcciones = $l("#msAcciones").multiselect("getChecked").map(function(){return this.value;}).get();
-
+    var arrayUnidades = $l("#msUnidadMedida").multiselect("getChecked").map(function(){return this.value;}).get();
     var inversionInicial = $l("#inversionInicial").val();
     var inversionFinal = $l("#inversionFinal").val();
 
@@ -342,7 +344,7 @@ function ReportePptx() {
     var metaFinal = $l("#metaFinal").val();
 
     var observaciones = $l("#observaciones").val();
-    var unidadMedida = $l("#unidadmedida").val();
+
 
 
     var URL="/issste/api/ReportePptx?access_token=" + newToken;
@@ -356,6 +358,7 @@ function ReportePptx() {
     if(arrayEstados.toString()!=""){URL += "&estados=" + arrayEstados.toString();}
     if(arrayMeses.toString()!=""){URL += "&meses=" + arrayMeses.toString();}
     if(arrayAcciones.toString()!=""){URL += "&acciones=" + arrayAcciones.toString();}
+    if(arrayUnidades.toString()!=""){ajax_data.unidadDeMedida=arrayUnidades.toString();}
 
     if(inversionInicial!=""){URL += "&inversionMinima=" + inversionInicial;}
     if(inversionFinal!=""){URL += "&inversionMaxima=" + inversionFinal;}
@@ -366,7 +369,7 @@ function ReportePptx() {
 
 
     if(observaciones!=""){URL += "&observaciones=" + observaciones;}
-    if(unidadMedida!=""){URL += "&unidadDeMedida=" + unidadMedida;}
+
 
     location.href = URL
 
@@ -384,6 +387,7 @@ function verDatos() {
     var arrayPeriodos= $l("#msPeriodos").multiselect("getChecked").map(function(){return this.value;}).get();
     var arrayMeses = $l("#msMeses").multiselect("getChecked").map(function(){return this.value;}).get();
     var arrayAcciones = $l("#msAcciones").multiselect("getChecked").map(function(){return this.value;}).get();
+    var arrayUnidades = $l("#msUnidadMedida").multiselect("getChecked").map(function(){return this.value;}).get();
 
     var inversionInicial = $l("#inversionInicial").val();
     var inversionFinal = $l("#inversionFinal").val();
@@ -395,7 +399,7 @@ function verDatos() {
     var metaFinal = $l("#metaFinal").val();
 
     var observaciones = $l("#observaciones").val();
-    var unidadMedida = $l("#unidadmedida").val();
+
 
 
     var ajax_data = {
@@ -410,17 +414,16 @@ function verDatos() {
     if(arrayEstados.toString()!=""){ajax_data.estados=arrayEstados.toString();}
     if(arrayMeses.toString()!=""){ajax_data.meses=arrayMeses.toString();}
     if(arrayAcciones.toString()!=""){ajax_data.acciones=arrayAcciones.toString();}
+    if(arrayUnidades.toString()!=""){ajax_data.unidadDeMedida=arrayUnidades.toString();}
 
     if(inversionInicial!=""){ajax_data.inversionMinima=inversionInicial;}
     if(inversionFinal!=""){ajax_data.inversionMaxima=inversionFinal;}
     if(avanceInicial!=""){ajax_data.avanceMinimo=avanceInicial;}
     if(avanceFinal!=""){ajax_data.avanceMaximo=avanceFinal;}
-    //if(metaInicial!=""){ajax_data.inversionMinima=metaInicial;}
-    //if(metaFinal!=""){ajax_data.inversionMaxima=metaFinal;}
 
 
     if(observaciones!=""){ajax_data.observaciones=observaciones;}
-    if(unidadMedida!=""){ajax_data.unidadDeMedida=unidadMedida;}
+
 
 
 
@@ -1568,7 +1571,7 @@ function tablaI(Datos){
                             +'<th>Avance Total</th>'
                         +'</tr>'
 
-                        +'<tr><td class="pager" id="pagerI" colspan="3">'
+                        +'<tr><td class="pager" id="pagerI" colspan="5">'
                         +'<img src="../../static/assets/tablesorter/addons/pager/icons/first.png" class="first" id="firstI"/>'
                         +'<img src="../../static/assets/tablesorter/addons/pager/icons/prev.png" class="prev" id="prevI"/>'
                         +'<span class="pagedisplay" id="pagedisplayI"></span>'
@@ -1631,7 +1634,7 @@ function tablaI(Datos){
                 +'    headerTemplate : "{content} {icon}",'
                 +'    widgets: [ "uitheme", "zebra", "pager", "scroller" ],'
                 +'    widgetOptions : {'
-                +'        scroller_height : 190,'
+                +'        scroller_height : 180,'
                 +'        scroller_upAfterSort: true,'
                 +'        scroller_jumpToHeader: true,'
                 +'        scroller_barWidth : null,'
@@ -1676,18 +1679,22 @@ function tablaD(Datos){
 
     var totalAvances = 0
     var totalInversion = 0
+    var tituloColumna = "";
     if (tipoReporte=="Estado") {
+        tituloColumna = "Estado";
         for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
             totalAvances += Datos.reporte_por_estado[i].avance
             totalInversion += Datos.reporte_por_estado[i].suma_meta
         }
     }else{
         if (tipoReporte=="Carencia") {
+            tituloColumna = "Carencia";
             for (var i = 0; i < Datos.reporte_por_carencia.length; i++) {
                 totalAvances += Datos.reporte_por_carencia[i].avance
                 totalInversion += Datos.reporte_por_carencia[i].suma_meta
             }
         }else{
+            tituloColumna = "Acción";
             for (var i = 0; i < Datos.reporte_por_accion.length; i++) {
                 totalAvances += Datos.reporte_por_accion[i].avance
                 totalInversion += Datos.reporte_por_accion[i].suma_meta
@@ -1698,14 +1705,14 @@ function tablaD(Datos){
     sHtmlExporta= '<table id="tablaExporta" class="table table-striped">'
                 +' <colgroup>'
                 +' <col width="40%">'
-                +' <col width="20%">'
+                //+' <col width="20%">'
                 +' <col width="20%">'
                 +' <col width="20%">'
                 +' </colgroup> '
                 +'<thead>'
                         +'<tr>'
-                            +'<th>Carencia</th>'
-                            +'<th>Estado</th>'
+                            +'<th>' + tituloColumna + '</th>'
+                            //+'<th>Estado</th>'
                             +'<th>Avance Total</th>'
                             +'<th>Meta Total</th>'
                         +'</tr>'
@@ -1714,7 +1721,7 @@ function tablaD(Datos){
     sHtmlShorter ='<table cellspacing="1"  id="tablaDerecha">'
                 +' <colgroup>'
                 +' <col width="40%">'
-                +' <col width="20%">'
+                //+' <col width="20%">'
                 +' <col width="20%">'
                 +' <col width="20%">'
                 +' </colgroup> ';
@@ -1722,21 +1729,21 @@ function tablaD(Datos){
 
     var sHtml='<thead>'
                         +'<tr>'
-                            +'<th width= "40%">Carencia</th>'
-                            +'<th width= "20%">Estado</th>'
+                            +'<th width= "40%">' + tituloColumna + '</th>'
+                           // +'<th width= "20%">Estado</th>'
                             +'<th width= "20%">Avance Total</th>'
                             +'<th width= "20%">Meta Total</th>'
                         +'</tr>'
                     +'</thead>'
                     +'<tfoot>'
                         +'<tr>'
-                            +'<th></th>'
+                            //+'<th></th>'
                             +'<th>TOTALES</th>'
                             +'<th style="text-align:right;">'+ formato_numero(totalAvances, 0, '.', ',') +'</th>'
                             +'<th style="text-align:right; padding-right:10px;">'+ formato_numero(totalInversion, 0, '.', ',') +'</th>'
                         +'</tr>'
 
-                        +'<tr><td class="pager" id="pagerD" colspan="4">'
+                        +'<tr><td class="pager" id="pagerD" colspan="3">'
                         //+'<div class="first principioFLECHA" id="firstD" style="height:11px"></div>'
                         +'<img src="../../static/assets/tablesorter/addons/pager/icons/first.png" class="first" id="firstD"/>'
                         +'<img src="../../static/assets/tablesorter/addons/pager/icons/prev.png" class="prev" id="prevD"/>'
@@ -1757,15 +1764,15 @@ function tablaD(Datos){
         estadosChecked="checked";
         for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
             sHtml += '<tr>'
-            + '<td width= "40%"></td>'
-            + '<td width= "20%" align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
+            //+ '<td width= "40%"></td>'
+            + '<td width= "40%" align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
             + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].avance, 0, '.', ',') + '</td>'
             + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].suma_meta, 0, '.', ',') + '</td>'
             + '</tr>'
 
             sHtmlExporta += '<tr>'
-            + '<td width= "40%"></td>'
-            + '<td width= "20%" align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
+            //+ '<td width= "40%"></td>'
+            + '<td width= "40%" align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
             + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].avance, 0, '.', ',') + '</td>'
             + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].suma_meta, 2, '.', ',') + '</td>'
             + '</tr>'
@@ -1775,15 +1782,15 @@ function tablaD(Datos){
             carenciasChecked="checked";
             for (var i = 0; i < Datos.reporte_por_carencia.length; i++) {
                 sHtml += '<tr>'
-                + '<td width= "40%"></td>'
-                + '<td width= "20%" align="right">' + Datos.reporte_por_carencia[i].nombreCarencia + '</td>'
+                //+ '<td width= "40%"></td>'
+                + '<td width= "40%" align="right">' + Datos.reporte_por_carencia[i].nombreCarencia + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_carencia[i].avance, 0, '.', ',') + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_carencia[i].suma_meta, 0, '.', ',') + '</td>'
                 + '</tr>'
 
                 sHtmlExporta += '<tr>'
-                + '<td width= "40%"></td>'
-                + '<td width= "20%" align="right">' + Datos.reporte_por_carencia[i].nombreCarencia + '</td>'
+                //+ '<td width= "40%"></td>'
+                + '<td width= "40%" align="right">' + Datos.reporte_por_carencia[i].nombreCarencia + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_carencia[i].avance, 0, '.', ',') + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_carencia[i].suma_meta, 2, '.', ',') + '</td>'
                 + '</tr>'
@@ -1792,15 +1799,15 @@ function tablaD(Datos){
             accionesChecked="checked";
             for (var i = 0; i < Datos.reporte_por_accion.length; i++) {
                 sHtml += '<tr>'
-                + '<td width= "40%"></td>'
-                + '<td width= "20%" align="right">' + Datos.reporte_por_accion[i].nombreAccion + '</td>'
+               // + '<td width= "40%"></td>'
+                + '<td width= "40%" align="right">' + Datos.reporte_por_accion[i].nombreAccion + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_accion[i].avance, 0, '.', ',') + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_accion[i].suma_meta, 0, '.', ',') + '</td>'
                 + '</tr>'
 
                 sHtmlExporta += '<tr>'
-                + '<td width= "40%"></td>'
-                + '<td width= "20%" align="right">' + Datos.reporte_por_accion[i].nombreAccion + '</td>'
+                //+ '<td width= "40%"></td>'
+                + '<td width= "40%" align="right">' + Datos.reporte_por_accion[i].nombreAccion + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_accion[i].avance, 0, '.', ',') + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_accion[i].suma_meta, 2, '.', ',') + '</td>'
                 + '</tr>'
@@ -1830,8 +1837,8 @@ function tablaD(Datos){
     }*/
 
         sHtml += '<tr>'
-            + '<td width= "40%"></td>'
-            + '<td width= "20%" align="right"></td>'
+            //+ '<td width= "40%"></td>'
+            + '<td width= "40%" align="right"></td>'
             + '<td width= "20%" align="right"></td>'
             + '<td width= "20%" align="right"></td>'
             + '</tr>'
@@ -1882,7 +1889,7 @@ function tablaD(Datos){
                 +'    headerTemplate : "{content} {icon}",'
                 +'    widgets: [ "uitheme", "zebra", "pager", "scroller" ],'
                 +'    widgetOptions : {'
-                +'        scroller_height : 130,'
+                +'        scroller_height : 120,'
                 +'        scroller_upAfterSort: true,'
                 +'        scroller_jumpToHeader: true,'
                 +'        scroller_barWidth : null,'
@@ -1919,18 +1926,22 @@ $j.tablaGrafica = function(Datos){
 
     var totalAvances = 0
     var totalInversion = 0
+    var tituloColumna="";
     if (tipoReporte=="Estado") {
+        tituloColumna="Estado";
         for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
             totalAvances += Datos.reporte_por_estado[i].avance
             totalInversion += Datos.reporte_por_estado[i].suma_meta
         }
     }else{
         if (tipoReporte=="Carencia") {
+            tituloColumna="Carencia";
             for (var i = 0; i < Datos.reporte_por_carencia.length; i++) {
                 totalAvances += Datos.reporte_por_carencia[i].avance
                 totalInversion += Datos.reporte_por_carencia[i].suma_meta
             }
         }else{
+            tituloColumna="Acción";
            for (var i = 0; i < Datos.reporte_por_accion.length; i++) {
                 totalAvances += Datos.reporte_por_accion[i].avance
                 totalInversion += Datos.reporte_por_accion[i].suma_meta
@@ -1946,15 +1957,15 @@ $j.tablaGrafica = function(Datos){
                     +'<table cellspacing="1"   id="tablaGrafica">'
                     +'<thead>'
                         +'<tr>'
-                            +'<th>Carencia</th>'
-                            +'<th>Estado</th>'
+                            //+'<th>Carencia</th>'
+                            +'<th>' + tituloColumna +'</th>'
                             +'<th>Avances</th>'
                             +'<th>Meta</th>'
                         +'</tr>'
                     +'</thead>'
                     +'<tfoot>'
                         +'<tr>'
-                            +'<th></th>'
+                            //+'<th></th>'
                             +'<th>TOTALES</th>'
                             +'<th style="text-align:right;">'+ formato_numero(totalAvances, 0, '.', ',') +'</th>'
                             +'<th style="text-align:right; padding-right:10px;">'+ formato_numero(totalInversion, 0, '.', ',') +'</th>'
@@ -1980,7 +1991,7 @@ $j.tablaGrafica = function(Datos){
         estadosChecked="checked";
         for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
             sHtml += '<tr>'
-            + '<td>' + Datos.reporte_por_estado[i].carencia + '</td>'
+            //+ '<td>' + Datos.reporte_por_estado[i].carencia + '</td>'
             + '<td align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
             + '<td align="right">' + formato_numero(Datos.reporte_por_estado[i].avance, 0, '.', ',') + '</td>'
             + '<td align="right">' + formato_numero(Datos.reporte_por_estado[i].suma_meta, 0, '.', ',') + '</td>'
@@ -1991,7 +2002,7 @@ $j.tablaGrafica = function(Datos){
             estadosChecked="checked";
             for (var i = 0; i < Datos.reporte_por_carencia.length; i++) {
                 sHtml += '<tr>'
-                + '<td></td>'
+                //+ '<td></td>'
                 + '<td align="right">' + Datos.reporte_por_carencia[i].nombreCarencia + '</td>'
                 + '<td align="right">' + formato_numero(Datos.reporte_por_carencia[i].avance, 0, '.', ',') + '</td>'
                 + '<td align="right">' + formato_numero(Datos.reporte_por_carencia[i].suma_meta, 0, '.', ',') + '</td>'
@@ -2001,7 +2012,7 @@ $j.tablaGrafica = function(Datos){
             estadosChecked="checked";
             for (var i = 0; i < Datos.reporte_por_accion.length; i++) {
                 sHtml += '<tr>'
-                + '<td></td>'
+                //+ '<td></td>'
                 + '<td align="right">' + Datos.reporte_por_accion[i].nombreAccion + '</td>'
                 + '<td align="right">' + formato_numero(Datos.reporte_por_accion[i].avance, 0, '.', ',') + '</td>'
                 + '<td align="right">' + formato_numero(Datos.reporte_por_accion[i].suma_meta, 0, '.', ',') + '</td>'

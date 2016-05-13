@@ -1,5 +1,5 @@
 {% extends "admin/base_site.html" %}
-{% load i18n admin_static %}
+{% load i18n admin_static app_filters %}
 
 {% block extrastyle %}{{ block.super }}
       <!-- bxSlider Javascript file -->
@@ -68,8 +68,17 @@
                                 Usuario :
                             </label>
                          </td>
-                        <td align="right" width="60%">
-                            {{ form.username }}
+                        <td align="right" width="60%" id="tr-usu" data-toggle="tooltip" data-placement="top"  title="{% for error in form.username.errors %}{{ error }}{% endfor %}">
+
+                             {% if form.username.errors %}
+                                         {{ form.username|addcss:"border-error" }}
+                                       {% else %}
+                                          {{ form.username }}
+                                       {% endif %}
+                                <script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
+                                <script> $(document).ready(function($) {
+                                    var $te = jQuery.noConflict();
+                                    $te('#tr-usu').tooltip({html:true});});</script>
                             <br><br>
                         </td>
                     </tr>
@@ -83,8 +92,17 @@
                                 <span class="error__msg">*</span>
                                 Contraseña :</label>
                         </td>
-                        <td align="right" width="60%">
-                            {{ form.password }}
+                        <td align="right" width="60%" id="tr-contras" data-toggle="tooltip" data-placement="top"  title="{% for error in form.password.errors %}{{ error }}{% endfor %}">
+
+                             {% if form.password.errors %}
+                                         {{ form.password|addcss:"border-error" }}
+                                       {% else %}
+                                          {{ form.password }}
+                                       {% endif %}
+                                <script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
+                                <script> $(document).ready(function($) {
+                                    var $te = jQuery.noConflict();
+                                    $te('#tr-contras').tooltip({html:true});});</script>
                             <br><br>
                             <input type="hidden" name="next" value="{{ next }}" />
                         </td>

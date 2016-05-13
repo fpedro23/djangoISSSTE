@@ -115,6 +115,7 @@ def consulta_web(request):
         'carencias': Carencia.objects.all(),
         'subcarencias': SubCarencia.objects.all(),
         'acciones': AccionEstrategica.objects.all(),
+        'unidadesMedida': UnidadDeMedida.objects.all(),
         'estados': estados,
         'municipios': municipios,
         'periodos': Periodo.objects.all(),

@@ -17,12 +17,12 @@ $nums(window).bind('scroll', function () {
 
 $nums(document).ready(function() {
     
-    $nums('#inversionInicial').numeric({ decimalPlaces: 2 });
+    /*$nums('#inversionInicial').numeric({ decimalPlaces: 2 });
     $nums('#inversionFinal').numeric({ decimalPlaces: 2 });
     $nums('#id_totalBeneficiarios').numeric({ decimal: false });
     $nums('#id_inversionTotal').numeric({ decimalPlaces: 2 });
     $nums('#id_montoRegistroHacendario').numeric({ decimalPlaces: 2 });
-    $nums('#id_porcentajeAvance').numeric({ decimalPlaces: 2 , negative:false });
+    $nums('.decimal').numeric({ decimalPlaces: 2 , negative:false });
     $nums('#id_latitud').numeric({ decimalPlaces: 10 });
     $nums('#id_longitud').numeric({ decimalPlaces: 10 });
     $nums('#id_detalleinversion_set-__prefix__-monto').numeric({ decimalPlaces: 2 });
@@ -33,6 +33,10 @@ $nums(document).ready(function() {
     $nums('#id_detalleinversion_set-4-monto').numeric({ decimalPlaces: 2 });
     $nums('#id_detalleinversion_set-5-monto').numeric({ decimalPlaces: 2 });
     $nums('#id_detalleinversion_set-6-monto').numeric({ decimalPlaces: 2 });
+    */
+
+    $nums('.tamcontrol').numeric({ decimalPlaces: 2 });
+
 
     $nums(".numeric").numeric();
 	$nums(".integer").numeric(false, function() { alert("Integers only"); this.value = ""; this.focus(); });

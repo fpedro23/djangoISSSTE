@@ -2,6 +2,33 @@
 <link rel="stylesheet" type="text/css" href="{% static "assets/css/restricted_styles.css" %}" />
 <div class="inline-group" id="{{ inline_admin_formset.formset.prefix }}-group">
   <div class="tabular inline-related {% if forloop.last %}last-related{% endif %}">
+  <style>
+      .delete input[type=checkbox]{
+          display: none;
+      }
+
+      .form-row {
+    overflow: hidden;
+    padding: 10px;
+    font-size: 13px;
+     border-bottom: 0px solid #ffffff;
+    }
+      .inline-deletelink {
+    float: right;
+    text-indent: -9999px;
+
+    width: 16px;
+    height: 16px;
+    border: 0px none;
+    left: -7px;
+    position: relative;
+    }
+  </style>
+<script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
+                            <script> $(document).ready(function($) {
+                                var $te = jQuery.noConflict();
+                                $te('[data-toggle="tooltip"]').tooltip({html:true});});</script>
+
 {{ inline_admin_formset.formset.management_form }}
 <fieldset class="module">
    {% if inline_admin_formset.formset.prefix == "metamensual_set" %}
@@ -13,7 +40,7 @@
     {% if inline_admin_formset.formset.prefix == "metamensual_set" %}<div id="tituloCUADROS">METAS MENSUALES</div>{% else %}{% endif %}
 
    {{ inline_admin_formset.formset.non_form_errors }}
-   <table width="100%">
+   <table  valign="top" style="text-align: left;margin-left: 3px" width="990px">
      <thead ><tr>
      {% for field in inline_admin_formset.fields %}
        {% if not field.widget.is_hidden %}
