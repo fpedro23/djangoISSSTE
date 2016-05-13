@@ -73,7 +73,7 @@ ROOT_URLCONF = 'Projects.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'djangoISSSTE/templatesssss/')]
+        'DIRS': [os.path.join(BASE_DIR, 'djangoISSSTE/templates/')]
         ,
         'APP_DIRS': True,
         'OPTIONS': {
