@@ -217,7 +217,7 @@ class UserAdmin(UserAdmin):
 class MetaMensualInLine(admin.TabularInline):
     model = MetaMensual
     form = MetaMensualForm
-    readonly_fields = ('get_inversion',)
+    readonly_fields = ('inversionAprox',)
     extra = 0
 
 
