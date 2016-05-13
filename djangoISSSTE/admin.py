@@ -561,6 +561,7 @@ class AccionEstrategicaAdmin(admin.ModelAdmin):
         ):
             arregloMetas.append(singleMeta.id)
 
+
         for singleMetaMensual in MetaMensual.objects.filter(
                 Q(meta__id__in=arregloMetas)
         ):
