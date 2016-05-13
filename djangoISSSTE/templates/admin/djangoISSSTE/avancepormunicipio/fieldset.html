@@ -130,9 +130,9 @@
                             </td>
 
                 {% endif %}
-                {% if field.field.name == "inversionAprox" %}
+                {% if field.field.name == "get_inversion" %}
                         <td width="140" class="txtlabel">
-                            Inversión:</td>
+                            Inversión Aprox.:</td>
 
                         <td width="200" class="labelreadonly" style="padding-top: 5px" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
                                      {% if field.field.errors %}
