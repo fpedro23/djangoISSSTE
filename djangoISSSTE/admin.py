@@ -527,14 +527,16 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 
     # Redireccionamiento cuando se guarda un nuevo avance
     def response_change(self, request, obj, post_url_continue=None):
-        if not request.POST.has_key('_addanother'):
-            success_message = 'El avance \"%s\" se ha modificado exitosamente.' % obj.__str__()
-            self.message_user(request, success_message, level=messages.SUCCESS)
-            return HttpResponseRedirect('/movimientos')
-        else:
+        if request.POST.has_key('_addanother'):
             success_message = 'El avance \"%s\" se ha modificado exitosamente.' % obj.__str__()
             self.message_user(request, success_message, level=messages.SUCCESS)
             return super(AvancePorMunicipioAdmin, self).response_add(request, obj, post_url_continue)
+        elif request.POST.has_key('_continue'):
+            return super(AvancePorMunicipioAdmin, self).response_add(request, obj, post_url_continue)
+        else:
+            success_message = 'El avance \"%s\" se ha modificado exitosamente.' % obj.__str__()
+            self.message_user(request, success_message, level=messages.SUCCESS)
+            return HttpResponseRedirect('/movimientos')
 
 class AccionEstrategicaAdmin(admin.ModelAdmin):
     model = AccionEstrategica
