@@ -2128,7 +2128,7 @@ class BalanceGeneralEndpoint(ProtectedResourceView):
         return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True,), 'application/json')
 
 
-class BalancePorEntidadEndpoint(ProtectedResourceView):
+class BalancePorEntidadEndpoint(generic.ListView):
     def get(self, request):
 
         json_map = {}
@@ -2136,27 +2136,30 @@ class BalancePorEntidadEndpoint(ProtectedResourceView):
         for estado in Estado.objects.all():
             list_estados = {}
             list_estados['estado'] = estado.nombreEstado
-            list_estados['total_avances'] = 0
-            list_estados['total_metas'] = 0
-            for avance in AvanceMensual.objects.filter(
-                    avancePorMunicipio__estado__id=estado.id).values(
-                'avancePorMunicipio__estado__nombreEstado').annotate(
-                ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
-                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+            list_estados['datos'] = []
 
-                total = avance['ene'] + avance['feb'] + avance['mar'] + avance['abr'] + avance['may'] + avance['jun'] +\
-                        avance['jul'] + avance['ago'] + avance['sep'] + avance['oct'] + avance['nov'] + avance['dic']
-                list_estados['total_avances'] = total
+            for carencia in Carencia.objects.all():
+                list_carencias = {}
+                list_carencias['carencia'] = carencia.nombreCarencia
+                for avance in AvanceMensual.objects.filter(
+                        avancePorMunicipio__estado__id=estado.id,
+                        avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia = carencia.id).values(
+                    'avancePorMunicipio__estado__nombreEstado').annotate(
+                    ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
+                    jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+                    total = avance['ene'] + avance['feb'] + avance['mar'] + avance['abr'] + avance['may'] + avance['jun'] +\
+                            avance['jul'] + avance['ago'] + avance['sep'] + avance['oct'] + avance['nov'] + avance['dic']
+                    list_carencias['total_avances'] = total
 
-            for meta in MetaMensual.objects.filter(estado__id=estado.id).values('estado__nombreEstado').annotate(
-                ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
-                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+                for meta in MetaMensual.objects.filter(estado__id=estado.id).values('estado__nombreEstado').annotate(
+                    ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
+                    jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
 
-                total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
-                        meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
+                    total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
+                            meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
 
-                list_estados['total_metas'] = total
-
+                    list_carencias['total_metas'] = total
+                list_estados['datos'].append(list_carencias)
             json_map['balancePorEntidad'].append(list_estados)
 
         return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True,), 'application/json')
