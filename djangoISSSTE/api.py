@@ -192,7 +192,7 @@ class MesesEndpoint(ProtectedResourceView):
 
 
 # Clase EndPoint (oauth2) para devolver las metas
-class MetasPorPeriodoEndpoint(generic.ListView):
+class MetasPorPeriodoEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         periodos = get_array_or_none(request.GET.get('periodos'))
         return HttpResponse(
@@ -326,7 +326,7 @@ class avancesMensualesPorMetaEndpoint(ProtectedResourceView):
 
 
 # Clase EndPoint (oauth2) para implementar el buscador en base al filtro grande
-class BuscadorEndpoint(generic.ListView):
+class BuscadorEndpoint(ProtectedResourceView):
     def get(self, request):
         # myObj: objeto a construir con lo parámetros obtenidos en la URL y que serán
         # mandados al buscador para que éste los filtre
@@ -751,7 +751,7 @@ class AvancesEndpoint(ProtectedResourceView):
 
 
 #Clase para devolver datos de la ficha técnica
-class FichaTecnicaAvancesEndpoint(generic.ListView):
+class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         prs = Presentation('djangoISSSTE/static/ppt/Ficha_Tecnica_Avance.pptx')
         #prs = Presentation('/home/sisefenlin/visitas/static/ppt/fichaTecnica_sisef.pptx')
@@ -2267,7 +2267,7 @@ class BalanceGeneralEndpoint(ProtectedResourceView):
 
         return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True,), 'application/json')
 
-class BalancePorEntidadEndpoint(generic.ListView):
+class BalancePorEntidadEndpoint(ProtectedResourceView):
     def get(self, request):
 
         json_map = {}
@@ -2303,7 +2303,7 @@ class BalancePorEntidadEndpoint(generic.ListView):
 
         return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True,), 'application/json')
 
-class InformacionGeneralEndpoint(generic.ListView):
+class InformacionGeneralEndpoint(ProtectedResourceView):
     def get(self, request):
 
         json_map = {}
