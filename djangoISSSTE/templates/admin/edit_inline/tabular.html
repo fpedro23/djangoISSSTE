@@ -24,6 +24,10 @@
     position: relative;
     }
   </style>
+<script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
+                            <script> $(document).ready(function($) {
+                                var $te = jQuery.noConflict();
+                                $te('[data-toggle="tooltip"]').tooltip({html:true});});</script>
 
 {{ inline_admin_formset.formset.management_form }}
 <fieldset class="module">

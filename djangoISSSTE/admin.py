@@ -297,7 +297,7 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
         ('Avance', {
             'fields': (
                 'periodo', 'meta', 'estado', 'get_carencia', 'get_unidad_medida',
-                'get_subcarencia', 'inversionAprox','get_observaciones', 'get_accion','get_monto_promedio',
+                'get_subcarencia', 'inversionAprox','get_observaciones', 'get_accion','get_monto_promedio'
             )
         }),
         ('Meta', {
@@ -312,7 +312,7 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
     readonly_fields = ('get_carencia', 'get_subcarencia', 'get_unidad_medida', 'get_observaciones', 'get_enero',
                        'get_febrero', 'get_marzo', 'get_abril', 'get_mayo', 'get_junio', 'get_julio', 'get_agosto',
                        'get_septiembre', 'get_octubre', 'get_noviembre', 'get_diciembre', 'get_accion',
-                       'inversionAprox', 'get_monto_promedio',)
+                       'inversionAprox', 'get_monto_promedio')
 
     list_display = ('id', 'get_carencia', 'get_subcarencia', 'meta', 'periodo', 'estado', 'inversionAprox', 'get_monto_promedio',)
     ordering = ['meta__nombreMeta', ]

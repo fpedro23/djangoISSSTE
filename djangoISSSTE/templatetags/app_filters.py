@@ -41,7 +41,8 @@ def is_file(field):
 def addcss(field, css):
     return field.as_widget(attrs={"class":css})
 
-@register.filter(name='floatFormat')
+@register.filter(name='formatoNumero')
 def currency(field):
-   moneda = round(float(field), 2)
-   return "$%s%s" % (intcomma(int(moneda)), ("%0.2f" % moneda)[-3:])
+    if field=='-': field=0
+    moneda = round(float(field), 2)
+    return "$%s%s" % (intcomma(int(moneda)), ("%0.2f" % moneda)[-3:])

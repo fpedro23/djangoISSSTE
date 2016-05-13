@@ -54,7 +54,7 @@
                                     Estado:
                                 </td>
 
-                                <td width="200" height="23" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                                <td width="200" height="23" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="bottom"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
                                      {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}
@@ -138,7 +138,7 @@
                                      {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}
-                                          {{ field.contents|floatFormat }}
+                                          {{ field.contents|formatoNumero }}
                                        {% endif %}
                                 <script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
                                 <script> $(document).ready(function($) {
@@ -180,7 +180,7 @@
                                         {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}
-                                          {{ field.contents|floatFormat }}
+                                          {{ field.contents|formatoNumero }}
                                        {% endif %}
                                 <script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
                                 <script> $(document).ready(function($) {
