@@ -971,35 +971,66 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
         bold = book.add_format({'bold': True})
 
         # Create a format to use in the merged range.
-        merge_format = book.add_format({
+        merge_format_rojo = book.add_format({
             'bold': 1,
             'border': 1,
             'align': 'left',
             'valign': 'vcenter',
-            'fg_color': 'A62A2A'})
+            'fg_color': 'C3534C'})
+        merge_format_rojo.set_border_color('white')
+        merge_format_rojo.set_border(3)
+        merge_format_naranja = book.add_format({
+            'bold': 1,
+            'border': 1,
+            'align': 'left',
+            'valign': 'vcenter',
+            'fg_color': 'FA934C'})
+        merge_format_naranja.set_border_color('white')
+        merge_format_naranja.set_border(3)
 
-        merge_format2 = book.add_format({
+        merge_format_verde = book.add_format({
+            'bold': 1,
+            'border': 1,
+            'align': 'left',
+            'valign': 'vcenter',
+            'fg_color': '9CBB5C'})
+        merge_format_verde.set_border_color('white')
+        merge_format_verde.set_border(3)
+
+
+        merge_format_gris = book.add_format({
             'bold': 1,
             'border': 1,
             'align': 'center',
             'valign': 'vcenter',
             'fg_color': 'BFBFBF'})
-
+        merge_format_gris.set_border_color('white')
+        merge_format_gris.set_border(3)
 
         # Merge 2 cells.
-        sheet.merge_range('A1:B1', 'Carencia', merge_format)
-        sheet.merge_range('A2:B2', 'SubCarencia', merge_format)
-        sheet.merge_range('A3:B3', 'Accion Estrategica', merge_format)
-        sheet.merge_range('A4:B4', 'Unidad de Medida', merge_format)
-        sheet.merge_range('A5:B5', 'Avances', merge_format)
-        sheet.merge_range('C5:O5', "Avance Mensual", merge_format2)
+        sheet.set_column(5, 0, 10)
+        sheet.set_column(5, 1, 20)
+        sheet.set_column(5, 2, 30)
+        for i in range(0, 5):
+            sheet.set_row(i, 40)
+        sheet.set_row(5, 30)
+        sheet.merge_range('A1:C1', 'Carencia', merge_format_rojo)
+        sheet.merge_range('A2:C2', 'SubCarencia', merge_format_naranja)
+        sheet.merge_range('A3:C3', 'Accion Estrategica', merge_format_rojo)
+        sheet.merge_range('A4:C4', 'Unidad de Medida', merge_format_naranja)
+        sheet.merge_range('A5:C5', 'Avances', merge_format_verde)
+        sheet.merge_range('D5:O5', "Avance Mensual", merge_format_verde)
 
 
         # avances
+        format = book.add_format()
+        format.set_font_color('black')
+        format.set_font_name('Calibri')
 
-        sheet.write(5, 0, "Clave", bold)
-        sheet.write(5, 1, "Entidad", bold)
-        sheet.write(5, 2, "Municipio", bold)
+
+        sheet.write(5, 0, "Clave", merge_format_rojo)
+        sheet.write(5, 1, "Entidad", merge_format_rojo)
+        sheet.write(5, 2, "Municipio", merge_format_rojo)
         sheet.write(5, 3, "Enero", bold)
         sheet.write(5, 4, "Febrero", bold)
         sheet.write(5, 5, "Marzo", bold)
@@ -1014,29 +1045,30 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
         sheet.write(5, 14, "Diciembre", bold)
 
 
-        sheet.merge_range('C1:O1', json_map['carencia'], merge_format2)
+        sheet.merge_range('D1:O1', json_map['carencia'], merge_format_rojo)
+
         for reporte in json_map['resultados']:
-            sheet.merge_range('C2:O2', reporte['subCarencias'], merge_format2)
+            sheet.merge_range('D2:O2', reporte['subCarencias'], merge_format_gris)
             for accion in reporte['acciones']:
-                sheet.merge_range('C3:O3', accion['accion'], merge_format2)
-                sheet.merge_range('C4:O4', accion['unidad'], merge_format2)
+                sheet.merge_range('D3:O3', accion['accion'])
+                sheet.merge_range('D4:O4', accion['unidad'])
                 renAvance=6
                 for avance in accion['avances']:
-                    sheet.write(renAvance, 0, avance["clave"], bold)
-                    sheet.write(renAvance, 1, avance["estado"], bold)
-                    sheet.write(renAvance, 2, avance["municipio"], bold)
-                    sheet.write(renAvance, 3, avance["ene"], bold)
-                    sheet.write(renAvance, 4, avance["feb"], bold)
-                    sheet.write(renAvance, 5, avance["mar"], bold)
-                    sheet.write(renAvance, 6, avance["abr"], bold)
-                    sheet.write(renAvance, 7, avance["may"], bold)
-                    sheet.write(renAvance, 8, avance["jun"], bold)
-                    sheet.write(renAvance, 9, avance["jul"], bold)
-                    sheet.write(renAvance, 10, avance["ago"], bold)
-                    sheet.write(renAvance, 11, avance["sep"], bold)
-                    sheet.write(renAvance, 12, avance["oct"], bold)
-                    sheet.write(renAvance, 13, avance["nov"], bold)
-                    sheet.write(renAvance, 14, avance["dic"], bold)
+                    sheet.write(renAvance, 0, avance["clave"], format)
+                    sheet.write(renAvance, 1, avance["estado"], format)
+                    sheet.write(renAvance, 2, avance["municipio"], format)
+                    sheet.write(renAvance, 3, avance["ene"], format)
+                    sheet.write(renAvance, 4, avance["feb"], format)
+                    sheet.write(renAvance, 5, avance["mar"], format)
+                    sheet.write(renAvance, 6, avance["abr"], format)
+                    sheet.write(renAvance, 7, avance["may"], format)
+                    sheet.write(renAvance, 8, avance["jun"], format)
+                    sheet.write(renAvance, 9, avance["jul"], format)
+                    sheet.write(renAvance, 10, avance["ago"], format)
+                    sheet.write(renAvance, 11, avance["sep"], format)
+                    sheet.write(renAvance, 12, avance["oct"], format)
+                    sheet.write(renAvance, 13, avance["nov"], format)
+                    sheet.write(renAvance, 14, avance["dic"], format)
                     renAvance+=1
 
 
