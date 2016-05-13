@@ -2332,3 +2332,36 @@ class InformacionGeneralEndpoint(ProtectedResourceView):
             json_map['balance'].append(list_carencias)
 
         return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True,), 'application/json')
+
+class AvancesPorPeriodoEndPoint(generic.ListView):
+    def get(self, request):
+        json_map = {}
+        json_map['balance'] = []
+
+        for periodo in Periodo.objects.all():
+            list_datos = {}
+            list_datos['periodo'] = periodo.nombrePeriodo
+            list_datos['metas'] = 0
+            list_datos['avances'] = 0
+            for avance in AvanceMensual.objects.filter(avancePorMunicipio__periodo__id = periodo.id).values(
+                    'avancePorMunicipio__periodo__nombrePeriodo').annotate(
+                ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
+                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+
+                total = avance['ene'] + avance['feb'] + avance['mar'] + avance['abr'] + avance['may'] + avance['jun'] + \
+                        avance['jul'] + avance['ago'] + avance['sep'] + avance['oct'] + avance['nov'] + avance['dic']
+
+                list_datos['avances'] = total
+
+            for meta in MetaMensual.objects.filter(meta__periodo__id=periodo.id).values(
+                    'meta__periodo__nombrePeriodo').annotate(
+                ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
+                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+                total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
+                        meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
+
+                list_datos['metas'] = total
+
+            json_map['balance'].append(list_datos)
+
+        return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True, ), 'application/json')
