@@ -119,7 +119,7 @@ class UsuarioInLine(admin.StackedInline):
 
 class UserAdmin(UserAdmin):
     inlines = (UsuarioInLine,)
-    list_display = ('username', 'first_name', 'last_name', 'email', 'get_estado', 'get_rol')
+    list_display = ('username', 'first_name', 'last_name', 'get_email', 'get_estado', 'get_rol')
     fieldsets = (
         (('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
         (('AuthInfo'), {'fields': ('username', 'password')}),
@@ -132,6 +132,9 @@ class UserAdmin(UserAdmin):
         (('Permissions'), {'fields': ('is_active',)}),
     )
 
+    def get_email(self,obj):
+        return obj.email
+
     # Obteniendo el campo del rol dentro de la lista de usuarios
     def get_rol(self, obj):
         return obj.usuario.rol
@@ -142,6 +145,7 @@ class UserAdmin(UserAdmin):
 
     get_rol.short_description = "Rol"
     get_estado.short_description = "Estado"
+    get_email.short_description = "E-mail"
 
     def response_add(self, request, obj, post_url_continue=None):
         if '_addanother' not in request.POST:
@@ -245,7 +249,7 @@ class MetaAdmin(admin.ModelAdmin):
 
     get_subcarencia.short_description = "SubCarencia"
     get_carencia.short_description = "Carencia"
-    get_inversion.short_description = "Inversion Aproximada"
+    get_inversion.short_description = "Inversión Aproximada"
 
     def save_formset(self, request, form, formset, change):
         formset.save()
@@ -296,7 +300,7 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
         ('Avance', {
             'fields': (
                 'periodo', 'meta', 'estado', 'get_carencia', 'get_unidad_medida',
-                'get_subcarencia', 'inversionAprox','get_observaciones', 'get_accion','get_monto_promedio',
+                'get_subcarencia', 'get_inversion','get_observaciones', 'get_accion','get_monto_promedio',
             )
         }),
         ('Meta', {
@@ -313,7 +317,7 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
                        'get_septiembre', 'get_octubre', 'get_noviembre', 'get_diciembre', 'get_accion',
                        'inversionAprox', 'get_monto_promedio',)
 
-    list_display = ('id', 'get_carencia', 'get_subcarencia', 'meta', 'periodo', 'estado', 'inversionAprox', 'get_monto_promedio',)
+    list_display = ('id', 'get_carencia', 'get_subcarencia', 'meta', 'periodo', 'estado', 'get_inversion', 'get_monto_promedio',)
     ordering = ['meta__nombreMeta', ]
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
@@ -468,7 +472,10 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
     def get_monto_promedio(self, obj):
         return obj.meta.montoPromedio
 
+    def get_inversion(self,obj):
+        return obj.inversionAprox
 
+    get_inversion.short_description = "Inversión"
     get_subcarencia.short_description = "Sub Carencia"
     get_carencia.short_description = "Carencia"
     get_unidad_medida.short_description = "Unidad de Medida"
