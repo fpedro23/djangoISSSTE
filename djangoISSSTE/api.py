@@ -448,15 +448,7 @@ class BuscadorEndpoint(generic.ListView):
             shortened_reporte['latitud'] = reporte['municipio__latitud']
             shortened_reporte['longitud'] = reporte['municipio__longitud']
 
-            # Validando que la suma de los avances se encuentre dentro del rango solicitado
-            if myObj.avance_minimo is not None and myObj.avance_maximo is not None:
-                if shortened_reporte['suma_avance'] < myObj.avance_minimo[0] or shortened_reporte['suma_avance'] > \
-                        myObj.avance_maximo[0]:
-                    add = False
-
-            # Si existieron los límites del avance y se estuvo dentro de ellos, se añade
-            if add == True:
-                json_map['reporte_general'].append(shortened_reporte)
+            json_map['reporte_general'].append(shortened_reporte)
 
         for reporte in resultados['reporte_por_estado']:
             shortened_reporte = {}
@@ -661,18 +653,18 @@ class BuscadorEndpoint(generic.ListView):
                         if mes == 11: shortened_reporte['suma_meta'] += meta_mensual['nov']
                         if mes == 12: shortened_reporte['suma_meta'] += meta_mensual['dic']
                 else:
-                    shortened_reporte['avance'] += meta_mensual["ene"]
-                    shortened_reporte['avance'] += meta_mensual["feb"]
-                    shortened_reporte['avance'] += meta_mensual["mar"]
-                    shortened_reporte['avance'] += meta_mensual["abr"]
-                    shortened_reporte['avance'] += meta_mensual["may"]
-                    shortened_reporte['avance'] += meta_mensual["jun"]
-                    shortened_reporte['avance'] += meta_mensual["jul"]
-                    shortened_reporte['avance'] += meta_mensual["ago"]
-                    shortened_reporte['avance'] += meta_mensual["sep"]
-                    shortened_reporte['avance'] += meta_mensual["oct"]
-                    shortened_reporte['avance'] += meta_mensual["nov"]
-                    shortened_reporte['avance'] += meta_mensual["dic"]
+                    shortened_reporte['suma_meta'] += meta_mensual["ene"]
+                    shortened_reporte['suma_meta'] += meta_mensual["feb"]
+                    shortened_reporte['suma_meta'] += meta_mensual["mar"]
+                    shortened_reporte['suma_meta'] += meta_mensual["abr"]
+                    shortened_reporte['suma_meta'] += meta_mensual["may"]
+                    shortened_reporte['suma_meta'] += meta_mensual["jun"]
+                    shortened_reporte['suma_meta'] += meta_mensual["jul"]
+                    shortened_reporte['suma_meta'] += meta_mensual["ago"]
+                    shortened_reporte['suma_meta'] += meta_mensual["sep"]
+                    shortened_reporte['suma_meta'] += meta_mensual["oct"]
+                    shortened_reporte['suma_meta'] += meta_mensual["nov"]
+                    shortened_reporte['suma_meta'] += meta_mensual["dic"]
 
             shortened_reporte['accionId'] = reporte[
                 'avancePorMunicipio__meta__accionEstrategica__id']
@@ -2235,7 +2227,43 @@ class PD_MetasSinAvancesEndpoint(ProtectedResourceView):
             shortened_reporte['longitud'] = reporte['estado__longitud']
             json_map['reporte_metas'].append(shortened_reporte)
 
-
-
-
         return HttpResponse(json.dumps(json_map, ensure_ascii=False), 'application/json')
+
+def date_handler(obj):
+    return obj.isoformat() if hasattr(obj, 'isoformat') else obj
+
+class BalanceGeneralEndpoint(generic.ListView):
+    def get(self, request):
+
+        json_map = {}
+        json_map['balance'] = []
+        for carencia in Carencia.objects.all():
+            list_carencias = {}
+            list_carencias['carencia'] = carencia.nombreCarencia
+            list_carencias['total_avances'] = 0
+            list_carencias['total_metas'] = 0
+            for avance in AvanceMensual.objects.filter(
+                    avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=carencia.id).values(
+                'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia').annotate(
+                ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
+                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+
+                total = avance['ene'] + avance['feb'] + avance['mar'] + avance['abr'] + avance['may'] + avance['jun'] +\
+                        avance['jul'] + avance['ago'] + avance['sep'] + avance['oct'] + avance['nov'] + avance['dic']
+                list_carencias['total_avances'] = total
+
+            for meta in MetaMensual.objects.filter(
+                    meta__accionEstrategica__subCarencia__carencia__id=carencia.id).values(
+                'meta__accionEstrategica__subCarencia__carencia__nombreCarencia').annotate(
+                ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
+                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+
+                total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
+                        meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
+
+                list_carencias['total_metas'] = total
+
+            json_map['balance'].append(list_carencias)
+
+        return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True,), 'application/json')
+
