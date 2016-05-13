@@ -3,7 +3,7 @@
 
 {% block extrastyle %}
   {{ block.super }}
-  <link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}" />
+  <link rel="stylesheet" type="text/css" href="{% static "assets/css/changelists.css" %}" />
   {% if cl.formset %}
     <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />
   {% endif %}
@@ -26,7 +26,12 @@
 (function($) {
     $(document).ready(function($) {
         $("tr input.action-select").actions();
+         $("#action-toggle").hide();
+         $('.action-select').hide();
+        $('.action-checkbox-column').hide();$('.action-checkbox').hide();
     });
+
+
 })(django.jQuery);
 </script>
 {% endif %}{% endif %}
@@ -37,7 +42,7 @@
 {% if not is_popup %}
 {% block breadcrumbs %}
 <div class="breadcrumbs">
-
+<div id = "regresarBTN" onclick="window.history.go(-1);"></div>
 </div>
 {% endblock %}
 {% endif %}
@@ -45,6 +50,7 @@
 {% block coltype %}flex{% endblock %}
 
 {% block content %}
+    <div id="welcome">Lista de Avances</div>
   <div id="content-main">
     {% block object-tools %}
 

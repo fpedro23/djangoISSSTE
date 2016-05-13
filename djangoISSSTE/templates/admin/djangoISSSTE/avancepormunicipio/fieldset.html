@@ -7,6 +7,7 @@
     {% endif %}
     {% for line in fieldset %}
             {% for field in line %}
+
                 {% if field.field.name == "periodo" %}
                     <div class= "general">
                         <div id="tituloCUADROS">
@@ -14,11 +15,11 @@
                         </div>
                          <table width="1022">
                             <tr>
-                                <td width="170" height="23" class="txtlabel">
+                                <td width="140" height="23" class="txtlabel">
                                    Año:
                                 </td>
 
-                                <td width="170" height="23" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                                <td width="200" height="23" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
                                      {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}
@@ -31,11 +32,11 @@
                                 </td>
                 {% endif %}
                 {% if field.field.name == "meta" %}
-                                 <td width="170" height="23" class="txtlabel">
+                                 <td width="140" height="23" class="txtlabel">
                                     Acción Estratégica:
                                  </td>
 
-                                <td width="170" height="23" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                                <td width="200" height="23" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
                                      {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}
@@ -49,11 +50,11 @@
                 {% endif %}
                 {% if field.field.name == "estado" %}
 
-                                <td width="170" height="23" class="txtlabel">
+                                <td width="140" height="23" class="txtlabel">
                                     Estado:
                                 </td>
 
-                                <td width="170" height="23" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                                <td width="200" height="23" class="related-widget-wrapper" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="bottom"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
                                      {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}
@@ -76,10 +77,10 @@
 
                         <table width="1022" valign="top" style="text-align: left">
                             <tr>
-                                <td width="170" class="txtlabel">
+                                <td width="140" height="45" class="txtlabel">
                                     Carencia:</td>
 
-                                <td width="170" class="labelreadonly" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                                <td width="200" class="labelreadonly" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
                                     {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}
@@ -92,10 +93,10 @@
                                 </td>
                 {% endif %}
                 {% if field.field.name == "get_unidad_medida" %}
-                                <td width="170" class="txtlabel">
+                                <td width="140" class="txtlabel">
                                     Unidad de Medida:</td>
 
-                                <td width="170" class="labelreadonly"  id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                                <td width="200" class="labelreadonly" style="padding-right: 20px" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
                                      {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}
@@ -113,10 +114,10 @@
                 {% endif %}
                 {% if field.field.name == "get_subcarencia" %}
                         <tr>
-                            <td width="170" class="txtlabel">
+                            <td width="140" height="45" class="txtlabel">
                                Sub Carencia:</td>
 
-                            <td width="170" class="labelreadonly" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                            <td width="200" class="labelreadonly" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
                                      {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}
@@ -129,15 +130,15 @@
                             </td>
 
                 {% endif %}
-                {% if field.field.name == "inversionAprox" %}
-                        <td width="170" class="txtlabel">
-                            Inversión:</td>
+                {% if field.field.name == "get_inversion" %}
+                        <td width="140" class="txtlabel">
+                            Inversión Aprox.:</td>
 
-                        <td width="170" class="labelreadonly" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+                        <td width="200" class="labelreadonly" style="padding-top: 5px" id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
                                      {% if field.field.errors %}
                                          {{ field.field|addcss:"border-error" }}
                                        {% else %}
-                                          {{ field.contents }}
+                                          {{ field.contents|formatoNumero }}
                                        {% endif %}
                                 <script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
                                 <script> $(document).ready(function($) {
@@ -168,24 +169,47 @@
 
                 {% endif %}
 
+
+                {% if field.field.name == "get_monto_promedio" %}
+                                    <div class="txtlabel" style="overflow: scroll; height:20px; top: 97px;left:339px;position: absolute;">
+
+                                        Monto  Promedio: </div>
+
+                     <div class="labelreadonly" style="overflow: scroll; height:20px; top: 97px;left:479px;position: absolute;">
+
+                                        {% if field.field.errors %}
+                                         {{ field.field|addcss:"border-error" }}
+                                       {% else %}
+                                          {{ field.contents|formatoNumero }}
+                                       {% endif %}
+                                <script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
+                                <script> $(document).ready(function($) {
+                                    var $te = jQuery.noConflict();
+                                    $te('#tr-{{ field.field.name}}').tooltip({html:true});});</script>
+                                    </div>
+
+                {% endif %}
+
+
+
                 {% if field.field.name == "get_enero" %}
 
 
-                          <table class="subtituloTABLA" valign="top" style="text-align: center;margin-left: 10px" width="97%">
+                          <table class="subtituloTABLA" valign="top" style="text-align: center;margin-left: 4px" width="990px">
                              <tr>
-                                <td width="125">Meta Estatal:</td>
-                                <td width="93">Ene</td>
-                                <td width="93">Feb</td>
-                                <td width="93">Mar</td>
-                                <td width="93">Abr</td>
-                                <td width="93">May</td>
-                                <td width="93">Jun</td>
-                                <td width="93">Jul</td>
-                                <td width="93">Ago</td>
-                                <td width="93">Sep</td>
-                                <td width="93">Oct</td>
-                                <td width="93">Nov</td>
-                                <td width="93">Dic</td>
+                                <td width="107">Meta Estatal:</td>
+                                <td width="74">Ene</td>
+                                <td width="74">Feb</td>
+                                <td width="74">Mar</td>
+                                <td width="74">Abr</td>
+                                <td width="74">May</td>
+                                <td width="74">Jun</td>
+                                <td width="74">Jul</td>
+                                <td width="74">Ago</td>
+                                <td width="74">Sep</td>
+                                <td width="74">Oct</td>
+                                <td width="74">Nov</td>
+                                <td width="74">Dic</td>
                              </tr>
                              <tr valign="top">
                                 <td width="100">

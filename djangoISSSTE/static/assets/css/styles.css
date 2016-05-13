@@ -266,7 +266,7 @@
 	height:45px;
 	position:absolute;
 	top: 250px;
-	left:217px;
+	left:227px;
 	background-image:url(../Imagenes/bigBackground.fw.png);
 	background-position:0px 0px;
 }
@@ -530,7 +530,7 @@
 .inavance_MENSUAL{
 	border: 0px solid #740e11;
 	border-radius: 0px;
-	width: 1015px;
+	width: 1010px;
 	height: 225px;
 	font-family: 'soberana_sanslight';
 	font-size: 15px;
@@ -538,7 +538,7 @@
 	position: absolute;
     padding-top: 0px;
     overflow: scroll;
-	left: 3px;
+	left: 2px;
 	top: 265px;
 }
 
@@ -937,8 +937,10 @@
 	height: 30px;
 	background-image: url(../Imagenes/bigBackground.fw.png);
 	background-position: -726px -1925px;
-	position: relative;
 	display: inline-block;
+        position: absolute;
+    top: 550px;
+    left: 597px;
 }
 
 .salirBTN:hover{
@@ -1075,6 +1077,20 @@
 	cursor: pointer;
 }
 
+.salirBTNC{
+	width: 51px;
+	height: 30px;
+	background-image: url(../Imagenes/bigBackground.fw.png);
+	background-position: -726px -1925px;
+	position: relative;
+    display: inline-block;
+}
+
+.salirBTNC:hover{
+	background-position: -726px -1956px;
+	cursor: pointer;
+}
+
 .ppt{
     width: 78px;
     height: 82px;
@@ -1105,9 +1121,8 @@
 }
 
 .labelreadonly{
-    font-weight: bold;
-    font-family: 'soberana_textobold';
-    font-size: 12px;
+    font-family: 'soberana_sans_lightbold';
+    font-size: 11px;
     color: #020203;
     vertical-align: top;
 }
@@ -1199,6 +1214,8 @@ a:hover {
 	background-image:url(../Imagenes/bigBackground.fw.png);
 	background-position:-721px -2000px;
     position: relative;
+    left:400px;
+    top:0px;
 }
 
 .textoALERTA{
@@ -1211,8 +1228,8 @@ a:hover {
 	height:60px;
 
 	position:absolute;
-	left:26px;
-	top:100px;
+	left:23px;
+	top:73px;
 }
 
 .aceptarBTN{
@@ -1224,12 +1241,38 @@ a:hover {
 
 	position:absolute;
 	top:180px;
-	left:100px;
+	left:140px;
 }
 
 .aceptarBTN:hover{
 	background-position:-724px -2287px;
 }
+/* MESSAGES & ERRORS */
+
+ul.messagelist {
+    padding: 0;
+    margin: 0;
+}
+
+ul.messagelist li {
+    font-size: 12px;
+    font-weight: bold;
+    display: block;
+    padding: 5px 5px 4px 25px;
+    margin: 0 0 3px 0;
+    border-bottom: 0px solid #ddd;
+    color: #ffffff;
+    background: transparent url(../img/icon_success.gif) 5px .3em no-repeat;
+}
+
+ul.messagelist li.warning {
+    background: transparent url(../img/icon_alert.gif) 5px .3em no-repeat;
+}
+
+ul.messagelist li.error {
+    background: transparent url(../img/icon_error.gif) 5px .3em no-repeat;
+}
+
 
 .errornote {
         font-family: 'soberana_sansregular';
@@ -1300,11 +1343,107 @@ a:hover {
 	 height:330px;
 	 margin-top:33px;
 	 margin-left:50px;
-
 	font-family: "soberana_sanslight";
     font-size:18px;
-
     color: #6A6B6C;
 
 }
 
+.guardar_ContinuarB {
+    width: 187px;
+    height: 30px;
+    position: absolute;
+    top: 550px;
+    left: 675px;
+    background-color: transparent;
+    border-radius: 0px;
+    border-width: 0px;
+    border-style: none;
+    border-color: inherit;
+    background-image: url(../Imagenes/bigBackground.fw.png);
+    background-position: -1159px -1861px;
+}
+
+.guardar_ContinuarB:hover{
+	background-position:-1159px -1891px;
+}
+
+
+
+.texto01{
+	width: 300px;
+	height: 20px;
+	font-family: 'soberana_sanslight';
+	font-size: 14px;
+	text-align: left;
+	position: absolute;
+	top: 120px;
+	left: 56px;
+
+
+}
+
+.texto02{
+	width: 300px;
+	height: 20px;
+	font-family: 'soberana_sanslight';
+	font-size: 14px;
+	text-align: left;
+	position: absolute;
+	top: 181px;
+	left: 56px;
+
+
+}
+
+/*dropdown 2do nivel*/
+
+ul li {
+  list-style-type: none;
+  padding: 1px 0;
+}
+.dropdown-submenu {
+    position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -6px;
+    margin-left: -1px;
+    -webkit-border-radius: 0 6px 6px 6px;
+    -moz-border-radius: 0 6px 6px;
+    border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+    display: block;
+}
+.dropdown-submenu>a:after {
+    display: block;
+    content: " ";
+    float: right;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 5px 0 5px 5px;
+    border-left-color: #ccc;
+    margin-top: 5px;
+    margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+    border-left-color: #fff;
+}
+
+.dropdown-submenu.pull-left {
+    float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+    left: -100%;
+    margin-left: 10px;
+    -webkit-border-radius: 6px 0 6px 6px;
+    -moz-border-radius: 6px 0 6px 6px;
+    border-radius: 6px 0 6px 6px;
+}
+
+
+/*end drop down 2do nivel*/

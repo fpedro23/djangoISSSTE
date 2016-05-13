@@ -16,38 +16,27 @@ $j(document).on('ready', function() {
     var estadoId = $('#id_estado').find('option:selected').val();
     var municipioId = $j('.tamcontrolsel').find('option:selected').val();
     var munlenght = $j('.tamcontrolsel').length;
-    //alert("municipioID "+$j('.tamcontrolsel').length);
+
     var mismun=[];
+    if (munlenght>0 && parseInt(estadoId) >0){
+        for (i = 0; i < munlenght - 1; i++) {
 
-    for(i=0;i<$j('.tamcontrolsel').length-1;i++)
-    {
-       // alert(i+',value:'+$j('.tamcontrolsel')[i].value);
-        //$j("select#id_avancemensual_set-"+i+"-municipio").attr('disabled','disabled');
-        //alert($j("select#id_avancemensual_set-"+i+"-municipio").val());
-        mismun[i]=$j("select#id_avancemensual_set-"+i+"-municipio").val();
-    }
-
-    if ( municipioId == "" && munlenght ==1 ) {
-        clearMunicipios();
-        //alert("no municipios previos")
-    }
-    else {
-        // No need to check for nulls here, wel already did in the first if
-        if (estadoId != "") {
-             //obtiene municipios
-           // alert("si municipios previos")
-            getMunicipiosForEstado(estadoId, function (ans) {
-                populateMunicpiosSelect(ans);
-
-            });
-
+            mismun[i] = $j("select#id_avancemensual_set-" + i + "-municipio").val();
+            //alert(i + ',value:' + $j('.tamcontrolsel')[i].value + "estaoId=" + estadoId);
+            clearMunicipios3(i);
         }
+
+            //obtiene municipios
+        getMunicipiosForEstado(estadoId, function (ans) {
+            populateMunicpiosSelect3(ans,mismun);
+
+        });
     }
 
 
 
     // I know, I'm calling this again, I'll get around to fixingt it
-    $('#id_estado').on('change', function() {
+    /*$('#id_estado').on('change', function() {
         var option = $(this).find('option:selected');
 
         if (option != null) {
@@ -63,7 +52,7 @@ $j(document).on('ready', function() {
 
             }
         }
-    });
+    });*/
 
     $j("tr.add-row").on("click",function(){
         var estadoId = $('#id_estado').find('option:selected').val();
@@ -73,9 +62,9 @@ $j(document).on('ready', function() {
         {
             mismun[i]=$j("select#id_avancemensual_set-"+i+"-municipio").val();
         }
-        getMunicipiosForEstado(parseInt(estadoId), function (ans) {
-                    populateMunicpiosSelect2(ans,mismun);
-                });
+            getMunicipiosForEstado(parseInt(estadoId), function (ans) {
+                populateMunicpiosSelect2(ans,mismun);
+            });
     });
 
 
@@ -167,3 +156,34 @@ function clearMunicipios2(mismun) {
         .empty()
         .append('<option value>---------</option>');
 }
+
+
+function populateMunicpiosSelect3(municipios,mismun) {
+    //mismun los valores de municipios que ya han sido seleccionados y se deben ocultar
+    // Clean the field
+    //alert(', array'+mismun);
+
+
+    for (var j=0;j <= mismun.length;j++) {
+        for (var i = 0; i < municipios.length; i++) {
+
+            $j("select#id_avancemensual_set-" + j + "-municipio").append(
+                '<option value="' + municipios[i].id + '">' +
+                municipios[i].nombreMunicipio +
+                '</option>'
+            );
+        }
+        $j("select#id_avancemensual_set-" + j + "-municipio option[value=" + mismun[j] + "]").attr('selected', true);
+        $j("select#id_avancemensual_set-" + j + "-municipio option:not(:selected)").attr('disabled', true);
+    }
+
+}
+
+function clearMunicipios3(i) {
+
+    $j("select#id_avancemensual_set-"+i+"-municipio")
+        .empty()
+        .append('<option value>---------</option>');
+}
+
+

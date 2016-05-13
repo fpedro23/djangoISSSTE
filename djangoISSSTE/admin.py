@@ -226,7 +226,7 @@ class MetaAdmin(admin.ModelAdmin):
     fields = ('accionEstrategica', 'periodo', 'montoPromedio', 'observaciones',)
     list_display = ('get_carencia', 'get_subcarencia', 'accionEstrategica', 'periodo', 'get_inversion')
     inlines = [MetaMensualInLine, ]
-    can_delete = True
+    can_delete = False
 
     # Obteniendo el campo de la SuCarencia para la lista de Metas
     def get_subcarencia(self, obj):
@@ -285,6 +285,7 @@ class AvanceMensualInLine(admin.TabularInline):
     model = AvanceMensual
     exclude = ['porcentajeAvance']
     extra = 0
+
 
 class AvancePorMunicipioAdmin(admin.ModelAdmin):
     # La entidad de meta se desplegará con el label de "Acción Estratégica"
@@ -568,6 +569,7 @@ class AccionEstrategicaAdmin(admin.ModelAdmin):
                 Q(accionEstrategica__id=accionEstrategicaID)
         ):
             arregloMetas.append(singleMeta.id)
+
 
         for singleMetaMensual in MetaMensual.objects.filter(
                 Q(meta__id__in=arregloMetas)
