@@ -47,7 +47,7 @@ urlpatterns = [
     url(r'^api/reporteExcelMetas', api.ReporteExcelMetasEndpoint.as_view()),
     url(r'^api/balanceGeneral', api.BalanceGeneralEndpoint.as_view()),
 	url(r'^api/balancePorEntidad', api.BalancePorEntidadEndpoint.as_view()),
-
+	url(r'^api/informacionGeneral', api.InformacionGeneralEndpoint.as_view()),
 
     # url(r'^api/hora_ultima_actualizacion', api.HoraUltimaActualizacion.as_view()),
 ]

@@ -2302,3 +2302,33 @@ class BalancePorEntidadEndpoint(generic.ListView):
             json_map['balancePorEntidad'].append(list_estados)
 
         return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True,), 'application/json')
+
+class InformacionGeneralEndpoint(generic.ListView):
+    def get(self, request):
+
+        json_map = {}
+        json_map['balance'] = []
+        for carencia in Carencia.objects.all():
+            list_carencias = {}
+            list_carencias['carencia'] = carencia.nombreCarencia
+            list_carencias['total_avances'] = 0
+            list_carencias['inversionAprox'] = 0
+            for avance in AvanceMensual.objects.filter(
+                    avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=carencia.id).values(
+                'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia').annotate(
+                ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
+                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+
+                total = avance['ene'] + avance['feb'] + avance['mar'] + avance['abr'] + avance['may'] + avance['jun'] +\
+                        avance['jul'] + avance['ago'] + avance['sep'] + avance['oct'] + avance['nov'] + avance['dic']
+                list_carencias['total_avances'] = total
+
+                for avanceMunicipio in AvancePorMunicipio.objects.filter(
+                    meta__accionEstrategica__subCarencia__carencia__id=carencia.id).values(
+                    'meta__accionEstrategica__subCarencia__carencia__id'
+                ).annotate(inversion=Sum('inversionAprox')):
+                    list_carencias['inversionAprox'] = avanceMunicipio['inversion']
+
+            json_map['balance'].append(list_carencias)
+
+        return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True,), 'application/json')
