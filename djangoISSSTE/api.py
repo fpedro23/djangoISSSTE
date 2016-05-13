@@ -2127,7 +2127,6 @@ class BalanceGeneralEndpoint(ProtectedResourceView):
 
         return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True,), 'application/json')
 
-
 class BalancePorEntidadEndpoint(generic.ListView):
     def get(self, request):
 
