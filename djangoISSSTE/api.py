@@ -974,28 +974,32 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
         merge_format_rojo = book.add_format({
             'bold': 1,
             'border': 1,
-            'align': 'left',
+            'align': 'center',
             'valign': 'vcenter',
             'fg_color': 'C3534C'})
         merge_format_rojo.set_border_color('white')
         merge_format_rojo.set_border(3)
+        merge_format_rojo.set_font_color('white')
+
         merge_format_naranja = book.add_format({
             'bold': 1,
             'border': 1,
-            'align': 'left',
+            'align': 'center',
             'valign': 'vcenter',
             'fg_color': 'FA934C'})
         merge_format_naranja.set_border_color('white')
         merge_format_naranja.set_border(3)
+        merge_format_naranja.set_font_color('white')
 
         merge_format_verde = book.add_format({
             'bold': 1,
             'border': 1,
-            'align': 'left',
+            'align': 'center',
             'valign': 'vcenter',
             'fg_color': '9CBB5C'})
         merge_format_verde.set_border_color('white')
         merge_format_verde.set_border(3)
+        merge_format_verde.set_font_color('white')
 
 
         merge_format_gris = book.add_format({
@@ -1006,6 +1010,18 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
             'fg_color': 'BFBFBF'})
         merge_format_gris.set_border_color('white')
         merge_format_gris.set_border(3)
+        merge_format_gris.set_font_color('white')
+
+
+        merge_format_blanco = book.add_format({
+            'bold': 1,
+            'border': 1,
+            'align': 'center',
+            'valign': 'vcenter',
+            'fg_color': 'FFFFFF'})
+        merge_format_gris.set_border_color('white')
+        merge_format_gris.set_border(1)
+        merge_format_gris.set_font_color('black')
 
         # Merge 2 cells.
         sheet.set_column(5, 0, 10)
@@ -1050,8 +1066,8 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
         for reporte in json_map['resultados']:
             sheet.merge_range('D2:O2', reporte['subCarencias'], merge_format_gris)
             for accion in reporte['acciones']:
-                sheet.merge_range('D3:O3', accion['accion'])
-                sheet.merge_range('D4:O4', accion['unidad'])
+                sheet.merge_range('D3:O3', accion['accion'],merge_format_blanco)
+                sheet.merge_range('D4:O4', accion['unidad'],merge_format_blanco)
                 renAvance=6
                 for avance in accion['avances']:
                     sheet.write(renAvance, 0, avance["clave"], format)
