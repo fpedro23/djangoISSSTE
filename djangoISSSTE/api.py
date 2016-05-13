@@ -760,8 +760,8 @@ class FichaTecnicaAvancesEndpoint(generic.ListView):
         accion_id = get_array_or_none(request.GET.get('accion'))
         estado_id = get_array_or_none(request.GET.get('estado'))
 
-        avances = AvanceMensual.objects.filter(Q(avancePorMunicipio__periodo__nombrePeriodo__in = periodo_id)&
-                                               Q(avancePorMunicipio__meta__accionEstrategica__id__in = accion_id)&
+        avances = AvanceMensual.objects.filter(Q(avancePorMunicipio__periodo__id__in = periodo_id)&
+                                               Q(avancePorMunicipio__meta__id__in = accion_id)&
                                                Q(avancePorMunicipio__estado__id__in=estado_id))
         resultados = avances.values(
             'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia',

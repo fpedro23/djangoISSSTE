@@ -5,6 +5,31 @@
 <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
 
 {{ media }}
+    <script>
+
+
+
+        $(document).ready(function($) {
+
+    $(document).on('keypress','input[type=number]',function(event) {
+  if ((event.which != 46 || $(this).val().indexOf('.') != -1) &&
+    ((event.which < 48 || event.which > 57) &&
+      (event.which != 0 && event.which != 8))) {
+    event.preventDefault();
+  }
+
+  var text = $(this).val();
+
+  if ((text.indexOf('.') != -1) &&
+    (text.substring(text.indexOf('.')).length > 2) &&
+    (event.which != 0 && event.which != 8) ) {
+    event.preventDefault();
+  }
+});
+        });
+
+
+    </script>
 {% endblock %}
 
 {% block extrastyle %}{{ block.super }}
@@ -61,7 +86,7 @@
     {% if fieldset.name == "Meta" %}
          <div class="captura_AVANCES">
             <div id="tituloCUADROS">
-    			AVANCES DE LA ACCION
+    			AVANCES DE LA ACCIÓN
 	        </div>
     {% endif %}
   {% include "admin/djangoISSSTE/avancepormunicipio/fieldset.html" %}
@@ -81,7 +106,8 @@
 
 {% block after_related_objects %}{% endblock %}
 
-{% block submit_buttons_bottom %}{% submit_row %}{% endblock %}
+{% block submit_buttons_bottom %}{% submit_row %}
+  <div class = "salirBTN" onclick="location.href='/admin';"></div>{% endblock %}
 
 {% block admin_change_form_document_ready %}
     <script type="text/javascript">
@@ -102,6 +128,9 @@
             });
         })(django.jQuery);
     </script>
+    <script src="{% static "assets/js/jquery.numeric.js"%}"></script>
+    <script src="{% static "assets/js/utilerias.js"%}"></script>
+
 {% endblock %}
 
 {# JavaScript for prepopulated fields #}
