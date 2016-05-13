@@ -217,7 +217,7 @@ class UserAdmin(UserAdmin):
 class MetaMensualInLine(admin.TabularInline):
     model = MetaMensual
     form = MetaMensualForm
-    readonly_fields = ('inversionAprox',)
+    readonly_fields = ('get_inversion',)
     extra = 0
 
 
@@ -249,7 +249,7 @@ class MetaAdmin(admin.ModelAdmin):
 
     get_subcarencia.short_description = "SubCarencia"
     get_carencia.short_description = "Carencia"
-    get_inversion.short_description = "Inversión Aproximada"
+    get_inversion.short_description = "Inversión Aprox."
 
     def save_formset(self, request, form, formset, change):
         formset.save()
@@ -315,7 +315,7 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
     readonly_fields = ('get_carencia', 'get_subcarencia', 'get_unidad_medida', 'get_observaciones', 'get_enero',
                        'get_febrero', 'get_marzo', 'get_abril', 'get_mayo', 'get_junio', 'get_julio', 'get_agosto',
                        'get_septiembre', 'get_octubre', 'get_noviembre', 'get_diciembre', 'get_accion',
-                       'inversionAprox', 'get_monto_promedio',)
+                       'get_inversion', 'get_monto_promedio',)
 
     list_display = ('id', 'get_carencia', 'get_subcarencia', 'meta', 'periodo', 'estado', 'get_inversion', 'get_monto_promedio',)
     ordering = ['meta__nombreMeta', ]
@@ -475,7 +475,7 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
     def get_inversion(self,obj):
         return obj.inversionAprox
 
-    get_inversion.short_description = "Inversión"
+    get_inversion.short_description = "Inversión Aprox."
     get_subcarencia.short_description = "Sub Carencia"
     get_carencia.short_description = "Carencia"
     get_unidad_medida.short_description = "Unidad de Medida"
@@ -577,7 +577,7 @@ class AccionEstrategicaAdmin(admin.ModelAdmin):
 
     get_carencia.short_description = 'Carencia'
     get_cargoResponsable.short_description = 'Cargo del Responsable'
-    get_inversionTotal.short_description = "Inversión Aproximada"
+    get_inversionTotal.short_description = "Inversión Aprox."
 
 
 class SubcarenciaAdmin(admin.ModelAdmin):
