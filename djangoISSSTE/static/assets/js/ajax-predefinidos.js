@@ -48,6 +48,8 @@ function main_consulta() {
 
     valida_token();
     $j('#balanceGeneral').on('click', balanceGeneral)
+    $j('#balanceEntidad').on('click', balanceEntidad)
+
 
     $j('#avancepormunicipio').on('click', avancePorMunicipio);
     $j('#enviaPDF2').on('click', demoFromHTML2)
@@ -108,6 +110,12 @@ function balanceGeneral() {
 
 }
 
+function balanceEntidad() {
+    var URL="/issste/api/balancePorEntidad?access_token="+newToken;
+    location.href = URL;
+
+}
+
 function avancePorMunicipio() {
     $j('#load1').removeClass("mfp-hide");
     $j('#load1').addClass("mfp-show");
@@ -147,7 +155,7 @@ function tablaI(Datos,titulo,descripcion){
                         +'<tr>'
                             +'<th>Carencia</th>'
                             +'<th>SubCarencia</th>'
-                            +'<th>Acción</th>'
+                            +'<th>Acci&oacute;n</th>'
                             +'<th>Municipio</th>'
                             +'<th>Avance Total</th>'
                         +'</tr>'
@@ -166,7 +174,7 @@ function tablaI(Datos,titulo,descripcion){
                         +'<tr>'
                             +'<th width="30%">Carencia</th>'
                             +'<th width="40%">SubCarencia</th>'
-                            +'<th width="30%">Acción</th>'
+                            +'<th width="30%">Acci&oacute;n</th>'
                             +'<th width="30%">Municipio</th>'
                             +'<th width="30%">Avance Total</th>'
                         +'</tr>'
@@ -175,7 +183,7 @@ function tablaI(Datos,titulo,descripcion){
                         +'<tr>'
                             +'<th>Carencia</th>'
                             +'<th>SubCarencia</th>'
-                            +'<th>Acción</th>'
+                            +'<th>Acci&oacute;n</th>'
                             +'<th>Municipio</th>'
                             +'<th>Avance Total</th>'
                         +'</tr>'

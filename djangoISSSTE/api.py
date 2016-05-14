@@ -438,6 +438,7 @@ class BuscadorEndpoint(ProtectedResourceView):
 
 
             shortened_reporte['id'] = reporte['id']
+            shortened_reporte['avancePorMunicipio_id'] = reporte['avancePorMunicipio__id']
             shortened_reporte['accion'] = reporte['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
             shortened_reporte['carencia'] = reporte[
                 'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
