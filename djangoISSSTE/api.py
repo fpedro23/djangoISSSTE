@@ -2448,7 +2448,12 @@ class AvancesPorPeriodoEndPoint(generic.ListView):
             list_datos['periodo'] = periodo.nombrePeriodo
             list_datos['metas'] = 0
             list_datos['avances'] = 0
-            for avance in AvanceMensual.objects.filter(avancePorMunicipio__periodo__id = periodo.id).values(
+            query = Q(avancePorMunicipio__periodo__id=periodo.id)
+            usuario = get_usuario_for_token(request.GET.get('access_token'))
+            if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
+                query = query & Q(avancePorMunicipio__estado = usuario.usuario.estado)
+
+            for avance in AvanceMensual.objects.filter(query).values(
                     'avancePorMunicipio__periodo__nombrePeriodo').annotate(
                 ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
                 jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
@@ -2458,7 +2463,11 @@ class AvancesPorPeriodoEndPoint(generic.ListView):
 
                 list_datos['avances'] = total
 
-            for meta in MetaMensual.objects.filter(meta__periodo__id=periodo.id).values(
+            query_meta = Q(meta__periodo__id=periodo.id)
+            if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
+                query_meta = query_meta & Q(estado=usuario.usuario.estado)
+
+            for meta in MetaMensual.objects.filter(query_meta).values(
                     'meta__periodo__nombrePeriodo').annotate(
                 ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
                 jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
