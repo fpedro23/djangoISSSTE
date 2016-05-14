@@ -25,7 +25,7 @@ SECRET_KEY = '7c$*7lp@_9igh)og*w7cd4c023*g^jccrg&_(fb_#mvj-w&stk'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -97,7 +97,7 @@ WSGI_APPLICATION = 'Projects.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'issste_db',
+        'NAME': 'issste',
         'USER': 'root',
         'PASSWORD': 'root',
         'HOST': '',
@@ -129,9 +129,12 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+<<<<<<< HEAD
+=======
 # vida del token
 SESSION_COOKIE_AGE = 35900
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+>>>>>>> 67f0b78512cc59e28fb60fd2ee1dc10a2bc769c8
 LOGIN_URL = '/admin/login/'
 
 # Internationalization
@@ -151,13 +154,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
-
+STATIC_URL = '/static/'
+'''
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
-STATIC_URL = '/static/'
+
 
 
 # Extra places for collectstatic to find static files.
@@ -166,3 +170,4 @@ STATICFILES_DIRS = (
 )
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+'''
