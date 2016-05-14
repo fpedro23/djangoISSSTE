@@ -756,13 +756,17 @@ class AvancesEndpoint(ProtectedResourceView):
 class FichaTecnicaForiPadAvancesEndpoint(generic.ListView):
     def get(self, request, *args, **kwargs):
         # Obteniendo los datos de la url
-        periodo_id = get_array_or_none(request.GET.get('periodo'))
-        accion_id = get_array_or_none(request.GET.get('accion'))
-        estado_id = get_array_or_none(request.GET.get('estado'))
+        theID = request.GET.get('idAvanceMensual')
+        singleAvance = AvanceMensual.objects.get(id=theID)
+        periodo_id = singleAvance.avancePorMunicipio.periodo.id
+        accion_id = singleAvance.avancePorMunicipio.meta.accionEstrategica.id
+        estado_id = singleAvance.avancePorMunicipio.estado.id
 
-        avances = AvanceMensual.objects.filter(Q(avancePorMunicipio__periodo__id__in=periodo_id) &
-                                               Q(avancePorMunicipio__meta__id__in=accion_id) &
-                                               Q(avancePorMunicipio__estado__id__in=estado_id))
+        avances = AvanceMensual.objects.filter(Q(avancePorMunicipio__periodo__id =periodo_id)&
+                                               Q(avancePorMunicipio__meta__accionEstrategica__id = accion_id)&
+                                               Q(avancePorMunicipio__estado=estado_id))
+        print "Avances: "
+        print len(avances)
         resultados = avances.values(
             'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia',
             'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia',
@@ -784,18 +788,16 @@ class FichaTecnicaForiPadAvancesEndpoint(generic.ListView):
         the_json = {}
         the_json['avance'] = []
         the_json['meta'] = []
-        the_json['generales'] = []
-        generales = {}
-        generales['responsable'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable']
-        generales['observaciones'] = resultados[0]['avancePorMunicipio__meta__observaciones']
-        generales['periodo'] = resultados[0]['avancePorMunicipio__periodo__nombrePeriodo']
-        generales['carencia'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
-        generales['subCarencia'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
-        generales['unidad'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad']
-        generales['montoPromedio'] = resultados[0]['avancePorMunicipio__meta__montoPromedio']
-        generales['accion'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
-        generales['estado'] = resultados[0]['avancePorMunicipio__estado__nombreEstado']
-        the_json['generales'].append(generales)
+        if resultados[0] is not []:
+            the_json['responsable'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable']
+            the_json['observaciones'] = resultados[0]['avancePorMunicipio__meta__observaciones']
+            the_json['periodo'] = resultados[0]['avancePorMunicipio__periodo__nombrePeriodo']
+            the_json['carencia'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
+            the_json['subCarencia'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
+            the_json['unidad'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad']
+            the_json['montoPromedio'] = resultados[0]['avancePorMunicipio__meta__montoPromedio']
+            the_json['accion'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
+            the_json['estado'] = resultados[0]['avancePorMunicipio__estado__nombreEstado']
 
         for datos in resultados:
             the_list = {}
@@ -821,9 +823,9 @@ class FichaTecnicaForiPadAvancesEndpoint(generic.ListView):
             the_json['avance'].append(the_list)
 
         for meta in MetaMensual.objects.filter(
-                                Q(meta__periodo__id__in=periodo_id) &
-                                Q(meta__accionEstrategica__id__in=accion_id) &
-                        Q(estado__id__in=estado_id)
+                                Q(meta__periodo__id=periodo_id) &
+                                Q(meta__accionEstrategica__id=accion_id) &
+                        Q(estado__id=estado_id)
         ):
             the_meta_list = {}
             the_meta_list['ene'] = meta.ene
@@ -854,7 +856,7 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
         estado_id = get_array_or_none(request.GET.get('estado'))
 
         avances = AvanceMensual.objects.filter(Q(avancePorMunicipio__periodo__id__in = periodo_id)&
-                                               Q(avancePorMunicipio__meta__id__in = accion_id)&
+                                               Q(avancePorMunicipio__meta__accionEstrategica__in = accion_id)&
                                                Q(avancePorMunicipio__estado__id__in=estado_id))
         resultados = avances.values(
             'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia',
