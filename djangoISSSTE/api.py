@@ -2518,7 +2518,8 @@ class BalancePorEntidadEndpoint(ProtectedResourceView):
 
 class InformacionGeneralEndpoint(ProtectedResourceView):
     def get(self, request):
-
+        prs = Presentation('djangoISSSTE/static/ppt/informacion_general.pptx')
+        #prs = Presentation('/home/sisefenlin/visitas/static/ppt/balance_por_estado.pptx')
         json_map = {}
         json_map['balance'] = []
         for carencia in Carencia.objects.all():
@@ -2549,7 +2550,44 @@ class InformacionGeneralEndpoint(ProtectedResourceView):
 
             json_map['balance'].append(list_carencias)
 
-        return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True,), 'application/json')
+        iSlide=0
+        for balanceEstado in json_map['balance']:
+            table = prs.slides[iSlide].shapes[0].table
+
+            for x in range(1, 1):
+                cell = table.rows[1].cells[x]
+                paragraph = cell.textframe.paragraphs[0]
+                paragraph.font.size = Pt(10)
+                paragraph.font.name = 'Arial'
+                paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+            # write body cells
+            prs.slides[iSlide].shapes[1].text_frame.paragraphs[0].font.size = Pt(18)
+            prs.slides[iSlide].shapes[1].text_frame.paragraphs[0].font.name = 'Arial Black'
+            prs.slides[iSlide].shapes[1].text_frame.paragraphs[0].font.color.rgb = RGBColor(0x40, 0x40, 0x40)
+            prs.slides[iSlide].shapes[1].text = balanceEstado['carencia']
+            table.cell(1, 0).text = "Total de avances: " + str('{0:,}'.format(balanceEstado['total_avances'])) + \
+                                             ", con un monto de inversión aproximado de: " + str('{0:,.2f}'.format(balanceEstado['inversionAprox']))
+
+            iSlide+=1
+
+        usuario = get_usuario_for_token(request.GET.get('access_token'))
+
+        prs.save('djangoISSSTE/static/ppt/ppt-generados/informacion_general_' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = 'djangoISSSTE/static/ppt/ppt-generados/informacion_general_' + str(usuario.usuario.user.id) + '.pptx'
+
+        #prs.save('/home/sisefenlin/visitas/static/ppt/ppt-generados/FichaTecnicaVisitas_' + str(usuario.user.id) + '.pptx')
+        #the_file = '/home/sisefenlin/visitas/static/ppt/ppt-generados/FichaTecnicaVisitas_' + str(usuario.user.id) + '.pptx'
+
+        filename = os.path.basename(the_file)
+        chunk_size = 8192
+        response = StreamingHttpResponse(FileWrapper(open(the_file,"rb"), chunk_size),
+                               content_type=mimetypes.guess_type(the_file)[0])
+        response['Content-Length'] = os.path.getsize(the_file)
+        response['Content-Disposition'] = "attachment; filename=%s" % filename
+        return response
+
+        #return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True,), 'application/json')
 
 class AvancesPorPeriodoEndPoint(ProtectedResourceView):
     def get(self, request):
