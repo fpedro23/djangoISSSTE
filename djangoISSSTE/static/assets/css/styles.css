@@ -44,6 +44,8 @@
 	position: absolute;
 	left: 20px;
 	top: 0px;
+    cursor:pointer;
+
 }
 
 #engrane{
@@ -241,13 +243,12 @@
 
 .logIn {
 	position: absolute;
+    top: 0px;
 	left: 630px;
-	top: 55px;
 	width: 345px;
 	height: 360px;
 	z-index: 1;
 	/*border: 1px solid black;*/
-	
 	font-family: 'soberana_sanslight';
 	font-size:18px;
 	color: #6A6B6C;
@@ -265,7 +266,7 @@
 	width:126px;
 	height:45px;
 	position:absolute;
-	top: 250px;
+	top: 290px;
 	left:227px;
 	background-image:url(../Imagenes/bigBackground.fw.png);
 	background-position:0px 0px;
@@ -280,7 +281,7 @@
 	height:40px;
 	
 	position:absolute;
-	top:320px;
+	top:360px;
 	
 	background-image:url(../Imagenes/bigBackground.fw.png);
 	background-position:-127px -187px;
@@ -970,6 +971,7 @@
 	position: absolute;
 	top: 550px;
 	left: 884px;
+    cursor:pointer;
 }
 
 .guardarsalirBTN:hover{
@@ -1396,11 +1398,18 @@ ul.messagelist li.error {
 	position: absolute;
 	top: 181px;
 	left: 56px;
-
-
 }
 
 /*dropdown 2do nivel*/
+
+.nav .open>a, .nav .open>a:focus, .nav .open>a:hover {
+  background-color: transparent;
+  border-color: transparent;
+}
+.nav>li>a:focus, .nav>li>a:hover {
+  text-decoration: none;
+  background-color: transparent;
+}
 
 ul li {
   list-style-type: none;

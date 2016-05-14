@@ -25,8 +25,7 @@
 
 {% block content %}<div id="content-main">
 
-        <div class="imprimirBTN" id="imprimirBTN"></div>
-        <div id="welcome">Agregar Metas</div>
+
 {% block object-tools %}
 {% if change %}{% if not is_popup %}
   <ul class="object-tools">
@@ -40,7 +39,22 @@
   </ul>
 {% endif %}{% endif %}
 {% endblock %}
-<div class="bienvenida">Bienvenido a Agregar Metas. Los campos marcados con asterisco (*) son obligatorios para la alta exitosa de la misma. Le pdimos los llene correctamente.</div>
+<div id="welcome">
+            {% if not change %}
+                Agregar
+            {% else %}
+                Modificar
+            {% endif %}
+            Metas
+      </div>
+
+      <div class="bienvenida">
+          {% if not change %}
+              Bienvenido a la Sección de "Agregar  Metas". Los campos marcados con asterisco (*) son obligatorios, le pedimos los llene correctamente.
+          {% else %}
+              Bienvenido a la Sección de "Modificar  Metas". Realice los cambios a los datos de la Meta seleccionada y presione el botón Guardar.
+          {% endif %}
+     </div>
 
 <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.model_name }}_form" novalidate>{% csrf_token %}{% block form_top %}{% endblock %}
 <div>

@@ -42,25 +42,25 @@
 {% else %}
     <p>{% blocktrans %}Are you sure you want to delete the selected {{ objects_name }}? All of the following objects and their related items will be deleted:{% endblocktrans %}</p>
 
-    </div>
+
     <div class="campos01">
-    <p>&nbsp;</p>
-    {% for deletable_object in deletable_objects %}
-        <ul>{{ deletable_object|unordered_list }}</ul>
-    {% endfor %}
-    <form action="" method="post">{% csrf_token %}
-    <div>
-    {% for obj in queryset %}
-    <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk|unlocalize }}" />
-    {% endfor %}
-    </div>
+        <p>&nbsp;</p>
+        {% for deletable_object in deletable_objects %}
+            <ul>{{ deletable_object|unordered_list }}</ul>
+        {% endfor %}
+        <form action="" method="post">{% csrf_token %}
+            <div>
+            {% for obj in queryset %}
+            <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk|unlocalize }}" />
+            {% endfor %}
+            </div>
+            <input type="hidden" name="action" value="delete_selected" />
+            <input type="hidden" name="post" value="yes" />
+            <input type="submit" class="eliminarBTN" value="" />
+             <div class="salirBTN" onclick="location.href='/visitas/usuarios'" style="left: 630px;"></div>
+
+        </form>
      </div>
-    <input type="hidden" name="action" value="delete_selected" />
-    <input type="hidden" name="post" value="yes" />
-    <input type="submit" class="eliminarBTN" value="" />
-     <div class="salirBTN" onclick="location.href='/visitas/usuarios'" style="left: 630px;"></div>
-
-    </form>
 {% endif %}
-
+ </div>
 {% endblock %}
