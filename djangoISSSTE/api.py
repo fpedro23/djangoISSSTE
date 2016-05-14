@@ -753,7 +753,7 @@ class AvancesEndpoint(ProtectedResourceView):
                             'application/json', )
 
 # Clase para devolver datos de la ficha técnica del iPad
-class FichaTecnicaForiPadAvancesEndpoint(generic.ListView):
+class FichaTecnicaForiPadAvancesEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         # Obteniendo los datos de la url
         theID = request.GET.get('idAvanceMensual')
