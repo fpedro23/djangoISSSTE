@@ -1,0 +1,149 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static app_filters %}
+
+{% block extrastyle %}{{ block.super }}
+      <!-- bxSlider Javascript file -->
+    <script src="{% static "assets/galeria/jquery.bxslider.min.js" %}"></script>
+    <!-- bxSlider CSS file -->
+    <link href="{% static "assets/galeria/jquery.bxslider.css" %}" rel="stylesheet" />
+    <link href="{% static "assets/galeria/scripts.js" %}" rel="stylesheet" />
+
+{{ form.media }}
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} login{% endblock %}
+
+{% block usertools %}{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block content_title %}{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+<script type="text/javascript">
+  $(document).ready(function($) {
+      $('.bxslider').show();
+      $("#galeria").show();
+      $("#logIn").show();
+  });
+</script>
+
+    <div class="galeria" id="galeria" hidden="true">
+          <ul class="bxslider" style=" -webkit-padding-start:0px" hidden="true">
+              <li><img src="{% static "assets/imagenes/001.png" %}" /></li>
+              <li><img src="{% static "assets/imagenes/002.png" %}" /></li>
+              <li><img src="{% static "assets/imagenes/003.png" %}" /></li>
+              <li><img src="{% static "assets/imagenes/004.png" %}" /></li>
+              <li><img src="{% static "assets/imagenes/005.png" %}" /></li>
+              <li><img src="{% static "assets/imagenes/006.png" %}" /></li>
+          </ul>
+    </div>
+
+
+
+
+{% if user.is_authenticated %}
+<p class="errornote">
+{% blocktrans with username=request.user.get_username trimmed %}
+    You are authenticated as {{ username }}, but are not authorized to
+    access this page. Would you like to login to a different account?
+{% endblocktrans %}
+</p>
+{% endif %}
+
+<div class="logIn" id="logIn" hidden="true">
+
+    <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
+        <div class="titulo">
+                            INICIAR SESIÓN
+        </div>
+        <div class="texto01">
+                  <table  width="100%">
+                    <tr>
+                        <td align="left" width="40%" valign="top">
+                            <label for="id_username" id="tit_1">
+                                <span class="error__msg">*</span>
+                                Usuario :
+                            </label>
+                         </td>
+                        <td align="right" width="60%" id="tr-usu" data-toggle="tooltip" data-placement="top"  title="{% for error in form.username.errors %}{{ error }}{% endfor %}">
+
+                             {% if form.username.errors %}
+                                         {{ form.username|addcss:"border-error" }}
+                                       {% else %}
+                                          {{ form.username }}
+                                       {% endif %}
+                                <script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
+                                <script> $(document).ready(function($) {
+                                    var $te = jQuery.noConflict();
+                                    $te('#tr-usu').tooltip({html:true});});</script>
+                            <br><br>
+                        </td>
+                    </tr>
+                  </table>
+        </div>
+        <div class="texto02">
+                  <table width="100%">
+                    <tr>
+                        <td align="left" width="40%" valign="top">
+                            <label for="id_password" id="tit_1">
+                                <span class="error__msg">*</span>
+                                Contraseña :</label>
+                        </td>
+                        <td align="right" width="60%" id="tr-contras" data-toggle="tooltip" data-placement="top"  title="{% for error in form.password.errors %}{{ error }}{% endfor %}">
+
+                             {% if form.password.errors %}
+                                         {{ form.password|addcss:"border-error" }}
+                                       {% else %}
+                                          {{ form.password }}
+                                       {% endif %}
+                                <script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
+                                <script> $(document).ready(function($) {
+                                    var $te = jQuery.noConflict();
+                                    $te('#tr-contras').tooltip({html:true});});</script>
+                            <br><br>
+                            <input type="hidden" name="next" value="{{ next }}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="justify">
+                            {% if form.errors and not form.non_field_errors %}
+                               <p class="error__msg">
+                                    {% if form.errors.items|length == 1 %} {{"Campos marcados con (*) son obligatorios"}} {% else %}{{ "Campos marcados con (*) son obligatorios" }} {% endif %}
+                                    <br>
+                                </p>
+                            {% endif %}
+                            {% if form.non_field_errors %}
+                            {% for error in form.non_field_errors %}
+                                <p class="error__msg">
+                                     {# error #}
+                                    El Nombre de Usuario y/o la Contraseña son incorrectos; ambos campos son sensibles a mayúsculas.
+                                </p>
+                            {% endfor %}
+                        {% endif %}
+                         </td>
+                     </tr>
+                  </table>
+        </div>
+        <div id="botLI" onclick="document.getElementById('login-form').submit();">
+        </div>
+    </form>
+                {% url 'admin_password_reset' as password_reset_url %}
+                <div id="olvidarPW" onclick="location.href='{{ password_reset_url }}'">
+                </div>
+</div>
+
+      <script src="{% static "assets/galeria/jquery.bxslider.min.js" %}"></script>
+                <script type="text/javascript">
+                    document.getElementById('id_username').focus()
+                    var $j = jQuery.noConflict()
+                   $j(document).ready(function(){
+                    $j('.bxslider').bxSlider({
+                        auto: true,
+                        mode: 'fade'
+                      });
+                   });
+                </script>
+{% endblock %}

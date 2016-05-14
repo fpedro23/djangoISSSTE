@@ -1,0 +1,185 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls admin_static admin_list %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static "assets/css/changelists.css" %}" />
+
+  {% if cl.formset %}
+    <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />
+  {% endif %}
+  {% if cl.formset or action_form %}
+       <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+      <script type="text/javascript" src="https://code.jquery.com/jquery.min.js"></script>
+    <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+  {% endif %}
+  {{ media.css }}
+  {% if not actions_on_top and not actions_on_bottom %}
+    <style>
+      #changelist table thead th:first-child {width: inherit}
+    </style>
+  {% endif %}
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+{{ media.js }}
+{% if action_form %}{% if actions_on_top or actions_on_bottom %}
+<script type="text/javascript">
+(
+
+
+        function($) {
+
+
+function $_GET(param)
+{
+/* Obtener la url completa */
+url = document.URL;
+/* Buscar a partir del signo de interrogación ? */
+url = String(url.match(/\?+.+/));
+/* limpiar la cadena quitándole el signo ? */
+url = url.replace("?", "");
+/* Crear un array con parametro=valor */
+url = url.split("&");
+
+/*
+Recorrer el array url
+obtener el valor y dividirlo en dos partes a través del signo =
+0 = parametro
+1 = valor
+Si el parámetro existe devolver su valor
+*/
+x = 0;
+while (x < url.length)
+{
+p = url[x].split("=");
+if (p[0] == param)
+{
+return decodeURIComponent(p[1]);
+}
+x++;
+}
+
+
+
+}
+    $(document).ready(function($) {
+        $("tr input.action-select").actions();
+        $("#action-toggle").hide();
+        if ($_GET("e")==1) {
+            $("#target").show();
+            $("#elmmsg").show();
+            $("#modmsg").hide();
+            $("#elmmsgins").show();
+            $("#modmsgins").hide();
+            $("#action-toggle").hide();
+            $('.action-checkbox').show();
+            $('.action-select').show();
+            $('.action-checkbox-column').show();;
+        }
+        else if($_GET("e")==2){
+            $("#target").hide();
+            $("#elmmsg").hide();
+            $('#modmsg').show();
+            $("#elmmsgins").hide();
+            $('#modmsgins').show();
+            $(".action-select").hide();
+            $('.action-checkbox-column').hide();
+             $('.action-checkbox').hide();
+        }
+        else{
+            $('#cons').show();
+            $('#consins').show();
+            $('.action-select').hide();
+            $('.action-checkbox-column').hide();
+             $('.action-checkbox').hide();
+        }
+
+    });
+})(django.jQuery);
+</script>
+{% endif %}{% endif %}
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} change-list{% endblock %}
+
+{% if not is_popup %}
+    {% block breadcrumbs %}
+
+    {% endblock %}
+{% endif %}
+
+{% block coltype %}flex{% endblock %}
+
+{% block content %}
+
+    <div id="regresarBTN" onclick="window.history.go(-1);">
+   </div>
+
+  <div id="welcome">
+      <span id="elmmsg" hidden="true">Eliminar</span>
+      <span id="modmsg" hidden="true">Modificar</span>
+      <span id="cons" hidden="true">Consulta</span>
+      Usuarios
+  </div>
+  <div class="bienvenida">
+        <span id="elmmsgins" hidden="true">Bienvenido a la Sección de "Eliminar Usuario"; seleccione un Usuario para eliminarlo.</span>
+        <span id="modmsgins" hidden="true">Bienvenido a la Sección de "Modificar Usuario"; seleccione un Usuario para modificar sus detalles.</span>
+        <span id="consins" hidden="true">Bienvenido a la Sección de "Buscar Usuarios"; seleccione un Usuario para consultar sus detalles.</span>
+  </div>
+
+  <div id="content-main" style="height: 600px;">
+    {% block object-tools %}
+      {% if has_add_permission %}
+        <ul class="object-tools">
+          {% block object-tools-items %}
+
+          {% endblock %}
+        </ul>
+      {% endif %}
+    {% endblock %}
+    {% if cl.formset.errors %}
+        <p class="errornote">
+        {% if cl.formset.total_error_count == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
+        </p>
+        {{ cl.formset.non_form_errors }}
+    {% endif %}
+   <div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">
+      {% block search %}{#% search_form cl %#}{% endblock %}
+      {% block date_hierarchy %}{% date_hierarchy cl %}{% endblock %}
+
+      {% block filters %}
+         {% if cl.has_filters %}
+          <div id="changelist-filter" hidden="true" style="width: 2px; height: 2px;">
+
+            {% for spec in cl.filter_specs %}{% endfor %}
+          </div>
+        {% endif %}
+      {% endblock %}
+
+      <form id="changelist-form" action="" method="post"{% if cl.formset.is_multipart %} enctype="multipart/form-data"{% endif %} novalidate>{% csrf_token %}
+      {% if cl.formset %}
+        <div>{{ cl.formset.management_form }}</div>
+      {% endif %}
+        <div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">
+
+      {% block result_list %}
+
+          {% result_list cl %}
+          {% if action_form and actions_on_bottom and cl.full_result_count %}{% admin_actions %}{% endif %}
+       {% endblock %}
+      {% block pagination %}
+              <div class="campopag">
+             {% pagination cl %}
+            </div>
+      {% endblock %}
+
+      <input type="hidden" name="action" value="delete_selected">
+      </form>
+    </div>
+  </div>
+
+{% url opts|admin_urlname:'delete' original.pk|admin_urlquote as delete_url %}
+   <div class="eliminarBTN" id="target" hidden="true" onclick="document.getElementById('changelist-form').submit('_delete_selected');"></div>
+{% endblock %}

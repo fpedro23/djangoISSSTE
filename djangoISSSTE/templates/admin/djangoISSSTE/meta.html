@@ -1,0 +1,20 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static admin_urls %}
+{% block extrastyle %}{{ block.super }}
+
+{% endblock %}
+{% block breadcrumbs %}
+{% endblock %}
+
+{% block content %}
+
+    <div id="body">
+   	    <div id= "regresarBTN" onclick="window.history.go(-1);"></div>
+          <div id="welcome">Catálogo de Metas </div>
+
+          <div class="metaADD" onclick="location.href='/admin/djangoISSSTE/meta/add/'"></div>
+          <div class="metaEDIT" onclick="location.href='/admin/djangoISSSTE/meta/?e=2'"></div>
+          <div class="metaDELETE" onclick="location.href='/admin/djangoISSSTE/meta/?e=1'"></div>
+    </div>
+
+{% endblock %}

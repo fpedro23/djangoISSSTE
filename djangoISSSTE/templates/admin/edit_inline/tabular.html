@@ -1,0 +1,140 @@
+{% load i18n admin_urls admin_static admin_modify app_filters %}
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/restricted_styles.css" %}" />
+<div class="inline-group" id="{{ inline_admin_formset.formset.prefix }}-group">
+  <div class="tabular inline-related {% if forloop.last %}last-related{% endif %}">
+  <style>
+      .delete input[type=checkbox]{
+          display: none;
+      }
+
+      .form-row {
+    overflow: hidden;
+    padding: 10px;
+    font-size: 13px;
+     border-bottom: 0px solid #ffffff;
+    }
+      .inline-deletelink {
+    float: right;
+    text-indent: -9999px;
+
+    width: 16px;
+    height: 16px;
+    border: 0px none;
+    left: -7px;
+    position: relative;
+    }
+  </style>
+<script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
+                            <script> $(document).ready(function($) {
+                                var $te = jQuery.noConflict();
+                                $te('[data-toggle="tooltip"]').tooltip({html:true});});</script>
+
+{{ inline_admin_formset.formset.management_form }}
+<fieldset class="module">
+   {% if inline_admin_formset.formset.prefix == "metamensual_set" %}
+       <div class= "mensuales_META">
+   {% else %}
+       <div class= "inavance_MENSUAL">
+   {% endif %}
+
+    {% if inline_admin_formset.formset.prefix == "metamensual_set" %}<div id="tituloCUADROS">METAS MENSUALES</div>{% else %}{% endif %}
+
+   {{ inline_admin_formset.formset.non_form_errors }}
+   <table  valign="top" style="text-align: left;margin-left: 3px" width="990px">
+     <thead ><tr>
+     {% for field in inline_admin_formset.fields %}
+       {% if not field.widget.is_hidden %}
+         <th{% if forloop.first %} colspan="2"{% endif %} class="subtituloTABLA">{{ field.label|capfirst }}
+         {% if field.help_text %}&nbsp;<img src="{% static "admin/img/icon-unknown.svg" %}" class="help help-tooltip" width="10" height="10" alt="({{ field.help_text|striptags }})" title="{{ field.help_text|striptags }}" />{% endif %}
+         </th>
+       {% endif %}
+     {% endfor %}
+     {% if inline_admin_formset.formset.can_delete %}<th>{#  % trans "Delete?" %#}</th>{% endif %}
+     </tr></thead>
+
+     <tbody>
+     {% for inline_admin_form in inline_admin_formset %}
+        {% if inline_admin_form.form.non_field_errors %}
+        <tr><td colspan="{{ inline_admin_form|cell_count }}">{{ inline_admin_form.form.non_field_errors }}</td></tr>
+        {% endif %}
+        <tr class="form-row {% cycle "row1" "row2" %} {% if inline_admin_form.original or inline_admin_form.show_url %}has_original{% endif %}{% if forloop.last %} empty-form{% endif %}"
+             id="{{ inline_admin_formset.formset.prefix }}-{% if not forloop.last %}{{ forloop.counter0 }}{% else %}empty{% endif %}">
+        <td class="original">
+          {% if inline_admin_form.original or inline_admin_form.show_url %}<p>
+          {% if inline_admin_form.original %}
+          {# inline_admin_form.original #}
+          {% if inline_admin_form.model_admin.show_change_link and inline_admin_form.model_admin.has_registered_model %}<a href="{% url inline_admin_form.model_admin.opts|admin_urlname:'change' inline_admin_form.original.pk|admin_urlquote %}" class="inlinechangelink">{% trans "Change" %}</a>{% endif %}
+          {% endif %}
+          {% if inline_admin_form.show_url %}<a href="{{ inline_admin_form.absolute_url }}">{% trans "View on site" %}</a>{% endif %}
+            </p>{% endif %}
+          {% if inline_admin_form.needs_explicit_pk_field %}{{ inline_admin_form.pk_field.field }}{% endif %}
+          {{ inline_admin_form.fk_field.field }}
+          {% spaceless %}
+          {% for fieldset in inline_admin_form %}
+            {% for line in fieldset %}
+              {% for field in line %}
+                {% if field.field.is_hidden %} {{ field.field }} {% endif %}
+              {% endfor %}
+            {% endfor %}
+          {% endfor %}
+          {% endspaceless %}
+        </td>
+        {% for fieldset in inline_admin_form %}
+          {% for line in fieldset %}
+            {% for field in line %}
+              {% if not field.field.is_hidden %}
+              <td{% if field.field.name %} class="field-{{ field.field.name }}"{% endif %} id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
+              {% if field.is_readonly %}
+                  <p>{{ field.contents }}</p>
+              {% else %}
+                  {% if field.field.name == "ene" or field.field.name == "feb" or field.field.name == "mar" or field.field.name == "abr" or field.field.name == "may" or field.field.name == "jun" or field.field.name == "jul" or field.field.name == "ago" or field.field.name == "sep" or field.field.name == "oct" or field.field.name == "nov" or field.field.name == "dic"%}
+                       {% if field.field.errors %}
+                               {{ field.field|addcss:"tamcontrol border-error" }}
+                       {% else %}
+                               {{ field.field|addcss:"tamcontrol" }}
+                       {% endif %}
+                  {% elif field.field.name == "municipio" %}
+                        {% if field.field.errors %}
+                               {{ field.field|addcss:"tamcontrolsel border-error" }}
+                       {% else %}
+                              {{ field.field|addcss:"tamcontrolsel" }}
+                       {% endif %}
+                  {% else %}
+                         {% if field.field.errors %}
+                               {{ field.field|addcss:"border-error" }}
+                       {% else %}
+                              {{ field.field }}
+                       {% endif %}
+                  {% endif %}
+              {% endif %}
+              <script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
+                                <script> $(document).ready(function($) {
+                                    var $te = jQuery.noConflict();
+                                    $te('#tr-{{ field.field.name}}').tooltip({html:true});});</script>
+              </td>
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+        {% endfor %}
+        {% if inline_admin_formset.formset.can_delete %}
+          <td class="delete">{% if inline_admin_form.original %}{{ inline_admin_form.deletion_field.field }}{% endif %}</td>
+        {% endif %}
+        </tr>
+     {% endfor %}
+     </tbody>
+   </table>
+   <div>
+</fieldset>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+(function($) {
+  $("#{{ inline_admin_formset.formset.prefix|escapejs }}-group .tabular.inline-related tbody tr").tabularFormset({
+    prefix: "{{ inline_admin_formset.formset.prefix|escapejs }}",
+    addText: "{% filter escapejs %}{% blocktrans with inline_admin_formset.opts.verbose_name|capfirst as verbose_name %}Agregar {{ verbose_name }}{% endblocktrans %}{% endfilter %}",
+    deleteText: "{% filter escapejs %}{% trans 'Remove' %}{% endfilter %}"
+  });
+})(django.jQuery);
+</script>

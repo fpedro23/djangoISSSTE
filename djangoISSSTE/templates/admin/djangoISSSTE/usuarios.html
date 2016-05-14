@@ -1,0 +1,29 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static %}
+{% block extrastyle %}{{ block.super }}
+
+{% endblock %}
+{% block breadcrumbs %}
+{% endblock %}
+
+{% block content %}
+    <div id ="regresarBTN" onclick="window.history.go(-1);">
+  </div>
+
+  <div id="welcome">
+    	U S U A R I O S
+  </div>
+
+  <div class="usuario_ADD" onclick="location.href='/admin/auth/user/add/'">
+  </div>
+
+  <div class="usuario_EDIT" onclick="location.href='/admin/auth/user/?e=2'">
+  </div>
+
+  <div class="usuario_DEL" onclick="location.href='/admin/auth/user/?e=1'">
+  </div>
+
+
+
+
+{% endblock %}
