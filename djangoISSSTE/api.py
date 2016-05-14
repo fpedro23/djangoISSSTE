@@ -751,6 +751,99 @@ class AvancesEndpoint(ProtectedResourceView):
         return HttpResponse(json.dumps(json_map, indent=4, sort_keys=True, ensure_ascii=False, ),
                             'application/json', )
 
+# Clase para devolver datos de la ficha técnica del iPad
+class FichaTecnicaForiPadAvancesEndpoint(ProtectedResourceView):
+    def get(self, request, *args, **kwargs):
+        # Obteniendo los datos de la url
+        periodo_id = get_array_or_none(request.GET.get('periodo'))
+        accion_id = get_array_or_none(request.GET.get('accion'))
+        estado_id = get_array_or_none(request.GET.get('estado'))
+
+        avances = AvanceMensual.objects.filter(Q(avancePorMunicipio__periodo__id__in=periodo_id) &
+                                               Q(avancePorMunicipio__meta__id__in=accion_id) &
+                                               Q(avancePorMunicipio__estado__id__in=estado_id))
+        resultados = avances.values(
+            'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia',
+            'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia',
+            'avancePorMunicipio__meta__accionEstrategica__nombreAccion',
+            'avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad',
+            'avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable',
+            'avancePorMunicipio__meta__observaciones',
+            'avancePorMunicipio__inversionAprox',
+            'avancePorMunicipio__meta__montoPromedio',
+            'avancePorMunicipio__estado__nombreEstado',
+            'municipio__nombreMunicipio',
+            'avancePorMunicipio__periodo__nombrePeriodo',
+            'municipio__latitud',
+            'municipio__longitud',
+        ).annotate(ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'),
+                   jun=Sum('jun'), jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'),
+                   nov=Sum('nov'), dic=Sum('dic'))
+
+        the_json = {}
+        the_json['avance'] = []
+        the_json['meta'] = []
+        for datos in resultados:
+            the_list = {}
+            the_list['carencia'] = datos[
+                'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
+            the_list['subCarencia'] = datos[
+                'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
+            the_list['accion'] = datos['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
+            the_list['unidad'] = datos[
+                'avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad']
+            the_list['responsable'] = datos[
+                'avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable']
+            the_list['observaciones'] = datos['avancePorMunicipio__meta__observaciones']
+            the_list['inversion'] = datos['avancePorMunicipio__inversionAprox']
+            the_list['estado'] = datos['avancePorMunicipio__estado__nombreEstado']
+            the_list['municipio'] = datos['municipio__nombreMunicipio']
+            the_list['periodo'] = datos['avancePorMunicipio__periodo__nombrePeriodo']
+            the_list['latitud'] = datos['municipio__latitud']
+            the_list['longitud'] = datos['municipio__longitud']
+            the_list['montoPromedio'] = datos['avancePorMunicipio__meta__montoPromedio']
+
+            the_list['ene'] = datos['ene']
+            the_list['feb'] = datos['feb']
+            the_list['mar'] = datos['mar']
+            the_list['abr'] = datos['abr']
+            the_list['may'] = datos['may']
+            the_list['jun'] = datos['jun']
+            the_list['jul'] = datos['jul']
+            the_list['ago'] = datos['ago']
+            the_list['sep'] = datos['sep']
+            the_list['oct'] = datos['oct']
+            the_list['nov'] = datos['nov']
+            the_list['dic'] = datos['dic']
+            suma = datos['ene'] + datos['ene'] + datos['feb'] + datos['mar'] + datos['abr'] + datos['may'] + datos[
+                'jun'] + \
+                   datos['jul'] + datos['ago'] + datos['sep'] + datos['oct'] + datos['nov'] + datos['dic']
+            the_list['suma'] = suma
+            the_list['inversion'] = suma * datos['avancePorMunicipio__meta__montoPromedio']
+            the_json['avance'].append(the_list)
+
+        for meta in MetaMensual.objects.filter(
+                                Q(meta__periodo__id__in=periodo_id) &
+                                Q(meta__accionEstrategica__id__in=accion_id) &
+                        Q(estado__id__in=estado_id)
+        ):
+            the_meta_list = {}
+            the_meta_list['ene'] = meta.ene
+            the_meta_list['feb'] = meta.feb
+            the_meta_list['mar'] = meta.mar
+            the_meta_list['abr'] = meta.abr
+            the_meta_list['may'] = meta.may
+            the_meta_list['jun'] = meta.jun
+            the_meta_list['jul'] = meta.jul
+            the_meta_list['ago'] = meta.ago
+            the_meta_list['sep'] = meta.sep
+            the_meta_list['oct'] = meta.oct
+            the_meta_list['nov'] = meta.nov
+            the_meta_list['dic'] = meta.dic
+
+            the_json['meta'].append(the_meta_list)
+        return HttpResponse(json.dumps(the_json, indent=4, separators=(',', ': '), sort_keys=True, ),
+                            'application/json')
 
 #Clase para devolver datos de la ficha técnica
 class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
@@ -2449,7 +2542,12 @@ class AvancesPorPeriodoEndPoint(generic.ListView):
             list_datos['periodo'] = periodo.nombrePeriodo
             list_datos['metas'] = 0
             list_datos['avances'] = 0
-            for avance in AvanceMensual.objects.filter(avancePorMunicipio__periodo__id = periodo.id).values(
+            query = Q(avancePorMunicipio__periodo__id=periodo.id)
+            usuario = get_usuario_for_token(request.GET.get('access_token'))
+            if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
+                query = query & Q(avancePorMunicipio__estado = usuario.usuario.estado)
+
+            for avance in AvanceMensual.objects.filter(query).values(
                     'avancePorMunicipio__periodo__nombrePeriodo').annotate(
                 ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
                 jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
@@ -2459,7 +2557,11 @@ class AvancesPorPeriodoEndPoint(generic.ListView):
 
                 list_datos['avances'] = total
 
-            for meta in MetaMensual.objects.filter(meta__periodo__id=periodo.id).values(
+            query_meta = Q(meta__periodo__id=periodo.id)
+            if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
+                query_meta = query_meta & Q(estado=usuario.usuario.estado)
+
+            for meta in MetaMensual.objects.filter(query_meta).values(
                     'meta__periodo__nombrePeriodo').annotate(
                 ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
                 jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
@@ -2471,3 +2573,4 @@ class AvancesPorPeriodoEndPoint(generic.ListView):
             json_map['balance'].append(list_datos)
 
         return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True, ), 'application/json')
+

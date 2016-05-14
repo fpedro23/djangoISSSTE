@@ -49,6 +49,7 @@ urlpatterns = [
 	url(r'^api/balancePorEntidad', api.BalancePorEntidadEndpoint.as_view()),
 	url(r'^api/informacionGeneral', api.InformacionGeneralEndpoint.as_view()),
 	url(r'^api/reporteAvancesPeriodo', api.AvancesPorPeriodoEndPoint.as_view()),
+	url(r'^api/fichaTecnicaiPad', api.FichaTecnicaForiPadAvancesEndpoint.as_view()),
 
     # url(r'^api/hora_ultima_actualizacion', api.HoraUltimaActualizacion.as_view()),
 ]
