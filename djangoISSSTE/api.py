@@ -753,7 +753,7 @@ class AvancesEndpoint(ProtectedResourceView):
                             'application/json', )
 
 # Clase para devolver datos de la ficha técnica del iPad
-class FichaTecnicaForiPadAvancesEndpoint(ProtectedResourceView):
+class FichaTecnicaForiPadAvancesEndpoint(generic.ListView):
     def get(self, request, *args, **kwargs):
         # Obteniendo los datos de la url
         periodo_id = get_array_or_none(request.GET.get('periodo'))
@@ -784,26 +784,24 @@ class FichaTecnicaForiPadAvancesEndpoint(ProtectedResourceView):
         the_json = {}
         the_json['avance'] = []
         the_json['meta'] = []
+        the_json['generales'] = []
+        generales = {}
+        generales['responsable'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable']
+        generales['observaciones'] = resultados[0]['avancePorMunicipio__meta__observaciones']
+        generales['periodo'] = resultados[0]['avancePorMunicipio__periodo__nombrePeriodo']
+        generales['carencia'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
+        generales['subCarencia'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
+        generales['unidad'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad']
+        generales['montoPromedio'] = resultados[0]['avancePorMunicipio__meta__montoPromedio']
+        generales['accion'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
+        generales['estado'] = resultados[0]['avancePorMunicipio__estado__nombreEstado']
+        the_json['generales'].append(generales)
+
         for datos in resultados:
             the_list = {}
-            the_list['carencia'] = datos[
-                'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
-            the_list['subCarencia'] = datos[
-                'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
-            the_list['accion'] = datos['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
-            the_list['unidad'] = datos[
-                'avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad']
-            the_list['responsable'] = datos[
-                'avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable']
-            the_list['observaciones'] = datos['avancePorMunicipio__meta__observaciones']
-            the_list['inversion'] = datos['avancePorMunicipio__inversionAprox']
-            the_list['estado'] = datos['avancePorMunicipio__estado__nombreEstado']
             the_list['municipio'] = datos['municipio__nombreMunicipio']
-            the_list['periodo'] = datos['avancePorMunicipio__periodo__nombrePeriodo']
             the_list['latitud'] = datos['municipio__latitud']
             the_list['longitud'] = datos['municipio__longitud']
-            the_list['montoPromedio'] = datos['avancePorMunicipio__meta__montoPromedio']
-
             the_list['ene'] = datos['ene']
             the_list['feb'] = datos['feb']
             the_list['mar'] = datos['mar']
@@ -816,8 +814,7 @@ class FichaTecnicaForiPadAvancesEndpoint(ProtectedResourceView):
             the_list['oct'] = datos['oct']
             the_list['nov'] = datos['nov']
             the_list['dic'] = datos['dic']
-            suma = datos['ene'] + datos['ene'] + datos['feb'] + datos['mar'] + datos['abr'] + datos['may'] + datos[
-                'jun'] + \
+            suma = datos['ene'] + datos['feb'] + datos['mar'] + datos['abr'] + datos['may'] + datos['jun'] + \
                    datos['jul'] + datos['ago'] + datos['sep'] + datos['oct'] + datos['nov'] + datos['dic']
             the_list['suma'] = suma
             the_list['inversion'] = suma * datos['avancePorMunicipio__meta__montoPromedio']
@@ -909,7 +906,7 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
             the_list['oct'] = datos['oct']
             the_list['nov'] = datos['nov']
             the_list['dic'] = datos['dic']
-            suma=datos['ene']+datos['ene']+datos['feb']+datos['mar']+datos['abr']+datos['may']+datos['jun']+datos['jul']+datos['ago']+datos['sep']+datos['oct']+datos['nov']+datos['dic']
+            suma=datos['ene']+datos['feb']+datos['mar']+datos['abr']+datos['may']+datos['jun']+datos['jul']+datos['ago']+datos['sep']+datos['oct']+datos['nov']+datos['dic']
             the_list['suma'] =suma
             the_list['inversion'] =suma*datos['avancePorMunicipio__meta__montoPromedio']
             the_json.append(the_list)
