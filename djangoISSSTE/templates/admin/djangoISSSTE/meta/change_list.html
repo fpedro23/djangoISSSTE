@@ -159,7 +159,11 @@ x++;
       {% block pagination %}<div class="campopag">
              {% pagination cl %}
             </div>{% endblock %}
+      <input type="hidden" name="action" value="delete_selected">
       </form>
     </div>
   </div>
+    {% url opts|admin_urlname:'delete' original.pk|admin_urlquote as delete_url %}
+   <div class="eliminarBTN" id="target" hidden="true" onclick="document.getElementById('changelist-form').submit('_delete_selected');"></div>
+
 {% endblock %}
