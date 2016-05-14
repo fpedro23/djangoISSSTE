@@ -2,43 +2,6 @@
 {% load i18n admin_static %}
 {% block extrastyle %}{{ block.super }}
 
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-
-    <link rel="stylesheet" type="text/css" href="{% static "assets/bootstrap/css/bootstrap.css"%}" />
-
-     <script>
-
-    $(document).on('ready', inicio);
-     function inicio(){
-
-        $('#tabla').removeClass("mfp-hide");
-        $('#tabla').addClass("mfp-show");
-        $('#load1').addClass("mfp-hide")
-         $('#load2').addClass("mfp-hide")
-         $('#load3').addClass("mfp-hide")
-     }
-     </script>
-
-
-	<script src="{% static "js/presentaciones.js" %} "></script>
-
-    <script>
-      $(function(){
-    $(".dropdown").hover(
-            function() {
-                $('.dropdown-menu', this).stop( true, true ).fadeIn("fast");
-                $(this).toggleClass('open');
-                $('b', this).toggleClass("caret caret-up");
-            },
-            function() {
-                $('.dropdown-menu', this).stop( true, true ).fadeOut("fast");
-                $(this).toggleClass('open');
-                $('b', this).toggleClass("caret caret-up");
-            });
-    });
-    </script>
-
     <script type="text/javascript" src="{% static "assets/tablesorter/jquery-latest.min.js"%}"></script>
     <script src="{% static "assets/tablesorter/js/prettify.js"%}"></script>
 
@@ -77,6 +40,46 @@
     });
 	});
 </script>
+
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="{% static "assets/bootstrap/css/bootstrap.css"%}" />
+
+     <script>
+
+    $(document).on('ready', inicio);
+     function inicio(){
+
+        $('#tabla').removeClass("mfp-hide");
+        $('#tabla').addClass("mfp-show");
+        $('#load1').addClass("mfp-hide")
+         $('#load2').addClass("mfp-hide")
+         $('#load3').addClass("mfp-hide")
+     }
+     </script>
+
+
+	<script src="{% static "js/presentaciones.js" %} "></script>
+
+    <script>
+      $(function(){
+    $(".dropdown").hover(
+            function() {
+                $('.dropdown-menu', this).stop( true, true ).fadeIn("fast");
+                $(this).toggleClass('open');
+                $('b', this).toggleClass("caret caret-up");
+            },
+            function() {
+                $('.dropdown-menu', this).stop( true, true ).fadeOut("fast");
+                $(this).toggleClass('open');
+                $('b', this).toggleClass("caret caret-up");
+            });
+    });
+    </script>
+
+
     <!-- Magnific Popup core CSS file -->
     <link rel="stylesheet" href="{% static "assets/Popup/magnific-popup.css"%}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
@@ -200,7 +203,7 @@ et$(function() {
 {% endblock %}
 
 {% block content %}
-<body style="font: 120% soberana_textoregular;height: 600px;background: #ffffff;" >
+<body style="font-weight:normal;font-family: 'soberana_sanslight';font-size: 13px;height: 600px;background: #ffffff; padding-top: 8px;" >
     <div id="tabla-exporta" >
 
     </div>
@@ -241,7 +244,7 @@ et$(function() {
         </div>
     </div>
 
-    <div id="regresarBTN" onclick="location.href='/obras/consultas'">
+    <div id="regresarBTN" onclick="location.href='/consultas'">
     </div>   <!--AGREGAR A DONDE SE VA A REGRESAR CON ESTA URL REGRESA A LA PÀGINA PRINCIPAL-->
 
     <div id="welcome">Consultas Predefinidas</div>

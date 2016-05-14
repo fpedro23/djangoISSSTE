@@ -1592,7 +1592,7 @@ function tablaI(Datos){
     sHtmlistado = sHtml;
     for(var i= 0;i<Datos.reporte_general.length;i++){
                 sHtml +='<tr>'
-                +'<td style="width:28%"><a href="/admin/djangoISSSTE/avancepormunicipio/' + Datos.reporte_general[i].id + '/change">' + Datos.reporte_general[i].carencia +'</a></td>'
+                +'<td style="width:28%"><a href="/admin/djangoISSSTE/avancepormunicipio/' + Datos.reporte_general[i].avancePorMunicipio_id + '/change">' + Datos.reporte_general[i].carencia +'</a></td>'
                 +'<td style="width:36%">' + Datos.reporte_general[i].subCarencia +'</td>'
                 +'<td style="width:28%">' + Datos.reporte_general[i].accion +'</td>'
                 +'<td style="width:28%">' + Datos.reporte_general[i].municipio +'</td>'

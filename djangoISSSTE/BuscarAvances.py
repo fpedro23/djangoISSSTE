@@ -97,6 +97,7 @@ class BuscarAvances:
 		# Reporte general (devuelve avances en base a los filtros)
 		reporte_general = avances_mensuales.values(
 			'id',
+			'avancePorMunicipio__id',
 			'avancePorMunicipio__meta__id',
 			'avancePorMunicipio__meta__accionEstrategica__nombreAccion',
 			'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia',
