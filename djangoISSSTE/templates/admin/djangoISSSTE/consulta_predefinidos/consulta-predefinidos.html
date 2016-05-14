@@ -200,7 +200,7 @@ et$(function() {
 {% endblock %}
 
 {% block content %}
-<body style="font: 110% soberana_textoregular;height: 600px;">
+<body style="font: 120% soberana_textoregular;height: 600px;background: #ffffff;" >
     <div id="tabla-exporta" >
 
     </div>
@@ -234,7 +234,7 @@ et$(function() {
             <div class="row" style="width: 60%;padding-top: 15px;margin-left: auto;margin-right: auto">
                 <article id="salir_exporta">
                     {% csrf_token %}
-                    <div class="salirBTN popup-exporta-dismiss" id="salirExporta" style="height: 30px">
+                    <div class="salirBTNC popup-exporta-dismiss" id="salirExporta" style="height: 30px">
                     </div>
                 </article>
             </div><br>
@@ -254,9 +254,9 @@ et$(function() {
                                     <h6 class="panel-title">Reportes</h6>
                                 </div>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li style="height: 25px"><a href="#" id="obrasIniciadas">Avances por Municipio <span id="load1" class="glyphicon glyphicon-refresh glyphicon-refresh-animate mfp-hide"></span></a></li>
-                                    <li style="height: 25px"><a href="#" id="obrasVencidas">Metas sin Avances <span id="load2" class="glyphicon glyphicon-refresh glyphicon-refresh-animate mfp-hide"></span></a></li>
-                                    <li style="height: 35px"><a href="#" id="obrasPorAutorizar">Avances sin actividad <span id="load3" class="glyphicon glyphicon-refresh glyphicon-refresh-animate mfp-hide"></span></a></li>
+                                    <li style="height: 25px"><a href="#" id="avancepormunicipio">Avances por Municipio <span id="load1" class="glyphicon glyphicon-refresh glyphicon-refresh-animate mfp-hide"></span></a></li>
+                                    <li style="height: 25px"><a href="#" id="metassinavances">Metas sin Avances <span id="load2" class="glyphicon glyphicon-refresh glyphicon-refresh-animate mfp-hide"></span></a></li>
+                                    <li style="height: 35px"><a href="#" id="avancessinactividad">Avances sin actividad <span id="load3" class="glyphicon glyphicon-refresh glyphicon-refresh-animate mfp-hide"></span></a></li>
                                 </ul>
                             </div>
                             <div class="panel panel-default">
@@ -264,19 +264,11 @@ et$(function() {
                                     <h6 class="panel-title">Predefinidos</h6>
                                 </div>
                                     <ul class="nav nav-pills nav-stacked">
-                                    <li style="height: 25px"><a href="/obras/balance-general-ppt" >Balance General</a></li>
-                                    <li style="height: 25px"><a href="/obras/hiper-info-general-ppt" >Hiperv&iacute;nculo Informaci&oacute;n General</a></li>
-                                    <li style="height: 25px"><a href="/obras/hiper-concluidas-ppt" >Hiperv&iacute;nculo Concluidas</a></li>
-                                    <li style="height: 35px"><a href="/obras/hiper-inauguradas-ppt" >Hiperv&iacute;nculo Inauguradas y Señalizadas</a></li>
-                                    {%  if user.usuario.rol == 'SA' %}
-                                        <li style="height: 25px"><a href="/obras/hiper-por-sector-ppt" >Hiperv&iacute;nculo Por Sector</a></li>
-                                        <li style="height: 25px"><a href="/obras/hiper-por-entidad-ppt/" >Hiperv&iacute;nculo Por Entidad</a></li>
-                                        <li style="height: 25px"><a href="#" id="prsentacionAPF" >Presentaci&oacute;n Obras APF</a></li>
-                                        <li style="height: 25px"><a href="/obras/logros_resultados_ppt"  >Principales Logros y Resultados</a></li>
-                                    {% endif %}
-                                    <li style="height: 25px"><a href="/obras/hiper-interestatal-ppt" >Hiperv&iacute;nculo Interestatal</a></li>
-                                    <li style="height: 25px"><a href="/obras/hiper-nacional-ppt" >Hiperv&iacute;nculo Nacional</a></li>
-                                    <li style="height: 35px"><a href="/obras/hiper-rangos-ppt" >Hiperv&iacute;nculo Rangos</a></li>
+                                    <li style="height: 25px"><a href="#" id="balanceGeneral">Balance General</a></li>
+                                    <li style="height: 25px"><a href="#" id="balanceEntidad">Balance por Entidad</a></li>
+                                    <li style="height: 25px"><a href="#" id="informacionGeneral">Informaci&oacute;n General</a></li>
+                                    <li style="height: 35px"><a href="#" id="presentacionAvances">Presentac&oacute;n de Avances</a></li>
+                                    <li style="height: 35px"><a href="#" id="avancesPeriodo">Avances por Periodo</a></li>
 
                                 </ul>
                             </div>

@@ -11,7 +11,7 @@ $j(document).on('ready', main_consulta);
 var datosJson;
 var newToken;
 var cualPpxt = 0;
-
+var descripcionavanceMunicipio = "Avances por municipio";
 
 function valida_token(){
 var ajax_datatoken = {
@@ -47,61 +47,211 @@ function main_consulta() {
 	});
 
     valida_token();
-    $j('#verRegion').on('click', ver_regiones);
-    $j('#verEstado').on('click', ver_estados);
-    $j('#verDependencia').on('click', ver_dependencias);
-    $j('#consultarRegiones #listaRegiones').on('click', reporte_region);
-    $j('#consultarEstados #listaEstados').on('click', reporte_estado);
-    $j('#consultarDependencias #listaDependencias').on('click', reporte_dependencia);
+    $j('#balanceGeneral').on('click', balanceGeneral)
+
+    $j('#avancepormunicipio').on('click', avancePorMunicipio);
+    $j('#enviaPDF2').on('click', demoFromHTML2)
+
+
 
 
 }
 
+///********************************************************************************************************************
 
-function ver_regiones() {
-    $j('#Dependencias').addClass("mfp-hide");
-    $j('#Estados').addClass("mfp-hide");
-    $j('#Regiones').removeClass("mfp-hide");
-    $j('#Regiones').addClass("mfp-show");
+function demoFromHTML2() {
+    var pdf = new jsPDF('p', 'pt', 'letter');
+    // source can be HTML-formatted string, or a reference
+    // to an actual DOM element from which the text will be scraped.
+    $pop('#tabla-exporta').show()
+
+    source = $pop('#tabla-exporta')[0];
+    // we support special element handlers. Register them with jQuery-style
+    // ID selector for either ID or node name. ("#iAmID", "div", "span" etc.)
+    // There is no support for any other type of selectors
+    // (class, of compound) at this time.
+    specialElementHandlers = {
+        // element with id of "bypass" - jQuery style selector
+        '#bypassme': function (element, renderer) {
+            // true = "handled elsewhere, bypass text extraction"
+            return true
+        }
+    };
+    margins = {
+        top: 80,
+        bottom: 60,
+        left: 40,
+        width: 522
+    };
+    // all coords and widths are in jsPDF instance's declared units
+    // 'inches' in this case
+    pdf.fromHTML(
+    source, // HTML string or DOM elem ref.
+    margins.left, // x coord
+    margins.top, { // y coord
+        'width': margins.width, // max width of content on PDF
+        'elementHandlers': specialElementHandlers
+    },
+
+    function (dispose) {
+        // dispose: object with X, Y of the last line add to the PDF
+        //          this allow the insertion of new lines after html
+        pdf.save('Documentos.pdf');
+    }, margins);
+
+    $pop('#tabla-exporta').hide();
 }
 
-function ver_estados() {
-    $j('#Dependencias').addClass("mfp-hide");
-    $j('#Regiones').addClass("mfp-hide");
-    $j('#Estados').removeClass("mfp-hide");
-    $j('#Estados').addClass("mfp-show");
-}
-
-function ver_dependencias() {
-    $j('#Estados').addClass("mfp-hide");
-    $j('#Regiones').addClass("mfp-hide");
-    $j('#Dependencias').removeClass("mfp-hide");
-    $j('#Dependencias').addClass("mfp-show");
-}
-
-function reporte_region() {
-    var $E = jQuery.noConflict();
-    var estado_id = $E("#msRegiones").val();
-
-    var URL="/visitas/Predefinido_Region?region_id=" + estado_id;
+function balanceGeneral() {
+    var URL="/issste/api/balanceGeneral?access_token="+newToken;
     location.href = URL;
 
 }
 
-function reporte_estado() {
-    var $E = jQuery.noConflict();
-    var estado_id = $E("#msEstados").val();
-
-    var URL="/visitas/Predefinido_Estado?estado_id=" + estado_id;
-    location.href = URL;
+function avancePorMunicipio() {
+    $j('#load1').removeClass("mfp-hide");
+    $j('#load1').addClass("mfp-show");
+    var ajax_data = {
+      "access_token"  : newToken
+    };
+    $j.ajax({
+        url: '/issste/api/PD_AvancePorMunicipio',
+        type: 'get',
+        data: ajax_data,
+        success: function(data) {
+            tablaI(data,'Avances por Municipio',descripcionavanceMunicipio);
+            datosJson=data;
+            $j('#load1').addClass("mfp-hide");
+        },
+        error: function(data) {
+            $j('#load1').addClass("mfp-hide");
+            alert('error!!! ' + data.status);
+        }
+    });
 
 }
 
-function reporte_dependencia() {
-    var $E = jQuery.noConflict();
-    var dependencia_id = $E("#msDependencias").val();
+function tablaI(Datos,titulo,descripcion){
+    var sHtmlExporta="";
+    var sHtmlShorter="";
+    var sHtmlistado="";
+    sHtmlExporta= '<table id="tablaExporta2" class="table2excel">'
+                +' <colgroup>'
+                +' <col width="20%">'
+                +' <col width="20%">'
+                +' <col width="20%">'
+                +' <col width="20%">'
+                +' <col width="20%">'
+                +' </colgroup> '
+                +'<thead>'
+                        +'<tr>'
+                            +'<th>Carencia</th>'
+                            +'<th>SubCarencia</th>'
+                            +'<th>Acción</th>'
+                            +'<th>Municipio</th>'
+                            +'<th>Avance Total</th>'
+                        +'</tr>'
+                +'</thead>'
+                +'<tbody>';
 
-    var URL="/visitas/Predefinido_Dependencia?dependencia_id=" + dependencia_id;
-    location.href = URL;
+    var sHtml='<table cellspacing="1"  id="tablaIzquierda">'
+                +' <colgroup>'
+                +' <col width="20%">'
+                +' <col width="20%">'
+                +' <col width="30%">'
+                +' <col width="20%">'
+                +' <col width="10%">'
+                +' </colgroup>'
+                +' <thead>'
+                        +'<tr>'
+                            +'<th width="30%">Carencia</th>'
+                            +'<th width="40%">SubCarencia</th>'
+                            +'<th width="30%">Acción</th>'
+                            +'<th width="30%">Municipio</th>'
+                            +'<th width="30%">Avance Total</th>'
+                        +'</tr>'
+                    +'</thead>'
+                    +'<tfoot>'
+                        +'<tr>'
+                            +'<th>Carencia</th>'
+                            +'<th>SubCarencia</th>'
+                            +'<th>Acción</th>'
+                            +'<th>Municipio</th>'
+                            +'<th>Avance Total</th>'
+                        +'</tr>'
+
+                        +'<tr><td class="pager" id="pagerI" colspan="5">'
+                        +'<img src="../../static/assets/tablesorter/addons/pager/icons/first.png" class="first" id="firstI"/>'
+                        +'<img src="../../static/assets/tablesorter/addons/pager/icons/prev.png" class="prev" id="prevI"/>'
+                        +'<span class="pagedisplay" id="pagedisplayI"></span>'
+                        +'<img src="../../static/assets/tablesorter/addons/pager/icons/next.png" class="next" id="nextI"/>'
+                        +'<img src="../../static/assets/tablesorter/addons/pager/icons/last.png" class="last" id="lastI"/>'
+                        +'<select class="pagesize" id="pagesizeI">'
+                        +'<option selected="selected"  value="10">10</option>'
+                        +'    <option value="20">20</option>'
+                        +'    <option value="30">30</option>'
+                        +'    <option  value="40">40</option>'
+                        +'</select></td></tr>'
+
+                    +'</tfoot>'
+                    +'<tbody>';
+
+
+            for(var i= 0;i<Datos.reporte_por_municipio.length;i++){
+                sHtml +='<tr>'
+                        +'<td style="width:28%"><a href="/admin/djangoISSSTE/avancepormunicipio/' + Datos.reporte_por_municipio[i].id + '/change">' + Datos.reporte_por_municipio[i].carencia +'</a></td>'
+                        +'<td style="width:36%">' + Datos.reporte_por_municipio[i].subCarencia +'</td>'
+                        +'<td style="width:28%">' + Datos.reporte_por_municipio[i].accion +'</td>'
+                        +'<td style="width:28%">' + Datos.reporte_por_municipio[i].municipio +'</td>'
+                        +'<td style="width:28%">' + Datos.reporte_por_municipio[i].suma_avance +'</td>'
+                        +'</tr>'
+
+                sHtmlExporta += '<tr>'
+                        +'<td>' + Datos.reporte_por_municipio[i].carencia +'</td>'
+                        +'<td>' + Datos.reporte_por_municipio[i].subCarencia +'</td>'
+                        +'<td>' + Datos.reporte_por_municipio[i].accion +'</td>'
+                        +'<td>' + Datos.reporte_por_municipio[i].municipio +'</td>'
+                        +'<td>' + Datos.reporte_por_municipio[i].suma_avance +'</td>'
+                        +'</tr>'
+            }
+
+        sHtml +=' </tbody>'
+                +'</table>'
+                +'<script id="js" type="text/javascript">'
+                +'$ts(function() {'
+                +'    $ts("#tablaIzquierda").tablesorter({'
+                +'    theme: "blue",'
+                +'    showProcessing: true,'
+                +'    headerTemplate : "{content} {icon}",'
+                +'    widgets: [ "uitheme", "zebra", "pager", "scroller" ],'
+                +'    widgetOptions : {'
+                +'        scroller_height : 180,'
+                +'        scroller_upAfterSort: true,'
+                +'        scroller_jumpToHeader: true,'
+                +'        scroller_barWidth : null,'
+                +'        pager_selectors: {'
+                +'                container   : "#pagerI",'
+                +'                first       : "#firstI",'
+                +'                prev        : "#prevI",'
+                +'                next        : "#nextI",'
+                +'                last        : "#lastI",'
+                +'                gotoPage    : "#gotoPageI",'
+                +'                pagedisplay : "#pagedisplayI",'
+                +'                pagesize    : "#pagesizeI"'
+                +'        }'
+                +'    }'
+                +'});'
+                +'});'
+                +'</script>';
+
+    sHtmlExporta +='</tbody>'
+                +'</table>';
+
+    $j('#tabla-exporta').hide();
+    $j('#titulo').html(titulo);
+    $j('#descripcion').html(descripcion);
+    $j('#tabla-exporta').html(sHtmlExporta);
+    $j('#tabla').html(sHtml);
+
 
 }
