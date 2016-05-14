@@ -793,7 +793,7 @@ class FichaTecnicaForiPadAvancesEndpoint(ListView):
         if resultados[0] is not []:
             the_json['responsable'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable']
             the_json['observaciones'] = resultados[0]['avancePorMunicipio__meta__observaciones']
-            the_json['periodo'] = resultados[0]['avancePorMunicipio__periodo__nombrePeriodo']
+            the_json['periodo'] = str(resultados[0]['avancePorMunicipio__periodo__nombrePeriodo'])
             the_json['carencia'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
             the_json['subCarencia'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
             the_json['unidad'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad']
