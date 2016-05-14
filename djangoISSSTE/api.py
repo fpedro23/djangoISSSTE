@@ -2592,3 +2592,97 @@ class AvancesPorPeriodoEndPoint(ProtectedResourceView):
 
         return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True, ), 'application/json')
 
+class PresentacioneAvancesEndPoint(ProtectedResourceView):
+    def get(self, request):
+
+        json_map = {}
+        json_map['reporte1'] = []
+        json_map['reporte2'] = []
+        json_map['reporte3'] = []
+        for carencia in Carencia.objects.all():
+            list_carencias = {}
+            list_carencias['carencia'] = carencia.nombreCarencia
+            list_carencias['total_avances'] = 0
+            query = Q(avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=carencia.id)
+
+            usuario = get_usuario_for_token(request.GET.get('access_token'))
+            if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
+                query = query & Q(avancePorMunicipio__estado=usuario.usuario.estado)
+
+            for avance in AvanceMensual.objects.filter(query).values(
+                    'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia').annotate(
+                ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
+                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+                total = avance['ene'] + avance['feb'] + avance['mar'] + avance['abr'] + avance['may'] + avance['jun'] + \
+                        avance['jul'] + avance['ago'] + avance['sep'] + avance['oct'] + avance['nov'] + avance['dic']
+                list_carencias['total_avances'] = total
+
+            query_meta = Q(meta__accionEstrategica__subCarencia__carencia__id=carencia.id)
+            if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
+                query_meta = query_meta & Q(estado=usuario.usuario.estado)
+            json_map['reporte1'].append(list_carencias)
+
+
+        #Reporte 2
+        usuario = get_usuario_for_token(request.GET.get('access_token'))
+        query = Q()
+        if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
+            query = query & Q(id=usuario.usuario.estado.id)
+        for estado in Estado.objects.filter(query):
+            list_estados = {}
+            list_estados['estado'] = estado.nombreEstado
+            for avance in AvanceMensual.objects.filter(avancePorMunicipio__estado = estado).values(
+                    'avancePorMunicipio__estado__nombreEstado').annotate(
+                ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
+                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+                total = avance['ene'] + avance['feb'] + avance['mar'] + avance['abr'] + avance['may'] + avance['jun'] + \
+                        avance['jul'] + avance['ago'] + avance['sep'] + avance['oct'] + avance['nov'] + avance['dic']
+
+                list_estados['total_avances'] = total
+                list_estados['estado'] = avance[ 'avancePorMunicipio__estado__nombreEstado']
+
+            json_map['reporte2'].append(list_estados)
+
+
+        #Reporte 3
+        usuario = get_usuario_for_token(request.GET.get('access_token'))
+        query = Q()
+        if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
+            query = query & Q(id=usuario.usuario.estado.id)
+        for estado in Estado.objects.filter(query):
+            list_estados = {}
+            list_estados['estado'] = estado.nombreEstado
+            list_estados['datos'] = []
+
+            for carencia in Carencia.objects.all():
+                list_carencias = {}
+                list_carencias['carencia'] = carencia.nombreCarencia
+                list_carencias['total_avances'] = 0
+                query_avance = Q(avancePorMunicipio__estado__id=estado.id) & \
+                               Q(avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia=carencia.id)
+
+                for avance in AvanceMensual.objects.filter(query_avance).values(
+                        'avancePorMunicipio__estado__nombreEstado').annotate(
+                    ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
+                    jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+                    total = avance['ene'] + avance['feb'] + avance['mar'] + avance['abr'] + avance['may'] + avance[
+                        'jun'] + \
+                            avance['jul'] + avance['ago'] + avance['sep'] + avance['oct'] + avance['nov'] + avance[
+                                'dic']
+                    list_carencias['total_avances'] = total
+
+                list_carencias['total_metas'] = 0
+                for meta in MetaMensual.objects.filter(estado__id=estado.id,
+                                                       meta__accionEstrategica__subCarencia__carencia__id=carencia.id).values(
+                    'estado__nombreEstado').annotate(
+                    ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
+                    jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+                    total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
+                            meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
+
+                    list_carencias['total_metas'] = total
+                list_estados['datos'].append(list_carencias)
+            json_map['reporte3'].append(list_estados)
+
+        return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True, ),
+                            'application/json')
