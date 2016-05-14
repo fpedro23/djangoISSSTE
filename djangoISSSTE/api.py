@@ -193,7 +193,7 @@ class MesesEndpoint(ProtectedResourceView):
 
 
 # Clase EndPoint (oauth2) para devolver las metas
-class MetasPorPeriodoEndpoint(generic.ListView):
+class MetasPorPeriodoEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         periodos = get_array_or_none(request.GET.get('periodos'))
         return HttpResponse(
@@ -327,7 +327,7 @@ class avancesMensualesPorMetaEndpoint(ProtectedResourceView):
 
 
 # Clase EndPoint (oauth2) para implementar el buscador en base al filtro grande
-class BuscadorEndpoint(generic.ListView):
+class BuscadorEndpoint(ProtectedResourceView):
     def get(self, request):
         # myObj: objeto a construir con lo parámetros obtenidos en la URL y que serán
         # mandados al buscador para que éste los filtre
@@ -752,7 +752,7 @@ class AvancesEndpoint(ProtectedResourceView):
 
 
 #Clase para devolver datos de la ficha técnica
-class FichaTecnicaAvancesEndpoint(generic.ListView):
+class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         prs = Presentation('djangoISSSTE/static/ppt/Ficha_Tecnica_Avance.pptx')
         #prs = Presentation('/home/sisefenlin/visitas/static/ppt/fichaTecnica_sisef.pptx')
@@ -2312,8 +2312,7 @@ class BalanceGeneralEndpoint(ProtectedResourceView):
 
         #return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True,), 'application/json')
 
-
-class BalancePorEntidadEndpoint(generic.ListView):
+class BalancePorEntidadEndpoint(ProtectedResourceView):
     def get(self, request):
 
         json_map = {}
@@ -2348,3 +2347,66 @@ class BalancePorEntidadEndpoint(generic.ListView):
             json_map['balancePorEntidad'].append(list_estados)
 
         return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True,), 'application/json')
+
+class InformacionGeneralEndpoint(ProtectedResourceView):
+    def get(self, request):
+
+        json_map = {}
+        json_map['balance'] = []
+        for carencia in Carencia.objects.all():
+            list_carencias = {}
+            list_carencias['carencia'] = carencia.nombreCarencia
+            list_carencias['total_avances'] = 0
+            list_carencias['inversionAprox'] = 0
+            for avance in AvanceMensual.objects.filter(
+                    avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=carencia.id).values(
+                'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia').annotate(
+                ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
+                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+
+                total = avance['ene'] + avance['feb'] + avance['mar'] + avance['abr'] + avance['may'] + avance['jun'] +\
+                        avance['jul'] + avance['ago'] + avance['sep'] + avance['oct'] + avance['nov'] + avance['dic']
+                list_carencias['total_avances'] = total
+
+                for avanceMunicipio in AvancePorMunicipio.objects.filter(
+                    meta__accionEstrategica__subCarencia__carencia__id=carencia.id).values(
+                    'meta__accionEstrategica__subCarencia__carencia__id'
+                ).annotate(inversion=Sum('inversionAprox')):
+                    list_carencias['inversionAprox'] = avanceMunicipio['inversion']
+
+            json_map['balance'].append(list_carencias)
+
+        return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True,), 'application/json')
+
+class AvancesPorPeriodoEndPoint(generic.ListView):
+    def get(self, request):
+        json_map = {}
+        json_map['balance'] = []
+
+        for periodo in Periodo.objects.all():
+            list_datos = {}
+            list_datos['periodo'] = periodo.nombrePeriodo
+            list_datos['metas'] = 0
+            list_datos['avances'] = 0
+            for avance in AvanceMensual.objects.filter(avancePorMunicipio__periodo__id = periodo.id).values(
+                    'avancePorMunicipio__periodo__nombrePeriodo').annotate(
+                ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
+                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+
+                total = avance['ene'] + avance['feb'] + avance['mar'] + avance['abr'] + avance['may'] + avance['jun'] + \
+                        avance['jul'] + avance['ago'] + avance['sep'] + avance['oct'] + avance['nov'] + avance['dic']
+
+                list_datos['avances'] = total
+
+            for meta in MetaMensual.objects.filter(meta__periodo__id=periodo.id).values(
+                    'meta__periodo__nombrePeriodo').annotate(
+                ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
+                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+                total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
+                        meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
+
+                list_datos['metas'] = total
+
+            json_map['balance'].append(list_datos)
+
+        return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True, ), 'application/json')
