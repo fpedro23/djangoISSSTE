@@ -755,7 +755,7 @@ class AvancesEndpoint(ProtectedResourceView):
                             'application/json', )
 
 # Clase para devolver datos de la ficha técnica del iPad
-class FichaTecnicaForiPadAvancesEndpoint(ProtectedResourceView):
+class FichaTecnicaForiPadAvancesEndpoint(ListView):
     def get(self, request, *args, **kwargs):
         # Obteniendo los datos de la url
         theID = request.GET.get('idAvanceMensual')
@@ -797,31 +797,31 @@ class FichaTecnicaForiPadAvancesEndpoint(ProtectedResourceView):
             the_json['carencia'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
             the_json['subCarencia'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
             the_json['unidad'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad']
-            the_json['montoPromedio'] = resultados[0]['avancePorMunicipio__meta__montoPromedio']
+            the_json['montoPromedio'] = str(resultados[0]['avancePorMunicipio__meta__montoPromedio'])
             the_json['accion'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
             the_json['estado'] = resultados[0]['avancePorMunicipio__estado__nombreEstado']
 
         for datos in resultados:
             the_list = {}
             the_list['municipio'] = datos['municipio__nombreMunicipio']
-            the_list['latitud'] = datos['municipio__latitud']
-            the_list['longitud'] = datos['municipio__longitud']
-            the_list['ene'] = datos['ene']
-            the_list['feb'] = datos['feb']
-            the_list['mar'] = datos['mar']
-            the_list['abr'] = datos['abr']
-            the_list['may'] = datos['may']
-            the_list['jun'] = datos['jun']
-            the_list['jul'] = datos['jul']
-            the_list['ago'] = datos['ago']
-            the_list['sep'] = datos['sep']
-            the_list['oct'] = datos['oct']
-            the_list['nov'] = datos['nov']
-            the_list['dic'] = datos['dic']
+            the_list['latitud'] = str(datos['municipio__latitud'])
+            the_list['longitud'] = str(datos['municipio__longitud'])
+            the_list['ene'] = str(datos['ene'])
+            the_list['feb'] = str(datos['feb'])
+            the_list['mar'] = str(datos['mar'])
+            the_list['abr'] = str(datos['abr'])
+            the_list['may'] = str(datos['may'])
+            the_list['jun'] = str(datos['jun'])
+            the_list['jul'] = str(datos['jul'])
+            the_list['ago'] = str(datos['ago'])
+            the_list['sep'] = str(datos['sep'])
+            the_list['oct'] = str(datos['oct'])
+            the_list['nov'] = str(datos['nov'])
+            the_list['dic'] = str(datos['dic'])
             suma = datos['ene'] + datos['feb'] + datos['mar'] + datos['abr'] + datos['may'] + datos['jun'] + \
                    datos['jul'] + datos['ago'] + datos['sep'] + datos['oct'] + datos['nov'] + datos['dic']
-            the_list['suma'] = suma
-            the_list['inversion'] = suma * datos['avancePorMunicipio__meta__montoPromedio']
+            the_list['suma'] = str(suma)
+            the_list['inversion'] = str(suma * datos['avancePorMunicipio__meta__montoPromedio'])
             the_json['avance'].append(the_list)
 
         for meta in MetaMensual.objects.filter(
@@ -830,18 +830,18 @@ class FichaTecnicaForiPadAvancesEndpoint(ProtectedResourceView):
                         Q(estado__id=estado_id)
         ):
             the_meta_list = {}
-            the_meta_list['ene'] = meta.ene
-            the_meta_list['feb'] = meta.feb
-            the_meta_list['mar'] = meta.mar
-            the_meta_list['abr'] = meta.abr
-            the_meta_list['may'] = meta.may
-            the_meta_list['jun'] = meta.jun
-            the_meta_list['jul'] = meta.jul
-            the_meta_list['ago'] = meta.ago
-            the_meta_list['sep'] = meta.sep
-            the_meta_list['oct'] = meta.oct
-            the_meta_list['nov'] = meta.nov
-            the_meta_list['dic'] = meta.dic
+            the_meta_list['ene'] = str(meta.ene)
+            the_meta_list['feb'] = str(meta.feb)
+            the_meta_list['mar'] = str(meta.mar)
+            the_meta_list['abr'] = str(meta.abr)
+            the_meta_list['may'] = str(meta.may)
+            the_meta_list['jun'] = str(meta.jun)
+            the_meta_list['jul'] = str(meta.jul)
+            the_meta_list['ago'] = str(meta.ago)
+            the_meta_list['sep'] = str(meta.sep)
+            the_meta_list['oct'] = str(meta.oct)
+            the_meta_list['nov'] = str(meta.nov)
+            the_meta_list['dic'] = str(meta.dic)
 
             the_json['meta'].append(the_meta_list)
         return HttpResponse(json.dumps(the_json, indent=4, separators=(',', ': '), sort_keys=True, ),
