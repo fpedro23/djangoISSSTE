@@ -2279,6 +2279,8 @@ class BalanceGeneralEndpoint(ProtectedResourceView):
             paragraph.font.color.rgb = RGBColor(0xFF, 0x7F, 0x50)
 
         indice = 1
+        sumAvances=0
+        sumMetas=0
         for avance in json_map['balance']:
             for x in range(1, 3):
                 cell = table.rows[indice].cells[x]
@@ -2291,8 +2293,12 @@ class BalanceGeneralEndpoint(ProtectedResourceView):
             table.cell(indice, 0).text = avance['carencia']
             table.cell(indice, 1).text = str('{0:,}'.format(avance['total_avances']))
             table.cell(indice, 2).text = str('{0:,}'.format(avance['total_metas']))
-
+            sumAvances+=avance['total_avances']
+            sumMetas+=avance['total_metas']
             indice += 1
+
+        table.cell(6, 1).text = str('{0:,}'.format(sumAvances))
+        table.cell(6, 2).text = str('{0:,}'.format(sumMetas))
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
 
@@ -2314,6 +2320,8 @@ class BalanceGeneralEndpoint(ProtectedResourceView):
 
 class BalancePorEntidadEndpoint(ProtectedResourceView):
     def get(self, request):
+        prs = Presentation('djangoISSSTE/static/ppt/balance_por_estado.pptx')
+        #prs = Presentation('/home/sisefenlin/visitas/static/ppt/balance_por_estado.pptx')
 
         json_map = {}
         json_map['balancePorEntidad'] = []
@@ -2325,6 +2333,7 @@ class BalancePorEntidadEndpoint(ProtectedResourceView):
             for carencia in Carencia.objects.all():
                 list_carencias = {}
                 list_carencias['carencia'] = carencia.nombreCarencia
+                list_carencias['total_avances'] = 0
                 for avance in AvanceMensual.objects.filter(
                         avancePorMunicipio__estado__id=estado.id,
                         avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia = carencia.id).values(
@@ -2335,7 +2344,9 @@ class BalancePorEntidadEndpoint(ProtectedResourceView):
                             avance['jul'] + avance['ago'] + avance['sep'] + avance['oct'] + avance['nov'] + avance['dic']
                     list_carencias['total_avances'] = total
 
-                for meta in MetaMensual.objects.filter(estado__id=estado.id).values('estado__nombreEstado').annotate(
+                list_carencias['total_metas'] = 0
+                for meta in MetaMensual.objects.filter(estado__id=estado.id,
+                        meta__accionEstrategica__subCarencia__carencia__id=carencia.id).values('estado__nombreEstado').annotate(
                     ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
                     jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
 
@@ -2346,7 +2357,56 @@ class BalancePorEntidadEndpoint(ProtectedResourceView):
                 list_estados['datos'].append(list_carencias)
             json_map['balancePorEntidad'].append(list_estados)
 
-        return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True,), 'application/json')
+            iSlide=0
+            for balanceEstado in json_map['balancePorEntidad']:
+                table = prs.slides[iSlide].shapes[0].table
+                for x in range(1, 6):
+                    cell = table.rows[x].cells[1]
+                    paragraph = cell.textframe.paragraphs[0]
+                    paragraph.font.size = Pt(12)
+                    paragraph.font.name = 'Arial'
+                    paragraph.font.color.rgb = RGBColor(0xFF, 0x7F, 0x50)
+
+                indice = 1
+                sumAvances=0
+                sumMetas=0
+                for avance in balanceEstado['datos']:
+                    for x in range(1, 3):
+                        cell = table.rows[indice].cells[x]
+                        paragraph = cell.textframe.paragraphs[0]
+                        paragraph.font.size = Pt(10)
+                        paragraph.font.name = 'Arial'
+                        paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+                    # write body cells
+                    table.cell(indice, 0).text = avance['carencia']
+                    table.cell(indice, 1).text = str('{0:,}'.format(avance['total_avances']))
+                    table.cell(indice, 2).text = str('{0:,}'.format(avance['total_metas']))
+                    sumAvances+=avance['total_avances']
+                    sumMetas+=avance['total_metas']
+                    indice += 1
+
+                table.cell(6, 1).text = str('{0:,}'.format(sumAvances))
+                table.cell(6, 2).text = str('{0:,}'.format(sumMetas))
+                iSlide+=1
+
+        usuario = get_usuario_for_token(request.GET.get('access_token'))
+
+        prs.save('djangoISSSTE/static/ppt/ppt-generados/balance_por_estado' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = 'djangoISSSTE/static/ppt/ppt-generados/balance_por_estado' + str(usuario.usuario.user.id) + '.pptx'
+
+        #prs.save('/home/sisefenlin/visitas/static/ppt/ppt-generados/FichaTecnicaVisitas_' + str(usuario.user.id) + '.pptx')
+        #the_file = '/home/sisefenlin/visitas/static/ppt/ppt-generados/FichaTecnicaVisitas_' + str(usuario.user.id) + '.pptx'
+
+        filename = os.path.basename(the_file)
+        chunk_size = 8192
+        response = StreamingHttpResponse(FileWrapper(open(the_file,"rb"), chunk_size),
+                               content_type=mimetypes.guess_type(the_file)[0])
+        response['Content-Length'] = os.path.getsize(the_file)
+        response['Content-Disposition'] = "attachment; filename=%s" % filename
+        return response
+
+        #return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True,), 'application/json')
 
 class InformacionGeneralEndpoint(ProtectedResourceView):
     def get(self, request):
