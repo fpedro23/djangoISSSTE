@@ -52,5 +52,5 @@ urlpatterns = [
 	url(r'^api/fichaTecnicaiPad', api.FichaTecnicaForiPadAvancesEndpoint.as_view()),
 	url(r'^api/presentacionAvances', api.PresentacioneAvancesEndPoint.as_view()),
 
-    # url(r'^api/hora_ultima_actualizacion', api.HoraUltimaActualizacion.as_view()),
+	url(r'^api/fecha_ultima_actualizacion', api.FechaUltimaActualizacionEndpoint.as_view()),
 ]

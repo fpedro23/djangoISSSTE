@@ -24,6 +24,8 @@ from oauth2_provider.views.generic import ProtectedResourceView
 from django.core.serializers.json import DjangoJSONEncoder
 from wsgiref.util import FileWrapper
 
+from datetime import date, timedelta
+
 from djangoISSSTE.models import *
 from django.db.models import Q, Sum, Count
 
@@ -2774,3 +2776,15 @@ class PresentacioneAvancesEndPoint(ProtectedResourceView):
 
         return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True, ),
                             'application/json')
+
+class FechaUltimaActualizacionEndpoint(ListView):
+    def get(self, request, *args, **kwargs):
+        the_list = []
+        comp_date = date.today() - timedelta(days=15)
+
+        the_list = map(lambda avancemensual: avancemensual.to_serializable_dict(), AvanceMensual.objects.filter(
+            Q(fecha_ultima_modificacion__lt=comp_date)))
+
+        return HttpResponse(
+            json.dumps(the_list, indent=4, sort_keys=True, ensure_ascii=False, cls=DjangoJSONEncoder),
+            'application/json', )
