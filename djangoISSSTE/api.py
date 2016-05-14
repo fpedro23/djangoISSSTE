@@ -327,7 +327,7 @@ class avancesMensualesPorMetaEndpoint(ProtectedResourceView):
 
 
 # Clase EndPoint (oauth2) para implementar el buscador en base al filtro grande
-class BuscadorEndpoint(ProtectedResourceView):
+class BuscadorEndpoint(generic.ListView):
     def get(self, request):
         # myObj: objeto a construir con lo parámetros obtenidos en la URL y que serán
         # mandados al buscador para que éste los filtre
@@ -447,6 +447,7 @@ class BuscadorEndpoint(ProtectedResourceView):
             shortened_reporte['estado'] = reporte['avancePorMunicipio__estado__nombreEstado']
             shortened_reporte['municipio'] = reporte['municipio__nombreMunicipio']
             shortened_reporte['periodo'] = reporte['avancePorMunicipio__periodo__nombrePeriodo']
+            shortened_reporte['periodo_id'] = reporte['avancePorMunicipio__periodo__id']
             shortened_reporte['latitud'] = reporte['municipio__latitud']
             shortened_reporte['longitud'] = reporte['municipio__longitud']
 

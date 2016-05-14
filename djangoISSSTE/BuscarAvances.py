@@ -106,6 +106,7 @@ class BuscarAvances:
 			'avancePorMunicipio__estado__id',
 			'municipio__nombreMunicipio',
 			'avancePorMunicipio__periodo__nombrePeriodo',
+			'avancePorMunicipio__periodo__id',
 			'municipio__latitud',
 			'municipio__longitud',
 		)[self.limite_inferior:self.limite_superior]
