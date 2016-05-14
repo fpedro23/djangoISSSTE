@@ -1,0 +1,63 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls admin_static %}
+{% block extrahead %}{{ block.super }}
+    <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+     <link href="{% static "assets/css/formas.css" %}" rel="stylesheet">
+
+{% endblock %}
+
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} delete-confirmation{% endblock %}
+
+{% block breadcrumbs %}
+
+{% endblock %}
+
+{% block content %}
+      <div id="regresarBTN" onclick="window.history.go(-1);">
+   </div>
+
+<div id="welcome">
+        Confirmación Eliminar Usuario
+  </div>
+
+  <div class="bienvenida">
+<br><br>
+        {% if perms_lacking or protected %}
+            {% if perms_lacking %}
+                <p>{% blocktrans with escaped_object=object %}Deleting the {{ object_name }} '{{ escaped_object }}' would result in deleting related objects, but your account doesn't have permission to delete the following types of objects:{% endblocktrans %}</p>
+                <ul>
+                {% for obj in perms_lacking %}
+                    <li>{{ obj }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+            {% if protected %}
+                <p>{% blocktrans with escaped_object=object %}Deleting the {{ object_name }} '{{ escaped_object }}' would require deleting the following protected related objects:{% endblocktrans %}</p>
+                <ul>
+                {% for obj in protected %}
+                    <li>{{ obj }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% else %}
+
+           {% blocktrans with escaped_object=object %}  Esta seguro de eliminar el Usuario: {% endblocktrans %}
+
+           </div>
+            <div class="campos01">
+            {% blocktrans with escaped_object=object %}
+            {{ escaped_object }}
+            {% endblocktrans %}
+            </div>
+
+                <form action="" method="post">{% csrf_token %}
+
+                <input type="hidden" name="post" value="yes" />
+                <input type="submit" class="eliminarBTN" value="" /> &nbsp;&nbsp;&nbsp;
+
+                <div class="salirBTN" onclick="location.href='/usuarios'" style="left: 630px;"></div>
+                </form>
+
+        {% endif %}
+{% endblock %}

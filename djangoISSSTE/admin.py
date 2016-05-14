@@ -11,6 +11,7 @@ from django.db.models.query_utils import Q
 from django.forms.models import ModelForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import Group
+from django.contrib import messages
 
 from djangoISSSTE.forms import *
 from djangoISSSTE.models import *
@@ -118,7 +119,7 @@ class UsuarioInLine(admin.StackedInline):
 
 class UserAdmin(UserAdmin):
     inlines = (UsuarioInLine,)
-    list_display = ('username', 'first_name', 'last_name', 'email', 'get_estado', 'get_rol')
+    list_display = ('username', 'first_name', 'last_name', 'get_email', 'get_estado', 'get_rol')
     fieldsets = (
         (('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
         (('AuthInfo'), {'fields': ('username', 'password')}),
@@ -131,6 +132,9 @@ class UserAdmin(UserAdmin):
         (('Permissions'), {'fields': ('is_active',)}),
     )
 
+    def get_email(self,obj):
+        return obj.email
+
     # Obteniendo el campo del rol dentro de la lista de usuarios
     def get_rol(self, obj):
         return obj.usuario.rol
@@ -141,6 +145,7 @@ class UserAdmin(UserAdmin):
 
     get_rol.short_description = "Rol"
     get_estado.short_description = "Estado"
+    get_email.short_description = "E-mail"
 
     def response_add(self, request, obj, post_url_continue=None):
         if '_addanother' not in request.POST:
@@ -219,9 +224,12 @@ class MetaMensualInLine(admin.TabularInline):
 class MetaAdmin(admin.ModelAdmin):
     model = Meta
     fields = ('accionEstrategica', 'periodo', 'montoPromedio', 'observaciones',)
-    list_display = ('get_carencia', 'get_subcarencia', 'accionEstrategica', 'periodo', 'get_inversion')
+    list_display = ('get_carencia', 'get_subcarencia', 'get_accionEstrategica', 'periodo', 'get_inversion')
     inlines = [MetaMensualInLine, ]
-    can_delete = True
+    can_delete = False
+
+    def get_accionEstrategica(self, obj):
+        return obj.accionEstrategica.nombreAccion
 
     # Obteniendo el campo de la SuCarencia para la lista de Metas
     def get_subcarencia(self, obj):
@@ -244,7 +252,8 @@ class MetaAdmin(admin.ModelAdmin):
 
     get_subcarencia.short_description = "SubCarencia"
     get_carencia.short_description = "Carencia"
-    get_inversion.short_description = "Inversion Aproximada"
+    get_inversion.short_description = "Inversión Aprox."
+    get_accionEstrategica.short_description = "Acción Estratégica"
 
     def save_formset(self, request, form, formset, change):
         formset.save()
@@ -253,9 +262,32 @@ class MetaAdmin(admin.ModelAdmin):
                 obj = f.instance
                 obj.save()
 
+    # Redireccionamiento cuando se guarda una nueva meta
+    def response_add(self, request, obj, post_url_continue=None):
+        if not request.POST.has_key('_addanother'):
+            success_message = 'La meta \"%s\" se ha creado exitosamente.' % obj.__str__()
+            self.message_user(request, success_message, level=messages.SUCCESS)
+            return HttpResponseRedirect('/catalogos')
+        else:
+            success_message = 'La meta \"%s\" se ha creado exitosamente.' % obj.__str__()
+            self.message_user(request, success_message, level=messages.SUCCESS)
+            return super(MetaAdmin, self).response_add(request, obj, post_url_continue)
+
+    # Redireccionamiento cuando se guarda una nueva meta
+    def response_change(self, request, obj, post_url_continue=None):
+        if not request.POST.has_key('_addanother'):
+            success_message = 'La meta \"%s\" se ha modificado exitosamente.' % obj.__str__()
+            self.message_user(request, success_message, level=messages.SUCCESS)
+            return super(MetaAdmin, self).response_add(request, obj, post_url_continue)
+        else:
+            success_message = 'La meta \"%s\" se ha modificado exitosamente.' % obj.__str__()
+            self.message_user(request, success_message, level=messages.SUCCESS)
+            return super(MetaAdmin, self).response_add(request, obj, post_url_continue)
+
 
 class AvanceMensualInLine(admin.TabularInline):
     model = AvanceMensual
+    exclude = ['porcentajeAvance']
     extra = 0
 
 
@@ -272,8 +304,8 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
     fieldsets = (
         ('Avance', {
             'fields': (
-                'periodo', 'meta', 'estado', 'get_carencia', 'get_unidad_medida', 'get_observaciones',
-                'get_subcarencia', 'inversionAprox', 'get_accion',
+                'periodo', 'meta', 'estado', 'get_carencia', 'get_unidad_medida',
+                'get_subcarencia', 'get_inversion','get_observaciones', 'get_accion','get_monto_promedio',
             )
         }),
         ('Meta', {
@@ -288,22 +320,14 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
     readonly_fields = ('get_carencia', 'get_subcarencia', 'get_unidad_medida', 'get_observaciones', 'get_enero',
                        'get_febrero', 'get_marzo', 'get_abril', 'get_mayo', 'get_junio', 'get_julio', 'get_agosto',
                        'get_septiembre', 'get_octubre', 'get_noviembre', 'get_diciembre', 'get_accion',
-                       'inversionAprox')
+                       'get_inversion', 'get_monto_promedio',)
 
-    list_display = ('id', 'get_carencia', 'get_subcarencia', 'meta', 'periodo', 'estado', 'inversionAprox')
+    list_display = ('id', 'get_carencia', 'get_subcarencia', 'get_accion', 'periodo', 'estado', 'get_inversion', 'get_monto_promedio',)
     ordering = ['meta__nombreMeta', ]
 
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        query_estado = request.user.usuario.estado.id
-        if db_field.name == "estado":
-            if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UR' or request.user.usuario.rol == 'FR':
-                kwargs["queryset"] = Estado.objects.all()
-            elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
-                kwargs["queryset"] = Estado.objects.filter(
-                    Q(id=query_estado)
-                )
 
-        return super(AvancePorMunicipioAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+    def get_action(self, obj):
+        return obj.meta.accionEstrategica.nombreAccion
 
     # Obteniendo el campo de la SuCarencia para la lista de avances por municipio
     def get_subcarencia(self, obj):
@@ -442,6 +466,13 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
     def get_accion(self, obj):
         return obj.meta.accionEstrategica.nombreAccion
 
+    def get_monto_promedio(self, obj):
+        return obj.meta.montoPromedio
+
+    def get_inversion(self,obj):
+        return obj.inversionAprox
+
+    get_inversion.short_description = "Inversión Aprox."
     get_subcarencia.short_description = "Sub Carencia"
     get_carencia.short_description = "Carencia"
     get_unidad_medida.short_description = "Unidad de Medida"
@@ -459,6 +490,8 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
     get_noviembre.short_description = "Noviembre"
     get_diciembre.short_description = "Diciembre"
     get_accion.short_description = "Acción Estratégica"
+    get_monto_promedio.short_description = "Monto promedio"
+
 
     # Esta funcion se ejecuta al desplegar la lista de Avances por municipio. Dentro
     # de ella se aplica un filtro por el rol del usuario y de su estado
@@ -476,18 +509,38 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
     # y del estado al que pertenece en la pantalla para añadir un nuevo
     # avance por municipio
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        query_estado = request.user.usuario.estado.id
 
         if db_field.name == "estado":
             if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UR' or request.user.usuario.rol == 'FR':
                 kwargs["queryset"] = Estado.objects.all()
             elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
+                query_estado = request.user.usuario.estado.id
                 kwargs["queryset"] = Estado.objects.filter(
                     Q(id=query_estado)
                 )
 
         return super(
             AvancePorMunicipioAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
+    # Redireccionamiento cuando se guarda un nuevo avance
+    def response_add(self, request, obj, post_url_continue=None):
+        if not request.POST.has_key('_addanother'):
+            return HttpResponseRedirect('/movimientos')
+        else:
+            return super(AvancePorMunicipioAdmin, self).response_add(request, obj, post_url_continue)
+
+    # Redireccionamiento cuando se guarda un nuevo avance
+    def response_change(self, request, obj, post_url_continue=None):
+        if request.POST.has_key('_addanother'):
+            success_message = 'El avance \"%s\" se ha modificado exitosamente.' % obj.__str__()
+            self.message_user(request, success_message, level=messages.SUCCESS)
+            return super(AvancePorMunicipioAdmin, self).response_add(request, obj, post_url_continue)
+        elif request.POST.has_key('_continue'):
+            return super(AvancePorMunicipioAdmin, self).response_add(request, obj, post_url_continue)
+        else:
+            success_message = 'El avance \"%s\" se ha modificado exitosamente.' % obj.__str__()
+            self.message_user(request, success_message, level=messages.SUCCESS)
+            return HttpResponseRedirect('/movimientos')
 
 class AccionEstrategicaAdmin(admin.ModelAdmin):
     model = AccionEstrategica
@@ -513,6 +566,7 @@ class AccionEstrategicaAdmin(admin.ModelAdmin):
         ):
             arregloMetas.append(singleMeta.id)
 
+
         for singleMetaMensual in MetaMensual.objects.filter(
                 Q(meta__id__in=arregloMetas)
         ):
@@ -521,7 +575,7 @@ class AccionEstrategicaAdmin(admin.ModelAdmin):
 
     get_carencia.short_description = 'Carencia'
     get_cargoResponsable.short_description = 'Cargo del Responsable'
-    get_inversionTotal.short_description = "Inversión Aproximada"
+    get_inversionTotal.short_description = "Inversión Aprox."
 
 
 class SubcarenciaAdmin(admin.ModelAdmin):

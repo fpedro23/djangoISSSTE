@@ -1,0 +1,26 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static admin_urls %}
+{% block extrastyle %}{{ block.super }}
+
+{% endblock %}
+{% block breadcrumbs %}
+{% endblock %}
+
+{% block content %}
+
+    <div id="body">
+   	    <div id= "regresarBTN" onclick="window.history.go(-1);"></div>
+          <div id="welcome">C O N S U L T A S</div>
+
+          <div class="filtroCONSULTAS" onclick="location.href='/djangoISSSTE/consulta_filtros'">
+          </div>
+
+          <div class="predefinidaCONSULTAS" onclick="location.href='/djangoISSSTE/consulta_predefinidos'">
+          </div>
+
+          <div class="listaCONSULTAS" onclick="location.href='/admin/djangoISSSTE/avancepormunicipio/'">
+          </div>
+    </div>
+
+
+{% endblock %}

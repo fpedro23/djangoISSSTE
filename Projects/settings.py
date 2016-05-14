@@ -73,7 +73,7 @@ ROOT_URLCONF = 'Projects.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
+        'DIRS': [os.path.join(BASE_DIR, 'djangoISSSTE/templates/')]
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -87,6 +87,7 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'Projects.wsgi.application'
 
 
@@ -96,9 +97,9 @@ WSGI_APPLICATION = 'Projects.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'issste',
-        'USER': 'obras',
-        'PASSWORD': 'obras',
+        'NAME': 'issste_db',
+        'USER': 'root',
+        'PASSWORD': 'root',
         'HOST': '',
         'PORT': '',
     }
@@ -128,6 +129,12 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+<<<<<<< HEAD
+=======
+# vida del token
+SESSION_COOKIE_AGE = 35900
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+>>>>>>> 67f0b78512cc59e28fb60fd2ee1dc10a2bc769c8
 LOGIN_URL = '/admin/login/'
 
 # Internationalization
@@ -156,9 +163,10 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 
 
+
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, 'static'),
+    os.path.join(PROJECT_ROOT, '../djangoISSSTE/static'),
 )
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'

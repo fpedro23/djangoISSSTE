@@ -2,10 +2,10 @@ venv
 *.pyc
 staticfiles
 .env/
-env2-7/
 env/
+env2-7/
+db.sqlite3/
 .idea/
 djangoISSSTE/migrations/
+local_settings.py
 Projects/settingsOscar.py
-djangoISSSTE/buscadorTest.py
-*.sqlite3

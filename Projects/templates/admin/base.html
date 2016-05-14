@@ -1,0 +1,170 @@
+{% load i18n admin_static %}<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE|default:"es" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+<head>
+<title>{% block title %}{% endblock %}</title>
+<link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "assets/css/styles.css" %}{% endblock %}" />
+{% block extrastyle %}{% endblock %}
+{% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}" />{% endif %}
+{% block extrahead %}{% endblock %}
+{% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+</head>
+{% load i18n %}
+
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}"
+  data-admin-utc-offset="{% now "Z" %}">
+
+
+    {% if not is_popup %}
+    <!-- Header -->
+
+    <div id="header_EI">
+        <div id="logoISSTE_main"></div>
+        <div class="titleSYSTEM">Estrategia Nacional de Inclusión - ISSSTE</div>
+
+        <div id="branding">
+        {% block branding %}{% endblock %}
+        </div>
+        {% block usertools %}
+        {% if has_permission %}
+            <div class="nameUSER">
+                {% block welcome-msg %}
+                    {% trans 'Welcome,' %}
+                    <strong>{% firstof user.get_short_name user.get_username %}</strong>.
+                {% endblock %}
+            </div>
+            <div id="engrane">
+                <div class="nav navbar-nav btn-user">
+                    <li class="dropdown right-text" >
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                            <span class="engrane"></span> </a>
+                            <ul class="dropdown-menu" role="menu" style="left: -185px; top:23px;">
+                               {% if user.has_usable_password %}
+                                   <!-- <span class="glyphicon glyphicon-cog pull-right"></span> -->
+                                  <li><a href="{% url 'admin:password_change' %}">Cambiar Contraseña </a></li>
+                                   <li><a href="/djangoISSSTE/ayuda">Ayuda </a></li>
+                                  <li class="divider"></li>
+                                   <!-- <span class="glyphicon glyphicon-log-out pull-right"></span> -->
+                                  <li><a href="{% url 'admin:logout' %}">Cerrar Sesion </a></li>
+                                {% endif %}
+                            </ul>
+                    </li>
+                </div>
+            </div>
+
+        {% endif %}
+        {% endblock %}
+
+    <!-- BEGIN Menu -->
+        <div id="menu">
+         {% if user.is_active and user.is_staff %}
+
+
+                  <div class="MOVIMIENTOS" onclick="location.href='/djangoISSSTE/movimientos'"></div>
+                  <li class="dropdown right-text" style="list-style-type: none;">
+                        <div class="pto001">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="pto01" aria-hidden="true"></span></a>
+                                        <ul class="dropdown-menu" style="left:-155px; top:29px;">
+                                          <li><a href="/admin/djangoISSSTE/visita/add/?m=1">Registrar Avances</a></li>
+                                        </ul>
+                        </div>
+                  </li>
+
+                    <div class="CONSULTAS" onclick="location.href='/djangoISSSTE/consultas'"></div>
+                        <li class="dropdown right-text" style="list-style-type: none;">
+                            <div class="pto002">
+                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="pto02"></span></a>
+                                         <ul class="dropdown-menu" style="left:-170px; top:29px;">
+                                            <li><a href="/djangoISSSTE/consulta_filtros">Consultar por Filtro</a></li>
+                                            <li><a href="/djangoISSSTE/consulta_predefinidos">Consultar Predefinida</a></li>
+                                             <li><a href="/admin/djangoISSSTE/avance/">Lista de Avances</a></li>
+                                        </ul>
+                            </div>
+                        </li>
+
+            {%  if user.userprofile.rol == 'AG' %}
+                <div class="CATALOGOS" onclick="location.href='/djangoISSSTE/catalogos'"></div>
+                        <div class="pto003">
+                            <a href="/catalogo" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="pto03"></span></a>
+                                <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu" style="left:-165px; top:29px;">
+                                    <li class="dropdown-submenu"><a href="#" class="dropdown-toggle" data-toggle="dropdown">De Metas</a>
+                                      <ul class="dropdown-menu" style="left:217px; top:8px;">
+                                          <li><a tabindex="-1" href="/admin/djangoISSSTE/cargo/add/?s=1">Crear</a></li>
+                                          <li><a href="/admin/djangoISSSTE/cargo/">Buscar</a></li>
+                                          <li><a href="/admin/djangoISSSTE/cargo/?e=2">Modificar</a></li>
+                                          <li><a href="/admin/djangoISSSTE/cargo/?e=1">Eliminar</a></li>
+                                      </ul>
+                                  </li>
+                                </ul>
+                        </div>
+
+
+
+                <div class="USUARIOS" onclick="location.href='/djangoISSSTE/usuarios'"></div>
+                  <li class="dropdown right-text" style="list-style-type: none;">
+                    <div class="pto004">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="pto04"></span></a>
+                        <ul class="dropdown-menu" role="menu" style="left:-155px; top:29px;">
+                          <li><a href="/admin/auth/user/add">Crear Nuevo</a></li>
+                          <li><a href="/admin/auth/user/">Buscar Existente</a></li>
+                          <li><a href="/admin/auth/user/?e=2">Modificar Existente</a></li>
+                          <li><a href="/admin/auth/user/?e=1">Eliminar Existente</a></li>
+                        </ul>
+                    </div>
+                  </li>
+            {% endif %}
+
+         {% endif %}
+    </div>
+
+    <!-- END menu -->
+
+
+
+    </div>
+
+        {% endif %}
+    <!-- END Header -->
+
+
+    <!-- BEGIN BODY  -->
+    <div id="body">
+    <div id="branding">
+        {% block branding %}{% endblock %}
+        </div>
+    {% block nav-global %}{% endblock %}{% block nav-global %}{% endblock %}
+    {% block breadcrumbs %}
+    <div class="breadcrumbs">
+     <a href="window.history.go(-1);"><< Regresar</a>
+    {% if title %} &rsaquo; {{ title }}{% endif %}
+    </div>
+    {% endblock %}
+
+
+    {% block messages %}
+        {% if messages %}
+        <ul class="messagelist">{% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|capfirst }}</li>
+        {% endfor %}</ul>
+        {% endif %}
+    {% endblock messages %}
+
+    <!-- Content -->
+    <div id="content" class="{% block coltype %}colM{% endblock %}">
+        {% block pretitle %}{% endblock %}
+        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
+        {% block content %}
+        {% block object-tools %}{% endblock %}
+        {{ content }}
+        {% endblock %}
+        {% block sidebar %}{% endblock %}
+        <br class="clear" />
+    </div>
+    <!-- END Content -->
+
+    {% block footer %}<div id="footer"></div>{% endblock %}
+
+
+
+</body>
+</html>

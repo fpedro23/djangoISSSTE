@@ -1,0 +1,230 @@
+{% load i18n admin_static %}<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE|default:"es" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+<head>
+<title>{% block title %}{% endblock %}</title>
+<link href="/static/assets/Imagenes/ico_pequenio_ISSSTE.png" type="image/x-icon" rel="shortcut icon" />
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<link href="{% static "assets/bootstrap/css/bootstrap.min.css"%}" rel="stylesheet">
+<!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+<link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "assets/css/styles.css" %}{% endblock %}" />
+
+    <!-- Magnific Popup core CSS file -->
+<link rel="stylesheet" href="{% static "assets/Popup/magnific-popup.css"%}">
+
+
+
+<!-- jQuery 1.7.2+ or Zepto.js 1.0+ -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<!-- Magnific Popup core JS file -->
+<script src="{% static "assets/Popup/jquery.magnific-popup.js"%}"></script>
+
+<link rel="stylesheet" href="{% static "assets/Popup/site.css"%}">
+
+{% block extrastyle %}{% endblock %}
+{% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}" />{% endif %}
+{% block extrahead %}{% endblock %}
+{% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+</head>
+{% load i18n %}
+
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}"
+  data-admin-utc-offset="{% now "Z" %}">
+
+
+    {% if not is_popup %}
+        <!-- BEGIN HEADER -->
+
+            <!--header -->
+                <div id="header_EI">
+                    <div id="logoISSTE_main"></div>
+                    <div class="titleSYSTEM">Estrategia Nacional de Inclusión - ISSSTE</div>
+
+
+                    {% block usertools %}
+                    {% if user.is_active and user.is_staff %}
+                        <div class="nameUSER">
+                            {% block welcome-msg %}
+
+                                <strong> {% firstof user.get_short_name user.get_username %}</strong>.
+                            {% endblock %}
+                        </div>
+                        <div id="engrane">
+                            <div class="nav navbar-nav btn-user">
+                                <li class="dropdown right-text" >
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                        <span class="engrane"></span> </a>
+                                        <ul class="dropdown-menu" role="menu" style="left: -180px; top:23px;">
+                                           {% if user.has_usable_password %}
+                                               <!-- <span class="glyphicon glyphicon-cog pull-right"></span> -->
+                                              <li><a href="{% url 'admin:password_change' %}">Cambiar Contraseña </a></li>
+                                               <li><a href="/djangoISSSTE/ayuda">Ayuda </a></li>
+                                              <li class="divider"></li>
+                                               <!-- <span class="glyphicon glyphicon-log-out pull-right"></span> -->
+                                              <li><a href="{% url 'admin:logout' %}">Cerrar Sesion </a></li>
+                                            {% endif %}
+                                        </ul>
+                                </li>
+                            </div>
+                        </div>
+
+                    {% endif %}
+                    {% endblock %}
+                </div>
+                 <!-- end header  -->
+
+                <!-- BEGIN Menu -->
+                    <div id="menu">
+
+                     {% if user.is_active and user.is_staff %}
+
+
+                              <div class="MOVIMIENTOS" onclick="location.href='/movimientos'"></div>
+                              <li class="dropdown right-text" style="list-style-type: none;">
+                                    <div class="pto001">
+                                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="pto01" aria-hidden="true"></span></a>
+                                                    <ul class="dropdown-menu" style="left:70px; top:29px;">
+                                                      <li><a href="/admin/djangoISSSTE/avancepormunicipio/add/?m=1">Registrar Avances</a></li>
+                                                    </ul>
+                                    </div>
+                              </li>
+
+                                <div class="CONSULTAS" onclick="location.href='/consultas'"></div>
+                                    <li class="dropdown right-text" style="list-style-type: none;">
+                                        <div class="pto002">
+                                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="pto02"></span></a>
+                                                     <ul class="dropdown-menu" style="left:290px; top:29px;">
+                                                        <li><a href="/djangoISSSTE/consulta_filtros">Consultar por Filtro</a></li>
+                                                        <li><a href="/djangoISSSTE/consulta_predefinidos">Consultar Predefinida</a></li>
+                                                         <li><a href="/admin/djangoISSSTE/avancepormunicipio/">Lista de Avances</a></li>
+                                                    </ul>
+                                        </div>
+                                    </li>
+
+                        {%  if user.usuario.rol == 'AG' %}
+                            <div class="CATALOGOS" onclick="location.href='/catalogos'"></div>
+                                    <div class="pto003">
+                                        <a href="/catalogo" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="pto03"></span></a>
+                                            <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu" style="left:567px; top:29px;">
+                                                <li class="dropdown-submenu"><a href="#" class="dropdown-toggle" data-toggle="dropdown">De Metas</a>
+                                                  <ul class="dropdown-menu" style="left:159px; top:8px;">
+                                                      <li><a tabindex="-1" href="/admin/djangoISSSTE/meta/add/?s=1">Crear Nuevo</a></li>
+                                                      <li><a href="/admin/djangoISSSTE/meta/?e=2">Editar Existente</a></li>
+                                                      <li><a href="/admin/djangoISSSTE/meta/?e=1">Eliminar Existente</a></li>
+                                                  </ul>
+                                              </li>
+                                            </ul>
+                                    </div>
+
+
+
+                            <div class="USUARIOS" onclick="location.href='/usuarios'"></div>
+                              <li class="dropdown right-text" style="list-style-type: none;">
+                                <div class="pto004">
+                                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="pto04"></span></a>
+                                    <ul class="dropdown-menu" role="menu" style="left:803px; top:29px;">
+                                      <li><a href="/admin/auth/user/add">Crear Nuevo</a></li>
+                                      <li><a href="/admin/auth/user/?e=2">Modificar Existente</a></li>
+                                      <li><a href="/admin/auth/user/?e=1">Eliminar Existente</a></li>
+                                    </ul>
+                                </div>
+                              </li>
+                        {% endif %}
+
+                     {% endif %}
+                </div>
+
+                <!-- END menu -->
+    {% endif %}
+    <!-- END HEADER -->
+
+
+    <!-- BEGIN BODY  -->
+    <div id="body">
+    <div id="branding">
+        {% block branding %}{% endblock %}
+        </div>
+    {% block nav-global %}{% endblock %}
+    {% block breadcrumbs %}
+    <div class="breadcrumbs">
+
+    {% if title %}{% endif %}
+    </div>
+    {% endblock %}
+
+
+    {% block messages %}
+        {% if messages %}
+            <script>
+                var $ppma=jQuery.noConflict();
+                    $ppma.magnificPopup.open({
+                        items: {
+                            src:  '<div id="test-modal" class="alertaVENTANA" style="top:0px; left: 450px;">'
+                                  + '<div>'
+                                  + ' <ul class="messagelist">{% for message in messages %}'
+                                  + '{% if forloop.first %}'
+                                    + '  <li{% if message.tags %} class="textoALERTA"{% endif %}>{{ message|capfirst }}</li>'
+                                    + '{% endif %} '
+                                  + '          {% endfor %}</ul>'
+                                  + ' <a class="popup-modal-dismiss" href="#"><div class="aceptarBTN" style="left:150px;"> </div></a>'
+                                + '</div>'
+                                + '</div>'
+                        },
+                        type: 'inline',
+                        preloader: true,
+                        modal: true
+                    });
+                    $ppma(document).on('click', '.popup-modal-dismiss', function (e) {
+                        e.preventDefault();
+                        $ppma.magnificPopup.close();
+                    });
+            </script>
+
+            {% endif %}
+    {% endblock messages %}
+
+    <!-- Content -->
+
+        {% block pretitle %}{% endblock %}
+        {% block content_title %}{% if title %}{% endif %}{% endblock %}
+        {% block content %}
+        {% block object-tools %}{% endblock %}
+        {{ content }}
+        {% endblock %}
+        {% block sidebar %}{% endblock %}
+        <br class="clear" />
+    </div>
+    <!-- END Content -->
+
+    {% block footer %}
+        <div class="footer">
+
+            <div id="txtFOOT">
+                Jesús García Corona 140,
+                Col. Buenavista, Ciudad de México. C.P. 06350
+
+                Teléfono: 51409617
+                Atención a la ciudadanía: 54488903
+                Instituto de Seguridad y Servicios Sociales de los Trabajadores del Estado
+            </div>
+
+            <div id="logoFOOT"></div>
+        </div>
+    {% endblock %}
+<!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="{% static "assets/js/ie10-viewport-bug-workaround.js"%}"></script>
+
+
+
+</body>
+</html>
