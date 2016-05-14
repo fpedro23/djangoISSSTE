@@ -32,6 +32,13 @@
 {{ inline_admin_formset.formset.management_form }}
 <fieldset class="module">
    {% if inline_admin_formset.formset.prefix == "metamensual_set" %}
+       <style>.tamcontrol {
+    width: 60px;
+}
+       .tamcontrolsel {
+    width: 170px;
+}
+       </style>
        <div class= "mensuales_META">
    {% else %}
        <div class= "inavance_MENSUAL">
@@ -94,6 +101,12 @@
                                {{ field.field|addcss:"tamcontrol" }}
                        {% endif %}
                   {% elif field.field.name == "municipio" %}
+                        {% if field.field.errors %}
+                               {{ field.field|addcss:"tamcontrolsel border-error" }}
+                       {% else %}
+                              {{ field.field|addcss:"tamcontrolsel" }}
+                       {% endif %}
+                   {% elif field.field.name == "estado" %}
                         {% if field.field.errors %}
                                {{ field.field|addcss:"tamcontrolsel border-error" }}
                        {% else %}
