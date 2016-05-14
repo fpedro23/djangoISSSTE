@@ -2341,8 +2341,13 @@ class BalanceGeneralEndpoint(ProtectedResourceView):
             list_carencias['carencia'] = carencia.nombreCarencia
             list_carencias['total_avances'] = 0
             list_carencias['total_metas'] = 0
-            for avance in AvanceMensual.objects.filter(
-                    avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=carencia.id).values(
+            query = Q(avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=carencia.id)
+
+            usuario = get_usuario_for_token(request.GET.get('access_token'))
+            if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
+                query = query & Q(avancePorMunicipio__estado=usuario.usuario.estado)
+
+            for avance in AvanceMensual.objects.filter(query).values(
                 'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia').annotate(
                 ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
                 jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
@@ -2351,8 +2356,11 @@ class BalanceGeneralEndpoint(ProtectedResourceView):
                         avance['jul'] + avance['ago'] + avance['sep'] + avance['oct'] + avance['nov'] + avance['dic']
                 list_carencias['total_avances'] = total
 
-            for meta in MetaMensual.objects.filter(
-                    meta__accionEstrategica__subCarencia__carencia__id=carencia.id).values(
+            query_meta = Q(meta__accionEstrategica__subCarencia__carencia__id=carencia.id)
+            if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
+                query_meta = query_meta & Q(estado=usuario.usuario.estado)
+
+            for meta in MetaMensual.objects.filter(query_meta).values(
                 'meta__accionEstrategica__subCarencia__carencia__nombreCarencia').annotate(
                 ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
                 jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
@@ -2413,7 +2421,7 @@ class BalanceGeneralEndpoint(ProtectedResourceView):
 
         #return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True,), 'application/json')
 
-class BalancePorEntidadEndpoint(generic.ListView):
+class BalancePorEntidadEndpoint(ProtectedResourceView):
     def get(self, request):
         prs = Presentation('djangoISSSTE/static/ppt/balance_por_estado.pptx')
         #prs = Presentation('/home/sisefenlin/visitas/static/ppt/balance_por_estado.pptx')
@@ -2543,7 +2551,7 @@ class InformacionGeneralEndpoint(ProtectedResourceView):
 
         return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True,), 'application/json')
 
-class AvancesPorPeriodoEndPoint(generic.ListView):
+class AvancesPorPeriodoEndPoint(ProtectedResourceView):
     def get(self, request):
         json_map = {}
         json_map['balance'] = []
