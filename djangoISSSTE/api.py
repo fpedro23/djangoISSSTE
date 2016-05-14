@@ -2411,14 +2411,18 @@ class BalanceGeneralEndpoint(ProtectedResourceView):
 
         #return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True,), 'application/json')
 
-class BalancePorEntidadEndpoint(ProtectedResourceView):
+class BalancePorEntidadEndpoint(generic.ListView):
     def get(self, request):
         prs = Presentation('djangoISSSTE/static/ppt/balance_por_estado.pptx')
         #prs = Presentation('/home/sisefenlin/visitas/static/ppt/balance_por_estado.pptx')
 
         json_map = {}
         json_map['balancePorEntidad'] = []
-        for estado in Estado.objects.all():
+        usuario = get_usuario_for_token(request.GET.get('access_token'))
+        query = Q()
+        if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
+            query = query & Q(id=usuario.usuario.estado.id)
+        for estado in Estado.objects.filter(query):
             list_estados = {}
             list_estados['estado'] = estado.nombreEstado
             list_estados['datos'] = []
@@ -2427,9 +2431,10 @@ class BalancePorEntidadEndpoint(ProtectedResourceView):
                 list_carencias = {}
                 list_carencias['carencia'] = carencia.nombreCarencia
                 list_carencias['total_avances'] = 0
-                for avance in AvanceMensual.objects.filter(
-                        avancePorMunicipio__estado__id=estado.id,
-                        avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia = carencia.id).values(
+                query_avance = Q(avancePorMunicipio__estado__id=estado.id)&\
+                               Q(avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia = carencia.id)
+
+                for avance in AvanceMensual.objects.filter(query_avance).values(
                     'avancePorMunicipio__estado__nombreEstado').annotate(
                     ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
                     jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
@@ -2511,8 +2516,11 @@ class InformacionGeneralEndpoint(ProtectedResourceView):
             list_carencias['carencia'] = carencia.nombreCarencia
             list_carencias['total_avances'] = 0
             list_carencias['inversionAprox'] = 0
-            for avance in AvanceMensual.objects.filter(
-                    avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=carencia.id).values(
+            query = Q(avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=carencia.id)
+            usuario = get_usuario_for_token(request.GET.get('access_token'))
+            if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
+                query = query & Q(avancePorMunicipio__estado=usuario.usuario.estado)
+            for avance in AvanceMensual.objects.filter(query).values(
                 'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia').annotate(
                 ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
                 jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
@@ -2521,8 +2529,10 @@ class InformacionGeneralEndpoint(ProtectedResourceView):
                         avance['jul'] + avance['ago'] + avance['sep'] + avance['oct'] + avance['nov'] + avance['dic']
                 list_carencias['total_avances'] = total
 
-                for avanceMunicipio in AvancePorMunicipio.objects.filter(
-                    meta__accionEstrategica__subCarencia__carencia__id=carencia.id).values(
+                query_municipio = Q(meta__accionEstrategica__subCarencia__carencia__id=carencia.id)
+                if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
+                    query_municipio = query_municipio & Q(estado=usuario.usuario.estado)
+                for avanceMunicipio in AvancePorMunicipio.objects.filter(query_municipio).values(
                     'meta__accionEstrategica__subCarencia__carencia__id'
                 ).annotate(inversion=Sum('inversionAprox')):
                     list_carencias['inversionAprox'] = avanceMunicipio['inversion']
