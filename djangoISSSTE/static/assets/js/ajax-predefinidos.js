@@ -11,7 +11,8 @@ $j(document).on('ready', main_consulta);
 var datosJson;
 var newToken;
 var cualPpxt = 0;
-var descripcionavanceMunicipio = "Avances por municipio";
+var descripcionavanceMunicipio = "Se muestran los avances por cada municipio";
+var descripcionMetasSinAvances = "Metas que no tienen registrados avances"
 
 function valida_token(){
 var ajax_datatoken = {
@@ -49,9 +50,13 @@ function main_consulta() {
     valida_token();
     $j('#balanceGeneral').on('click', balanceGeneral)
     $j('#balanceEntidad').on('click', balanceEntidad)
+    $j('#informacionGeneral').on('click', informacionGeneral)
+    $j('#avancesPeriodo').on('click', avancesPeriodo)
 
 
     $j('#avancepormunicipio').on('click', avancePorMunicipio);
+    $j('#metassinavances').on('click', metasSinAvances);
+
     $j('#enviaPDF2').on('click', demoFromHTML2)
 
 
@@ -116,6 +121,21 @@ function balanceEntidad() {
 
 }
 
+function avancesPeriodo() {
+    var URL="/issste/api/reporteAvancesPeriodo?access_token="+newToken;
+    location.href = URL;
+
+}
+
+function informacionGeneral() {
+    var URL="/issste/api/informacionGeneral?access_token="+newToken;
+    location.href = URL;
+
+}
+
+
+
+
 function avancePorMunicipio() {
     $j('#load1').removeClass("mfp-hide");
     $j('#load1').addClass("mfp-show");
@@ -133,6 +153,29 @@ function avancePorMunicipio() {
         },
         error: function(data) {
             $j('#load1').addClass("mfp-hide");
+            alert('error!!! ' + data.status);
+        }
+    });
+
+}
+
+function metasSinAvances() {
+    $j('#load2').removeClass("mfp-hide");
+    $j('#load2').addClass("mfp-show");
+    var ajax_data = {
+      "access_token"  : newToken
+    };
+    $j.ajax({
+        url: '/issste/api/PD_MetasSinAvances',
+        type: 'get',
+        data: ajax_data,
+        success: function(data) {
+            tablaMA(data,'Metas sin Avances',descripcionMetasSinAvances);
+            datosJson=data;
+            $j('#load2').addClass("mfp-hide");
+        },
+        error: function(data) {
+            $j('#load2').addClass("mfp-hide");
             alert('error!!! ' + data.status);
         }
     });
@@ -207,7 +250,7 @@ function tablaI(Datos,titulo,descripcion){
 
             for(var i= 0;i<Datos.reporte_por_municipio.length;i++){
                 sHtml +='<tr>'
-                        +'<td style="width:28%"><a href="/admin/djangoISSSTE/avancepormunicipio/' + Datos.reporte_por_municipio[i].id + '/change">' + Datos.reporte_por_municipio[i].carencia +'</a></td>'
+                        +'<td style="width:28%"><a href="/admin/djangoISSSTE/avancepormunicipio/' + Datos.reporte_por_municipio[i].avancePorMunicipio_id + '/change">' + Datos.reporte_por_municipio[i].carencia +'</a></td>'
                         +'<td style="width:36%">' + Datos.reporte_por_municipio[i].subCarencia +'</td>'
                         +'<td style="width:28%">' + Datos.reporte_por_municipio[i].accion +'</td>'
                         +'<td style="width:28%">' + Datos.reporte_por_municipio[i].municipio +'</td>'
@@ -220,6 +263,132 @@ function tablaI(Datos,titulo,descripcion){
                         +'<td>' + Datos.reporte_por_municipio[i].accion +'</td>'
                         +'<td>' + Datos.reporte_por_municipio[i].municipio +'</td>'
                         +'<td>' + Datos.reporte_por_municipio[i].suma_avance +'</td>'
+                        +'</tr>'
+            }
+
+        sHtml +=' </tbody>'
+                +'</table>'
+                +'<script id="js" type="text/javascript">'
+                +'$ts(function() {'
+                +'    $ts("#tablaIzquierda").tablesorter({'
+                +'    theme: "blue",'
+                +'    showProcessing: true,'
+                +'    headerTemplate : "{content} {icon}",'
+                +'    widgets: [ "uitheme", "zebra", "pager", "scroller" ],'
+                +'    widgetOptions : {'
+                +'        scroller_height : 180,'
+                +'        scroller_upAfterSort: true,'
+                +'        scroller_jumpToHeader: true,'
+                +'        scroller_barWidth : null,'
+                +'        pager_selectors: {'
+                +'                container   : "#pagerI",'
+                +'                first       : "#firstI",'
+                +'                prev        : "#prevI",'
+                +'                next        : "#nextI",'
+                +'                last        : "#lastI",'
+                +'                gotoPage    : "#gotoPageI",'
+                +'                pagedisplay : "#pagedisplayI",'
+                +'                pagesize    : "#pagesizeI"'
+                +'        }'
+                +'    }'
+                +'});'
+                +'});'
+                +'</script>';
+
+    sHtmlExporta +='</tbody>'
+                +'</table>';
+
+    $j('#tabla-exporta').hide();
+    $j('#titulo').html(titulo);
+    $j('#descripcion').html(descripcion);
+    $j('#tabla-exporta').html(sHtmlExporta);
+    $j('#tabla').html(sHtml);
+
+
+}
+
+
+function tablaMA(Datos,titulo,descripcion){
+    var sHtmlExporta="";
+    var sHtmlShorter="";
+    var sHtmlistado="";
+    sHtmlExporta= '<table id="tablaExporta2" class="table2excel">'
+                +' <colgroup>'
+                +' <col width="20%">'
+                +' <col width="20%">'
+                +' <col width="20%">'
+                +' <col width="20%">'
+                +' <col width="20%">'
+                +' </colgroup> '
+                +'<thead>'
+                        +'<tr>'
+                            +'<th>Carencia</th>'
+                            +'<th>SubCarencia</th>'
+                            +'<th>Acci&oacute;n</th>'
+                            +'<th>Estado</th>'
+                            +'<th>Meta</th>'
+                        +'</tr>'
+                +'</thead>'
+                +'<tbody>';
+
+    var sHtml='<table cellspacing="1"  id="tablaIzquierda">'
+                +' <colgroup>'
+                +' <col width="20%">'
+                +' <col width="20%">'
+                +' <col width="30%">'
+                +' <col width="20%">'
+                +' <col width="10%">'
+                +' </colgroup>'
+                +' <thead>'
+                        +'<tr>'
+                            +'<th width="30%">Carencia</th>'
+                            +'<th width="40%">SubCarencia</th>'
+                            +'<th width="30%">Acci&oacute;n</th>'
+                            +'<th width="30%">Estado</th>'
+                            +'<th width="30%">Meta</th>'
+                        +'</tr>'
+                    +'</thead>'
+                    +'<tfoot>'
+                        +'<tr>'
+                            +'<th>Carencia</th>'
+                            +'<th>SubCarencia</th>'
+                            +'<th>Acci&oacute;n</th>'
+                            +'<th>Estado</th>'
+                            +'<th>Meta</th>'
+                        +'</tr>'
+
+                        +'<tr><td class="pager" id="pagerI" colspan="5">'
+                        +'<img src="../../static/assets/tablesorter/addons/pager/icons/first.png" class="first" id="firstI"/>'
+                        +'<img src="../../static/assets/tablesorter/addons/pager/icons/prev.png" class="prev" id="prevI"/>'
+                        +'<span class="pagedisplay" id="pagedisplayI"></span>'
+                        +'<img src="../../static/assets/tablesorter/addons/pager/icons/next.png" class="next" id="nextI"/>'
+                        +'<img src="../../static/assets/tablesorter/addons/pager/icons/last.png" class="last" id="lastI"/>'
+                        +'<select class="pagesize" id="pagesizeI">'
+                        +'<option selected="selected"  value="10">10</option>'
+                        +'    <option value="20">20</option>'
+                        +'    <option value="30">30</option>'
+                        +'    <option  value="40">40</option>'
+                        +'</select></td></tr>'
+
+                    +'</tfoot>'
+                    +'<tbody>';
+
+
+            for(var i= 0;i<Datos.reporte_metas.length;i++){
+                sHtml +='<tr>'
+                        +'<td style="width:28%">' + Datos.reporte_metas[i].carencia +'</a></td>'
+                        +'<td style="width:36%">' + Datos.reporte_metas[i].subCarencia +'</td>'
+                        +'<td style="width:28%">' + Datos.reporte_metas[i].accion +'</td>'
+                        +'<td style="width:28%">' + Datos.reporte_metas[i].estado +'</td>'
+                        +'<td style="width:28%">' + Datos.reporte_metas[i].suma_meta +'</td>'
+                        +'</tr>'
+
+                sHtmlExporta += '<tr>'
+                        +'<td>' + Datos.reporte_metas[i].carencia +'</td>'
+                        +'<td>' + Datos.reporte_metas[i].subCarencia +'</td>'
+                        +'<td>' + Datos.reporte_metas[i].accion +'</td>'
+                        +'<td>' + Datos.reporte_metas[i].estado +'</td>'
+                        +'<td>' + Datos.reporte_metas[i].suma_meta +'</td>'
                         +'</tr>'
             }
 

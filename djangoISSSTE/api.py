@@ -2210,6 +2210,7 @@ class PD_AvancePorMunicipioEndpoint(ProtectedResourceView):
         # Reporte gpor munucipios
         reporte_municipio = avances.values(
 			'id',
+            'avancePorMunicipio__id',
 			'avancePorMunicipio__meta__id',
 			'avancePorMunicipio__meta__accionEstrategica__nombreAccion',
 			'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia',
@@ -2247,6 +2248,7 @@ class PD_AvancePorMunicipioEndpoint(ProtectedResourceView):
                                                meta.may + meta.jun + meta.jul + meta.ago +
                                                meta.sep + meta.oct + meta.nov + meta.dic)
             shortened_reporte['id'] = reporte['id']
+            shortened_reporte['avancePorMunicipio_id'] = reporte['avancePorMunicipio__id']
             shortened_reporte['accion'] = reporte['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
             shortened_reporte['carencia'] = reporte[
                 'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
@@ -2270,11 +2272,11 @@ class PD_MetasSinAvancesEndpoint(ProtectedResourceView):
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
         if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
-            avancesRol = AvanceMensual.objects.all()
-            metasRol = MetaMensual.objects.all()
+            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__periodo__id=5)
+            metasRol = MetaMensual.objects.filter(meta__periodo__id=5)
         else:
-            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__estado__id = usuario.usuario.estado.id)
-            metasRol = MetaMensual.objects.filter(estado__id = usuario.usuario.estado.id)
+            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__estado__id = usuario.usuario.estado.id,avancePorMunicipio__periodo__id=5)
+            metasRol = MetaMensual.objects.filter(estado__id = usuario.usuario.estado.id,meta__periodo__id=5)
 
         avances = avancesRol.values('avancePorMunicipio__meta__accionEstrategica__id')
         metas = metasRol.exclude(meta__accionEstrategica__id__in=avances)
@@ -2591,6 +2593,8 @@ class InformacionGeneralEndpoint(ProtectedResourceView):
 
 class AvancesPorPeriodoEndPoint(ProtectedResourceView):
     def get(self, request):
+        prs = Presentation('djangoISSSTE/static/ppt/avances_por_periodo.pptx')
+        #prs = Presentation('/home/sisefenlin/visitas/static/ppt/avance_por_periodo.pptx')
         json_map = {}
         json_map['balance'] = []
 
@@ -2629,5 +2633,51 @@ class AvancesPorPeriodoEndPoint(ProtectedResourceView):
 
             json_map['balance'].append(list_datos)
 
-        return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True, ), 'application/json')
+        table = prs.slides[0].shapes[0].table
+        for x in range(1, 8):
+            cell = table.rows[x].cells[1]
+            paragraph = cell.textframe.paragraphs[0]
+            paragraph.font.size = Pt(12)
+            paragraph.font.name = 'Arial'
+            paragraph.font.color.rgb = RGBColor(0xFF, 0x7F, 0x50)
+
+        indice = 1
+        sumAvances=0
+        sumMetas=0
+        for avance in json_map['balance']:
+            for x in range(1, 3):
+                cell = table.rows[indice].cells[x]
+                paragraph = cell.textframe.paragraphs[0]
+                paragraph.font.size = Pt(10)
+                paragraph.font.name = 'Arial'
+                paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+            # write body cells
+            table.cell(indice, 0).text = str(avance['periodo'])
+            table.cell(indice, 1).text = str('{0:,}'.format(avance['avances']))
+            table.cell(indice, 2).text = str('{0:,}'.format(avance['metas']))
+            sumAvances+=avance['avances']
+            sumMetas+=avance['metas']
+            indice += 1
+
+        table.cell(8, 1).text = str('{0:,}'.format(sumAvances))
+        table.cell(8, 2).text = str('{0:,}'.format(sumMetas))
+
+        usuario = get_usuario_for_token(request.GET.get('access_token'))
+
+        prs.save('djangoISSSTE/static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = 'djangoISSSTE/static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx'
+
+        #prs.save('/home/sisefenlin/visitas/static/ppt/ppt-generados/FichaTecnicaVisitas_' + str(usuario.user.id) + '.pptx')
+        #the_file = '/home/sisefenlin/visitas/static/ppt/ppt-generados/FichaTecnicaVisitas_' + str(usuario.user.id) + '.pptx'
+
+        filename = os.path.basename(the_file)
+        chunk_size = 8192
+        response = StreamingHttpResponse(FileWrapper(open(the_file,"rb"), chunk_size),
+                               content_type=mimetypes.guess_type(the_file)[0])
+        response['Content-Length'] = os.path.getsize(the_file)
+        response['Content-Disposition'] = "attachment; filename=%s" % filename
+        return response
+
+        #return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True, ), 'application/json')
 
