@@ -224,9 +224,12 @@ class MetaMensualInLine(admin.TabularInline):
 class MetaAdmin(admin.ModelAdmin):
     model = Meta
     fields = ('accionEstrategica', 'periodo', 'montoPromedio', 'observaciones',)
-    list_display = ('get_carencia', 'get_subcarencia', 'accionEstrategica', 'periodo', 'get_inversion')
+    list_display = ('get_carencia', 'get_subcarencia', 'get_accionEstrategica', 'periodo', 'get_inversion')
     inlines = [MetaMensualInLine, ]
     can_delete = False
+
+    def get_accionEstrategica(self, obj):
+        return obj.accionEstrategica.nombreAccion
 
     # Obteniendo el campo de la SuCarencia para la lista de Metas
     def get_subcarencia(self, obj):
@@ -250,6 +253,7 @@ class MetaAdmin(admin.ModelAdmin):
     get_subcarencia.short_description = "SubCarencia"
     get_carencia.short_description = "Carencia"
     get_inversion.short_description = "Inversión Aprox."
+    get_accionEstrategica.short_description = "Acción Estratégica"
 
     def save_formset(self, request, form, formset, change):
         formset.save()
@@ -274,7 +278,7 @@ class MetaAdmin(admin.ModelAdmin):
         if not request.POST.has_key('_addanother'):
             success_message = 'La meta \"%s\" se ha modificado exitosamente.' % obj.__str__()
             self.message_user(request, success_message, level=messages.SUCCESS)
-            return HttpResponseRedirect('/catalogos')
+            return super(MetaAdmin, self).response_add(request, obj, post_url_continue)
         else:
             success_message = 'La meta \"%s\" se ha modificado exitosamente.' % obj.__str__()
             self.message_user(request, success_message, level=messages.SUCCESS)
@@ -318,20 +322,12 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
                        'get_septiembre', 'get_octubre', 'get_noviembre', 'get_diciembre', 'get_accion',
                        'get_inversion', 'get_monto_promedio',)
 
-    list_display = ('id', 'get_carencia', 'get_subcarencia', 'meta', 'periodo', 'estado', 'get_inversion', 'get_monto_promedio',)
+    list_display = ('id', 'get_carencia', 'get_subcarencia', 'get_accion', 'periodo', 'estado', 'get_inversion', 'get_monto_promedio',)
     ordering = ['meta__nombreMeta', ]
 
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "estado":
-            if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UR' or request.user.usuario.rol == 'FR':
-                kwargs["queryset"] = Estado.objects.all()
-            elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
-                query_estado = request.user.usuario.estado.id
-                kwargs["queryset"] = Estado.objects.filter(
-                    Q(id=query_estado)
-                )
 
-        return super(AvancePorMunicipioAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+    def get_action(self, obj):
+        return obj.meta.accionEstrategica.nombreAccion
 
     # Obteniendo el campo de la SuCarencia para la lista de avances por municipio
     def get_subcarencia(self, obj):
