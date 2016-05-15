@@ -97,9 +97,9 @@ WSGI_APPLICATION = 'Projects.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'issste_db',
-        'USER': 'root',
-        'PASSWORD': 'root',
+        'NAME': 'issste',
+        'USER': 'inclusion',
+        'PASSWORD': 'inclusion',
         'HOST': '',
         'PORT': '',
     }
@@ -153,7 +153,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
-'''
+
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 # Static files (CSS, JavaScript, Images)
@@ -164,8 +164,8 @@ STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, '../djangoISSSTE/static'),
+    os.path.join(PROJECT_ROOT, '/djangoISSSTE/static'),
 )
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
-'''
+
