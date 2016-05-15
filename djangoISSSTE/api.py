@@ -70,7 +70,7 @@ class SubcarenciasForCarenciasEndpoint(ProtectedResourceView):
 
         if all_carencias:
             subcarencias = SubCarencia.objects.order_by('nombreSubCarencia').all()
-            print (subcarencias)
+            ##print (subcarencias)
         else:
             subcarencias = SubCarencia.objects.filter(carencia_id__in=carencia_ids).order_by(
                 'nombreSubCarencia').all()
@@ -369,9 +369,9 @@ class BuscadorEndpoint(ProtectedResourceView):
             avance_mensual = AvanceMensual.objects.get(id=reporte['id'])
             # ID de cada meta en el reporte para poder obtener el valor del avance cada mes
 
-            print "Printing: "
-            print reporte['avancePorMunicipio__meta__id']
-            print reporte['avancePorMunicipio__estado__nombreEstado']
+            ##print "##printing: "
+            ##print reporte['avancePorMunicipio__meta__id']
+            # print reporte['avancePorMunicipio__estado__nombreEstado']
 
             if myObj.meses is not None:
                 for mes in myObj.meses:
@@ -691,11 +691,11 @@ class AvanceForPeriodoEndpoint(ProtectedResourceView):
 
         for avanceMunicipio in AvancePorMunicipio.objects.filter(periodo__in=periodo_id):
             arreglo_avance_municipio.append(avanceMunicipio.id)
-            print arreglo_avance_municipio
+            #print arreglo_avance_municipio
 
         avances = AvancePorMunicipio.objects.filter(id__in=arreglo_avance_municipio,
                                                     meta__id__in=accion_id, estado_id__in=estados_id)
-        print avances.values()
+        #print avances.values()
 
         the_list = []
         for avance in avances.values('id'):
@@ -709,17 +709,17 @@ class AvanceForPeriodoEndpoint(ProtectedResourceView):
 class AvancesEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         avances_ids = get_array_or_none(request.GET.get('avances'))
-        print avances_ids
+        #print avances_ids
         arreglo_avances = []
         json_map = {}
         json_map['avances'] = []
         if avances_ids is None:
             avances_mensuales = AvanceMensual.objects.order_by('municipio').all()
         else:
-            print 'else'
+            #print 'else'
             for avance in AvanceMensual.objects.filter(id__in=avances_ids):
                 arreglo_avances.append(avance.id)
-                print arreglo_avances
+                #print arreglo_avances
             avances_mensuales = AvanceMensual.objects.filter(id__in=arreglo_avances)
 
         the_list = []
@@ -730,7 +730,7 @@ class AvancesEndpoint(ProtectedResourceView):
                                                        'ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago',
                                                        'sep', 'oct', 'nov', 'dic', ):
             # the_list.append(avance_mensual)
-            # print avance_mensual['id']
+            # #print avance_mensual['id']
             shortened_reporte = {}
             shortened_reporte['id'] = avance_mensual['id']
             shortened_reporte['municipio'] = avance_mensual['municipio__nombreMunicipio']
@@ -755,7 +755,7 @@ class AvancesEndpoint(ProtectedResourceView):
                             'application/json', )
 
 # Clase para devolver datos de la ficha técnica del iPad
-class FichaTecnicaForiPadAvancesEndpoint(ProtectedResourceView):
+class FichaTecnicaForiPadAvancesEndpoint(ListView):
     def get(self, request, *args, **kwargs):
         # Obteniendo los datos de la url
         theID = request.GET.get('idAvanceMensual')
@@ -767,8 +767,8 @@ class FichaTecnicaForiPadAvancesEndpoint(ProtectedResourceView):
         avances = AvanceMensual.objects.filter(Q(avancePorMunicipio__periodo__id =periodo_id)&
                                                Q(avancePorMunicipio__meta__accionEstrategica__id = accion_id)&
                                                Q(avancePorMunicipio__estado=estado_id))
-        print "Avances: "
-        print len(avances)
+        # print "Avances: "
+        #print len(avances)
         resultados = avances.values(
             'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia',
             'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia',
@@ -793,35 +793,35 @@ class FichaTecnicaForiPadAvancesEndpoint(ProtectedResourceView):
         if resultados[0] is not []:
             the_json['responsable'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable']
             the_json['observaciones'] = resultados[0]['avancePorMunicipio__meta__observaciones']
-            the_json['periodo'] = resultados[0]['avancePorMunicipio__periodo__nombrePeriodo']
+            the_json['periodo'] = str(resultados[0]['avancePorMunicipio__periodo__nombrePeriodo'])
             the_json['carencia'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
             the_json['subCarencia'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
             the_json['unidad'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad']
-            the_json['montoPromedio'] = resultados[0]['avancePorMunicipio__meta__montoPromedio']
+            the_json['montoPromedio'] = str(resultados[0]['avancePorMunicipio__meta__montoPromedio'])
             the_json['accion'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
             the_json['estado'] = resultados[0]['avancePorMunicipio__estado__nombreEstado']
 
         for datos in resultados:
             the_list = {}
             the_list['municipio'] = datos['municipio__nombreMunicipio']
-            the_list['latitud'] = datos['municipio__latitud']
-            the_list['longitud'] = datos['municipio__longitud']
-            the_list['ene'] = datos['ene']
-            the_list['feb'] = datos['feb']
-            the_list['mar'] = datos['mar']
-            the_list['abr'] = datos['abr']
-            the_list['may'] = datos['may']
-            the_list['jun'] = datos['jun']
-            the_list['jul'] = datos['jul']
-            the_list['ago'] = datos['ago']
-            the_list['sep'] = datos['sep']
-            the_list['oct'] = datos['oct']
-            the_list['nov'] = datos['nov']
-            the_list['dic'] = datos['dic']
+            the_list['latitud'] = str(datos['municipio__latitud'])
+            the_list['longitud'] = str(datos['municipio__longitud'])
+            the_list['ene'] = str(datos['ene'])
+            the_list['feb'] = str(datos['feb'])
+            the_list['mar'] = str(datos['mar'])
+            the_list['abr'] = str(datos['abr'])
+            the_list['may'] = str(datos['may'])
+            the_list['jun'] = str(datos['jun'])
+            the_list['jul'] = str(datos['jul'])
+            the_list['ago'] = str(datos['ago'])
+            the_list['sep'] = str(datos['sep'])
+            the_list['oct'] = str(datos['oct'])
+            the_list['nov'] = str(datos['nov'])
+            the_list['dic'] = str(datos['dic'])
             suma = datos['ene'] + datos['feb'] + datos['mar'] + datos['abr'] + datos['may'] + datos['jun'] + \
                    datos['jul'] + datos['ago'] + datos['sep'] + datos['oct'] + datos['nov'] + datos['dic']
-            the_list['suma'] = suma
-            the_list['inversion'] = suma * datos['avancePorMunicipio__meta__montoPromedio']
+            the_list['suma'] = str(suma)
+            the_list['inversion'] = str(suma * datos['avancePorMunicipio__meta__montoPromedio'])
             the_json['avance'].append(the_list)
 
         for meta in MetaMensual.objects.filter(
@@ -830,18 +830,18 @@ class FichaTecnicaForiPadAvancesEndpoint(ProtectedResourceView):
                         Q(estado__id=estado_id)
         ):
             the_meta_list = {}
-            the_meta_list['ene'] = meta.ene
-            the_meta_list['feb'] = meta.feb
-            the_meta_list['mar'] = meta.mar
-            the_meta_list['abr'] = meta.abr
-            the_meta_list['may'] = meta.may
-            the_meta_list['jun'] = meta.jun
-            the_meta_list['jul'] = meta.jul
-            the_meta_list['ago'] = meta.ago
-            the_meta_list['sep'] = meta.sep
-            the_meta_list['oct'] = meta.oct
-            the_meta_list['nov'] = meta.nov
-            the_meta_list['dic'] = meta.dic
+            the_meta_list['ene'] = str(meta.ene)
+            the_meta_list['feb'] = str(meta.feb)
+            the_meta_list['mar'] = str(meta.mar)
+            the_meta_list['abr'] = str(meta.abr)
+            the_meta_list['may'] = str(meta.may)
+            the_meta_list['jun'] = str(meta.jun)
+            the_meta_list['jul'] = str(meta.jul)
+            the_meta_list['ago'] = str(meta.ago)
+            the_meta_list['sep'] = str(meta.sep)
+            the_meta_list['oct'] = str(meta.oct)
+            the_meta_list['nov'] = str(meta.nov)
+            the_meta_list['dic'] = str(meta.dic)
 
             the_json['meta'].append(the_meta_list)
         return HttpResponse(json.dumps(the_json, indent=4, separators=(',', ': '), sort_keys=True, ),
@@ -1005,7 +1005,7 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
         json_map['carencia'] = carenciaDatos.nombreCarencia
         json_map['resultados'] = []
         for subCarencia in subCarencias:
-            #print "SubCarencia"
+            ##print "SubCarencia"
             datos = {}
             datos['subCarencias'] = subCarencia['avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
             datos['acciones'] = []
@@ -1019,7 +1019,7 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
                             'avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable')\
                     .annotate(acciones=Count('avancePorMunicipio__meta__accionEstrategica__nombreAccion')):
 
-                #print "Accion"
+                ##print "Accion"
                 accion = {}
                 accion['accion'] = accionesDatos['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
                 accion['unidad'] = accionesDatos['avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad']
@@ -1030,7 +1030,7 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
                                   accionesDatos['avancePorMunicipio__meta__accionEstrategica__nombreAccion']) &
                                 Q(avancePorMunicipio__meta__periodo__nombrePeriodo=periodo_id)
                 ):
-                    #print "Avance"
+                    ##print "Avance"
                     avances = {}
                     avances['clave'] = avance.municipio.claveMunicipio
                     avances['estado'] = avance.avancePorMunicipio.estado.nombreEstado
@@ -1209,7 +1209,7 @@ class ReporteExcelMetasEndpoint(generic.ListView):
         json_map['carencia'] = carenciaDatos.nombreCarencia
         json_map['resultados'] = []
         for subCarencia in subCarencias:
-            # print "SubCarencia"
+            # #print "SubCarencia"
             datos = {}
             datos['subCarencias'] = subCarencia[
                 'meta__accionEstrategica__subCarencia__nombreSubCarencia']
@@ -1225,7 +1225,7 @@ class ReporteExcelMetasEndpoint(generic.ListView):
                             'meta__accionEstrategica__responsable__nombreResponsable') \
                     .annotate(acciones=Count('meta__accionEstrategica__nombreAccion')):
 
-                # print "Accion"
+                # #print "Accion"
                 accion = {}
                 accion['accion'] = accionesDatos['meta__accionEstrategica__nombreAccion']
                 accion['unidad'] = accionesDatos[
@@ -1238,7 +1238,7 @@ class ReporteExcelMetasEndpoint(generic.ListView):
                                   accionesDatos['meta__accionEstrategica__nombreAccion']) &
                                 Q(meta__periodo__nombrePeriodo=periodo_id)
                 ):
-                    # print "Avance"
+                    # #print "Avance"
                     metas = {}
                     metas['ene'] = meta.ene
                     metas['feb'] = meta.feb
@@ -1775,10 +1775,10 @@ class AvanceForPeriodo(ProtectedResourceView):
 
         for avanceMunicipio in AvancePorMunicipio.objects.filter(periodo__nombrePeriodo__in=periodo_id):
             arreglo_avance_municipio.append(avanceMunicipio.id)
-            print arreglo_avance_municipio
+            #print arreglo_avance_municipio
 
         avances = AvancePorMunicipio.objects.filter(id__in=arreglo_avance_municipio, meta__accionEstrategica__id__in=accion_id, estado_id__in = estados_id)
-        print avances.values()
+        #print avances.values()
 
         the_list = []
         for avance in avances.values('id'):
@@ -2185,10 +2185,10 @@ class AvanceForPeriodo(ProtectedResourceView):
 
         for avanceMunicipio in AvancePorMunicipio.objects.filter(periodo__nombrePeriodo__in=periodo_id):
             arreglo_avance_municipio.append(avanceMunicipio.id)
-            print arreglo_avance_municipio
+            #print arreglo_avance_municipio
 
         avances = AvancePorMunicipio.objects.filter(id__in=arreglo_avance_municipio, meta__accionEstrategica__id__in=accion_id, estado_id__in = estados_id)
-        print avances.values()
+        #print avances.values()
 
         the_list = []
         for avance in avances.values('id'):
