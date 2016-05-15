@@ -2202,9 +2202,9 @@ class PD_AvancePorMunicipioEndpoint(ProtectedResourceView):
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
         if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
-			avancesRol = AvanceMensual.objects.all()
+			avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__periodo__id=5)
         else:
-            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__estado__id = usuario.usuario.estado.id)
+            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__estado__id = usuario.usuario.estado.id,avancePorMunicipio__periodo__id=5)
 
         avances = avancesRol
 
@@ -2684,7 +2684,8 @@ class AvancesPorPeriodoEndPoint(ProtectedResourceView):
 
 class PresentacioneAvancesEndPoint(ProtectedResourceView):
     def get(self, request):
-
+        prs = Presentation('djangoISSSTE/static/ppt/presentacion_avances.pptx')
+        #prs = Presentation('/home/sisefenlin/visitas/static/ppt/presentacion_avances.pptx')
         json_map = {}
         json_map['reporte1'] = []
         json_map['reporte2'] = []
@@ -2774,17 +2775,636 @@ class PresentacioneAvancesEndPoint(ProtectedResourceView):
                 list_estados['datos'].append(list_carencias)
             json_map['reporte3'].append(list_estados)
 
-        return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True, ),
-                            'application/json')
+        table = prs.slides[0].shapes[0].table
+        for x in range(1, 6):
+            cell = table.rows[x].cells[1]
+            paragraph = cell.textframe.paragraphs[0]
+            paragraph.font.size = Pt(12)
+            paragraph.font.name = 'Arial'
+            paragraph.font.color.rgb = RGBColor(0xFF, 0x7F, 0x50)
+
+        indice = 1
+        sumAvances=0
+        sumMetas=0
+        for avance in json_map['reporte1']:
+            for x in range(1, 2):
+                cell = table.rows[indice].cells[x]
+                paragraph = cell.textframe.paragraphs[0]
+                paragraph.font.size = Pt(12)
+                paragraph.font.name = 'Arial'
+                paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+            # write body cells
+            table.cell(indice, 0).text = avance['carencia']
+            table.cell(indice, 1).text = str('{0:,}'.format(avance['total_avances']))
+            sumAvances+=avance['total_avances']
+            indice += 1
+
+        table.cell(6, 1).text = str('{0:,}'.format(sumAvances))
+
+        #mapa
+        for x in range(4, 36):
+            prs.slides[1].shapes[x].text_frame.paragraphs[0].font.size = Pt(6)
+            prs.slides[1].shapes[x].text_frame.paragraphs[0].font.name = 'Arial Black'
+            prs.slides[1].shapes[x].text_frame.paragraphs[0].font.color.rgb = RGBColor(0xCD, 0x00, 0x00)
+
+        i = 4
+        for avance in json_map['reporte2']:
+            prs.slides[1].shapes[i].text = str('{0:,}'.format(avance['total_avances']))
+            i += 1
+
+        #tabla diapositiva 3
+
+        table = prs.slides[2].shapes[0].table
+        table2 = prs.slides[3].shapes[0].table
+        indice = 1
+        indice2 = 1
+        sumAvances=0
+        sumMetas=0
+        for avance in json_map['reporte3']:
+            if indice<18:
+                for x in range(0, 11):
+                    cell = table.rows[indice].cells[x]
+                    paragraph = cell.textframe.paragraphs[0]
+                    paragraph.font.size = Pt(8)
+                    paragraph.font.name = 'Arial'
+                    paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+                # write body cells
+                table.cell(indice, 0).text = avance['estado']
+                iCol=1
+                for dato in avance['datos']:
+                    table.cell(indice, iCol).text = str('{0:,}'.format(dato['total_avances']))
+                    table.cell(indice, iCol+1).text = str('{0:,}'.format(dato['total_metas']))
+                    '''if table2.cell(17, iCol)=="":
+                        table2.cell(17, iCol).text="0"
+                        table2.cell(17, iCol+1).text="0"
+                    table2.cell(17, iCol).text = str('{0:,}'.format(float(table2.cell(17, iCol))+dato['total_avances']))
+                    table2.cell(17, iCol+1).text = str('{0:,}'.format(float(table2.cell(17, iCol+1))+dato['total_metas']))'''
+                    iCol+=2
+                indice += 1
+            else:
+                for x in range(0, 11):
+                    cell = table2.rows[indice2].cells[x]
+                    paragraph = cell.textframe.paragraphs[0]
+                    paragraph.font.size = Pt(8)
+                    paragraph.font.name = 'Arial'
+                    paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+                # write body cells
+                table2.cell(indice2, 0).text = avance['estado']
+                iCol=1
+                for dato in avance['datos']:
+                    table2.cell(indice2, iCol).text = str('{0:,}'.format(dato['total_avances']))
+                    table2.cell(indice2, iCol+1).text = str('{0:,}'.format(dato['total_metas']))
+                    '''if table2.cell(17, iCol)=="":
+                        table2.cell(17, iCol).text="0"
+                        table2.cell(17, iCol+1).text="0"
+                    table2.cell(17, iCol).text = str('{0:,}'.format(float(table2.cell(17, iCol))+dato['total_avances']))
+                    table2.cell(17, iCol+1).text = str('{0:,}'.format(float(table2.cell(17, iCol+1))+dato['total_metas']))'''
+                    iCol+=2
+                indice2 += 1
+
+
+        usuario = get_usuario_for_token(request.GET.get('access_token'))
+
+        prs.save('djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = 'djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx'
+
+        #prs.save('/home/sisefenlin/visitas/static/ppt/ppt-generados/FichaTecnicaVisitas_' + str(usuario.user.id) + '.pptx')
+        #the_file = '/home/sisefenlin/visitas/static/ppt/ppt-generados/FichaTecnicaVisitas_' + str(usuario.user.id) + '.pptx'
+
+        filename = os.path.basename(the_file)
+        chunk_size = 8192
+        response = StreamingHttpResponse(FileWrapper(open(the_file,"rb"), chunk_size),
+                               content_type=mimetypes.guess_type(the_file)[0])
+        response['Content-Length'] = os.path.getsize(the_file)
+        response['Content-Disposition'] = "attachment; filename=%s" % filename
+        return response
+
+        #return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True, ),
+        #                    'application/json')
 
 class FechaUltimaActualizacionEndpoint(ListView):
     def get(self, request, *args, **kwargs):
         the_list = []
         comp_date = date.today() - timedelta(days=15)
 
-        the_list = map(lambda avancemensual: avancemensual.to_serializable_dict(), AvanceMensual.objects.filter(
-            Q(fecha_ultima_modificacion__lt=comp_date)))
+        usuario = get_usuario_for_token(request.GET.get('access_token'))
+        if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
+			avancesRol = AvanceMensual.objects.filter(fecha_ultima_modificacion__lt=comp_date,avancePorMunicipio__periodo__id=5)
+        else:
+            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__estado__id = usuario.usuario.estado.id,
+                                                      fecha_ultima_modificacion__lt=comp_date,avancePorMunicipio__periodo__id=5)
 
-        return HttpResponse(
-            json.dumps(the_list, indent=4, sort_keys=True, ensure_ascii=False, cls=DjangoJSONEncoder),
-            'application/json', )
+        avances = avancesRol
+
+        # Reporte gpor munucipios
+        reporte_municipio = avances.values(
+			'id',
+            'avancePorMunicipio__id',
+			'avancePorMunicipio__meta__id',
+			'avancePorMunicipio__meta__accionEstrategica__nombreAccion',
+			'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia',
+			'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia',
+			'avancePorMunicipio__estado__nombreEstado',
+			'municipio__nombreMunicipio',
+			'avancePorMunicipio__periodo__nombrePeriodo',
+			'municipio__latitud',
+			'municipio__longitud',
+		)
+        resultados = {"reporte_por_municipio" : reporte_municipio,}
+
+        json_map = {}
+        json_map['reporte_por_municipio'] = []
+
+        for reporte in resultados['reporte_por_municipio']:
+            shortened_reporte = {}  # Utilizado para mejorar el aspecto de las llaves del json
+            add = True  # Bandera para decidir si el valor del avace está dentro del rango
+
+            shortened_reporte['suma_avance'] = 0
+            shortened_reporte['suma_meta'] = 0
+
+            # ID de cada avance mensual en el reporte para poder obtener el valor del avance cada mes
+            avance_mensual = AvanceMensual.objects.get(id=reporte['id'])
+            # ID de cada meta en el reporte para poder obtener el valor del avance cada mes
+            meta = MetaMensual.objects.get(meta__id=reporte['avancePorMunicipio__meta__id'],
+                                           estado__nombreEstado=reporte['avancePorMunicipio__estado__nombreEstado'])
+
+            # Si no se indicaron meses. habrá que obtener el valor de todos
+            shortened_reporte['suma_avance'] += (avance_mensual.ene + avance_mensual.feb + avance_mensual.mar +
+                                                avance_mensual.abr + avance_mensual.may + avance_mensual.jun +
+                                                avance_mensual.jul + avance_mensual.ago + avance_mensual.sep +
+                                                avance_mensual.oct + avance_mensual.nov + avance_mensual.dic)
+            shortened_reporte['suma_meta'] += (meta.ene + meta.feb + meta.mar + meta.abr +
+                                               meta.may + meta.jun + meta.jul + meta.ago +
+                                               meta.sep + meta.oct + meta.nov + meta.dic)
+            shortened_reporte['id'] = reporte['id']
+            shortened_reporte['avancePorMunicipio_id'] = reporte['avancePorMunicipio__id']
+            shortened_reporte['accion'] = reporte['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
+            shortened_reporte['carencia'] = reporte[
+                'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
+            shortened_reporte['subCarencia'] = reporte[
+                'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
+            shortened_reporte['estado'] = reporte['avancePorMunicipio__estado__nombreEstado']
+            shortened_reporte['municipio'] = reporte['municipio__nombreMunicipio']
+            shortened_reporte['periodo'] = reporte['avancePorMunicipio__periodo__nombrePeriodo']
+            shortened_reporte['latitud'] = reporte['municipio__latitud']
+            shortened_reporte['longitud'] = reporte['municipio__longitud']
+            json_map['reporte_por_municipio'].append(shortened_reporte)
+
+
+
+
+        return HttpResponse(json.dumps(json_map, ensure_ascii=False), 'application/json')
+
+class AvancePorMunicipioPptxEndpoint(ProtectedResourceView):
+    def get(self, request):
+
+        usuario = get_usuario_for_token(request.GET.get('access_token'))
+        if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
+			avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__periodo__id=5)
+        else:
+            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__estado__id = usuario.usuario.estado.id,avancePorMunicipio__periodo__id=5)
+
+        avances = avancesRol
+
+        # Reporte gpor munucipios
+        reporte_municipio = avances.values(
+			'id',
+            'avancePorMunicipio__id',
+			'avancePorMunicipio__meta__id',
+			'avancePorMunicipio__meta__accionEstrategica__nombreAccion',
+			'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia',
+			'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia',
+			'avancePorMunicipio__estado__nombreEstado',
+			'municipio__nombreMunicipio',
+			'avancePorMunicipio__periodo__nombrePeriodo',
+			'municipio__latitud',
+			'municipio__longitud',
+		)
+        resultados = {"reporte_por_municipio" : reporte_municipio,}
+
+        json_map = {}
+        json_map['reporte_por_municipio'] = []
+
+        for reporte in resultados['reporte_por_municipio']:
+            shortened_reporte = {}  # Utilizado para mejorar el aspecto de las llaves del json
+            add = True  # Bandera para decidir si el valor del avace está dentro del rango
+
+            shortened_reporte['suma_avance'] = 0
+            shortened_reporte['suma_meta'] = 0
+
+            # ID de cada avance mensual en el reporte para poder obtener el valor del avance cada mes
+            avance_mensual = AvanceMensual.objects.get(id=reporte['id'])
+            # ID de cada meta en el reporte para poder obtener el valor del avance cada mes
+            meta = MetaMensual.objects.get(meta__id=reporte['avancePorMunicipio__meta__id'],
+                                           estado__nombreEstado=reporte['avancePorMunicipio__estado__nombreEstado'])
+
+            # Si no se indicaron meses. habrá que obtener el valor de todos
+            shortened_reporte['suma_avance'] += (avance_mensual.ene + avance_mensual.feb + avance_mensual.mar +
+                                                avance_mensual.abr + avance_mensual.may + avance_mensual.jun +
+                                                avance_mensual.jul + avance_mensual.ago + avance_mensual.sep +
+                                                avance_mensual.oct + avance_mensual.nov + avance_mensual.dic)
+            shortened_reporte['suma_meta'] += (meta.ene + meta.feb + meta.mar + meta.abr +
+                                               meta.may + meta.jun + meta.jul + meta.ago +
+                                               meta.sep + meta.oct + meta.nov + meta.dic)
+            shortened_reporte['id'] = reporte['id']
+            shortened_reporte['avancePorMunicipio_id'] = reporte['avancePorMunicipio__id']
+            shortened_reporte['accion'] = reporte['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
+            shortened_reporte['carencia'] = reporte[
+                'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
+            shortened_reporte['subCarencia'] = reporte[
+                'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
+            shortened_reporte['estado'] = reporte['avancePorMunicipio__estado__nombreEstado']
+            shortened_reporte['municipio'] = reporte['municipio__nombreMunicipio']
+            shortened_reporte['periodo'] = reporte['avancePorMunicipio__periodo__nombrePeriodo']
+            shortened_reporte['latitud'] = reporte['municipio__latitud']
+            shortened_reporte['longitud'] = reporte['municipio__longitud']
+            json_map['reporte_por_municipio'].append(shortened_reporte)
+
+        output = StringIO.StringIO()
+        prs = Presentation()
+        slide = prs.slides.add_slide(prs.slide_layouts[5])
+        shapes = slide.shapes
+        shapes.title.text = 'Avances por Municipio'
+        rows = 10
+        cols = 6
+        left = Inches(0.521)
+        top = Inches(1.2)
+        width = Inches(6.0)
+        height = Inches(0.8)
+        table = shapes.add_table(rows, cols, left, top, width, height).table
+        # set column widths
+        table.columns[0].width = Inches(1.2)
+        table.columns[1].width = Inches(1.2)
+        table.columns[2].width = Inches(3.0)
+        table.columns[3].width = Inches(1.2)
+        table.columns[4].width = Inches(1.2)
+        table.columns[5].width = Inches(1.0)
+        indice = 1
+
+        for avance in json_map['reporte_por_municipio']:
+            if indice == 10:
+                indice = 1
+                slide = prs.slides.add_slide(prs.slide_layouts[5])
+                shapes = slide.shapes
+                shapes.title.text = 'Resultados'
+
+                rows = 10
+                cols = 6
+                left = Inches(0.521)
+                top = Inches(1.2)
+                width = Inches(6.0)
+                height = Inches(0.8)
+
+                table = shapes.add_table(rows, cols, left, top, width, height).table
+
+                # set column widths
+                table.columns[0].width = Inches(1.2)
+                table.columns[1].width = Inches(1.2)
+                table.columns[2].width = Inches(3.0)
+                table.columns[3].width = Inches(1.2)
+                table.columns[4].width = Inches(1.2)
+                table.columns[5].width = Inches(1.0)
+
+            for x in range(0, 6):
+                cell = table.rows[0].cells[x]
+                paragraph = cell.textframe.paragraphs[0]
+                paragraph.font.size = Pt(12)
+                paragraph.font.name = 'Arial Black'
+                paragraph.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+
+            for x in range(0, 6):
+                cell = table.rows[indice].cells[x]
+                paragraph = cell.textframe.paragraphs[0]
+                paragraph.font.size = Pt(8)
+                paragraph.font.name = 'Arial'
+                paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+            # write column headings
+            table.cell(0, 0).text = 'Carencia'
+            table.cell(0, 1).text = 'SubCarencia'
+            table.cell(0, 2).text = 'Accion'
+            table.cell(0, 3).text = 'Estado'
+            table.cell(0, 4).text = 'Municipio'
+            table.cell(0, 5).text = 'Avance Total'
+
+
+            # write body cells
+            table.cell(indice, 0).text = avance['carencia']
+            table.cell(indice, 1).text = avance['subCarencia']
+            table.cell(indice, 2).text = avance['accion']
+            table.cell(indice, 3).text = avance['estado']
+            table.cell(indice, 4).text = avance['municipio']
+            table.cell(indice, 5).text = str(avance['suma_avance'])
+            indice += 1
+
+        prs.save(output)
+        response = StreamingHttpResponse(FileWrapper(output),
+                                         content_type='application/vnd.openxmlformats-officedocument.presentationml.presentation')
+        response['Content-Disposition'] = 'attachment; filename="Avance_Por_Municipio.pptx"'
+        response['Content-Length'] = output.tell()
+
+        output.seek(0)
+
+        return response
+
+class MetasSinAvancesPptxEndpoint(ProtectedResourceView):
+    def get(self, request):
+
+        usuario = get_usuario_for_token(request.GET.get('access_token'))
+        if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
+            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__periodo__id=5)
+            metasRol = MetaMensual.objects.filter(meta__periodo__id=5)
+        else:
+            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__estado__id = usuario.usuario.estado.id,avancePorMunicipio__periodo__id=5)
+            metasRol = MetaMensual.objects.filter(estado__id = usuario.usuario.estado.id,meta__periodo__id=5)
+
+        avances = avancesRol.values('avancePorMunicipio__meta__accionEstrategica__id')
+        metas = metasRol.exclude(meta__accionEstrategica__id__in=avances)
+
+        # Reporte gpor munucipios
+        reporte_metas = metas.values(
+			'id',
+			'meta__id',
+			'meta__accionEstrategica__nombreAccion',
+			'meta__accionEstrategica__subCarencia__carencia__nombreCarencia',
+			'meta__accionEstrategica__subCarencia__nombreSubCarencia',
+			'estado__nombreEstado',
+			'meta__periodo__nombrePeriodo',
+			'estado__latitud',
+			'estado__longitud',
+		)
+        resultados = {"reporte_metas" : reporte_metas,}
+
+        json_map = {}
+        json_map['reporte_metas'] = []
+
+        for reporte in resultados['reporte_metas']:
+            shortened_reporte = {}  # Utilizado para mejorar el aspecto de las llaves del json
+            add = True  # Bandera para decidir si el valor del avace está dentro del rango
+
+            shortened_reporte['suma_avance'] = 0
+            shortened_reporte['suma_meta'] = 0
+
+            # ID de cada meta en el reporte para poder obtener el valor del avance cada mes
+            meta = MetaMensual.objects.get(meta__id=reporte['meta__id'],
+                                           estado__nombreEstado=reporte['estado__nombreEstado'])
+
+            # Si no se indicaron meses. habrá que obtener el valor de todos
+            shortened_reporte['suma_meta'] += (meta.ene + meta.feb + meta.mar + meta.abr +
+                                               meta.may + meta.jun + meta.jul + meta.ago +
+                                               meta.sep + meta.oct + meta.nov + meta.dic)
+            shortened_reporte['id'] = reporte['id']
+            shortened_reporte['accion'] = reporte['meta__accionEstrategica__nombreAccion']
+            shortened_reporte['carencia'] = reporte[
+                'meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
+            shortened_reporte['subCarencia'] = reporte[
+                'meta__accionEstrategica__subCarencia__nombreSubCarencia']
+            shortened_reporte['estado'] = reporte['estado__nombreEstado']
+            shortened_reporte['periodo'] = reporte['meta__periodo__nombrePeriodo']
+            shortened_reporte['latitud'] = reporte['estado__latitud']
+            shortened_reporte['longitud'] = reporte['estado__longitud']
+            json_map['reporte_metas'].append(shortened_reporte)
+
+        output = StringIO.StringIO()
+        prs = Presentation()
+        slide = prs.slides.add_slide(prs.slide_layouts[5])
+        shapes = slide.shapes
+        shapes.title.text = 'Metas sin Avances'
+        rows = 10
+        cols = 5
+        left = Inches(0.521)
+        top = Inches(1.2)
+        width = Inches(6.0)
+        height = Inches(0.8)
+        table = shapes.add_table(rows, cols, left, top, width, height).table
+        # set column widths
+        table.columns[0].width = Inches(1.3)
+        table.columns[1].width = Inches(1.3)
+        table.columns[2].width = Inches(3.5)
+        table.columns[3].width = Inches(1.2)
+        table.columns[4].width = Inches(1.0)
+
+        indice = 1
+
+        for avance in json_map['reporte_metas']:
+            if indice == 10:
+                indice = 1
+                slide = prs.slides.add_slide(prs.slide_layouts[5])
+                shapes = slide.shapes
+                shapes.title.text = 'Resultados'
+
+                rows = 10
+                cols = 5
+                left = Inches(0.521)
+                top = Inches(1.2)
+                width = Inches(6.0)
+                height = Inches(0.8)
+
+                table = shapes.add_table(rows, cols, left, top, width, height).table
+
+                # set column widths
+                table.columns[0].width = Inches(1.3)
+                table.columns[1].width = Inches(1.3)
+                table.columns[2].width = Inches(3.5)
+                table.columns[3].width = Inches(1.2)
+                table.columns[4].width = Inches(1.0)
+
+            for x in range(0, 5):
+                cell = table.rows[0].cells[x]
+                paragraph = cell.textframe.paragraphs[0]
+                paragraph.font.size = Pt(12)
+                paragraph.font.name = 'Arial Black'
+                paragraph.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+
+            for x in range(0, 5):
+                cell = table.rows[indice].cells[x]
+                paragraph = cell.textframe.paragraphs[0]
+                paragraph.font.size = Pt(8)
+                paragraph.font.name = 'Arial'
+                paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+            # write column headings
+            table.cell(0, 0).text = 'Carencia'
+            table.cell(0, 1).text = 'SubCarencia'
+            table.cell(0, 2).text = 'Accion'
+            table.cell(0, 3).text = 'Estado'
+            table.cell(0, 4).text = 'Año'
+
+
+            # write body cells
+            table.cell(indice, 0).text = avance['carencia']
+            table.cell(indice, 1).text = avance['subCarencia']
+            table.cell(indice, 2).text = avance['accion']
+            table.cell(indice, 3).text = avance['estado']
+            table.cell(indice, 4).text = str(avance['periodo'])
+            indice += 1
+
+        prs.save(output)
+        response = StreamingHttpResponse(FileWrapper(output),
+                                         content_type='application/vnd.openxmlformats-officedocument.presentationml.presentation')
+        response['Content-Disposition'] = 'attachment; filename="Metas_Sin_Avance.pptx"'
+        response['Content-Length'] = output.tell()
+
+        output.seek(0)
+
+        return response
+
+
+class AvancesSinActividadEndpoint(ListView):
+    def get(self, request, *args, **kwargs):
+        the_list = []
+        comp_date = date.today() - timedelta(days=15)
+
+        usuario = get_usuario_for_token(request.GET.get('access_token'))
+        if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
+			avancesRol = AvanceMensual.objects.filter(fecha_ultima_modificacion__lt=comp_date,avancePorMunicipio__periodo__id=5)
+        else:
+            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__estado__id = usuario.usuario.estado.id,
+                                                      fecha_ultima_modificacion__lt=comp_date,avancePorMunicipio__periodo__id=5)
+
+        avances = avancesRol
+
+        # Reporte gpor munucipios
+        reporte_municipio = avances.values(
+			'id',
+            'avancePorMunicipio__id',
+			'avancePorMunicipio__meta__id',
+			'avancePorMunicipio__meta__accionEstrategica__nombreAccion',
+			'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia',
+			'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia',
+			'avancePorMunicipio__estado__nombreEstado',
+			'municipio__nombreMunicipio',
+			'avancePorMunicipio__periodo__nombrePeriodo',
+			'municipio__latitud',
+			'municipio__longitud',
+		)
+        resultados = {"reporte_por_municipio" : reporte_municipio,}
+
+        json_map = {}
+        json_map['reporte_por_municipio'] = []
+
+        for reporte in resultados['reporte_por_municipio']:
+            shortened_reporte = {}  # Utilizado para mejorar el aspecto de las llaves del json
+            add = True  # Bandera para decidir si el valor del avace está dentro del rango
+
+            shortened_reporte['suma_avance'] = 0
+            shortened_reporte['suma_meta'] = 0
+
+            # ID de cada avance mensual en el reporte para poder obtener el valor del avance cada mes
+            avance_mensual = AvanceMensual.objects.get(id=reporte['id'])
+            # ID de cada meta en el reporte para poder obtener el valor del avance cada mes
+            meta = MetaMensual.objects.get(meta__id=reporte['avancePorMunicipio__meta__id'],
+                                           estado__nombreEstado=reporte['avancePorMunicipio__estado__nombreEstado'])
+
+            # Si no se indicaron meses. habrá que obtener el valor de todos
+            shortened_reporte['suma_avance'] += (avance_mensual.ene + avance_mensual.feb + avance_mensual.mar +
+                                                avance_mensual.abr + avance_mensual.may + avance_mensual.jun +
+                                                avance_mensual.jul + avance_mensual.ago + avance_mensual.sep +
+                                                avance_mensual.oct + avance_mensual.nov + avance_mensual.dic)
+            shortened_reporte['suma_meta'] += (meta.ene + meta.feb + meta.mar + meta.abr +
+                                               meta.may + meta.jun + meta.jul + meta.ago +
+                                               meta.sep + meta.oct + meta.nov + meta.dic)
+            shortened_reporte['id'] = reporte['id']
+            shortened_reporte['avancePorMunicipio_id'] = reporte['avancePorMunicipio__id']
+            shortened_reporte['accion'] = reporte['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
+            shortened_reporte['carencia'] = reporte[
+                'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
+            shortened_reporte['subCarencia'] = reporte[
+                'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
+            shortened_reporte['estado'] = reporte['avancePorMunicipio__estado__nombreEstado']
+            shortened_reporte['municipio'] = reporte['municipio__nombreMunicipio']
+            shortened_reporte['periodo'] = reporte['avancePorMunicipio__periodo__nombrePeriodo']
+            shortened_reporte['latitud'] = reporte['municipio__latitud']
+            shortened_reporte['longitud'] = reporte['municipio__longitud']
+            json_map['reporte_por_municipio'].append(shortened_reporte)
+
+
+        output = StringIO.StringIO()
+        prs = Presentation()
+        slide = prs.slides.add_slide(prs.slide_layouts[5])
+        shapes = slide.shapes
+        shapes.title.text = 'Avances Sin Actividad'
+        rows = 10
+        cols = 6
+        left = Inches(0.521)
+        top = Inches(1.2)
+        width = Inches(6.0)
+        height = Inches(0.8)
+        table = shapes.add_table(rows, cols, left, top, width, height).table
+        # set column widths
+        table.columns[0].width = Inches(1.2)
+        table.columns[1].width = Inches(1.2)
+        table.columns[2].width = Inches(3.0)
+        table.columns[3].width = Inches(1.2)
+        table.columns[4].width = Inches(1.2)
+        table.columns[5].width = Inches(1.0)
+        indice = 1
+
+        for avance in json_map['reporte_por_municipio']:
+            if indice == 10:
+                indice = 1
+                slide = prs.slides.add_slide(prs.slide_layouts[5])
+                shapes = slide.shapes
+                shapes.title.text = 'Resultados'
+
+                rows = 10
+                cols = 6
+                left = Inches(0.521)
+                top = Inches(1.2)
+                width = Inches(6.0)
+                height = Inches(0.8)
+
+                table = shapes.add_table(rows, cols, left, top, width, height).table
+
+                # set column widths
+                table.columns[0].width = Inches(1.2)
+                table.columns[1].width = Inches(1.2)
+                table.columns[2].width = Inches(3.0)
+                table.columns[3].width = Inches(1.2)
+                table.columns[4].width = Inches(1.2)
+                table.columns[5].width = Inches(1.0)
+
+            for x in range(0, 6):
+                cell = table.rows[0].cells[x]
+                paragraph = cell.textframe.paragraphs[0]
+                paragraph.font.size = Pt(12)
+                paragraph.font.name = 'Arial Black'
+                paragraph.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+
+            for x in range(0, 6):
+                cell = table.rows[indice].cells[x]
+                paragraph = cell.textframe.paragraphs[0]
+                paragraph.font.size = Pt(8)
+                paragraph.font.name = 'Arial'
+                paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+            # write column headings
+            table.cell(0, 0).text = 'Carencia'
+            table.cell(0, 1).text = 'SubCarencia'
+            table.cell(0, 2).text = 'Accion'
+            table.cell(0, 3).text = 'Estado'
+            table.cell(0, 4).text = 'Municipio'
+            table.cell(0, 5).text = 'Avance Total'
+
+
+            # write body cells
+            table.cell(indice, 0).text = avance['carencia']
+            table.cell(indice, 1).text = avance['subCarencia']
+            table.cell(indice, 2).text = avance['accion']
+            table.cell(indice, 3).text = avance['estado']
+            table.cell(indice, 4).text = avance['municipio']
+            table.cell(indice, 5).text = str(avance['suma_avance'])
+            indice += 1
+
+        prs.save(output)
+        response = StreamingHttpResponse(FileWrapper(output),
+                                         content_type='application/vnd.openxmlformats-officedocument.presentationml.presentation')
+        response['Content-Disposition'] = 'attachment; filename="Avance_Sin_Actividad.pptx"'
+        response['Content-Length'] = output.tell()
+
+        output.seek(0)
+
+        return response

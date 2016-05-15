@@ -12,7 +12,8 @@ var datosJson;
 var newToken;
 var cualPpxt = 0;
 var descripcionavanceMunicipio = "Se muestran los avances por cada municipio";
-var descripcionMetasSinAvances = "Metas que no tienen registrados avances"
+var descripcionMetasSinAvances = "Metas que no tienen registrados avances";
+var descripcionavancesSinActividad = "Se muestran los avances sin actividad alguna, durante los &uacute;ltimos 15 d&iacute;as";
 
 function valida_token(){
 var ajax_datatoken = {
@@ -52,12 +53,17 @@ function main_consulta() {
     $j('#balanceEntidad').on('click', balanceEntidad)
     $j('#informacionGeneral').on('click', informacionGeneral)
     $j('#avancesPeriodo').on('click', avancesPeriodo)
+    $j('#presentacionAvances').on('click', presentacionAvances)
+
 
 
     $j('#avancepormunicipio').on('click', avancePorMunicipio);
     $j('#metassinavances').on('click', metasSinAvances);
+    $j('#avancessinactividad').on('click', avancesSinActividad);
+
 
     $j('#enviaPDF2').on('click', demoFromHTML2)
+    $j('#ver_datos #enviaPPT2').on('click', PptxReporte)
 
 
 
@@ -65,6 +71,19 @@ function main_consulta() {
 }
 
 ///********************************************************************************************************************
+function PptxReporte() {
+    var URLavancePorMunicipio="/issste/api/AvancePorMunicipioPptx?access_token=" + newToken;
+    var URLmetasSinAvance="/issste/api/MetasSinAvancePptx?access_token=" + newToken;
+    var URLavancesSinActividad="/issste/api/AvancesSinActividadPptx?access_token=" + newToken;
+
+    if (cualPpxt==1) {location.href = URLavancePorMunicipio;}
+    if (cualPpxt==2) {location.href = URLmetasSinAvance;}
+    if (cualPpxt==3) {location.href = URLavancesSinActividad;}
+
+
+}
+
+
 
 function demoFromHTML2() {
     var pdf = new jsPDF('p', 'pt', 'letter');
@@ -133,12 +152,19 @@ function informacionGeneral() {
 
 }
 
+function presentacionAvances() {
+    var URL="/issste/api/presentacionAvances?access_token="+newToken;
+    location.href = URL;
+
+}
+
 
 
 
 function avancePorMunicipio() {
     $j('#load1').removeClass("mfp-hide");
     $j('#load1').addClass("mfp-show");
+    cualPpxt=1
     var ajax_data = {
       "access_token"  : newToken
     };
@@ -162,6 +188,7 @@ function avancePorMunicipio() {
 function metasSinAvances() {
     $j('#load2').removeClass("mfp-hide");
     $j('#load2').addClass("mfp-show");
+    cualPpxt=2
     var ajax_data = {
       "access_token"  : newToken
     };
@@ -181,6 +208,31 @@ function metasSinAvances() {
     });
 
 }
+
+function avancesSinActividad() {
+    $j('#load3').removeClass("mfp-hide");
+    $j('#load3').addClass("mfp-show");
+    cualPpxt=3
+    var ajax_data = {
+      "access_token"  : newToken
+    };
+    $j.ajax({
+        url: '/issste/api/fecha_ultima_actualizacion',
+        type: 'get',
+        data: ajax_data,
+        success: function(data) {
+            tablaI(data,'Avances sin Actividad',descripcionavancesSinActividad);
+            datosJson=data;
+            $j('#load3').addClass("mfp-hide");
+        },
+        error: function(data) {
+            $j('#load3').addClass("mfp-hide");
+            alert('error!!! ' + data.status);
+        }
+    });
+
+}
+
 
 function tablaI(Datos,titulo,descripcion){
     var sHtmlExporta="";
