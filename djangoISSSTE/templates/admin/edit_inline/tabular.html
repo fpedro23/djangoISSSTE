@@ -92,7 +92,11 @@
               {% if not field.field.is_hidden %}
               <td{% if field.field.name %} class="field-{{ field.field.name }}"{% endif %} id="tr-{{ field.field.name}}" data-toggle="tooltip" data-placement="right"  title="{% for error in field.field.errors %}{{ error }}{% endfor %}">
               {% if field.is_readonly %}
-                  <p>{{ field.contents }}</p>
+                  {% if field.field.name == "inversionAprox" %}
+                      &nbsp; &nbsp;{{ field.contents|formatoNumero }}
+                  {% else %}
+                    <p>{{ field.contents }}</p>
+                  {% endif %}
               {% else %}
                   {% if field.field.name == "ene" or field.field.name == "feb" or field.field.name == "mar" or field.field.name == "abr" or field.field.name == "may" or field.field.name == "jun" or field.field.name == "jul" or field.field.name == "ago" or field.field.name == "sep" or field.field.name == "oct" or field.field.name == "nov" or field.field.name == "dic"%}
                        {% if field.field.errors %}

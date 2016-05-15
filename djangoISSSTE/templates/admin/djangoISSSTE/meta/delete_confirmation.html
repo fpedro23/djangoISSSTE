@@ -21,7 +21,7 @@
         Confirmación Eliminar Meta
   </div>
 
-  <div class="bienvenida">
+  <div class="bienvenida"> </div>
 <br><br>
         {% if perms_lacking or protected %}
             {% if perms_lacking %}
@@ -44,7 +44,7 @@
 
            {% blocktrans with escaped_object=object %}  Esta seguro de eliminar el Usuario: {% endblocktrans %}
 
-           </div>
+
             <div class="campos01">
             {% blocktrans with escaped_object=object %}
             {{ escaped_object }}

@@ -20,7 +20,7 @@
         Confirmación Eliminar Meta
   </div>
 
-  <div class="bienvenida">
+  <div class="bienvenida"></div>
 <p>&nbsp;</p>
     {% if perms_lacking or protected %}
         {% if perms_lacking %}
@@ -48,6 +48,7 @@
             {% for deletable_object in deletable_objects %}
                 <ul>{{ deletable_object|unordered_list }}</ul>
             {% endfor %}
+         </div>
             <form action="" method="post">{% csrf_token %}
                 <div>
                 {% for obj in queryset %}
@@ -57,11 +58,11 @@
 
                 <input type="hidden" name="action" value="delete_selected" />
                 <input type="hidden" name="post" value="yes" />
-                <input type="submit" class="eliminarBTN" value="" style="top:485px;left:670px;border-style: hidden;"/>
+                <input type="submit" class="eliminarBTN" value=""/>
                  <div class="salirBTN" onclick="location.href='/metas'" style="left: 630px;"></div>
 
              </form>
-        </div>
+
 {% endif %}
-</div>
+
 {% endblock %}

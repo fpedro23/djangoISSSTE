@@ -2,7 +2,7 @@
 {% load i18n l10n admin_urls admin_static %}
 {% block extrahead %}{{ block.super }}
     <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
-     <link href="{% static "assets/css/formas.css" %}" rel="stylesheet">
+
 
 {% endblock %}
 
@@ -20,7 +20,7 @@
         Confirmación Eliminar Usuario
   </div>
 
-  <div class="bienvenida">
+  <div class="bienvenida"></div>
 <p>&nbsp;</p>
 {% if perms_lacking or protected %}
     {% if perms_lacking %}
@@ -48,6 +48,7 @@
         {% for deletable_object in deletable_objects %}
             <ul>{{ deletable_object|unordered_list }}</ul>
         {% endfor %}
+</div>
         <form action="" method="post">{% csrf_token %}
             <div>
             {% for obj in queryset %}
@@ -56,11 +57,11 @@
             </div>
             <input type="hidden" name="action" value="delete_selected" />
             <input type="hidden" name="post" value="yes" />
-            <input type="submit" class="eliminarBTN" value="" />
-             <div class="salirBTN" onclick="location.href='/visitas/usuarios'" style="left: 630px;"></div>
+            <input type="submit" class="eliminarBTN" value=""  />
+             <div class="salirBTN" onclick="location.href='/usuarios'" style="left: 630px;"></div>
 
         </form>
-     </div>
+
 {% endif %}
- </div>
+
 {% endblock %}
