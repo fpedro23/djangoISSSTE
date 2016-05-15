@@ -70,7 +70,7 @@ class SubcarenciasForCarenciasEndpoint(ProtectedResourceView):
 
         if all_carencias:
             subcarencias = SubCarencia.objects.order_by('nombreSubCarencia').all()
-            print (subcarencias)
+            ##print (subcarencias)
         else:
             subcarencias = SubCarencia.objects.filter(carencia_id__in=carencia_ids).order_by(
                 'nombreSubCarencia').all()
@@ -369,9 +369,9 @@ class BuscadorEndpoint(ProtectedResourceView):
             avance_mensual = AvanceMensual.objects.get(id=reporte['id'])
             # ID de cada meta en el reporte para poder obtener el valor del avance cada mes
 
-            print "Printing: "
-            print reporte['avancePorMunicipio__meta__id']
-            print reporte['avancePorMunicipio__estado__nombreEstado']
+            ##print "##printing: "
+            ##print reporte['avancePorMunicipio__meta__id']
+            # print reporte['avancePorMunicipio__estado__nombreEstado']
 
             if myObj.meses is not None:
                 for mes in myObj.meses:
@@ -691,11 +691,11 @@ class AvanceForPeriodoEndpoint(ProtectedResourceView):
 
         for avanceMunicipio in AvancePorMunicipio.objects.filter(periodo__in=periodo_id):
             arreglo_avance_municipio.append(avanceMunicipio.id)
-            print arreglo_avance_municipio
+            #print arreglo_avance_municipio
 
         avances = AvancePorMunicipio.objects.filter(id__in=arreglo_avance_municipio,
                                                     meta__id__in=accion_id, estado_id__in=estados_id)
-        print avances.values()
+        #print avances.values()
 
         the_list = []
         for avance in avances.values('id'):
@@ -709,17 +709,17 @@ class AvanceForPeriodoEndpoint(ProtectedResourceView):
 class AvancesEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         avances_ids = get_array_or_none(request.GET.get('avances'))
-        print avances_ids
+        #print avances_ids
         arreglo_avances = []
         json_map = {}
         json_map['avances'] = []
         if avances_ids is None:
             avances_mensuales = AvanceMensual.objects.order_by('municipio').all()
         else:
-            print 'else'
+            #print 'else'
             for avance in AvanceMensual.objects.filter(id__in=avances_ids):
                 arreglo_avances.append(avance.id)
-                print arreglo_avances
+                #print arreglo_avances
             avances_mensuales = AvanceMensual.objects.filter(id__in=arreglo_avances)
 
         the_list = []
@@ -730,7 +730,7 @@ class AvancesEndpoint(ProtectedResourceView):
                                                        'ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago',
                                                        'sep', 'oct', 'nov', 'dic', ):
             # the_list.append(avance_mensual)
-            # print avance_mensual['id']
+            # #print avance_mensual['id']
             shortened_reporte = {}
             shortened_reporte['id'] = avance_mensual['id']
             shortened_reporte['municipio'] = avance_mensual['municipio__nombreMunicipio']
@@ -767,8 +767,8 @@ class FichaTecnicaForiPadAvancesEndpoint(ListView):
         avances = AvanceMensual.objects.filter(Q(avancePorMunicipio__periodo__id =periodo_id)&
                                                Q(avancePorMunicipio__meta__accionEstrategica__id = accion_id)&
                                                Q(avancePorMunicipio__estado=estado_id))
-        print "Avances: "
-        print len(avances)
+        # print "Avances: "
+        #print len(avances)
         resultados = avances.values(
             'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia',
             'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia',
@@ -1005,7 +1005,7 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
         json_map['carencia'] = carenciaDatos.nombreCarencia
         json_map['resultados'] = []
         for subCarencia in subCarencias:
-            #print "SubCarencia"
+            ##print "SubCarencia"
             datos = {}
             datos['subCarencias'] = subCarencia['avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
             datos['acciones'] = []
@@ -1019,7 +1019,7 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
                             'avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable')\
                     .annotate(acciones=Count('avancePorMunicipio__meta__accionEstrategica__nombreAccion')):
 
-                #print "Accion"
+                ##print "Accion"
                 accion = {}
                 accion['accion'] = accionesDatos['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
                 accion['unidad'] = accionesDatos['avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad']
@@ -1030,7 +1030,7 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
                                   accionesDatos['avancePorMunicipio__meta__accionEstrategica__nombreAccion']) &
                                 Q(avancePorMunicipio__meta__periodo__nombrePeriodo=periodo_id)
                 ):
-                    #print "Avance"
+                    ##print "Avance"
                     avances = {}
                     avances['clave'] = avance.municipio.claveMunicipio
                     avances['estado'] = avance.avancePorMunicipio.estado.nombreEstado
@@ -1209,7 +1209,7 @@ class ReporteExcelMetasEndpoint(generic.ListView):
         json_map['carencia'] = carenciaDatos.nombreCarencia
         json_map['resultados'] = []
         for subCarencia in subCarencias:
-            # print "SubCarencia"
+            # #print "SubCarencia"
             datos = {}
             datos['subCarencias'] = subCarencia[
                 'meta__accionEstrategica__subCarencia__nombreSubCarencia']
@@ -1225,7 +1225,7 @@ class ReporteExcelMetasEndpoint(generic.ListView):
                             'meta__accionEstrategica__responsable__nombreResponsable') \
                     .annotate(acciones=Count('meta__accionEstrategica__nombreAccion')):
 
-                # print "Accion"
+                # #print "Accion"
                 accion = {}
                 accion['accion'] = accionesDatos['meta__accionEstrategica__nombreAccion']
                 accion['unidad'] = accionesDatos[
@@ -1238,7 +1238,7 @@ class ReporteExcelMetasEndpoint(generic.ListView):
                                   accionesDatos['meta__accionEstrategica__nombreAccion']) &
                                 Q(meta__periodo__nombrePeriodo=periodo_id)
                 ):
-                    # print "Avance"
+                    # #print "Avance"
                     metas = {}
                     metas['ene'] = meta.ene
                     metas['feb'] = meta.feb
@@ -1775,10 +1775,10 @@ class AvanceForPeriodo(ProtectedResourceView):
 
         for avanceMunicipio in AvancePorMunicipio.objects.filter(periodo__nombrePeriodo__in=periodo_id):
             arreglo_avance_municipio.append(avanceMunicipio.id)
-            print arreglo_avance_municipio
+            #print arreglo_avance_municipio
 
         avances = AvancePorMunicipio.objects.filter(id__in=arreglo_avance_municipio, meta__accionEstrategica__id__in=accion_id, estado_id__in = estados_id)
-        print avances.values()
+        #print avances.values()
 
         the_list = []
         for avance in avances.values('id'):
@@ -2185,10 +2185,10 @@ class AvanceForPeriodo(ProtectedResourceView):
 
         for avanceMunicipio in AvancePorMunicipio.objects.filter(periodo__nombrePeriodo__in=periodo_id):
             arreglo_avance_municipio.append(avanceMunicipio.id)
-            print arreglo_avance_municipio
+            #print arreglo_avance_municipio
 
         avances = AvancePorMunicipio.objects.filter(id__in=arreglo_avance_municipio, meta__accionEstrategica__id__in=accion_id, estado_id__in = estados_id)
-        print avances.values()
+        #print avances.values()
 
         the_list = []
         for avance in avances.values('id'):
