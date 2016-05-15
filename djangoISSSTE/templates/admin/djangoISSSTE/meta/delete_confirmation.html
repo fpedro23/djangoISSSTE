@@ -2,7 +2,7 @@
 {% load i18n admin_urls admin_static %}
 {% block extrahead %}{{ block.super }}
     <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
-
+     <link href="{% static "assets/css/formas.css" %}" rel="stylesheet">
 
 {% endblock %}
 
@@ -14,11 +14,14 @@
 {% endblock %}
 
 {% block content %}
-      <div id="regresarBTN" onclick="window.history.go(-1);"></div>
+      <div id="regresarBTN" onclick="window.history.go(-1);">
+   </div>
 
-<div id="welcome">Confirmación Eliminar Usuario</div>
+<div id="welcome">
+        Confirmación Eliminar Meta
+  </div>
 
-  <div class="bienvenida"></div>
+  <div class="bienvenida"> </div>
 <br><br>
         {% if perms_lacking or protected %}
             {% if perms_lacking %}
@@ -53,9 +56,8 @@
                 <input type="hidden" name="post" value="yes" />
                 <input type="submit" class="eliminarBTN" value="" /> &nbsp;&nbsp;&nbsp;
 
-                <div class="salirBTN" onclick="location.href='/usuarios'" style="left: 630px;"></div>
+                <div class="salirBTN" onclick="location.href='/metas'" style="left: 630px;"></div>
                 </form>
 
         {% endif %}
-
 {% endblock %}

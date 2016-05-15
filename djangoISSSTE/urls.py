@@ -53,4 +53,10 @@ urlpatterns = [
 	url(r'^api/presentacionAvances', api.PresentacioneAvancesEndPoint.as_view()),
 
 	url(r'^api/fecha_ultima_actualizacion', api.FechaUltimaActualizacionEndpoint.as_view()),
+
+	url(r'^api/AvancePorMunicipioPptx', api.AvancePorMunicipioPptxEndpoint.as_view()),
+	url(r'^api/MetasSinAvancePptx', api.MetasSinAvancesPptxEndpoint.as_view()),
+	url(r'^api/AvancesSinActividadPptx', api.AvancesSinActividadEndpoint.as_view()),
+
+
 ]

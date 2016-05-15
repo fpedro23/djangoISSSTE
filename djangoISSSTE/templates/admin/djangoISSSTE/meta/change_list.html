@@ -119,8 +119,8 @@ x++;
   </div>
   <div class="bienvenida">
         <span id="elmmsgins" hidden="true">Bienvenido a Eliminar Meta. Le pedimos seleccione el registro y presione el botón Eliminar.</span>
-        <span id="modmsgins" hidden="true">Bienvenido a Modificar Meta. Le pedimos seleccione el ID de una Meta para editarlo.</span>
-        <span id="consins" hidden="true">Bienvenido al Catálogo de Meta; presione sobre el ID de una Meta para consultar sus detalles.</span>
+        <span id="modmsgins" hidden="true">Bienvenido a Modificar Meta. Le pedimos seleccione una Meta para editarla.</span>
+        <span id="consins" hidden="true">Bienvenido al Catálogo de Meta; presione sobre una Meta para consultar sus detalles.</span>
   <p>&nbsp;</p>
   </div>
   <div id="content-main">
@@ -159,7 +159,11 @@ x++;
       {% block pagination %}<div class="campopag">
              {% pagination cl %}
             </div>{% endblock %}
+      <input type="hidden" name="action" value="delete_selected">
       </form>
     </div>
   </div>
+    {% url opts|admin_urlname:'delete' original.pk|admin_urlquote as delete_url %}
+   <div class="eliminarBTN" id="target" hidden="true" onclick="document.getElementById('changelist-form').submit('_delete_selected');"></div>
+
 {% endblock %}

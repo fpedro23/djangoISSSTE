@@ -745,7 +745,7 @@ function jsonSeriesCategorias(Datos,tipoReporte) {
     if (tipoReporte == "Estado") {
         for (var i = 0; i < Datos.reporte_por_estado.length; i++) {
             arregloTotal.push(Datos.reporte_por_estado[i].suma_meta);
-            arregloSimple.push(-1*Datos.reporte_por_estado[i].avances);
+            arregloSimple.push(-1*Datos.reporte_por_estado[i].avance);
             arregloCategoria.push(Datos.reporte_por_estado[i].estado);
         }
         Series.serie.push({
@@ -762,7 +762,7 @@ function jsonSeriesCategorias(Datos,tipoReporte) {
         if (tipoReporte == "Carencia") {
             for (var i = 0; i < datosJson.reporte_por_carencia.length; i++) {
                 arregloTotal.push(Datos.reporte_por_carencia[i].suma_meta);
-                arregloSimple.push(-1 * Datos.reporte_por_carencia[i].avances);
+                arregloSimple.push(-1 * Datos.reporte_por_carencia[i].avance);
                 arregloCategoria.push(Datos.reporte_por_carencia[i].nombreCarencia);
             }
             Series.serie.push({
@@ -777,7 +777,7 @@ function jsonSeriesCategorias(Datos,tipoReporte) {
         }else{
             for (var i = 0; i < datosJson.reporte_por_accion.length; i++) {
                 arregloTotal.push(Datos.reporte_por_accion[i].suma_meta);
-                arregloSimple.push(-1 * Datos.reporte_por_accion[i].avances);
+                arregloSimple.push(-1 * Datos.reporte_por_accion[i].avance);
                 arregloCategoria.push(Datos.reporte_por_accion[i].nombreAccion);
             }
             Series.serie.push({
