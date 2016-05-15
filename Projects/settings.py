@@ -129,12 +129,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-<<<<<<< HEAD
-=======
+
 # vida del token
 SESSION_COOKIE_AGE = 35900
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
->>>>>>> 67f0b78512cc59e28fb60fd2ee1dc10a2bc769c8
 LOGIN_URL = '/admin/login/'
 
 # Internationalization
