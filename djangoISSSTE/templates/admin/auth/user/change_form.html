@@ -8,14 +8,6 @@
 
 {% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />
 
-
-    <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.css" />
-
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
-
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.js"></script>
-
-<script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.js' %}"></script>
 <link rel="stylesheet" type="text/css" href="{% static "assets/css/restricted_styles.css" %}" />
 
     <script type="text/javascript">
@@ -73,7 +65,7 @@
 
         });
 
-
+        $('.guardar_ContinuarB').hide();
     });
     </script>
 
@@ -131,7 +123,8 @@
 <div>
 {% if is_popup %}<input type="hidden" name="{{ is_popup_var }}" value="1" />{% endif %}
 {% if to_field %}<input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}" />{% endif %}
-{% if save_on_top %}{% block submit_buttons_top %}{% submit_row %}{% endblock %}{% endif %}
+{% if save_on_top %}{% block submit_buttons_top %}{% submit_row %}
+{% endblock %}{% endif %}
 {% if errors %}
      <div class="set-errmsg" style="top:96px;left:50px;">
                     {% if adminform.form.non_field_errors|length == 1 %} {% endif %}
@@ -155,7 +148,9 @@
 
 {% block after_related_objects %}{% endblock %}
 
-{% block submit_buttons_bottom %}{% submit_row %}{% endblock %}
+{% block submit_buttons_bottom %}{% submit_row %}
+<div class = "salirBTN" onclick="location.href='/admin';"></div>
+{% endblock %}
 
 {% if adminform and add %}
     <script type="text/javascript">

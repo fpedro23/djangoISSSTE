@@ -2,7 +2,7 @@
 {% load i18n admin_urls admin_static %}
 {% block extrahead %}{{ block.super }}
     <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
-     <link href="{% static "assets/css/formas.css" %}" rel="stylesheet">
+
 
 {% endblock %}
 
@@ -14,14 +14,11 @@
 {% endblock %}
 
 {% block content %}
-      <div id="regresarBTN" onclick="window.history.go(-1);">
-   </div>
+      <div id="regresarBTN" onclick="window.history.go(-1);"></div>
 
-<div id="welcome">
-        Confirmación Eliminar Usuario
-  </div>
+<div id="welcome">Confirmación Eliminar Usuario</div>
 
-  <div class="bienvenida">
+  <div class="bienvenida"></div>
 <br><br>
         {% if perms_lacking or protected %}
             {% if perms_lacking %}
@@ -44,7 +41,7 @@
 
            {% blocktrans with escaped_object=object %}  Esta seguro de eliminar el Usuario: {% endblocktrans %}
 
-           </div>
+
             <div class="campos01">
             {% blocktrans with escaped_object=object %}
             {{ escaped_object }}
@@ -60,4 +57,5 @@
                 </form>
 
         {% endif %}
+
 {% endblock %}

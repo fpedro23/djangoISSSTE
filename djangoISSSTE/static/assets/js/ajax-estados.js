@@ -22,11 +22,11 @@ $(document).on('ready', function() {
     });
 
     $(".tamcontrol").on("change",function(){
-        alert($(this).val());
-        alert($(this).attr("id"));
+        //alert($(this).val());
+        //alert($(this).attr("id"));
 
         var meslen=$('.tamcontrolsel').length;
-        alert(meslen);
+        //alert(meslen);
 
 
     });
