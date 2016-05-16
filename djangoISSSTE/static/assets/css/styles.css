@@ -1361,6 +1361,21 @@ ul.messagelist li.error {
 }
 
 
+.botCAMBIAR{
+	width:126px;
+	height:45px;
+	position:absolute;
+	top: 340px;
+	left: 365px;
+	background-image:url(../Imagenes/bigBackground.fw.png);
+	background-position: 0px -524px;
+    border-style: hidden;
+}
+
+.botCAMBIAR:hover{
+	background-position:0px -569px;
+}
+
 .botENVIAR{
 	width:126px;
 	height:45px;
@@ -1504,6 +1519,36 @@ ul li {
     position: absolute;
 }
 
+ .recuperarCon{
+	 position:relative;
+	 width:460px;
+	 height:330px;
+	 margin-top:55px;
+	 margin-left:50px;
+	font-family: 'soberana_sanslight';
+    font-size:18px;
+    color: #6A6B6C;
+
+}
+
+ .logIn2 {
+	position: absolute;
+	left: 300px;
+	top: 76px;
+	width: 435px;
+	height: 337px;
+	z-index: 1;
+}
+
+ #alertaMAIL{
+	width:400px;
+	height:250px;
+	position:absolute;
+	left:17px;
+	background-image:url(../Imagenes/bigBackground.fw.png);
+	background-position:-721px -1520px;
+}
+
 
 /*elementos de la seccion de AYUDA*/
 .ayudaTXT{
@@ -1511,7 +1556,6 @@ ul li {
     height:190px;
     background-image:url(../Imagenes/bigBackground.fw.png);
     background-position: -180px -1140px;
-
     position:absolute;
     top: 149px;
     left: 322px;

@@ -7,18 +7,12 @@
    <div class="eliminarBTN" onclick="location.href='{% add_preserved_filters delete_url %}';"></div>
 {% endif %}
 {% if show_save_as_new %}
-    {%  if user.usuario.rol != 'FC' and user.usuario.rol != 'FE' %}
             <input type="submit" value="{% trans 'Save as new' %}" name="_saveasnew" />
-    {% endif %}
 {%endif%}
 {% if show_save_and_continue %}
-    {%  if user.usuario.rol != 'FC' and user.usuario.rol != 'FE' %}
         <input type="submit" value="" class="guardar_ContinuarB" name="_continue" />
-    {% endif %}
 {% endif %}
 {% if show_save_and_add_another %}
-    {%  if user.usuario.rol != 'FC' and user.usuario.rol != 'FE' %}
-            <input  class="guardarotroBTN"  type="submit" value="" name="_addanother" />
-    {% endif %}
+    <input  class="guardarotroBTN"  type="submit" value="" name="_addanother" />
 {% endif %}
 </div>
