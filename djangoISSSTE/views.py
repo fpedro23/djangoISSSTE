@@ -76,6 +76,20 @@ def meta(request):
     return HttpResponse('Secret contents!', status=200)
 
 
+@login_required()
+def ayuda(request):
+    return render_to_response('admin/djangoISSSTE/ayuda/c_ayuda.html', locals(),
+                              context_instance=RequestContext(request))
+
+@login_required()
+def videos(request):
+    return render_to_response('admin/djangoISSSTE/videos/videos_lista.html', locals(),
+                              context_instance=RequestContext(request))
+
+@login_required()
+def manualesPdf(request):
+    return render_to_response('admin/obras/manuales/manuales_lista.html', locals(),
+                              context_instance=RequestContext(request))
 
 
 @login_required()
@@ -101,7 +115,8 @@ def consulta_web(request):
     print request.user.usuario.rol
 
     usuario = request.user.usuario
-    if usuario.rol == 'AG' or usuario.rol == 'UR' or usuario.rol == 'FR':
+    #usuario = get_usuario_for_token(request.GET.get('access_token'))
+    if usuario.rol == 'AG' or usuario.rol == 'FC' or usuario.rol == 'UC':
         estados = Estado.objects.all()
         municipios = Municipio.objects.all()
     else:
@@ -123,3 +138,46 @@ def consulta_web(request):
         'responsables': Responsable.objects.all(),
     })
     return HttpResponse(template.render(context))
+
+@login_required()
+def ver_video(request):
+    cualVideo=request.GET.get('cualVideo', None),
+    print(str(cualVideo[0]))
+
+    if str(cualVideo[0]) =='1_1_iniciarSesion.mp4':
+        tituloVideo='Inicio de Sesion',
+    elif str(cualVideo[0]) =='2_1_AltaAvances.mp4':
+        tituloVideo='Registrar un avance',
+    elif str(cualVideo[0]) =='3_1_consFiltros.mp4':
+        tituloVideo='Consulta Mediante Filtros',
+    elif str(cualVideo[0]) =='3_2_consPredef.mp4':
+        tituloVideo='Consulta Predefinidos',
+
+    elif str(cualVideo[0]) =='3_3_listadeAvances.mp4':
+        tituloVideo='Listado de Avances',
+    elif str(cualVideo[0]) =='4_1_altaMeta.mp4':
+        tituloVideo='Alta de Metas',
+    elif str(cualVideo[0]) =='4_2_modifMeta.mp4':
+        tituloVideo='Modificar una Meta',
+    elif str(cualVideo[0]) =='4_3_eliminarCatalogo.mp4':
+        tituloVideo='Eliminar una Meta',
+
+    elif str(cualVideo[0]) =='5_1_altaUs.mp4':
+        tituloVideo='Agregar un Usuario',
+    elif str(cualVideo[0]) =='5_2_modifUsuario.mp4':
+        tituloVideo='Modificar un Usuario',
+    elif str(cualVideo[0]) =='5_3_delUsuario.mp4':
+        tituloVideo='Eliminar un Usuario',
+
+
+    template = loader.get_template('admin/djangoISSSTE/videos/videos_lista.html')
+    context = RequestContext(request, {
+        'cualVideo': cualVideo,
+        'tituloVideo': tituloVideo,
+    })
+    return HttpResponse(template.render(context))
+
+@login_required()
+def manuales(request):
+    return render_to_response('admin/djangoISSSTE/manuales/manuales_lista.html', locals(),
+                              context_instance=RequestContext(request))

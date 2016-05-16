@@ -173,7 +173,8 @@ STATICFILES_DIRS = (
 
 
 
-MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'djangoISSSTE/media/')
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'djangoISSSTE/media')
 MEDIA_URL = '/media/'
 
 

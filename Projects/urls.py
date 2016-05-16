@@ -44,6 +44,10 @@ urlpatterns = [
     url(r'^consultas', djangoISSSTE.views.consultas, name='consultas'),
     url(r'^usuarios', djangoISSSTE.views.usuarios, name='usuarios'),
     url(r'^movimientos', djangoISSSTE.views.movimientos, name='movimientos'),
+    url(r'^ayuda', djangoISSSTE.views.ayuda, name='ayuda'),
+    url(r'^videos', djangoISSSTE.views.videos),
+    url(r'^ver_video', djangoISSSTE.views.ver_video),
+    url(r'^manuales-Pdf', djangoISSSTE.views.manuales),
 
     url(r'^admin/password_reset/$', auth_views.password_reset, name='admin_password_reset'),
     url(r'^admin/password_reset/done/$', auth_views.password_reset_done, name='password_reset_done'),
