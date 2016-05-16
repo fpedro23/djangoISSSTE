@@ -1,0 +1,88 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static %}
+{% block extrastyle %}{{ block.super }}
+
+    <link href="{% static "css/menu.css" %}" rel="stylesheet">  <!--AQUI VAN TODOS LOS ARCHIVOS DE ESTILO EXTRA QUE SE REQUIEREN PARA LA PAGINA O JS-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="{% static "assets/bootstrap/css/bootstrap.css"%}" />
+
+
+    <link href="{% static "css/styles.css"%}" rel="stylesheet">
+
+
+    <script type="text/javascript" src="{% static "assets/js/ajax-docsPdf.js"%}"></script>
+
+
+{% endblock %}
+{% block breadcrumbs %}
+{% endblock %}
+
+{% block content %}
+
+    <div id="regresarBTN" onclick="location.href='/obras/ayuda'">
+    </div>   <!--AGREGAR A DONDE SE VA A REGRESAR CON ESTA URL REGRESA A LA PÀGINA PRINCIPAL-->
+
+    <div id="welcome">Manuales de Ayuda al Usuario en Documento</div>
+    <input type="hidden" name="historico" id="historico"/>
+    <div class="row" style="padding-right: 18px; padding-left: 0px; padding-bottom: 0px; padding-top: 0px ">
+       <div class="col-md-3" style="height:500px; overflow: scroll;">
+           <div class="panel-group">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h6 class="panel-title">Obras</h6>
+                                </div>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li style="height: 25px"><a href="#" id="crearObra">Crear una Obra <span id="load1" class="glyphicon glyphicon-refresh glyphicon-refresh-animate mfp-hide"></span></a></li>
+                                    <li style="height: 30px"><a href="#" id="modificarObra">Modificar una Obra <span id="load2" class="glyphicon glyphicon-refresh glyphicon-refresh-animate mfp-hide"></span></a></li>
+                                </ul>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h6 class="panel-title">Consultas</h6>
+                                </div>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li style="height: 25px"><a href="#" id="consultaFiltros" >Consulta Mediante Filtros</a></li>
+                                    <li style="height: 25px"><a href="#" id="consultaPredefinidos" >Consultas Predefinidas </a></li>
+                                    <li style="height: 30px"><a href="#" id="listadoObras" >Listado de Obras </a></li>
+                                </ul>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h6 class="panel-title">Catálogos</h6>
+                                </div>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li style="height: 25px"><a href="#" id="catalogoDependencias" >Catálogo de Dependencias </a></li>
+                                    <li style="height: 25px"><a href="#" id="catalogoSubdependencias" >Catálogo de Sub Dependencias</a></li>
+                                    <li style="height: 25px"><a href="#" id="catalogoClasificaciones" >Catálogo de Clasificaciones</a></li>
+                                    <li style="height: 25px"><a href="#" id="catalogoInversion" >Catálogo de Tipos de Inversión</a></li>
+                                    <li style="height: 25px"><a href="#" id="catalogoImpacto" >Catálogo de Impacto</a></li>
+                                    <li style="height: 30px"><a href="#" id="catalogoInauguradores" >Catálogo de Inauguradores</a></li>
+
+                                </ul>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h6 class="panel-title">Usuarios</h6>
+                                </div>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li style="height: 30px"><a href="#" id="catalogoUsuarios" >Catálogo de Usuarios</a></li>
+
+                                </ul>
+                            </div>
+
+           </div>
+
+       </div>
+
+       <div class="col-md-9-box" style="height: 500px">
+            </br>
+            <div class="col-md-12 titulo" id="titulo"> </div>
+            <div class="col-md-12 " id="vistaPdf"> </div>
+           </br>
+            <div class="col-md-12" id="descripcion"></div>
+       </div>
+    </div>
+
+
+{% endblock %}

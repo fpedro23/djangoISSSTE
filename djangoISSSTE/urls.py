@@ -1,5 +1,6 @@
 from django.conf.urls import url, include
 from djangoISSSTE import api
+from Projects import settings
 
 
 urlpatterns = [
@@ -57,6 +58,6 @@ urlpatterns = [
 	url(r'^api/AvancePorMunicipioPptx', api.AvancePorMunicipioPptxEndpoint.as_view()),
 	url(r'^api/MetasSinAvancePptx', api.MetasSinAvancesPptxEndpoint.as_view()),
 	url(r'^api/AvancesSinActividadPptx', api.AvancesSinActividadEndpoint.as_view()),
-
+	url(r'^media/(?P<path>.*)$', 'django.views.static.serve',{'document_root': settings.MEDIA_ROOT}),
 
 ]
