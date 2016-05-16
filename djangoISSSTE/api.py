@@ -2625,7 +2625,7 @@ def date_handler(obj):
 class BalanceGeneralEndpoint(ProtectedResourceView):
     def get(self, request):
 
-        #prs = Presentation('static/ppt/balance_general.pptx')
+        #prs = Presentation('djangoISSSTE/static/ppt/balance_general.pptx')
         prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/balance_general.pptx')
 
         json_map = {}
@@ -2717,7 +2717,7 @@ class BalanceGeneralEndpoint(ProtectedResourceView):
 
 class BalancePorEntidadEndpoint(ProtectedResourceView):
     def get(self, request):
-        #prs = Presentation('static/ppt/balance_por_estado.pptx')
+        #prs = Presentation('djangoISSSTE/static/ppt/balance_por_estado.pptx')
         prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/balance_por_estado.pptx')
 
         json_map = {}
@@ -2735,20 +2735,25 @@ class BalancePorEntidadEndpoint(ProtectedResourceView):
                 list_carencias = {}
                 list_carencias['carencia'] = carencia.nombreCarencia
                 list_carencias['total_avances'] = 0
+                list_carencias['inversionAvance'] = 0
+                list_carencias['porcentaje'] = 0
                 query_avance = Q(avancePorMunicipio__estado__id=estado.id)&\
-                               Q(avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia = carencia.id)
+                               Q(avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia = carencia.id)&\
+                               Q(avancePorMunicipio__periodo_id = 5)
 
                 for avance in AvanceMensual.objects.filter(query_avance).values(
-                    'avancePorMunicipio__estado__nombreEstado').annotate(
+                    'avancePorMunicipio__estado__nombreEstado','avancePorMunicipio__meta__montoPromedio').annotate(
                     ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
                     jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
                     total = avance['ene'] + avance['feb'] + avance['mar'] + avance['abr'] + avance['may'] + avance['jun'] +\
                             avance['jul'] + avance['ago'] + avance['sep'] + avance['oct'] + avance['nov'] + avance['dic']
                     list_carencias['total_avances'] = total
+                    list_carencias['inversionAvance'] = total*avance['avancePorMunicipio__meta__montoPromedio']
 
                 list_carencias['total_metas'] = 0
-                for meta in MetaMensual.objects.filter(estado__id=estado.id,
-                        meta__accionEstrategica__subCarencia__carencia__id=carencia.id).values('estado__nombreEstado').annotate(
+                list_carencias['inversionMeta'] = 0
+                for meta in MetaMensual.objects.filter(estado__id=estado.id,meta__periodo_id=5,
+                        meta__accionEstrategica__subCarencia__carencia__id=carencia.id).values('estado__nombreEstado','inversionAprox').annotate(
                     ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
                     jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
 
@@ -2756,24 +2761,31 @@ class BalancePorEntidadEndpoint(ProtectedResourceView):
                             meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
 
                     list_carencias['total_metas'] = total
+                    list_carencias['inversionMeta'] = meta['inversionAprox']
+
+                if list_carencias['total_metas']>0:
+                    list_carencias['porcentaje'] = (list_carencias['total_avances']*100)/list_carencias['total_metas']
+
                 list_estados['datos'].append(list_carencias)
             json_map['balancePorEntidad'].append(list_estados)
 
             iSlide=0
             for balanceEstado in json_map['balancePorEntidad']:
                 table = prs.slides[iSlide].shapes[0].table
-                for x in range(1, 6):
-                    cell = table.rows[x].cells[1]
+                for x in range(2, 7):
+                    cell = table.rows[x].cells[0]
                     paragraph = cell.textframe.paragraphs[0]
-                    paragraph.font.size = Pt(12)
+                    paragraph.font.size = Pt(10)
                     paragraph.font.name = 'Arial'
                     paragraph.font.color.rgb = RGBColor(0xFF, 0x7F, 0x50)
 
-                indice = 1
+                indice = 2
                 sumAvances=0
                 sumMetas=0
+                sumInversionAvance=0
+                sumInversionMeta=0
                 for avance in balanceEstado['datos']:
-                    for x in range(1, 3):
+                    for x in range(1, 6):
                         cell = table.rows[indice].cells[x]
                         paragraph = cell.textframe.paragraphs[0]
                         paragraph.font.size = Pt(10)
@@ -2783,19 +2795,33 @@ class BalancePorEntidadEndpoint(ProtectedResourceView):
                     # write body cells
                     table.cell(indice, 0).text = avance['carencia']
                     table.cell(indice, 1).text = str('{0:,}'.format(avance['total_avances']))
-                    table.cell(indice, 2).text = str('{0:,}'.format(avance['total_metas']))
+                    table.cell(indice, 2).text = str('{0:,.2f}'.format(avance['inversionAvance']))
+                    table.cell(indice, 3).text = str('{0:,}'.format(avance['total_metas']))
+                    table.cell(indice, 4).text = str('{0:,.2f}'.format(avance['inversionMeta']))
+                    table.cell(indice, 5).text = str('{0:,.2f}'.format(avance['porcentaje']))
                     sumAvances+=avance['total_avances']
                     sumMetas+=avance['total_metas']
+                    sumInversionAvance+=avance['inversionAvance']
+                    sumInversionMeta+=avance['inversionMeta']
                     indice += 1
 
-                table.cell(6, 1).text = str('{0:,}'.format(sumAvances))
-                table.cell(6, 2).text = str('{0:,}'.format(sumMetas))
+                for x in range(1, 6):
+                    cell = table.rows[7].cells[x]
+                    paragraph = cell.textframe.paragraphs[0]
+                    paragraph.font.size = Pt(10)
+                    paragraph.font.name = 'Arial'
+                    paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+                table.cell(7, 1).text = str('{0:,}'.format(sumAvances))
+                table.cell(7, 2).text = str('{0:,.2f}'.format(sumInversionAvance))
+                table.cell(7, 3).text = str('{0:,}'.format(sumMetas))
+                table.cell(7, 4).text = str('{0:,.2f}'.format(sumInversionMeta))
                 iSlide+=1
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
 
-        #prs.save('static/ppt/ppt-generados/balance_por_estado' + str(usuario.usuario.user.id) + '.pptx')
-        #the_file = 'static/ppt/ppt-generados/balance_por_estado' + str(usuario.usuario.user.id) + '.pptx'
+        #prs.save('djangoISSSTE/static/ppt/ppt-generados/balance_por_estado' + str(usuario.usuario.user.id) + '.pptx')
+        #the_file = 'djangoISSSTE/static/ppt/ppt-generados/balance_por_estado' + str(usuario.usuario.user.id) + '.pptx'
 
         prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_por_estado_' + str(usuario.usuario.user.id) + '.pptx')
         the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_por_estado_' + str(usuario.usuario.user.id) + '.pptx'
