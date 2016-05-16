@@ -163,27 +163,27 @@ class UserAdmin(UserAdmin):
             if usuario.usuario.rol == "AG":
                 g = Group.objects.get(name="administrador_general")
                 g.user_set.add(usuario)
-                print "Definiendo permisos para Administrador General"
+                #print "Definiendo permisos para Administrador General"
 
             elif usuario.usuario.rol == "UC":
                 g = Group.objects.get(name="usuario")
                 g.user_set.add(usuario)
-                print "Definiendo permisos para Usuario Central"
+                #print "Definiendo permisos para Usuario Central"
 
             elif usuario.usuario.rol == "FC":
                 g = Group.objects.get(name="funcionario")
                 g.user_set.add(usuario)
-                print "Definiendo permisos para Funcionario Central"
+                #print "Definiendo permisos para Funcionario Central"
 
             elif usuario.usuario.rol == "UE":
                 g = Group.objects.get(name="usuario")
                 g.user_set.add(usuario)
-                print "Definiendo permisos para Usuario Estatal"
+                #print "Definiendo permisos para Usuario Estatal"
 
             elif usuario.usuario.rol == "FE":
                 g = Group.objects.get(name="funcionario")
                 g.user_set.add(usuario)
-                print "Definiendo permisos para Funcionario Estatal"
+                #print "Definiendo permisos para Funcionario Estatal"
         except Group.DoesNotExist:
             g = None
 
@@ -197,14 +197,13 @@ class UserAdmin(UserAdmin):
     # Definiendo a los usuarios que serán visibles para los demás usuarios
     # dependiendo de su rol y estado
     def get_queryset(self, request):
-        queryEstado = request.user.usuario.estado.id
-
         qs = super(UserAdmin, self).get_queryset(request)
         if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UC' or request.user.usuario.rol == 'FC':
             return qs
         elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
-            print 'Query Set Administrador dependenciasub'
-            print queryEstado
+            queryEstado = request.user.usuario.estado.id
+            #print 'Query Set Administrador dependenciasub'
+            #print queryEstado
             return qs.filter(
                 Q(usuario__estado__id=queryEstado)
             )
@@ -506,7 +505,7 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
         if request.user.usuario.rol == 'AG' or request.user.usuario.rol == 'UC' or request.user.usuario.rol == 'FC':
             return qs
         elif request.user.usuario.rol == 'UE' or request.user.usuario.rol == 'FE':
-            print 'Query Set Administrador dependenciasub'
+            #print 'Query Set Administrador dependenciasub'
             return qs.filter(
                 Q(estado__id=request.user.usuario.estado.id)
             )
