@@ -328,9 +328,9 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 	readonly_fields = ('get_carencia', 'get_subcarencia', 'get_unidad_medida', 'get_observaciones', 'get_enero',
 					   'get_febrero', 'get_marzo', 'get_abril', 'get_mayo', 'get_junio', 'get_julio', 'get_agosto',
 					   'get_septiembre', 'get_octubre', 'get_noviembre', 'get_diciembre', 'get_accion',
-					   'get_inversion', 'get_monto_promedio',)
+					   'get_inversion', 'get_monto_promedio','get_inversion_formato')
 
-	list_display = ('id', 'get_carencia', 'get_subcarencia', 'get_accion', 'periodo', 'estado', 'get_inversion', 'get_monto_promedio',)
+	list_display = ('id', 'get_carencia', 'get_subcarencia', 'get_accion', 'periodo', 'estado', 'get_inversion_formato', 'get_monto_promedio',)
 	ordering = ['meta__nombreMeta', ]
 
 
@@ -477,12 +477,17 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 	def get_monto_promedio(self, obj):
 		return obj.meta.montoPromedio
 
-	def get_inversion(self,obj):
+	def get_inversion_formato(self,obj):
 
 		inversionAprox = round(float(obj.inversionAprox), 2)
 		return "$%s%s" % (intcomma(int(inversionAprox)), ("%0.2f" % inversionAprox)[-3:])
 
+	def get_inversion(self, obj):
+
+		return obj.inversionAprox
+
 	get_inversion.short_description = "Inversión Aprox."
+	get_inversion_formato.short_description = "Inversión Aprox."
 	get_subcarencia.short_description = "Sub Carencia"
 	get_carencia.short_description = "Carencia"
 	get_unidad_medida.short_description = "Unidad de Medida"
