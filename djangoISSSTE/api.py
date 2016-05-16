@@ -2519,6 +2519,7 @@ class PD_AvancePorMunicipioEndpoint(ProtectedResourceView):
 
             shortened_reporte['suma_avance'] = 0
             shortened_reporte['suma_meta'] = 0
+            shortened_reporte['porcentaje'] = 0
 
             # ID de cada avance mensual en el reporte para poder obtener el valor del avance cada mes
             avance_mensual = AvanceMensual.objects.get(id=reporte['id'])
@@ -2527,6 +2528,7 @@ class PD_AvancePorMunicipioEndpoint(ProtectedResourceView):
                                            estado__nombreEstado=reporte['avancePorMunicipio__estado__nombreEstado'])
 
             # Si no se indicaron meses. habrá que obtener el valor de todos
+
             shortened_reporte['suma_avance'] += (avance_mensual.ene + avance_mensual.feb + avance_mensual.mar +
                                                 avance_mensual.abr + avance_mensual.may + avance_mensual.jun +
                                                 avance_mensual.jul + avance_mensual.ago + avance_mensual.sep +
@@ -2534,6 +2536,9 @@ class PD_AvancePorMunicipioEndpoint(ProtectedResourceView):
             shortened_reporte['suma_meta'] += (meta.ene + meta.feb + meta.mar + meta.abr +
                                                meta.may + meta.jun + meta.jul + meta.ago +
                                                meta.sep + meta.oct + meta.nov + meta.dic)
+            if shortened_reporte['suma_meta']>0:
+                shortened_reporte['porcentaje'] +=(shortened_reporte['suma_avance']*100)/shortened_reporte['suma_meta']
+
             shortened_reporte['id'] = reporte['id']
             shortened_reporte['avancePorMunicipio_id'] = reporte['avancePorMunicipio__id']
             shortened_reporte['accion'] = reporte['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
