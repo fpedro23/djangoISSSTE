@@ -25,7 +25,11 @@ SECRET_KEY = '7c$*7lp@_9igh)og*w7cd4c023*g^jccrg&_(fb_#mvj-w&stk'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+TEMPLATE_DEBUG = True
+
+ALLOWED_HOSTS = ['www.inclusionissste.mx']
+
+ADMIN_TOOLS_MENU = 'menu.CustomMenu'
 
 
 # Application definition
@@ -60,8 +64,8 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-	'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-	'oauth2_provider.middleware.OAuth2TokenMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'oauth2_provider.middleware.OAuth2TokenMiddleware',
 ]
 
 
@@ -86,6 +90,11 @@ TEMPLATES = [
         },
     },
 ]
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.core.context_processors.request',
+    'django.contrib.auth.context_processors.auth',
+)
 
 
 WSGI_APPLICATION = 'Projects.wsgi.application'
@@ -133,6 +142,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # vida del token
 SESSION_COOKIE_AGE = 35900
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 LOGIN_URL = '/admin/login/'
 
 # Internationalization
@@ -153,8 +163,14 @@ USE_TZ = True
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files
-STATIC_ROOT = '/home/inclusioni/issste/static/djangoISSSTE/static'
 STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'Projects/staticfiles')
+
+STATICFILES_DIRS = (
+    os.path.join(PROJECT_ROOT, '/djangoISSSTE/static'),
+)
+
 
 
 #MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'djangoISSSTE/media/tutorialesPDF')
@@ -170,16 +186,12 @@ TEMPLATETAGS_DIRS = (
     os.path.join(BASE_DIR, 'djangoISSSTE/templatetags/'),
 )
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-
-# Extra places for collectstatic to find static files.
-#STATICFILES_DIRS = (
- #   os.path.join(PROJECT_ROOT, '../djangoISSSTE/static'),
-#)
-
-#STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
-
+EMAIL_HOST = 'mail.inclusionissste.mx'
+EMAIL_HOST_USER = 'inclusioni'
+EMAIL_HOST_PASSWORD = 'CbxxdWaz'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True

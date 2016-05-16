@@ -333,28 +333,18 @@ class BuscadorEndpoint(ProtectedResourceView):
     def get(self, request):
         # myObj: objeto a construir con lo parámetros obtenidos en la URL y que serán
         # mandados al buscador para que éste los filtre
+        estados = []
         usuario = get_usuario_for_token(request.GET.get('access_token'))
-        estados = get_array_or_none(request.GET.get('estados'))
-        municipios = get_array_or_none(request.GET.get('municipios'))
-
-        if estados is None or len(estados) == 0:
-            if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UC' or usuario.usuario.rol == 'FC':
-                estados = None
-            else:
-                estados = [usuario.usuario.estado.id]
-
-        if municipios is None or len(municipios) == 0:
-            if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UC' or usuario.usuario.rol == 'FC':
-                municipios = None
-            else:
-                municipios = [Municipio.objects.values('id').filter(estado_id = usuario.usuario.estado.id)]
-
+        if usuario.usuario.rol == "FE" or usuario.usuario.rol == "UE":
+            estados.append(usuario.usuario.estado.id)
+        else:
+            estados = get_array_or_none(request.GET.get('estados'))
         myObj = BuscarAvances(
             carencias=get_array_or_none(request.GET.get('carencias')),
             subcarencias=get_array_or_none(request.GET.get('subcarencias')),
             acciones=get_array_or_none(request.GET.get('acciones')),
             estados=estados,
-            municipios=municipios,
+            municipios=get_array_or_none(request.GET.get('municipios')),
             periodos=get_array_or_none(request.GET.get('periodos')),
             meses=get_array_or_none(request.GET.get('meses')),
             observaciones=request.GET.get('observaciones'),
@@ -1031,6 +1021,7 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
                 Q(avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia =
                   subCarencia['avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']))\
                     .values('avancePorMunicipio__meta__accionEstrategica__nombreAccion',
+                            'avancePorMunicipio__meta__accionEstrategica__id',
                             'avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad',
                             'avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable')\
                     .annotate(acciones=Count('avancePorMunicipio__meta__accionEstrategica__nombreAccion')):
@@ -1042,8 +1033,8 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
                 accion['responable'] = accionesDatos['avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable']
                 accion['avances'] = []
                 for avance in AvanceMensual.objects.filter(
-                                Q(avancePorMunicipio__meta__accionEstrategica__nombreAccion=
-                                  accionesDatos['avancePorMunicipio__meta__accionEstrategica__nombreAccion']) &
+                                Q(avancePorMunicipio__meta__accionEstrategica__id=
+                                  accionesDatos['avancePorMunicipio__meta__accionEstrategica__id']) &
                                 Q(avancePorMunicipio__meta__periodo__nombrePeriodo=periodo_id)
                 ):
                     ##print "Avance"
@@ -1064,6 +1055,21 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
                     avances['nov'] = avance.nov
                     avances['dic'] = avance.dic
 
+                    avances['2014_2015'] = 0
+                    for acumulado in AvanceMensual.objects.filter(
+                        Q(avancePorMunicipio__meta__accionEstrategica__id=
+                          accionesDatos['avancePorMunicipio__meta__accionEstrategica__id']) &
+                        Q(municipio=avance.municipio)&
+                        (
+                            Q(avancePorMunicipio__meta__periodo__nombrePeriodo=2016)|
+                            Q(avancePorMunicipio__meta__periodo__nombrePeriodo=2015)
+                        )
+
+                    ):
+                        avances['2014_2015'] = avances['2014_2015'] + acumulado.ene + acumulado.feb + acumulado.mar + \
+                                               acumulado.abr +  acumulado.may + acumulado.jun + acumulado.jul +\
+                                               acumulado.ago + acumulado.sep + acumulado.oct + acumulado.nov +\
+                                               acumulado.dic
                     accion['avances'].append(avances)
                 datos['acciones'].append(accion)
             json_map['resultados'].append(datos)
@@ -1124,9 +1130,9 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
             'align': 'center',
             'valign': 'vcenter',
             'fg_color': 'FFFFFF'})
-        merge_format_blanco.set_border_color('white')
-        merge_format_blanco.set_border(1)
-        merge_format_blanco.set_font_color('black')
+        merge_format_gris.set_border_color('white')
+        merge_format_gris.set_border(1)
+        merge_format_gris.set_font_color('black')
 
         # Merge 2 cells.
         sheet.set_column(5, 0, 10)

@@ -7,5 +7,8 @@ env2-7/
 db.sqlite3/
 .idea/
 djangoISSSTE/migrations/
+djangoISSSTE/media/
 local_settings.py
 Projects/settingsOscar.py
+Projects/wsgiOscar.py
+Projects/mailData.txt
