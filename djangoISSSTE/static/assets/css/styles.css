@@ -1503,3 +1503,33 @@ ul li {
     top:30px;
     position: absolute;
 }
+
+
+/*elementos de la seccion de AYUDA*/
+.ayudaTXT{
+    width:180px;
+    height:190px;
+    background-image:url(../Imagenes/bigBackground.fw.png);
+    background-position: -180px -1140px;
+
+    position:absolute;
+    top: 149px;
+    left: 322px;
+}
+.ayudaTXT:hover{
+    background-position: -180px -1330px;
+}
+.ayudaVIDEO{
+    width: 180px;
+    height:190px;
+    background-image:url(../Imagenes/bigBackground.fw.png);
+    background-position: 0px -1140px;
+
+    position:absolute;
+    top: 149px;
+    left:512px;
+}
+.ayudaVIDEO:hover{
+    background-position:0px -1330px;
+}
+/*cierre de elementos de la seccion de AYUDA*/

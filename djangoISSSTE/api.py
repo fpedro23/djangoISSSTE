@@ -333,12 +333,28 @@ class BuscadorEndpoint(ProtectedResourceView):
     def get(self, request):
         # myObj: objeto a construir con lo parámetros obtenidos en la URL y que serán
         # mandados al buscador para que éste los filtre
+        usuario = get_usuario_for_token(request.GET.get('access_token'))
+        estados = get_array_or_none(request.GET.get('estados'))
+        municipios = get_array_or_none(request.GET.get('municipios'))
+
+        if estados is None or len(estados) == 0:
+            if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UC' or usuario.usuario.rol == 'FC':
+                estados = None
+            else:
+                estados = [usuario.usuario.estado.id]
+
+        if municipios is None or len(municipios) == 0:
+            if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UC' or usuario.usuario.rol == 'FC':
+                municipios = None
+            else:
+                municipios = [Municipio.objects.values('id').filter(estado_id = usuario.usuario.estado.id)]
+
         myObj = BuscarAvances(
             carencias=get_array_or_none(request.GET.get('carencias')),
             subcarencias=get_array_or_none(request.GET.get('subcarencias')),
             acciones=get_array_or_none(request.GET.get('acciones')),
-            estados=get_array_or_none(request.GET.get('estados')),
-            municipios=get_array_or_none(request.GET.get('municipios')),
+            estados=estados,
+            municipios=municipios,
             periodos=get_array_or_none(request.GET.get('periodos')),
             meses=get_array_or_none(request.GET.get('meses')),
             observaciones=request.GET.get('observaciones'),
@@ -1108,9 +1124,9 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
             'align': 'center',
             'valign': 'vcenter',
             'fg_color': 'FFFFFF'})
-        merge_format_gris.set_border_color('white')
-        merge_format_gris.set_border(1)
-        merge_format_gris.set_font_color('black')
+        merge_format_blanco.set_border_color('white')
+        merge_format_blanco.set_border(1)
+        merge_format_blanco.set_font_color('black')
 
         # Merge 2 cells.
         sheet.set_column(5, 0, 10)
@@ -1133,47 +1149,92 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
         format.set_font_name('Calibri')
 
 
-        sheet.write(5, 0, "Clave", merge_format_rojo)
-        sheet.write(5, 1, "Entidad", merge_format_rojo)
-        sheet.write(5, 2, "Municipio", merge_format_rojo)
-        sheet.write(5, 3, "Enero", bold)
-        sheet.write(5, 4, "Febrero", bold)
-        sheet.write(5, 5, "Marzo", bold)
-        sheet.write(5, 6, "Abril", bold)
-        sheet.write(5, 7, "Mayo", bold)
-        sheet.write(5, 8, "Junio", bold)
-        sheet.write(5, 9, "Julio", bold)
-        sheet.write(5, 10, "Agosto", bold)
-        sheet.write(5, 11, "Septiembre", bold)
-        sheet.write(5, 12, "Octubre", bold)
-        sheet.write(5, 13, "Noviembre", bold)
-        sheet.write(5, 14, "Diciembre", bold)
-
-
-        sheet.merge_range('D1:O1', json_map['carencia'], merge_format_rojo)
-
+        indice=0
+        columna=0
         for reporte in json_map['resultados']:
-            sheet.merge_range('D2:O2', reporte['subCarencias'], merge_format_gris)
             for accion in reporte['acciones']:
-                sheet.merge_range('D3:O3', accion['accion'],merge_format_blanco)
-                sheet.merge_range('D4:O4', accion['unidad'],merge_format_blanco)
+                indice+=1
+                if indice==1:
+                    sheet.merge_range('D1:O1', json_map['carencia'], merge_format_rojo)
+                    sheet.merge_range('D2:O2', reporte['subCarencias'], merge_format_gris)
+                    columna=0
+                    sheet.merge_range('D3:O3', accion['accion'],merge_format_blanco)
+                    sheet.merge_range('D4:O4', accion['unidad'],merge_format_blanco)
+                elif indice==2:
+                    sheet.merge_range('Q1:AE1', json_map['carencia'], merge_format_rojo)
+                    sheet.merge_range('Q2:AE2', reporte['subCarencias'], merge_format_gris)
+                    columna=columna+16
+                    sheet.merge_range('Q3:AE3', accion['accion'],merge_format_blanco)
+                    sheet.merge_range('Q4:AE4', accion['unidad'],merge_format_blanco)
+                    sheet.merge_range('Q5:AE5', 'Avances', merge_format_verde)
+                    sheet.merge_range('Q5:AE5', "Avance Mensual", merge_format_verde)
+
+                elif indice==3:
+                    sheet.merge_range('AG1:AU1', json_map['carencia'], merge_format_rojo)
+                    sheet.merge_range('AG2:AU2', reporte['subCarencias'], merge_format_gris)
+                    columna=columna+16
+                    sheet.merge_range('AG3:AU3', accion['accion'],merge_format_blanco)
+                    sheet.merge_range('AG4:AU4', accion['unidad'],merge_format_blanco)
+                    sheet.merge_range('AG5:AU5', 'Avances', merge_format_verde)
+                    sheet.merge_range('AG5:AU5', "Avance Mensual", merge_format_verde)
+                elif indice==4:
+                    sheet.merge_range('AW1:BK1', json_map['carencia'], merge_format_rojo)
+                    sheet.merge_range('AW2:BK2', reporte['subCarencias'], merge_format_gris)
+                    columna=columna+16
+                    sheet.merge_range('AW3:BK3', accion['accion'],merge_format_blanco)
+                    sheet.merge_range('AW4:BK4', accion['unidad'],merge_format_blanco)
+                    sheet.merge_range('AW5:BK5', 'Avances', merge_format_verde)
+                    sheet.merge_range('AW5:BK5', "Avance Mensual", merge_format_verde)
+                elif indice==5:
+                    sheet.merge_range('BM1:CA1', json_map['carencia'], merge_format_rojo)
+                    sheet.merge_range('BM2:CA2', reporte['subCarencias'], merge_format_gris)
+                    columna=columna+16
+                    sheet.merge_range('BM3:CA3', accion['accion'],merge_format_blanco)
+                    sheet.merge_range('BM4:CA4', accion['unidad'],merge_format_blanco)
+                    sheet.merge_range('BM5:CA5', 'Avances', merge_format_verde)
+                    sheet.merge_range('BM5:CA5', "Avance Mensual", merge_format_verde)
+                elif indice==6:
+                    sheet.merge_range('CC1:CQ1', json_map['carencia'], merge_format_rojo)
+                    sheet.merge_range('CC2:CQ2', reporte['subCarencias'], merge_format_gris)
+                    columna=columna+16
+                    sheet.merge_range('CC3:CQ3', accion['accion'],merge_format_blanco)
+                    sheet.merge_range('CC4:CQ4', accion['unidad'],merge_format_blanco)
+                    sheet.merge_range('CC5:CQ5', 'Avances', merge_format_verde)
+                    sheet.merge_range('CC5:CQ5', "Avance Mensual", merge_format_verde)
+
+
+                sheet.write(5, columna +0, "Clave", merge_format_rojo)
+                sheet.write(5, columna +1, "Entidad", merge_format_rojo)
+                sheet.write(5, columna +2, "Municipio", merge_format_rojo)
+                sheet.write(5, columna +3, "Enero", bold)
+                sheet.write(5, columna +4, "Febrero", bold)
+                sheet.write(5, columna +5, "Marzo", bold)
+                sheet.write(5, columna +6, "Abril", bold)
+                sheet.write(5, columna +7, "Mayo", bold)
+                sheet.write(5, columna +8, "Junio", bold)
+                sheet.write(5, columna +9, "Julio", bold)
+                sheet.write(5, columna +10, "Agosto", bold)
+                sheet.write(5, columna +11, "Septiembre", bold)
+                sheet.write(5, columna +12, "Octubre", bold)
+                sheet.write(5, columna +13, "Noviembre", bold)
+                sheet.write(5, columna +14, "Diciembre", bold)
                 renAvance=6
                 for avance in accion['avances']:
-                    sheet.write(renAvance, 0, avance["clave"], format)
-                    sheet.write(renAvance, 1, avance["estado"], format)
-                    sheet.write(renAvance, 2, avance["municipio"], format)
-                    sheet.write(renAvance, 3, avance["ene"], format)
-                    sheet.write(renAvance, 4, avance["feb"], format)
-                    sheet.write(renAvance, 5, avance["mar"], format)
-                    sheet.write(renAvance, 6, avance["abr"], format)
-                    sheet.write(renAvance, 7, avance["may"], format)
-                    sheet.write(renAvance, 8, avance["jun"], format)
-                    sheet.write(renAvance, 9, avance["jul"], format)
-                    sheet.write(renAvance, 10, avance["ago"], format)
-                    sheet.write(renAvance, 11, avance["sep"], format)
-                    sheet.write(renAvance, 12, avance["oct"], format)
-                    sheet.write(renAvance, 13, avance["nov"], format)
-                    sheet.write(renAvance, 14, avance["dic"], format)
+                    sheet.write(renAvance, columna +0, avance["clave"], format)
+                    sheet.write(renAvance, columna +1, avance["estado"], format)
+                    sheet.write(renAvance, columna +2, avance["municipio"], format)
+                    sheet.write(renAvance, columna +3, avance["ene"], format)
+                    sheet.write(renAvance, columna +4, avance["feb"], format)
+                    sheet.write(renAvance, columna +5, avance["mar"], format)
+                    sheet.write(renAvance, columna +6, avance["abr"], format)
+                    sheet.write(renAvance, columna +7, avance["may"], format)
+                    sheet.write(renAvance, columna +8, avance["jun"], format)
+                    sheet.write(renAvance, columna +9, avance["jul"], format)
+                    sheet.write(renAvance, columna +10, avance["ago"], format)
+                    sheet.write(renAvance, columna +11, avance["sep"], format)
+                    sheet.write(renAvance, columna +12, avance["oct"], format)
+                    sheet.write(renAvance, columna +13, avance["nov"], format)
+                    sheet.write(renAvance, columna +14, avance["dic"], format)
                     renAvance+=1
 
 
@@ -1274,148 +1335,7 @@ def get_suma_mes(S):
            S.aggregate(Sum('avancemensual__sep'))['avancemensual__sep__sum'] +S.aggregate(Sum('avancemensual__oct'))['avancemensual__oct__sum']+\
            S.aggregate(Sum('avancemensual__nov'))['avancemensual__nov__sum']+S.aggregate(Sum('avancemensual__dic'))['avancemensual__dic__sum']
 
-class ReporteInicioEndpoint(ProtectedResourceView):
-    def rename_municipio(self, avance):
-        avance['avancemensual__municipio'] = avance['avancemensual__municipio__nombreMunicipio']
-        del avance['avancemensual__municipio__nombreMunicipio']
 
-    def get(self, request):
-        avances = AvancePorMunicipio.objects.all()
-
-        reporte = {
-            'reporte_mapa': {'avance_mapa': {}},
-            'reporte_total': {'avance_educacion': {}, 'avance_salud': {}, 'avance_vivienda': {}, 'avance_alimentacion': {}},
-			'reporte2016': {'avance_educacion': {}, 'avance_salud': {}, 'avance_vivienda': {}, 'avance_alimentacion': {}},
-            'educacion': {'total': {}},
-            'salud': {'total': {}},
-            'vivienda': {'total': {}},
-            'alimentacion': {'total': {}},
-        }
-
-
-        the_list = []
-        reporte_municipio = get_avance_values(avances)
-        if reporte_municipio:
-            for avance in reporte_municipio:
-                self.rename_municipio(avance)
-                the_list.append(avance)
-            reporte['reporte_mapa']['avance_mapa']['avances'] = the_list
-            reporte['reporte_mapa']['avance_mapa']['total'] = get_suma_mes(reporte_municipio)
-        else:
-            reporte['reporte_mapa']['avance_mapa']['avances'] = the_list
-            reporte['reporte_mapa']['avance_mapa']['total'] = 0
-
-
-        # Grafico, obras totales
-        avances_totales_educacion = avances.filter(avancemensual__avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=1)
-        the_list = []
-        if avances_totales_educacion:
-            avances_values=get_avance_values(avances_totales_educacion)
-            for avance in avances_values:
-                self.rename_municipio(avance)
-                the_list.append(avance)
-            reporte['reporte_total']['avance_educacion']['avances'] = the_list
-            reporte['reporte_total']['avance_educacion']['total'] = get_suma_mes(avances_totales_educacion)
-        else:
-            reporte['reporte_total']['avance_educacion']['avances'] = the_list
-            reporte['reporte_total']['avance_educacion']['total'] = 0
-
-        avances_totales_salud = avances.filter(avancemensual__avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=2)
-        the_list = []
-        if avances_totales_salud:
-            avances_values=get_avance_values(avances_totales_salud)
-            for avance in avances_values:
-                self.rename_municipio(avance)
-                the_list.append(avance)
-            reporte['reporte_total']['avance_salud']['avances'] = the_list
-            reporte['reporte_total']['avance_salud']['total'] = get_suma_mes(avances_totales_salud)
-        else:
-            reporte['reporte_total']['avance_salud']['avances'] = the_list
-            reporte['reporte_total']['avance_salud']['total'] = 0
-
-        avances_totales_vivienda = avances.filter(avancemensual__avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=3)
-        the_list = []
-        if avances_totales_vivienda:
-            avances_values=get_avance_values(avances_totales_vivienda)
-            for avance in avances_values:
-                self.rename_municipio(avance)
-                the_list.append(avance)
-            reporte['reporte_total']['avance_vivienda']['avances'] = the_list
-            reporte['reporte_total']['avance_vivienda']['total'] = get_suma_mes(avances_totales_vivienda)
-        else:
-            reporte['reporte_total']['avance_vivienda']['avances'] = the_list
-            reporte['reporte_total']['avance_vivienda']['total'] = 0
-
-        avances_totales_alimentacion = avances.filter(avancemensual__avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=4)
-        the_list = []
-        if avances_totales_alimentacion:
-            avances_values=get_avance_values(avances_totales_alimentacion)
-            for avance in avances_values:
-                self.rename_municipio(avance)
-                the_list.append(avance)
-            reporte['reporte_total']['avance_alimentacion']['avances'] = the_list
-            reporte['reporte_total']['avance_alimentacion']['total'] = get_suma_mes(avances_totales_alimentacion)
-        else:
-            reporte['reporte_total']['avance_alimentacion']['avances'] = the_list
-            reporte['reporte_total']['avance_alimentacion']['total'] = 0
-
-
-
-        # Reportes anuales 2012-2015
-        avance2016_educacion = avances_totales_educacion.filter(avancemensual__avancePorMunicipio__periodo__nombrePeriodo=2016).distinct()
-        the_list = []
-        if avance2016_educacion:
-            avances_values=get_avance_values(avance2016_educacion)
-            for avance in avances_values:
-                self.rename_municipio(avance)
-                the_list.append(avance)
-            reporte['reporte2016']['avance_educacion']['avances'] = the_list
-            reporte['reporte2016']['avance_educacion']['total'] = get_suma_mes(avance2016_educacion)
-        else:
-            reporte['reporte2016']['avance_educacion']['avances'] = the_list
-            reporte['reporte2016']['avance_educacion']['total'] = 0
-
-        avance2016_salud = avances_totales_salud.filter(avancemensual__avancePorMunicipio__periodo__nombrePeriodo=2016).distinct()
-        the_list = []
-        if avance2016_salud:
-            avances_values=get_avance_values(avance2016_salud)
-            for avance in avances_values:
-                self.rename_municipio(avance)
-                the_list.append(avance)
-            reporte['reporte2016']['avance_salud']['avances'] = the_list
-            reporte['reporte2016']['avance_salud']['total'] = get_suma_mes(avance2016_salud)
-        else:
-            reporte['reporte2016']['avance_salud']['avances'] = the_list
-            reporte['reporte2016']['avance_salud']['total'] = 0
-
-        avance2016_vivienda = avances_totales_vivienda.filter(avancemensual__avancePorMunicipio__periodo__nombrePeriodo=2016).distinct()
-        the_list = []
-        if avance2016_vivienda:
-            avances_values=get_avance_values(avance2016_vivienda)
-            for avance in avances_values:
-                self.rename_municipio(avance)
-                the_list.append(avance)
-            reporte['reporte2016']['avance_vivienda']['avances'] = the_list
-            reporte['reporte2016']['avance_vivienda']['total'] = get_suma_mes(avance2016_vivienda)
-        else:
-            reporte['reporte2016']['avance_vivienda']['avances'] = the_list
-            reporte['reporte2016']['avance_vivienda']['total'] = 0
-
-        avance2016_alimentacion = avances_totales_alimentacion.filter(avancemensual__avancePorMunicipio__periodo__nombrePeriodo=2016).distinct()
-        the_list = []
-        if avance2016_alimentacion:
-            avances_values=get_avance_values(avance2016_alimentacion)
-            for avance in avances_values:
-                self.rename_municipio(avance)
-                the_list.append(avance)
-            reporte['reporte2016']['avance_alimentacion']['avances'] = the_list
-            reporte['reporte2016']['avance_alimentacion']['total'] = get_suma_mes(avance2016_alimentacion)
-        else:
-            reporte['reporte2016']['avance_alimentacion']['avances'] = the_list
-            reporte['reporte2016']['avance_alimentacion']['total'] = 0
-
-
-        return HttpResponse(json.dumps(reporte), 'application/json')
 
 def get_usuario_for_token(token):
     if token:
@@ -1425,87 +1345,155 @@ def get_usuario_for_token(token):
 
 class ResultadosPptxEndpoint(ProtectedResourceView):
     def get(self, request):
-		usuario = get_usuario_for_token(request.GET.get('access_token'))
-		estados = get_array_or_none(request.GET.get('estados'))
-		municipios = get_array_or_none(request.GET.get('municipios'))
+        usuario = get_usuario_for_token(request.GET.get('access_token'))
+        estados = get_array_or_none(request.GET.get('estados'))
+        municipios = get_array_or_none(request.GET.get('municipios'))
+        if estados is None or len(estados) == 0:
+            if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
+                estados = None
+            else:
+                estados = [usuario.estado.id]
 
-		if estados is None or len(estados) == 0:
-			if usuario.rol == 'AG' or usuario.rol == 'UR' or usuario.rol == 'FR':
-				estados = None
-			else:
-				estados = [usuario.estado.id]
+        if municipios is None or len(municipios) == 0:
+            if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
+                municipios = None
+            else:
+                municipios = [Municipio.objects.filter(estado_id = usuario.estado.id)]
 
-		if municipios is None or len(municipios) == 0:
-			if usuario.rol == 'AG' or usuario.rol == 'UR' or usuario.rol == 'FR':
-				municipios = None
-			else:
-				municipios = [Municipio.objects.filter(estado_id = usuario.estado.id)]
 
-		myObj =  BuscarAvances(
-			carencias = get_array_or_none(request.GET.get('carencias')),
-			subcarencias = get_array_or_none(request.GET.get('subcarencias')),
-			acciones = get_array_or_none(request.GET.get('acciones')),
-			estados = estados,
-			municipios = municipios,
-			periodos = get_array_or_none(request.GET.get('periodos')),
-			meses = get_array_or_none(request.GET.get('meses')),
-			observaciones = request.GET.get('observaciones'),
-			avance_minimo = get_array_or_none(request.GET.get('avanceMinimo')),
-			avance_maximo = get_array_or_none(request.GET.get('avanceMaximo')),
-			inversion_minima = get_array_or_none(request.GET.get('inversionMinima')),
-			inversion_maxima = get_array_or_none(request.GET.get('inversionMaxima')),
-			unidad_de_medida = request.GET.get('unidadDeMedida'),
-		)
-		resultados = myObj.buscar()
+        myObj = BuscarAvances(
+            carencias=get_array_or_none(request.GET.get('carencias')),
+            subcarencias=get_array_or_none(request.GET.get('subcarencias')),
+            acciones=get_array_or_none(request.GET.get('acciones')),
+            estados=estados,
+            municipios=municipios,
+            periodos=get_array_or_none(request.GET.get('periodos')),
+            meses=get_array_or_none(request.GET.get('meses')),
+            observaciones=request.GET.get('observaciones'),
+            avance_minimo=request.GET.get('avanceMinimo'),
+            avance_maximo=request.GET.get('avanceMaximo'),
+            inversion_minima=get_array_or_none(request.GET.get('inversionMinima')),
+            inversion_maxima=get_array_or_none(request.GET.get('inversionMaxima')),
+            unidad_de_medida=request.GET.get('unidadDeMedida'),
+            limite_inferior=request.GET.get('limiteInferior'),
+            limite_superior=request.GET.get('limiteSuperior')
+        )
 
-		#***********************************************************************************************************
-		json_map = {}
-		json_map['reporte_general'] = []
-		for reporte in resultados['reporte_general']:
-			shortened_reporte = {}
-			shortened_reporte['suma_avance'] = 0
-			avance_mensual = AvanceMensual.objects.get(id=reporte['id'])
-			if myObj.meses is not  None:
-				for mes in myObj.meses:
-					if mes == 1: shortened_reporte['suma_avance'] += avance_mensual.ene
-					if mes == 2: shortened_reporte['suma_avance'] += avance_mensual.feb
-					if mes == 3: shortened_reporte['suma_avance'] += avance_mensual.mar
-					if mes == 4: shortened_reporte['suma_avance'] += avance_mensual.abr
-					if mes == 5: shortened_reporte['suma_avance'] += avance_mensual.may
-					if mes == 6: shortened_reporte['suma_avance'] += avance_mensual.jun
-					if mes == 7: shortened_reporte['suma_avance'] += avance_mensual.jul
-					if mes == 8: shortened_reporte['suma_avance'] += avance_mensual.ago
-					if mes == 9: shortened_reporte['suma_avance'] += avance_mensual.sep
-					if mes == 10: shortened_reporte['suma_avance'] += avance_mensual.oct
-					if mes == 11: shortened_reporte['suma_avance'] += avance_mensual.nov
-					if mes == 12: shortened_reporte['suma_avance'] += avance_mensual.dic
-			else:
-				shortened_reporte['suma_avance'] += avance_mensual.ene + avance_mensual.feb + avance_mensual.mar + avance_mensual.abr
-				shortened_reporte['suma_avance'] += avance_mensual.may + avance_mensual.jun + avance_mensual.jul + avance_mensual.ago
-				shortened_reporte['suma_avance'] += avance_mensual.sep + avance_mensual.oct + avance_mensual.nov + avance_mensual.dic
+        resultados = myObj.buscar()  # Obteniendo los reportes del buscador
+        json_map = {}  # Json a devolver
+        json_map['reporte_general'] = []  # Entrega avances mensuales con la información solicitada
+        json_map['reporte_por_estado'] = []  # Entrega avances mensuales por estado
+        json_map['reporte_por_carencia'] = []  # Entrega avances mensuales por carencia
+        json_map['reporte_por_accion'] = []  # Entrega avances mensuales por accion
 
-			shortened_reporte['id'] = reporte['id']
-			shortened_reporte['accion'] = reporte['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
-			shortened_reporte['carencia'] = reporte['avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
-			shortened_reporte['subCarencia'] = reporte['avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
-			shortened_reporte['estado'] = reporte['avancePorMunicipio__estado__nombreEstado']
-			shortened_reporte['municipio'] = reporte['municipio__nombreMunicipio']
-			shortened_reporte['periodo'] = reporte['avancePorMunicipio__periodo__nombrePeriodo']
-			shortened_reporte['latitud'] = reporte['municipio__latitud']
-			shortened_reporte['longitud'] = reporte['municipio__longitud']
-			json_map['reporte_general'].append(shortened_reporte)
+        for reporte in resultados['reporte_general']:
+            shortened_reporte = {}  # Utilizado para mejorar el aspecto de las llaves del json
+            add = True  # Bandera para decidir si el valor del avace está dentro del rango
 
-		output = StringIO.StringIO()
-		prs = Presentation()
-		slide = prs.slides.add_slide(prs.slide_layouts[5])
-		shapes = slide.shapes
-		shapes.title.text = 'Resultados'
+            shortened_reporte['suma_avance'] = 0
+            shortened_reporte['suma_meta'] = 0
 
-		renglones = len(json_map['reporte_general'])
-		if renglones < 22:
-			rows = renglones+1
-		else:
-			rows = 22
+            # ID de cada avance mensual en el reporte para poder obtener el valor del avance cada mes
+            avance_mensual = AvanceMensual.objects.get(id=reporte['id'])
+            # ID de cada meta en el reporte para poder obtener el valor del avance cada mes
+
+            ##print "##printing: "
+            ##print reporte['avancePorMunicipio__meta__id']
+            # print reporte['avancePorMunicipio__estado__nombreEstado']
+
+            if myObj.meses is not None:
+                for mes in myObj.meses:
+                    if mes == 1:
+                        shortened_reporte['suma_avance'] += avance_mensual.ene
+                    if mes == 2:
+                        shortened_reporte['suma_avance'] += avance_mensual.feb
+                    if mes == 3:
+                        shortened_reporte['suma_avance'] += avance_mensual.mar
+                    if mes == 4:
+                        shortened_reporte['suma_avance'] += avance_mensual.abr
+                    if mes == 5:
+                        shortened_reporte['suma_avance'] += avance_mensual.may
+                    if mes == 6:
+                        shortened_reporte['suma_avance'] += avance_mensual.jun
+                    if mes == 7:
+                        shortened_reporte['suma_avance'] += avance_mensual.jul
+                    if mes == 8:
+                        shortened_reporte['suma_avance'] += avance_mensual.ago
+                    if mes == 9:
+                        shortened_reporte['suma_avance'] += avance_mensual.sep
+                    if mes == 10:
+                        shortened_reporte['suma_avance'] += avance_mensual.oct
+                    if mes == 11:
+                        shortened_reporte['suma_avance'] += avance_mensual.nov
+                    if mes == 12:
+                        shortened_reporte['suma_avance'] += avance_mensual.dic
+            else:
+                # Si no se indicaron meses. habrá que obtener el valor de todos
+                shortened_reporte['suma_avance'] += (avance_mensual.ene + avance_mensual.feb + avance_mensual.mar +
+                                                     avance_mensual.abr + avance_mensual.may + avance_mensual.jun +
+                                                     avance_mensual.jul + avance_mensual.ago + avance_mensual.sep +
+                                                     avance_mensual.oct + avance_mensual.nov + avance_mensual.dic)
+
+            metaId = reporte['avancePorMunicipio__meta__id']
+            estadoId = reporte['avancePorMunicipio__estado__id']
+            metas = myObj.getMetasFiltradas(carenciaID=None, accionID=None, estadoID=estadoId, metaID = metaId)
+            for meta_mensual in metas['meta']:
+                if myObj.meses is not None:
+                    for mes in myObj.meses:
+                        if mes == 1: shortened_reporte['suma_meta'] += meta_mensual['ene']
+                        if mes == 2: shortened_reporte['suma_meta'] += meta_mensual['feb']
+                        if mes == 3: shortened_reporte['suma_meta'] += meta_mensual['mar']
+                        if mes == 4: shortened_reporte['suma_meta'] += meta_mensual['abr']
+                        if mes == 5: shortened_reporte['suma_meta'] += meta_mensual['may']
+                        if mes == 6: shortened_reporte['suma_meta'] += meta_mensual['jun']
+                        if mes == 7: shortened_reporte['suma_meta'] += meta_mensual['jul']
+                        if mes == 8: shortened_reporte['suma_meta'] += meta_mensual['ago']
+                        if mes == 9: shortened_reporte['suma_meta'] += meta_mensual['sep']
+                        if mes == 10: shortened_reporte['suma_meta'] += meta_mensual['oct']
+                        if mes == 11: shortened_reporte['suma_meta'] += meta_mensual['nov']
+                        if mes == 12: shortened_reporte['suma_meta'] += meta_mensual['dic']
+                else:
+                    shortened_reporte['suma_meta'] += meta_mensual['ene']
+                    shortened_reporte['suma_meta'] += meta_mensual['feb']
+                    shortened_reporte['suma_meta'] += meta_mensual['mar']
+                    shortened_reporte['suma_meta'] += meta_mensual['abr']
+                    shortened_reporte['suma_meta'] += meta_mensual['may']
+                    shortened_reporte['suma_meta'] += meta_mensual['jun']
+                    shortened_reporte['suma_meta'] += meta_mensual['jul']
+                    shortened_reporte['suma_meta'] += meta_mensual['ago']
+                    shortened_reporte['suma_meta'] += meta_mensual['sep']
+                    shortened_reporte['suma_meta'] += meta_mensual['oct']
+                    shortened_reporte['suma_meta'] += meta_mensual['nov']
+                    shortened_reporte['suma_meta'] += meta_mensual['dic']
+
+
+            shortened_reporte['id'] = reporte['id']
+            shortened_reporte['avancePorMunicipio_id'] = reporte['avancePorMunicipio__id']
+            shortened_reporte['accion'] = reporte['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
+            shortened_reporte['carencia'] = reporte[
+                'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
+            shortened_reporte['subCarencia'] = reporte[
+                'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
+            shortened_reporte['estado'] = reporte['avancePorMunicipio__estado__nombreEstado']
+            shortened_reporte['municipio'] = reporte['municipio__nombreMunicipio']
+            shortened_reporte['periodo'] = reporte['avancePorMunicipio__periodo__nombrePeriodo']
+            shortened_reporte['periodo_id'] = reporte['avancePorMunicipio__periodo__id']
+            shortened_reporte['latitud'] = reporte['municipio__latitud']
+            shortened_reporte['longitud'] = reporte['municipio__longitud']
+
+            json_map['reporte_general'].append(shortened_reporte)
+
+        output = StringIO.StringIO()
+        prs = Presentation()
+        slide = prs.slides.add_slide(prs.slide_layouts[5])
+        shapes = slide.shapes
+        shapes.title.text = 'Resultados'
+
+        renglones = len(json_map['reporte_general'])
+        if renglones < 12:
+            rows = renglones+1
+        else:
+	        rows = 12
 		cols = 5
 		left = Inches(0.921)
 		top = Inches(1.2)
@@ -1531,12 +1519,12 @@ class ResultadosPptxEndpoint(ProtectedResourceView):
 		# write body cells
 		indice = 1
 		for avance in json_map['reporte_general']:
-			if indice == 22:
+			if indice == 12:
 				indice = 1
 				slide = prs.slides.add_slide(prs.slide_layouts[5])
 				shapes = slide.shapes
 				shapes.title.text = 'Resultados'
-				rows = 22
+				rows = 12
 				cols = 5
 				left = Inches(0.921)
 				top = Inches(1.2)
@@ -1591,81 +1579,269 @@ class ResultadosPptxEndpoint(ProtectedResourceView):
 
 class ReportePptxEndpoint(ProtectedResourceView):
     def get(self, request):
-
-        user = AccessToken.objects.get(token=request.GET.get('access_token')).user
         usuario = get_usuario_for_token(request.GET.get('access_token'))
-
-        queryEstado = request.user.usuario.estado.id
-
-
         estados = get_array_or_none(request.GET.get('estados'))
+        municipios = get_array_or_none(request.GET.get('municipios'))
+        tipoReporte = request.GET.get("tipoReporte", None)
         if estados is None or len(estados) == 0:
-            if usuario.rol == 'AG':
+            if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UC' or usuario.usuario.rol == 'FC':
                 estados = None
             else:
                 estados = [usuario.estado.id]
 
-        myObj =  BuscarAvances(
-			carencias = get_array_or_none(request.GET.get('carencias')),
-			subcarencias = get_array_or_none(request.GET.get('subcarencias')),
-			acciones = get_array_or_none(request.GET.get('acciones')),
-			estados = estados,
-			municipios = get_array_or_none(request.GET.get('municipios')),
-			periodos = get_array_or_none(request.GET.get('periodos')),
-			meses = get_array_or_none(request.GET.get('meses')),
-			observaciones = request.GET.get('observaciones'),
-			avance_minimo = get_array_or_none(request.GET.get('avanceMinimo')),
-			avance_maximo = get_array_or_none(request.GET.get('avanceMaximo')),
-			inversion_minima = get_array_or_none(request.GET.get('inversionMinima')),
-			inversion_maxima = get_array_or_none(request.GET.get('inversionMaxima')),
-			unidad_de_medida = request.GET.get('unidadDeMedida'),
-		)
-        resultados = myObj.buscar()
+        if municipios is None or len(municipios) == 0:
+            if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UC' or usuario.usuario.rol == 'FC':
+                municipios = None
+            else:
+                municipios = [Municipio.objects.filter(estado_id = usuario.estado.id)]
 
-                #***********************************************************************************************************
+        myObj = BuscarAvances(
+            carencias=get_array_or_none(request.GET.get('carencias')),
+            subcarencias=get_array_or_none(request.GET.get('subcarencias')),
+            acciones=get_array_or_none(request.GET.get('acciones')),
+            estados=estados,
+            municipios=municipios,
+            periodos=get_array_or_none(request.GET.get('periodos')),
+            meses=get_array_or_none(request.GET.get('meses')),
+            observaciones=request.GET.get('observaciones'),
+            avance_minimo=request.GET.get('avanceMinimo'),
+            avance_maximo=request.GET.get('avanceMaximo'),
+            inversion_minima=get_array_or_none(request.GET.get('inversionMinima')),
+            inversion_maxima=get_array_or_none(request.GET.get('inversionMaxima')),
+            unidad_de_medida=request.GET.get('unidadDeMedida'),
+            limite_inferior=request.GET.get('limiteInferior'),
+            limite_superior=request.GET.get('limiteSuperior')
+        )
 
-        json_map = {}
-        json_map['reporte_por_estado'] = []
+        resultados = myObj.buscar()  # Obteniendo los reportes del buscador
+        json_map = {}  # Json a devolver
+        json_map['reporte_por_estado'] = []  # Entrega avances mensuales por estado
+        json_map['reporte_por_carencia'] = []  # Entrega avances mensuales por carencia
+        json_map['reporte_por_accion'] = []  # Entrega avances mensuales por accion
 
-        for reporte_estado in resultados['reporte_por_estado']:
-			shortened_reporte = {}
-			shortened_reporte['avance'] = 0
-			if myObj.meses is not None:
-				for mes in myObj.meses:
-					if mes == 1: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('ene'))['ene__sum']
-					if mes == 2: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('feb'))['feb__sum']
-					if mes == 3: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('mar'))['mar__sum']
-					if mes == 4: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('abr'))['abr__sum']
-					if mes == 5: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('may'))['may__sum']
-					if mes == 6: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('jun'))['jun__sum']
-					if mes == 7: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('jul'))['jul__sum']
-					if mes == 8: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('ago'))['ago__sum']
-					if mes == 9: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('sep'))['sep__sum']
-					if mes == 10: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('oct'))['oct__sum']
-					if mes == 11: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('nov'))['nov__sum']
-					if mes == 12: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('dic'))['dic__sum']
-			else:
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('ene'))['ene__sum']
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('feb'))['feb__sum']
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('mar'))['mar__sum']
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('abr'))['abr__sum']
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('may'))['may__sum']
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('jun'))['jun__sum']
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('jul'))['jul__sum']
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('ago'))['ago__sum']
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('sep'))['sep__sum']
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('oct'))['oct__sum']
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('nov'))['nov__sum']
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('dic'))['dic__sum']
+        for reporte in resultados['reporte_por_estado']:
+            shortened_reporte = {}
+            shortened_reporte['avance'] = 0
+            shortened_reporte['inversion'] = 0
+            shortened_reporte['suma_meta'] = 0
+            shortened_reporte['inversion_aproximada'] = 0
+            if myObj.meses is not None:
+                for mes in myObj.meses:
+                    if mes == 1: shortened_reporte['avance'] += reporte["ene"]
+                    if mes == 2: shortened_reporte['avance'] += reporte["feb"]
+                    if mes == 3: shortened_reporte['avance'] += reporte["mar"]
+                    if mes == 4: shortened_reporte['avance'] += reporte["abr"]
+                    if mes == 5: shortened_reporte['avance'] += reporte["may"]
+                    if mes == 6: shortened_reporte['avance'] += reporte["jun"]
+                    if mes == 7: shortened_reporte['avance'] += reporte["jul"]
+                    if mes == 8: shortened_reporte['avance'] += reporte["ago"]
+                    if mes == 9: shortened_reporte['avance'] += reporte["sep"]
+                    if mes == 10: shortened_reporte['avance'] += reporte["oct"]
+                    if mes == 11: shortened_reporte['avance'] += reporte["nov"]
+                    if mes == 12: shortened_reporte['avance'] += reporte["dic"]
+            else:
+                shortened_reporte['avance'] += reporte["ene"]
+                shortened_reporte['avance'] += reporte["feb"]
+                shortened_reporte['avance'] += reporte["mar"]
+                shortened_reporte['avance'] += reporte["abr"]
+                shortened_reporte['avance'] += reporte["may"]
+                shortened_reporte['avance'] += reporte["jun"]
+                shortened_reporte['avance'] += reporte["jul"]
+                shortened_reporte['avance'] += reporte["ago"]
+                shortened_reporte['avance'] += reporte["sep"]
+                shortened_reporte['avance'] += reporte["oct"]
+                shortened_reporte['avance'] += reporte["nov"]
+                shortened_reporte['avance'] += reporte["dic"]
 
-			shortened_reporte['id'] = reporte_estado['id']
-			shortened_reporte['estado'] = reporte_estado['estado__nombreEstado']
-			shortened_reporte['carencia'] = reporte_estado['meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
-			shortened_reporte['montoPromedio'] = reporte_estado['meta__montoPromedio']
-			shortened_reporte['inversion_aproximada'] = shortened_reporte['avance'] * reporte_estado['meta__montoPromedio']
-			json_map['reporte_por_estado'].append(shortened_reporte)
+            estadoId = reporte['avancePorMunicipio__estado__id']
+            for avance in AvancePorMunicipio.objects.filter(estado__id=estadoId):
+                shortened_reporte['inversion_aproximada'] += avance.inversionAprox
+
+            metas = myObj.getMetasFiltradas(carenciaID=None, accionID=None, estadoID=estadoId, metaID=None)
+            for meta_mensual in metas['meta']:
+                if myObj.meses is not None:
+                    for mes in myObj.meses:
+                        if mes == 1: shortened_reporte['suma_meta'] += meta_mensual['ene']
+                        if mes == 2: shortened_reporte['suma_meta'] += meta_mensual['feb']
+                        if mes == 3: shortened_reporte['suma_meta'] += meta_mensual['mar']
+                        if mes == 4: shortened_reporte['suma_meta'] += meta_mensual['abr']
+                        if mes == 5: shortened_reporte['suma_meta'] += meta_mensual['may']
+                        if mes == 6: shortened_reporte['suma_meta'] += meta_mensual['jun']
+                        if mes == 7: shortened_reporte['suma_meta'] += meta_mensual['jul']
+                        if mes == 8: shortened_reporte['suma_meta'] += meta_mensual['ago']
+                        if mes == 9: shortened_reporte['suma_meta'] += meta_mensual['sep']
+                        if mes == 10: shortened_reporte['suma_meta'] += meta_mensual['oct']
+                        if mes == 11: shortened_reporte['suma_meta'] += meta_mensual['nov']
+                        if mes == 12: shortened_reporte['suma_meta'] += meta_mensual['dic']
+                else:
+                    shortened_reporte['suma_meta'] += meta_mensual['ene']
+                    shortened_reporte['suma_meta'] += meta_mensual['feb']
+                    shortened_reporte['suma_meta'] += meta_mensual['mar']
+                    shortened_reporte['suma_meta'] += meta_mensual['abr']
+                    shortened_reporte['suma_meta'] += meta_mensual['may']
+                    shortened_reporte['suma_meta'] += meta_mensual['jun']
+                    shortened_reporte['suma_meta'] += meta_mensual['jul']
+                    shortened_reporte['suma_meta'] += meta_mensual['ago']
+                    shortened_reporte['suma_meta'] += meta_mensual['sep']
+                    shortened_reporte['suma_meta'] += meta_mensual['oct']
+                    shortened_reporte['suma_meta'] += meta_mensual['nov']
+                    shortened_reporte['suma_meta'] += meta_mensual['dic']
+
+            shortened_reporte['estado'] = reporte['avancePorMunicipio__estado__nombreEstado']
+            shortened_reporte['latitud'] = reporte['avancePorMunicipio__estado__latitud']
+            shortened_reporte['longitud'] = reporte['avancePorMunicipio__estado__longitud']
+            json_map['reporte_por_estado'].append(shortened_reporte)
 
 
+        for reporte in resultados['reporte_por_carencia']:
+            shortened_reporte = {}
+            shortened_reporte['avance'] = 0
+            shortened_reporte['inversion'] = 0
+            shortened_reporte['suma_meta'] = 0
+            if myObj.meses is not None:
+                for mes in myObj.meses:
+                    if mes == 1: shortened_reporte['avance'] += reporte["ene"]
+                    if mes == 2: shortened_reporte['avance'] += reporte["feb"]
+                    if mes == 3: shortened_reporte['avance'] += reporte["mar"]
+                    if mes == 4: shortened_reporte['avance'] += reporte["abr"]
+                    if mes == 5: shortened_reporte['avance'] += reporte["may"]
+                    if mes == 6: shortened_reporte['avance'] += reporte["jun"]
+                    if mes == 7: shortened_reporte['avance'] += reporte["jul"]
+                    if mes == 8: shortened_reporte['avance'] += reporte["ago"]
+                    if mes == 9: shortened_reporte['avance'] += reporte["sep"]
+                    if mes == 10: shortened_reporte['avance'] += reporte["oct"]
+                    if mes == 11: shortened_reporte['avance'] += reporte["nov"]
+                    if mes == 12: shortened_reporte['avance'] += reporte["dic"]
+            else:
+                shortened_reporte['avance'] += reporte["ene"]
+                shortened_reporte['avance'] += reporte["feb"]
+                shortened_reporte['avance'] += reporte["mar"]
+                shortened_reporte['avance'] += reporte["abr"]
+                shortened_reporte['avance'] += reporte["may"]
+                shortened_reporte['avance'] += reporte["jun"]
+                shortened_reporte['avance'] += reporte["jul"]
+                shortened_reporte['avance'] += reporte["ago"]
+                shortened_reporte['avance'] += reporte["sep"]
+                shortened_reporte['avance'] += reporte["oct"]
+                shortened_reporte['avance'] += reporte["nov"]
+                shortened_reporte['avance'] += reporte["dic"]
+
+            carenciaId = reporte['avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id']
+            for avance in AvancePorMunicipio.objects.filter(
+                    meta__accionEstrategica__subCarencia__carencia__id=carenciaId):
+                shortened_reporte['inversion'] += avance.inversionAprox
+
+            metas = myObj.getMetasFiltradas(carenciaID = carenciaId, accionID=None, estadoID=None, metaID=None)
+            for meta_mensual in metas['meta']:
+                if myObj.meses is not None:
+                    for mes in myObj.meses:
+                        if mes == 1: shortened_reporte['suma_meta'] += meta_mensual['ene']
+                        if mes == 2: shortened_reporte['suma_meta'] += meta_mensual['feb']
+                        if mes == 3: shortened_reporte['suma_meta'] += meta_mensual['mar']
+                        if mes == 4: shortened_reporte['suma_meta'] += meta_mensual['abr']
+                        if mes == 5: shortened_reporte['suma_meta'] += meta_mensual['may']
+                        if mes == 6: shortened_reporte['suma_meta'] += meta_mensual['jun']
+                        if mes == 7: shortened_reporte['suma_meta'] += meta_mensual['jul']
+                        if mes == 8: shortened_reporte['suma_meta'] += meta_mensual['ago']
+                        if mes == 9: shortened_reporte['suma_meta'] += meta_mensual['sep']
+                        if mes == 10: shortened_reporte['suma_meta'] += meta_mensual['oct']
+                        if mes == 11: shortened_reporte['suma_meta'] += meta_mensual['nov']
+                        if mes == 12: shortened_reporte['suma_meta'] += meta_mensual['dic']
+                else:
+                    shortened_reporte['suma_meta'] += meta_mensual['ene']
+                    shortened_reporte['suma_meta'] += meta_mensual['feb']
+                    shortened_reporte['suma_meta'] += meta_mensual['mar']
+                    shortened_reporte['suma_meta'] += meta_mensual['abr']
+                    shortened_reporte['suma_meta'] += meta_mensual['may']
+                    shortened_reporte['suma_meta'] += meta_mensual['jun']
+                    shortened_reporte['suma_meta'] += meta_mensual['jul']
+                    shortened_reporte['suma_meta'] += meta_mensual['ago']
+                    shortened_reporte['suma_meta'] += meta_mensual['sep']
+                    shortened_reporte['suma_meta'] += meta_mensual['oct']
+                    shortened_reporte['suma_meta'] += meta_mensual['nov']
+                    shortened_reporte['suma_meta'] += meta_mensual['dic']
+
+            shortened_reporte['carenciaId'] = reporte[
+                'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id']
+            shortened_reporte['nombreCarencia'] = reporte[
+                'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
+            json_map['reporte_por_carencia'].append(shortened_reporte)
+
+        for reporte in resultados['reporte_por_accion']:
+            shortened_reporte = {}
+            shortened_reporte['avance'] = 0
+            shortened_reporte['inversion'] = 0
+            shortened_reporte['suma_meta'] = 0
+            if myObj.meses is not None:
+                for mes in myObj.meses:
+                    if mes == 1: shortened_reporte['avance'] += reporte["ene"]
+                    if mes == 2: shortened_reporte['avance'] += reporte["feb"]
+                    if mes == 3: shortened_reporte['avance'] += reporte["mar"]
+                    if mes == 4: shortened_reporte['avance'] += reporte["abr"]
+                    if mes == 5: shortened_reporte['avance'] += reporte["may"]
+                    if mes == 6: shortened_reporte['avance'] += reporte["jun"]
+                    if mes == 7: shortened_reporte['avance'] += reporte["jul"]
+                    if mes == 8: shortened_reporte['avance'] += reporte["ago"]
+                    if mes == 9: shortened_reporte['avance'] += reporte["sep"]
+                    if mes == 10: shortened_reporte['avance'] += reporte["oct"]
+                    if mes == 11: shortened_reporte['avance'] += reporte["nov"]
+                    if mes == 12: shortened_reporte['avance'] += reporte["dic"]
+            else:
+                shortened_reporte['avance'] += reporte["ene"]
+                shortened_reporte['avance'] += reporte["feb"]
+                shortened_reporte['avance'] += reporte["mar"]
+                shortened_reporte['avance'] += reporte["abr"]
+                shortened_reporte['avance'] += reporte["may"]
+                shortened_reporte['avance'] += reporte["jun"]
+                shortened_reporte['avance'] += reporte["jul"]
+                shortened_reporte['avance'] += reporte["ago"]
+                shortened_reporte['avance'] += reporte["sep"]
+                shortened_reporte['avance'] += reporte["oct"]
+                shortened_reporte['avance'] += reporte["nov"]
+                shortened_reporte['avance'] += reporte["dic"]
+
+            accionId = reporte['avancePorMunicipio__meta__accionEstrategica__id']
+            for avance in AvancePorMunicipio.objects.filter(
+                    meta__accionEstrategica__id=accionId):
+                shortened_reporte['inversion'] += avance.inversionAprox
+
+            metas = myObj.getMetasFiltradas(carenciaID=None, accionID=accionId, estadoID=None, metaID=None)
+            for meta_mensual in metas['meta']:
+                if myObj.meses is not None:
+                    for mes in myObj.meses:
+                        if mes == 1: shortened_reporte['suma_meta'] += meta_mensual['ene']
+                        if mes == 2: shortened_reporte['suma_meta'] += meta_mensual['feb']
+                        if mes == 3: shortened_reporte['suma_meta'] += meta_mensual['mar']
+                        if mes == 4: shortened_reporte['suma_meta'] += meta_mensual['abr']
+                        if mes == 5: shortened_reporte['suma_meta'] += meta_mensual['may']
+                        if mes == 6: shortened_reporte['suma_meta'] += meta_mensual['jun']
+                        if mes == 7: shortened_reporte['suma_meta'] += meta_mensual['jul']
+                        if mes == 8: shortened_reporte['suma_meta'] += meta_mensual['ago']
+                        if mes == 9: shortened_reporte['suma_meta'] += meta_mensual['sep']
+                        if mes == 10: shortened_reporte['suma_meta'] += meta_mensual['oct']
+                        if mes == 11: shortened_reporte['suma_meta'] += meta_mensual['nov']
+                        if mes == 12: shortened_reporte['suma_meta'] += meta_mensual['dic']
+                else:
+                    shortened_reporte['suma_meta'] += meta_mensual["ene"]
+                    shortened_reporte['suma_meta'] += meta_mensual["feb"]
+                    shortened_reporte['suma_meta'] += meta_mensual["mar"]
+                    shortened_reporte['suma_meta'] += meta_mensual["abr"]
+                    shortened_reporte['suma_meta'] += meta_mensual["may"]
+                    shortened_reporte['suma_meta'] += meta_mensual["jun"]
+                    shortened_reporte['suma_meta'] += meta_mensual["jul"]
+                    shortened_reporte['suma_meta'] += meta_mensual["ago"]
+                    shortened_reporte['suma_meta'] += meta_mensual["sep"]
+                    shortened_reporte['suma_meta'] += meta_mensual["oct"]
+                    shortened_reporte['suma_meta'] += meta_mensual["nov"]
+                    shortened_reporte['suma_meta'] += meta_mensual["dic"]
+
+            shortened_reporte['accionId'] = reporte[
+                'avancePorMunicipio__meta__accionEstrategica__id']
+            shortened_reporte['nombreAccion'] = reporte[
+                'avancePorMunicipio__meta__accionEstrategica__nombreAccion']
+            json_map['reporte_por_accion'].append(shortened_reporte)
+
+        sJson="reporte_por_estado"
 
         output = StringIO.StringIO()
         prs = Presentation()
@@ -1673,13 +1849,27 @@ class ReportePptxEndpoint(ProtectedResourceView):
         shapes = slide.shapes
         shapes.title.text = 'Reporte'
 
+        sTipo=""
+        sJson=""
+
         #renglones = resultados['reporte_general']['visitas_totales'] + 1
-        renglones = len(json_map['reporte_por_estado'])
-        if renglones < 22:
+        if tipoReporte=="Estado":
+            renglones = len(json_map['reporte_por_estado'])
+            sTipo='estado'
+            sJson="reporte_por_estado"
+        elif tipoReporte=="Carencia":
+            renglones = len(json_map['reporte_por_carencia'])
+            sTipo='nombreCarencia'
+            sJson="reporte_por_carencia"
+        else:
+            renglones = len(json_map['reporte_por_accion'])
+            sTipo='nombreAccion'
+            sJson="reporte_por_accion"
+        if renglones < 12:
             rows = renglones+1
         else:
-            rows = 22
-        cols = 4
+            rows = 12
+        cols = 3
         left = Inches(0.921)
         top = Inches(1.2)
         width = Inches(6.0)
@@ -1688,31 +1878,29 @@ class ReportePptxEndpoint(ProtectedResourceView):
         table = shapes.add_table(rows, cols, left, top, width, height).table
 
         # set column widths
-        table.columns[0].width = Inches(1.1)
+        table.columns[0].width = Inches(3.0)
         table.columns[1].width = Inches(2.0)
         table.columns[2].width = Inches(2.0)
-        table.columns[3].width = Inches(2.0)
 
 
         # write column headings
-        table.cell(0, 0).text = 'Carencia'
-        table.cell(0, 1).text = 'Estado'
-        table.cell(0, 2).text = 'Avance Total'
-        table.cell(0, 3).text = 'Inversion Aprox.'
+        table.cell(0, 0).text = tipoReporte
+        table.cell(0, 1).text = 'Avance Total'
+        table.cell(0, 2).text = 'Meta Total'
 
 
         # write body cells
         indice = 1
-        for avance in json_map['reporte_por_estado']:
+        for avance in json_map[sJson]:
 
-            if indice == 22:
+            if indice == 12:
                 indice = 1
                 slide = prs.slides.add_slide(prs.slide_layouts[5])
                 shapes = slide.shapes
                 shapes.title.text = 'Reporte'
 
-                rows = 22
-                cols = 4
+                rows = 12
+                cols = 3
                 left = Inches(0.921)
                 top = Inches(1.2)
                 width = Inches(6.0)
@@ -1720,37 +1908,35 @@ class ReportePptxEndpoint(ProtectedResourceView):
 
                 table = shapes.add_table(rows, cols, left, top, width, height).table
                 # set column widths
-                table.columns[0].width = Inches(1.1)
+                table.columns[0].width = Inches(3.0)
                 table.columns[1].width = Inches(2.0)
                 table.columns[2].width = Inches(2.0)
-                table.columns[3].width = Inches(2.0)
+
 
 
             # write column headings
-            for x in range(0, 4):
+            for x in range(0, 3):
                 cell = table.rows[0].cells[x]
                 paragraph = cell.textframe.paragraphs[0]
                 paragraph.font.size = Pt(12)
                 paragraph.font.name = 'Arial Black'
                 paragraph.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
 
-            for x in range(0, 4):
+            for x in range(0, 3):
                 cell = table.rows[indice].cells[x]
                 paragraph = cell.textframe.paragraphs[0]
                 paragraph.font.size = Pt(8)
                 paragraph.font.name = 'Arial'
                 paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
 
-           	table.cell(0, 0).text = 'Carencia'
-        	table.cell(0, 1).text = 'Estado'
-        	table.cell(0, 2).text = 'Avance Total'
-        	table.cell(0, 3).text = 'Inversion Aprox.'
+           	table.cell(0, 0).text = tipoReporte
+        	table.cell(0, 1).text = 'Avance Total'
+        	table.cell(0, 2).text = 'Meta Total'
 
             # write body cells
-            table.cell(indice, 0).text = avance['carencia']
-            table.cell(indice, 1).text = avance['estado']
-            table.cell(indice, 2).text = str(avance['avance'])
-            table.cell(indice, 3).text = str(avance['inversion_aproximada'])
+            table.cell(indice, 0).text = avance[sTipo]
+            table.cell(indice, 1).text = str(avance['avance'])
+            table.cell(indice, 2).text = str(avance['suma_meta'])
             indice += 1
 
         prs.save(output)
@@ -1809,7 +1995,7 @@ class ReporteInicioEndpoint(ProtectedResourceView):
     def get(self, request):
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
-        if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
+        if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'FC' or usuario.usuario.rol == 'UC':
 			avancesRol = AvancePorMunicipio.objects.all()
         else:
             avancesRol = AvancePorMunicipio.objects.filter(estado__id = usuario.usuario.estado.id)
@@ -1956,222 +2142,6 @@ def get_usuario_for_token(token):
         return AccessToken.objects.get(token=token).user
     else:
         return None
-
-class ResultadosPptxEndpoint(ProtectedResourceView):
-    def get(self, request):
-		usuario = get_usuario_for_token(request.GET.get('access_token'))
-		estados = get_array_or_none(request.GET.get('estados'))
-		municipios = get_array_or_none(request.GET.get('municipios'))
-
-		if estados is None or len(estados) == 0:
-			if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
-				estados = None
-			else:
-				estados = [usuario.usuario.estado.id]
-
-		if municipios is None or len(municipios) == 0:
-			if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
-				municipios = None
-			else:
-				municipios = [Municipio.objects.filter(estado_id = usuario.estado.usuario.id)]
-
-		myObj =  BuscarAvances(
-			carencias = get_array_or_none(request.GET.get('carencias')),
-			subcarencias = get_array_or_none(request.GET.get('subcarencias')),
-			acciones = get_array_or_none(request.GET.get('acciones')),
-			estados = estados,
-			municipios = municipios,
-			periodos = get_array_or_none(request.GET.get('periodos')),
-			meses = get_array_or_none(request.GET.get('meses')),
-			observaciones = request.GET.get('observaciones'),
-			avance_minimo = get_array_or_none(request.GET.get('avanceMinimo')),
-			avance_maximo = get_array_or_none(request.GET.get('avanceMaximo')),
-			inversion_minima = get_array_or_none(request.GET.get('inversionMinima')),
-			inversion_maxima = get_array_or_none(request.GET.get('inversionMaxima')),
-			unidad_de_medida = request.GET.get('unidadDeMedida'),
-		)
-		resultados = myObj.buscar()
-
-		#***********************************************************************************************************
-		# json_map = {}
-
-
-
-class ReportePptxEndpoint(ProtectedResourceView):
-    def get(self, request):
-
-        user = AccessToken.objects.get(token=request.GET.get('access_token')).user
-        usuario = get_usuario_for_token(request.GET.get('access_token'))
-
-        queryEstado = request.user.usuario.estado.id
-
-
-        estados = get_array_or_none(request.GET.get('estados'))
-        if estados is None or len(estados) == 0:
-            if usuario.usuario.rol == 'AG':
-                estados = None
-            else:
-                estados = [usuario.usuario.estado.id]
-
-        myObj =  BuscarAvances(
-			carencias = get_array_or_none(request.GET.get('carencias')),
-			subcarencias = get_array_or_none(request.GET.get('subcarencias')),
-			acciones = get_array_or_none(request.GET.get('acciones')),
-			estados = estados,
-			municipios = get_array_or_none(request.GET.get('municipios')),
-			periodos = get_array_or_none(request.GET.get('periodos')),
-			meses = get_array_or_none(request.GET.get('meses')),
-			observaciones = request.GET.get('observaciones'),
-			avance_minimo = get_array_or_none(request.GET.get('avanceMinimo')),
-			avance_maximo = get_array_or_none(request.GET.get('avanceMaximo')),
-			inversion_minima = get_array_or_none(request.GET.get('inversionMinima')),
-			inversion_maxima = get_array_or_none(request.GET.get('inversionMaxima')),
-			unidad_de_medida = request.GET.get('unidadDeMedida'),
-            limite_inferior=request.GET.get('limiteInferior'),
-            limite_superior=request.GET.get('limiteSuperior')
-		)
-        resultados = myObj.buscar()
-
-                #***********************************************************************************************************
-
-        json_map = {}
-        json_map['reporte_por_estado'] = []
-
-        for reporte_estado in resultados['reporte_por_estado']:
-			shortened_reporte = {}
-			shortened_reporte['avance'] = 0
-			if myObj.meses is not None:
-				for mes in myObj.meses:
-					if mes == 1: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('ene'))['ene__sum']
-					if mes == 2: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('feb'))['feb__sum']
-					if mes == 3: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('mar'))['mar__sum']
-					if mes == 4: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('abr'))['abr__sum']
-					if mes == 5: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('may'))['may__sum']
-					if mes == 6: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('jun'))['jun__sum']
-					if mes == 7: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('jul'))['jul__sum']
-					if mes == 8: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('ago'))['ago__sum']
-					if mes == 9: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('sep'))['sep__sum']
-					if mes == 10: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('oct'))['oct__sum']
-					if mes == 11: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('nov'))['nov__sum']
-					if mes == 12: shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio = reporte_estado['id']).aggregate(Sum('dic'))['dic__sum']
-			else:
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('ene'))['ene__sum']
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('feb'))['feb__sum']
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('mar'))['mar__sum']
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('abr'))['abr__sum']
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('may'))['may__sum']
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('jun'))['jun__sum']
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('jul'))['jul__sum']
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('ago'))['ago__sum']
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('sep'))['sep__sum']
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('oct'))['oct__sum']
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('nov'))['nov__sum']
-				shortened_reporte['avance'] += AvanceMensual.objects.filter(avancePorMunicipio=reporte_estado['id']).aggregate(Sum('dic'))['dic__sum']
-
-			shortened_reporte['id'] = reporte_estado['id']
-			shortened_reporte['estado'] = reporte_estado['estado__nombreEstado']
-			shortened_reporte['carencia'] = reporte_estado['meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
-			shortened_reporte['montoPromedio'] = reporte_estado['meta__montoPromedio']
-			shortened_reporte['inversion_aproximada'] = shortened_reporte['avance'] * reporte_estado['meta__montoPromedio']
-			json_map['reporte_por_estado'].append(shortened_reporte)
-
-
-
-        output = StringIO.StringIO()
-        prs = Presentation()
-        slide = prs.slides.add_slide(prs.slide_layouts[5])
-        shapes = slide.shapes
-        shapes.title.text = 'Reporte'
-
-        #renglones = resultados['reporte_general']['visitas_totales'] + 1
-        renglones = len(json_map['reporte_por_estado'])
-        if renglones < 22:
-            rows = renglones+1
-        else:
-            rows = 22
-        cols = 4
-        left = Inches(0.921)
-        top = Inches(1.2)
-        width = Inches(6.0)
-        height = Inches(0.8)
-
-        table = shapes.add_table(rows, cols, left, top, width, height).table
-
-        # set column widths
-        table.columns[0].width = Inches(1.1)
-        table.columns[1].width = Inches(2.0)
-        table.columns[2].width = Inches(2.0)
-        table.columns[3].width = Inches(2.0)
-
-
-        # write column headings
-        table.cell(0, 0).text = 'Carencia'
-        table.cell(0, 1).text = 'Estado'
-        table.cell(0, 2).text = 'Avance Total'
-        table.cell(0, 3).text = 'Inversion Aprox.'
-
-
-        # write body cells
-        indice = 1
-        for avance in json_map['reporte_por_estado']:
-
-            if indice == 22:
-                indice = 1
-                slide = prs.slides.add_slide(prs.slide_layouts[5])
-                shapes = slide.shapes
-                shapes.title.text = 'Reporte'
-
-                rows = 22
-                cols = 4
-                left = Inches(0.921)
-                top = Inches(1.2)
-                width = Inches(6.0)
-                height = Inches(0.8)
-
-                table = shapes.add_table(rows, cols, left, top, width, height).table
-                # set column widths
-                table.columns[0].width = Inches(1.1)
-                table.columns[1].width = Inches(2.0)
-                table.columns[2].width = Inches(2.0)
-                table.columns[3].width = Inches(2.0)
-
-
-            # write column headings
-            for x in range(0, 4):
-                cell = table.rows[0].cells[x]
-                paragraph = cell.textframe.paragraphs[0]
-                paragraph.font.size = Pt(12)
-                paragraph.font.name = 'Arial Black'
-                paragraph.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
-
-            for x in range(0, 4):
-                cell = table.rows[indice].cells[x]
-                paragraph = cell.textframe.paragraphs[0]
-                paragraph.font.size = Pt(8)
-                paragraph.font.name = 'Arial'
-                paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
-
-           	table.cell(0, 0).text = 'Carencia'
-        	table.cell(0, 1).text = 'Estado'
-        	table.cell(0, 2).text = 'Avance Total'
-        	table.cell(0, 3).text = 'Inversion Aprox.'
-
-            # write body cells
-            table.cell(indice, 0).text = avance['carencia']
-            table.cell(indice, 1).text = avance['estado']
-            table.cell(indice, 2).text = str(avance['avance'])
-            table.cell(indice, 3).text = str(avance['inversion_aproximada'])
-            indice += 1
-
-        prs.save(output)
-        response = StreamingHttpResponse(FileWrapper(output),
-                                         content_type='application/vnd.openxmlformats-officedocument.presentationml.presentation')
-        response['Content-Disposition'] = 'attachment; filename="Reporte.pptx"'
-        response['Content-Length'] = output.tell()
-
-        output.seek(0)
-
-        return response
 
 
 #Clase EndPoint (oauth2) para implementar la captra de avances, recibe un perdiodo, accion y un estado y devuelve el id del avance

@@ -97,9 +97,9 @@ WSGI_APPLICATION = 'Projects.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'issste',
-        'USER': 'inclusion',
-        'PASSWORD': 'inclusion',
+        'NAME': 'issste_db',
+        'USER': 'root',
+        'PASSWORD': 'root',
         'HOST': '',
         'PORT': '',
     }
@@ -157,7 +157,8 @@ STATIC_ROOT = '/home/inclusioni/issste/static/djangoISSSTE/static'
 STATIC_URL = '/static/'
 
 
-MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'djangoISSSTE/media/tutorialesPDF')
+#MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'djangoISSSTE/media/tutorialesPDF')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'djangoISSSTE/media')
 MEDIA_URL = '/media/'
 
 

@@ -1,0 +1,183 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static %}
+{% block extrastyle %}{{ block.super }}
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="{% static "assets/bootstrap/css/bootstrap.css"%}" />
+
+
+    <link href="{% static "assets/css/styles.css"%}" rel="stylesheet">
+
+
+
+
+    <!-- Chang URLs to wherever Video.js files will be hosted -->
+     <link href="{% static "assets/video-js/video-js.css"%}" rel="stylesheet" type="text/css">
+    <!-- video.js must be in the <head> for older IEs to work. -->
+    <script src="{% static "assets/video-js/video.js"%}"></script>
+
+    <!-- Unless using the CDN hosted version, update the URL to the Flash SWF -->
+    <script>
+        videojs.options.flash.swf = "video-js.swf";
+    </script>
+    <style type="text/css">
+      .vjs-default-skin { color: #970b0b; }
+      .vjs-default-skin .vjs-play-progress,
+      .vjs-default-skin .vjs-volume-level { background-color: #0b7811 }
+    </style>
+
+{% endblock %}
+{% block breadcrumbs %}
+{% endblock %}
+
+{% block content %}
+<body style="font-weight:normal;font-family: 'soberana_sanslight';font-size: 13px;height: 600px;background: #ffffff; padding-top: 8px;" >
+    <div id="regresarBTN" onclick="location.href='/obras/ayuda'">
+    </div>   <!--AGREGAR A DONDE SE VA A REGRESAR CON ESTA URL REGRESA A LA PÀGINA PRINCIPAL-->
+
+    <div id="welcome">Manuales de Ayuda al Usuario en Video</div>
+    <input type="hidden" name="historico" id="historico"/>
+
+    <div class="row" style="padding-right: 18px; padding-left: 0px; padding-bottom: 0px; padding-top: 0px ">
+       <div class="col-md-3" style="height:500px; overflow: scroll;">
+           <div class="panel-group">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h6 class="panel-title">Inicio de Sesi&oacute;n</h6>
+                                </div>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li style="height: 25px"><a href="/ver_video?cualVideo=iniciarSesion.mp4" >Inicio de Sesi&oacute;n <span id="load1" class="glyphicon glyphicon-refresh glyphicon-refresh-animate mfp-hide"></span></a></li>
+                                    <li style="height: 30px"><a href="/obras/ver_video?cualVideo=modificacionObra.mp4" >Modificar una Obra <span id="load2" class="glyphicon glyphicon-refresh glyphicon-refresh-animate mfp-hide"></span></a></li>
+                                </ul>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h6 class="panel-title">Consultas</h6>
+                                </div>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li style="height: 25px"><a href="/obras/ver_video?cualVideo=consultaFiltros.mp4" >Consulta Mediante Filtros <span id="load1" class="glyphicon glyphicon-refresh glyphicon-refresh-animate mfp-hide"></span></a></li>
+                                    <li style="height: 30px"><a href="/obras/ver_video?cualVideo=consultaPredefinida.mp4" >Consulta Predefinidos<span id="load2" class="glyphicon glyphicon-refresh glyphicon-refresh-animate mfp-hide"></span></a></li>
+                                </ul>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h6 class="panel-title">Clasificaciones</h6>
+                                </div>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li style="height: 25px"><a href="/obras/ver_video?cualVideo=agregarClasificacion.mp4"  >Agregar una Clasificación</a></li>
+                                    <li style="height: 25px"><a href="/obras/ver_video?cualVideo=buscarClasificacion.mp4"  >Buscar una Clasificación </a></li>
+                                    <li style="height: 25px"><a href="/obras/ver_video?cualVideo=modificarClasificacion.mp4"  >Modificar una Clasificación</a></li>
+                                    <li style="height: 30px"><a href="/obras/ver_video?cualVideo=eliminarClasificacion.mp4"  >Eliminar una Clasificación </a></li>
+                                </ul>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h6 class="panel-title">Usuarios</h6>
+                                </div>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li style="height: 25px"><a href="/obras/ver_video?cualVideo=crearUsuario.mp4"  >Agregar un usuario</a></li>
+                                    <li style="height: 25px"><a href="/obras/ver_video?cualVideo=buscarUsuario.mp4"  >Buscar un usuario</a></li>
+                                    <li style="height: 25px"><a href="/obras/ver_video?cualVideo=modificarUsuario.mp4"  >Modificar un Usuario </a></li>
+                                    <li style="height: 30px"><a href="/obras/ver_video?cualVideo=eliminarUsuario.mp4"  >Eliminar un usuario</a></li>
+                                </ul>
+                            </div>
+
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h6 class="panel-title">Dependencia</h6>
+                                </div>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li style="height: 25px"><a href="/obras/ver_video?cualVideo=agregarDependencia.mp4"  >Agregar una Dependencia</a></li>
+                                    <li style="height: 25px"><a href="/obras/ver_video?cualVideo=buscarDependencia.mp4"  >Buscar una Dependencia</a></li>
+                                    <li style="height: 25px"><a href="/obras/ver_video?cualVideo=modificarDependencia.mp4"  >Modificar una Dependencia </a></li>
+                                    <li style="height: 30px"><a href="/obras/ver_video?cualVideo=eliminarDependencia.mp4"  >Eliminar una Dependencia</a></li>
+                                </ul>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h6 class="panel-title">Impacto</h6>
+                                </div>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li style="height: 25px"><a href="/obras/ver_video?cualVideo=agregarImpacto.mp4"  >Agregar Impacto</a></li>
+                                    <li style="height: 25px"><a href="/obras/ver_video?cualVideo=buscarImpacto.mp4"  >Buscar Impacto</a></li>
+                                    <li style="height: 25px"><a href="/obras/ver_video?cualVideo=modificarImpacto.mp4"  >Modificar Impacto </a></li>
+                                    <li style="height: 30px"><a href="/obras/ver_video?cualVideo=eliminarImpacto.mp4"  >Eliminar Impacto</a></li>
+                                </ul>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h6 class="panel-title">Inaugurador</h6>
+                                </div>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li style="height: 25px"><a href="/obras/ver_video?cualVideo=agregarInaugurador.mp4"  >Agregar un Inaugurador</a></li>
+                                    <li style="height: 25px"><a href="/obras/ver_video?cualVideo=buscarInaugurador.mp4"  >Buscar un Inaugurador</a></li>
+                                    <li style="height: 25px"><a href="/obras/ver_video?cualVideo=modificarInaugurador.mp4"  >Modificar un Inaugurador </a></li>
+                                    <li style="height: 30px"><a href="/obras/ver_video?cualVideo=eliminarInaugurador.mp4"  >Eliminar un Inaugurador</a></li>
+                                </ul>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h6 class="panel-title">Inversión</h6>
+                                </div>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li style="height: 25px"><a href="/obras/ver_video?cualVideo=agregarInversión.mp4"  >Agregar una Inversión</a></li>
+                                    <li style="height: 25px"><a href="/obras/ver_video?cualVideo=buscarInversión.mp4"  >Buscar una Inversión</a></li>
+                                    <li style="height: 25px"><a href="/obras/ver_video?cualVideo=modificarInversión.mp4"  >Modificar una Inversión </a></li>
+                                    <li style="height: 30px"><a href="/obras/ver_video?cualVideo=eliminarInversión.mp4"  >Eliminar una Inversión</a></li>
+                                </ul>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h6 class="panel-title">SubDependencia</h6>
+                                </div>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li style="height: 25px"><a href="/obras/ver_video?cualVideo=agregarSubDependencia.mp4"  >Agregar una Sub Dependencia</a></li>
+                                    <li style="height: 25px"><a href="/obras/ver_video?cualVideo=buscarSubDependencia.mp4"  >Buscar una Sub Dependencia</a></li>
+                                    <li style="height: 25px"><a href="/obras/ver_video?cualVideo=modificarSubDependencia.mp4"  >Modificar una Sub Dependencia </a></li>
+                                    <li style="height: 30px"><a href="/obras/ver_video?cualVideo=eliminarSubDependencia.mp4"  >Eliminar una Sub Dependencia</a></li>
+                                </ul>
+                            </div>
+
+           </div>
+
+       </div>
+
+       <div class="col-md-9-box" style="height: 500px">
+            </br>
+
+            <div class="row">
+                <div class="col-md-12 titulo" id="titulo">
+                {% for titulo in tituloVideo %}
+                           {{ titulo }}
+                {% endfor %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12" ><center>
+
+                {% for video in cualVideo %}
+                    <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" width="610" height="400"
+                          poster=""
+                          data-setup="{}">
+
+                                <source src="/issste/media/videos/{{ video }}" type='video/mp4'/>
+                        <track kind="captions" src="demo.captions.vtt"  srclang="es" label="Español"></track>
+                        <track kind="subtitles" src="demo.captions.vtt" srclang="es" label="Español"></track>
+
+                        <p class="vjs-no-js">Para ver el vídeo por favor habilite JavaScript y considere actualizar a un navegador web que <a href="http://videojs.com/html5-video-support/" target="_blank">soporte video en HTML5</a></p>
+                    </video>
+                 {% endfor %}
+                </center></div>
+            </div>
+           </br>
+            <div class="row">
+                <div class="col-md-12" id="descripcion"></div>
+            </div>
+       </div>
+    </div>
+
+</body>
+{% endblock %}
