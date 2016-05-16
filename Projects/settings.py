@@ -185,11 +185,10 @@ TEMPLATETAGS_DIRS = (
 )
 
 
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
 EMAIL_HOST = 'mail.inclusionissste.mx'
 EMAIL_HOST_USER = 'inclusioni'
 EMAIL_HOST_PASSWORD = 'CbxxdWaz'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
