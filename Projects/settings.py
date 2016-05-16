@@ -25,7 +25,6 @@ SECRET_KEY = '7c$*7lp@_9igh)og*w7cd4c023*g^jccrg&_(fb_#mvj-w&stk'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = ['www.inclusionissste.mx']
 
@@ -87,14 +86,11 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'debug': DEBUG,
         },
     },
 ]
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.core.context_processors.request',
-    'django.contrib.auth.context_processors.auth',
-)
 
 
 WSGI_APPLICATION = 'Projects.wsgi.application'
@@ -142,7 +138,6 @@ AUTH_PASSWORD_VALIDATORS = [
 # vida del token
 SESSION_COOKIE_AGE = 35900
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-
 LOGIN_URL = '/admin/login/'
 
 # Internationalization
@@ -165,24 +160,21 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 # https://docs.djangoproject.com/en/1.9/howto/static-files
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'Projects/staticfiles')
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, '/djangoISSSTE/static'),
+    os.path.join(PROJECT_ROOT, '../djangoISSSTE/static'),
 )
 
 
 
-MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'djangoISSSTE/media/tutorialesPDF')
+MEDIA_ROOT = os.path.join(PROJECT_ROOT, '../djangoISSSTE/media/tutorialesPDF')
 MEDIA_URL = '/media/'
 
 
-TEMPLATE_DIRS = (
-    os.path.join(PROJECT_ROOT,  'djangoISSSTE/templates/'),
-)
 
 TEMPLATETAGS_DIRS = (
-    os.path.join(BASE_DIR, 'djangoISSSTE/templatetags/'),
+    os.path.join(BASE_DIR, '../djangoISSSTE/templatetags/'),
 )
 
 
