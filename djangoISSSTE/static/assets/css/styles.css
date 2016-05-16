@@ -1503,3 +1503,15 @@ ul li {
     top:30px;
     position: absolute;
 }
+
+ .recuperarCon{
+	 position:relative;
+	 width:460px;
+	 height:330px;
+	 margin-top:55px;
+	 margin-left:50px;
+	font-family: 'soberana_sanslight';
+    font-size:18px;
+    color: #6A6B6C;
+
+}
