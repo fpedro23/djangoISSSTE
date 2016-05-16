@@ -264,21 +264,27 @@ class MetaAdmin(admin.ModelAdmin):
 
     # Redireccionamiento cuando se guarda una nueva meta
     def response_add(self, request, obj, post_url_continue=None):
-        if not request.POST.has_key('_addanother'):
-            success_message = 'La meta \"%s\" se ha creado exitosamente.' % obj.__str__()
-            self.message_user(request, success_message, level=messages.SUCCESS)
-            return HttpResponseRedirect('/catalogos')
-        else:
+        if request.POST.has_key('_addanother'):
             success_message = 'La meta \"%s\" se ha creado exitosamente.' % obj.__str__()
             self.message_user(request, success_message, level=messages.SUCCESS)
             return super(MetaAdmin, self).response_add(request, obj, post_url_continue)
+        elif request.POST.has_key('_continue'):
+            success_message = 'La meta \"%s\" se ha creado exitosamente.' % obj.__str__()
+            self.message_user(request, success_message, level=messages.SUCCESS)
+            return super(MetaAdmin, self).response_add(request, obj, post_url_continue)
+        else:
+            success_message = 'La meta \"%s\" se ha creado exitosamente.' % obj.__str__()
+            self.message_user(request, success_message, level=messages.SUCCESS)
+            return HttpResponseRedirect('/catalogos')
 
-    # Redireccionamiento cuando se guarda una nueva meta
+
+
+    # Redireccionamiento cuando se modifica una nueva meta
     def response_change(self, request, obj, post_url_continue=None):
         if not request.POST.has_key('_addanother'):
             success_message = 'La meta \"%s\" se ha modificado exitosamente.' % obj.__str__()
             self.message_user(request, success_message, level=messages.SUCCESS)
-            return super(MetaAdmin, self).response_add(request, obj, post_url_continue)
+            return HttpResponseRedirect('/catalogos')
         else:
             success_message = 'La meta \"%s\" se ha modificado exitosamente.' % obj.__str__()
             self.message_user(request, success_message, level=messages.SUCCESS)
