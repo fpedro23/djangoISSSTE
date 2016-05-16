@@ -1,0 +1,23 @@
+.white-popup-block {
+  background: #ffffff;
+  padding: 5px 5px;
+  text-align: center;
+  max-width: 100%;
+    max-height: 100%;
+  margin: 10px auto;
+  position: relative;
+}
+
+/*estilo popup*/
+
+
+.green-popup-block {
+  background: linear-gradient(to right, rgba(194,194,194,1) 0%, rgba(44,44,44,1) 0%, rgba(92,92,92,1) 16%, rgba(102,102,102,1) 25%, rgba(128,128,128,1) 50%, rgba(128,128,128,1) 53%, rgba(131,131,131,0.98) 76%, rgba(133,133,133,0.98) 92%, rgba(94,92,94,0.98) 100%);
+  padding: 5px 5px;
+    padding-left: 20px;
+    padding-right: 20px;
+  text-align: center;
+  max-width: 100%;
+  margin: 10px auto;
+  position: relative;
+}
