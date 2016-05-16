@@ -2343,7 +2343,7 @@ class ReporteInicioEndpoint(ProtectedResourceView):
 
 
         # Grafico, obras totales
-        avances_totales_educacion = avances.filter(avancemensual__avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=1)
+        avances_totales_educacion = avances.filter(avancemensual__avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=2)
         the_list = []
         if avances_totales_educacion:
             avances_values=get_avance_values(avances_totales_educacion)
@@ -2356,7 +2356,7 @@ class ReporteInicioEndpoint(ProtectedResourceView):
             reporte['reporte_total']['avance_educacion']['avances'] = the_list
             reporte['reporte_total']['avance_educacion']['total'] = 0
 
-        avances_totales_salud = avances.filter(avancemensual__avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=2)
+        avances_totales_salud = avances.filter(avancemensual__avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=3)
         the_list = []
         if avances_totales_salud:
             avances_values=get_avance_values(avances_totales_salud)
@@ -2369,7 +2369,7 @@ class ReporteInicioEndpoint(ProtectedResourceView):
             reporte['reporte_total']['avance_salud']['avances'] = the_list
             reporte['reporte_total']['avance_salud']['total'] = 0
 
-        avances_totales_vivienda = avances.filter(avancemensual__avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=3)
+        avances_totales_vivienda = avances.filter(avancemensual__avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=5)
         the_list = []
         if avances_totales_vivienda:
             avances_values=get_avance_values(avances_totales_vivienda)
@@ -2382,7 +2382,7 @@ class ReporteInicioEndpoint(ProtectedResourceView):
             reporte['reporte_total']['avance_vivienda']['avances'] = the_list
             reporte['reporte_total']['avance_vivienda']['total'] = 0
 
-        avances_totales_alimentacion = avances.filter(avancemensual__avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=4)
+        avances_totales_alimentacion = avances.filter(avancemensual__avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=1)
         the_list = []
         if avances_totales_alimentacion:
             avances_values=get_avance_values(avances_totales_alimentacion)
