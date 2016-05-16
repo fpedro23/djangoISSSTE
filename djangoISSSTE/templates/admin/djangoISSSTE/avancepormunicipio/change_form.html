@@ -108,8 +108,14 @@
 
 {% block after_related_objects %}{% endblock %}
 
-{% block submit_buttons_bottom %}{% submit_row %}
-  <div class = "salirBTN" onclick="location.href='/admin';"></div>{% endblock %}
+{% block submit_buttons_bottom %}{#   submit_row #}
+     {%  if user.usuario.rol != 'FC' and user.usuario.rol != 'UC' %}
+           <div class="guardarsalirBTN" onclick="document.getElementById('{{ opts.model_name }}_form').submit('_save');"></div>
+           <input type="submit" value="" class="guardar_ContinuarB" name="_continue" />
+           <input  class="guardarotroBTN"  type="submit" value="" name="_addanother" />
+   {% endif %}
+  <div class = "salirBTN" onclick="location.href='/admin';"></div>
+{% endblock %}
 
 {% block admin_change_form_document_ready %}
     <script type="text/javascript">
