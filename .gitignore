@@ -9,3 +9,4 @@ db.sqlite3/
 djangoISSSTE/migrations/
 local_settings.py
 Projects/settingsOscar.py
+Projects/wsgiOscar.py
