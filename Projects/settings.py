@@ -106,9 +106,9 @@ WSGI_APPLICATION = 'Projects.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'issste',
-        'USER': 'inclusion',
-        'PASSWORD': 'inclusion',
+        'NAME': 'issste_db',
+        'USER': 'root',
+        'PASSWORD': '',
         'HOST': '',
         'PORT': '',
     }

@@ -1361,6 +1361,21 @@ ul.messagelist li.error {
 }
 
 
+.botCAMBIAR{
+	width:126px;
+	height:45px;
+	position:absolute;
+	top: 340px;
+	left: 365px;
+	background-image:url(../Imagenes/bigBackground.fw.png);
+	background-position: 0px -524px;
+    border-style: hidden;
+}
+
+.botCAMBIAR:hover{
+	background-position:0px -569px;
+}
+
 .botENVIAR{
 	width:126px;
 	height:45px;
@@ -1514,4 +1529,22 @@ ul li {
     font-size:18px;
     color: #6A6B6C;
 
+}
+
+ .logIn2 {
+	position: absolute;
+	left: 300px;
+	top: 76px;
+	width: 435px;
+	height: 337px;
+	z-index: 1;
+}
+
+ #alertaMAIL{
+	width:400px;
+	height:250px;
+	position:absolute;
+	left:17px;
+	background-image:url(../Imagenes/bigBackground.fw.png);
+	background-position:-721px -1520px;
 }
