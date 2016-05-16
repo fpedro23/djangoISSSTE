@@ -1547,7 +1547,7 @@ ul li {
 	left:17px;
 	background-image:url(../Imagenes/bigBackground.fw.png);
 	background-position:-721px -1520px;
-}}
+}
 
 
 /*elementos de la seccion de AYUDA*/
@@ -1556,7 +1556,6 @@ ul li {
     height:190px;
     background-image:url(../Imagenes/bigBackground.fw.png);
     background-position: -180px -1140px;
-
     position:absolute;
     top: 149px;
     left: 322px;

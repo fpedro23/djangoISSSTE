@@ -225,3 +225,8 @@ def ver_video(request):
         'tituloVideo': tituloVideo,
     })
     return HttpResponse(template.render(context))
+
+@login_required()
+def manuales(request):
+    return render_to_response('admin/djangoISSSTE/manuales/manuales_lista.html', locals(),
+                              context_instance=RequestContext(request))

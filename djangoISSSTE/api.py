@@ -864,7 +864,7 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
         estado_id = get_array_or_none(request.GET.get('estado'))
 
         avances = AvanceMensual.objects.filter(Q(avancePorMunicipio__periodo__id__in = periodo_id)&
-                                               Q(avancePorMunicipio__meta__accionEstrategica__in = accion_id)&
+                                               Q(avancePorMunicipio__meta__id__in = accion_id)&
                                                Q(avancePorMunicipio__estado__id__in=estado_id))
         resultados = avances.values(
             'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia',
@@ -921,59 +921,116 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
             the_list['inversion'] =suma*datos['avancePorMunicipio__meta__montoPromedio']
             the_json.append(the_list)
 
-
-        table = prs.slides[0].shapes[0].table
-        for x in range(0, 3):
-            cell = table.rows[x].cells[1]
-            paragraph = cell.textframe.paragraphs[0]
-            paragraph.font.size = Pt(8)
-            paragraph.font.name = 'Arial'
-            paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
-
-        table.cell(0, 1).text = the_json[0]['carencia']
-        table.cell(1, 1).text = the_json[0]['subCarencia']
-        table.cell(2, 1).text = the_json[0]['accion']
-
-        table = prs.slides[0].shapes[1].table
-        for x in range(0, 4):
-            cell = table.rows[x].cells[1]
-            paragraph = cell.textframe.paragraphs[0]
-            paragraph.font.size = Pt(8)
-            paragraph.font.name = 'Arial'
-            paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
-
-        table.cell(0, 1).text = the_json[0]['unidad']
-        table.cell(1, 1).text = the_json[0]['responsable']
-        table.cell(2, 1).text = str(the_json[0]['periodo'])
-        table.cell(3, 1).text = the_json[0]['observaciones']
-
-        table = prs.slides[0].shapes[2].table
-        indice = 2
-        for avance in the_json:
-            for x in range(0, 16):
-                cell = table.rows[indice].cells[x]
+        if the_json.__len__()>0:
+            table = prs.slides[0].shapes[0].table
+            table2 = prs.slides[1].shapes[0].table
+            for x in range(0, 3):
+                cell = table.rows[x].cells[1]
                 paragraph = cell.textframe.paragraphs[0]
                 paragraph.font.size = Pt(8)
                 paragraph.font.name = 'Arial'
                 paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
 
-            # write body cells
-            table.cell(indice, 1).text = avance['municipio']
-            table.cell(indice, 2).text = str(avance['ene'])
-            table.cell(indice, 3).text = str(avance['feb'])
-            table.cell(indice, 4).text = str(avance['mar'])
-            table.cell(indice, 5).text = str(avance['abr'])
-            table.cell(indice, 6).text = str(avance['may'])
-            table.cell(indice, 7).text = str(avance['jun'])
-            table.cell(indice, 8).text = str(avance['jul'])
-            table.cell(indice, 9).text = str(avance['ago'])
-            table.cell(indice, 10).text = str(avance['sep'])
-            table.cell(indice, 11).text = str(avance['oct'])
-            table.cell(indice, 12).text = str(avance['nov'])
-            table.cell(indice, 13).text = str(avance['dic'])
-            table.cell(indice, 14).text = str(avance['suma'])
-            table.cell(indice, 15).text = str(avance['inversion'])
-            indice += 1
+            table.cell(0, 1).text = the_json[0]['carencia']
+            table.cell(1, 1).text = the_json[0]['subCarencia']
+            table.cell(2, 1).text = the_json[0]['accion']
+
+            table = prs.slides[0].shapes[1].table
+            for x in range(0, 4):
+                cell = table.rows[x].cells[1]
+                paragraph = cell.textframe.paragraphs[0]
+                paragraph.font.size = Pt(8)
+                paragraph.font.name = 'Arial'
+                paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+            table.cell(0, 1).text = the_json[0]['unidad']
+            table.cell(1, 1).text = the_json[0]['responsable']
+            table.cell(2, 1).text = str(the_json[0]['periodo'])
+            table.cell(3, 1).text = the_json[0]['observaciones']
+
+            table = prs.slides[0].shapes[2].table
+
+            for x in range(0, 3):
+                cell = table2.rows[x].cells[1]
+                paragraph = cell.textframe.paragraphs[0]
+                paragraph.font.size = Pt(8)
+                paragraph.font.name = 'Arial'
+                paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+            table2.cell(0, 1).text = the_json[0]['carencia']
+            table2.cell(1, 1).text = the_json[0]['subCarencia']
+            table2.cell(2, 1).text = the_json[0]['accion']
+
+            table2 = prs.slides[0].shapes[1].table
+            for x in range(0, 4):
+                cell = table2.rows[x].cells[1]
+                paragraph = cell.textframe.paragraphs[0]
+                paragraph.font.size = Pt(8)
+                paragraph.font.name = 'Arial'
+                paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+            table2.cell(0, 1).text = the_json[0]['unidad']
+            table2.cell(1, 1).text = the_json[0]['responsable']
+            table2.cell(2, 1).text = str(the_json[0]['periodo'])
+            table2.cell(3, 1).text = the_json[0]['observaciones']
+
+            table2 = prs.slides[1].shapes[2].table
+
+            indice = 2
+            indice2 = 2
+            for avance in the_json:
+
+                if indice <=10:
+                    for x in range(0, 16):
+                        cell = table.rows[indice].cells[x]
+                        paragraph = cell.textframe.paragraphs[0]
+                        paragraph.font.size = Pt(8)
+                        paragraph.font.name = 'Arial'
+                        paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+                    # write body cells
+                    table.cell(indice, 1).text = avance['municipio']
+                    table.cell(indice, 2).text = str(avance['ene'])
+                    table.cell(indice, 3).text = str(avance['feb'])
+                    table.cell(indice, 4).text = str(avance['mar'])
+                    table.cell(indice, 5).text = str(avance['abr'])
+                    table.cell(indice, 6).text = str(avance['may'])
+                    table.cell(indice, 7).text = str(avance['jun'])
+                    table.cell(indice, 8).text = str(avance['jul'])
+                    table.cell(indice, 9).text = str(avance['ago'])
+                    table.cell(indice, 10).text = str(avance['sep'])
+                    table.cell(indice, 11).text = str(avance['oct'])
+                    table.cell(indice, 12).text = str(avance['nov'])
+                    table.cell(indice, 13).text = str(avance['dic'])
+                    table.cell(indice, 14).text = str(avance['suma'])
+                    table.cell(indice, 15).text = str(avance['inversion'])
+                    indice += 1
+                else:
+                    for x in range(0, 16):
+                        cell = table.rows[indice2].cells[x]
+                        paragraph = cell.textframe.paragraphs[0]
+                        paragraph.font.size = Pt(8)
+                        paragraph.font.name = 'Arial'
+                        paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+                    # write body cells
+                    table.cell(indice2, 1).text = avance['municipio']
+                    table.cell(indice2, 2).text = str(avance['ene'])
+                    table.cell(indice2, 3).text = str(avance['feb'])
+                    table.cell(indice2, 4).text = str(avance['mar'])
+                    table.cell(indice2, 5).text = str(avance['abr'])
+                    table.cell(indice2, 6).text = str(avance['may'])
+                    table.cell(indice2, 7).text = str(avance['jun'])
+                    table.cell(indice2, 8).text = str(avance['jul'])
+                    table.cell(indice2, 9).text = str(avance['ago'])
+                    table.cell(indice2, 10).text = str(avance['sep'])
+                    table.cell(indice2, 11).text = str(avance['oct'])
+                    table.cell(indice2, 12).text = str(avance['nov'])
+                    table.cell(indice2, 13).text = str(avance['dic'])
+                    table.cell(indice2, 14).text = str(avance['suma'])
+                    table.cell(indice2, 15).text = str(avance['inversion'])
+                    indice2 += 1
+
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
 
