@@ -54,6 +54,13 @@ function main_consulta() {
     $j('#informacionGeneral').on('click', informacionGeneral)
     $j('#avancesPeriodo').on('click', avancesPeriodo)
     $j('#presentacionAvances').on('click', presentacionAvances)
+    $j('#listadoSedesol1').on('click', listadoSedesol1)
+    $j('#listadoSedesol2').on('click', listadoSedesol2)
+    $j('#listadoSedesol3').on('click', listadoSedesol3)
+    $j('#listadoSedesol4').on('click', listadoSedesol4)
+    $j('#listadoSedesol5').on('click', listadoSedesol5)
+
+
 
 
 
@@ -126,6 +133,28 @@ function demoFromHTML2() {
     }, margins);
 
     $pop('#tabla-exporta').hide();
+}
+
+
+function listadoSedesol1() {
+    var URL="/issste/api/reporteExcelAvances?access_token="+newToken + "&periodo=2016&carencia=1";
+    location.href = URL;
+}
+function listadoSedesol2() {
+    var URL="/issste/api/reporteExcelAvances?access_token="+newToken + "&periodo=2016&carencia=2";
+    location.href = URL;
+}
+function listadoSedesol3() {
+    var URL="/issste/api/reporteExcelAvances?access_token="+newToken + "&periodo=2016&carencia=3";
+    location.href = URL;
+}
+function listadoSedesol4() {
+    var URL="/issste/api/reporteExcelAvances?access_token="+newToken + "&periodo=2016&carencia=4";
+    location.href = URL;
+}
+function listadoSedesol5() {
+    var URL="/issste/api/reporteExcelAvances?access_token="+newToken + "&periodo=2016&carencia=5";
+    location.href = URL;
 }
 
 function balanceGeneral() {

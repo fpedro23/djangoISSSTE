@@ -1059,6 +1059,7 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
                     metas['oct'] = meta.oct
                     metas['nov'] = meta.nov
                     metas['dic'] = meta.dic
+                    metas['suma_meta'] = meta.ene+meta.feb+meta.mar+meta.abr+meta.may+meta.jun+meta.jul+meta.ago+meta.sep+meta.oct+meta.nov+meta.dic
                     metas['inversion'] = meta.inversionAprox
 
                     accion['metas'].append(metas)
@@ -1103,6 +1104,16 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
         merge_format_verde.set_border(3)
         merge_format_verde.set_font_color('white')
 
+        merge_format_verdeF = book.add_format({
+            'bold': 1,
+            'border': 1,
+            'align': 'center',
+            'valign': 'vcenter',
+            'fg_color': '0B3B17'})
+        merge_format_verdeF.set_border_color('white')
+        merge_format_verdeF.set_border(3)
+        merge_format_verdeF.set_font_color('white')
+
 
         merge_format_gris = book.add_format({
             'bold': 1,
@@ -1121,23 +1132,22 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
             'align': 'center',
             'valign': 'vcenter',
             'fg_color': 'FFFFFF'})
-        merge_format_gris.set_border_color('white')
-        merge_format_gris.set_border(1)
-        merge_format_gris.set_font_color('black')
+        merge_format_blanco.set_border_color('white')
+        merge_format_blanco.set_border(1)
+        merge_format_blanco.set_font_color('black')
 
         # Merge 2 cells.
         sheet.set_column(5, 0, 10)
         sheet.set_column(5, 1, 20)
-        sheet.set_column(5, 2, 30)
         for i in range(0, 5):
             sheet.set_row(i, 40)
         sheet.set_row(5, 30)
-        sheet.merge_range('A1:C1', 'Carencia', merge_format_rojo)
-        sheet.merge_range('A2:C2', 'SubCarencia', merge_format_naranja)
-        sheet.merge_range('A3:C3', 'Accion Estrategica', merge_format_rojo)
-        sheet.merge_range('A4:C4', 'Unidad de Medida', merge_format_naranja)
-        sheet.merge_range('A5:C5', 'Avances', merge_format_verde)
-        sheet.merge_range('D5:P5', "Avance Mensual", merge_format_verde)
+        sheet.merge_range('A1:B1', 'Carencia', merge_format_rojo)
+        sheet.merge_range('A2:B2', 'SubCarencia', merge_format_naranja)
+        sheet.merge_range('A3:B3', 'Accion Estrategica', merge_format_rojo)
+        sheet.merge_range('A4:B4', 'Unidad de Medida', merge_format_naranja)
+        sheet.merge_range('A5:B5', 'Avances', merge_format_verde)
+        sheet.merge_range('C5:P5', "Avance Mensual", merge_format_verde)
 
 
         # avances
@@ -1152,11 +1162,11 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
             for accion in reporte['acciones']:
                 indice+=1
                 if indice==1:
-                    sheet.merge_range('D1:P1', json_map['carencia'], merge_format_rojo)
-                    sheet.merge_range('D2:P2', reporte['subCarencias'], merge_format_gris)
+                    sheet.merge_range('C1:P1', json_map['carencia'], merge_format_rojo)
+                    sheet.merge_range('C2:P2', reporte['subCarencias'], merge_format_gris)
                     columna=0
-                    sheet.merge_range('D3:P3', accion['accion'],merge_format_blanco)
-                    sheet.merge_range('D4:P4', accion['unidad'],merge_format_blanco)
+                    sheet.merge_range('C3:P3', accion['accion'],merge_format_blanco)
+                    sheet.merge_range('C4:P4', accion['unidad'],merge_format_blanco)
                 elif indice==2:
                     sheet.merge_range('Q1:AF1', json_map['carencia'], merge_format_rojo)
                     sheet.merge_range('Q2:AF2', reporte['subCarencias'], merge_format_gris)
@@ -1202,36 +1212,38 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
 
                 sheet.write(5, columna +0, "Clave", merge_format_rojo)
                 sheet.write(5, columna +1, "Entidad", merge_format_rojo)
-                sheet.write(5, columna +4, "Enero", bold)
-                sheet.write(5, columna +5, "Febrero", bold)
-                sheet.write(5, columna +6, "Marzo", bold)
-                sheet.write(5, columna +7, "Abril", bold)
-                sheet.write(5, columna +8, "Mayo", bold)
-                sheet.write(5, columna +9, "Junio", bold)
-                sheet.write(5, columna +10, "Julio", bold)
-                sheet.write(5, columna +11, "Agosto", bold)
-                sheet.write(5, columna +12, "Septiembre", bold)
-                sheet.write(5, columna +13, "Octubre", bold)
-                sheet.write(5, columna +14, "Noviembre", bold)
-                sheet.write(5, columna +15, "Diciembre", bold)
+                sheet.write(5, columna +2, "Enero", bold)
+                sheet.write(5, columna +3, "Febrero", bold)
+                sheet.write(5, columna +4, "Marzo", bold)
+                sheet.write(5, columna +5, "Abril", bold)
+                sheet.write(5, columna +6, "Mayo", bold)
+                sheet.write(5, columna +7, "Junio", bold)
+                sheet.write(5, columna +8, "Julio", bold)
+                sheet.write(5, columna +9, "Agosto", bold)
+                sheet.write(5, columna +10, "Septiembre", bold)
+                sheet.write(5, columna +11, "Octubre", bold)
+                sheet.write(5, columna +12, "Noviembre", bold)
+                sheet.write(5, columna +13, "Diciembre", bold)
+                sheet.write(5, columna +14, "Meta Acumulada", merge_format_verde)
+                sheet.write(5, columna +15, "Inversion Aprox.", merge_format_verdeF)
                 renAvance=6
                 for avance in accion['metas']:
                     sheet.write(renAvance, columna +0, avance["clave"], format)
                     sheet.write(renAvance, columna +1, avance["estado"], format)
-                    sheet.write(renAvance, columna +2, avance["municipio"], format)
-                    sheet.write(renAvance, columna +3, avance['2014_2015'], format)
-                    sheet.write(renAvance, columna +4, avance["ene"], format)
-                    sheet.write(renAvance, columna +5, avance["feb"], format)
-                    sheet.write(renAvance, columna +6, avance["mar"], format)
-                    sheet.write(renAvance, columna +7, avance["abr"], format)
-                    sheet.write(renAvance, columna +8, avance["may"], format)
-                    sheet.write(renAvance, columna +9, avance["jun"], format)
-                    sheet.write(renAvance, columna +10, avance["jul"], format)
-                    sheet.write(renAvance, columna +11, avance["ago"], format)
-                    sheet.write(renAvance, columna +12, avance["sep"], format)
-                    sheet.write(renAvance, columna +13, avance["oct"], format)
-                    sheet.write(renAvance, columna +14, avance["nov"], format)
-                    sheet.write(renAvance, columna +15, avance["dic"], format)
+                    sheet.write(renAvance, columna +2, avance["ene"], format)
+                    sheet.write(renAvance, columna +3, avance["feb"], format)
+                    sheet.write(renAvance, columna +4, avance["mar"], format)
+                    sheet.write(renAvance, columna +5, avance["abr"], format)
+                    sheet.write(renAvance, columna +6, avance["may"], format)
+                    sheet.write(renAvance, columna +7, avance["jun"], format)
+                    sheet.write(renAvance, columna +8, avance["jul"], format)
+                    sheet.write(renAvance, columna +9, avance["ago"], format)
+                    sheet.write(renAvance, columna +10, avance["sep"], format)
+                    sheet.write(renAvance, columna +11, avance["oct"], format)
+                    sheet.write(renAvance, columna +12, avance["nov"], format)
+                    sheet.write(renAvance, columna +13, avance["dic"], format)
+                    sheet.write(renAvance, columna +14, avance["suma_meta"], format)
+                    sheet.write(renAvance, columna +15, avance["inversion"], format)
                     renAvance+=1
         #**********************************************FIN METAS *************************************
 
@@ -1367,9 +1379,9 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
             'align': 'center',
             'valign': 'vcenter',
             'fg_color': 'FFFFFF'})
-        merge_format_gris.set_border_color('white')
-        merge_format_gris.set_border(1)
-        merge_format_gris.set_font_color('black')
+        merge_format_blanco.set_border_color('white')
+        merge_format_blanco.set_border(1)
+        merge_format_blanco.set_font_color('black')
 
         # Merge 2 cells.
         sheet.set_column(5, 0, 10)
@@ -1546,6 +1558,8 @@ class ReporteExcelMetasEndpoint(generic.ListView):
                 ):
                     # #print "Avance"
                     metas = {}
+                    metas['clave'] = meta.estado.claveEstado
+                    metas['estado'] = meta.estado.nombreEstado
                     metas['ene'] = meta.ene
                     metas['feb'] = meta.feb
                     metas['mar'] = meta.mar
