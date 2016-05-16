@@ -20,27 +20,52 @@ function main_consulta() {
 		}
 	});
 
-    $j('#crearObra').on('click', crear_obra)
-    $j('#modificarObra').on('click', modificar_obra)
-    $j('#agregarClasificacion').on('click', agregar_clasificacion)
-    $j('#buscarClasificacion').on('click', buscar_clasificacion)
+    $j('#iciniosesion').on('click', inicio_sesion)
+    $j('#registroavance').on('click', registro_avance)
+    $j('#consfiltro').on('click', cons_filtro)
+    $j('#conspredef').on('click', cons_predef)
+    $j('#conslistado').on('click', cons_listado)
+    $j('#altameta').on('click', alta_meta)
+    $j('#modifmeta').on('click',modif_meta )
+    $j('#bajameta').on('click',baja_meta )
+    $j('#altausr').on('click',alta_usr )
+    $j('#bajausr').on('click',baja_usr )
 
-
 }
 
-function crear_obra(){
-    $j('#titulo').html('Crear una Obra');
-    //verVideo('creacionObra.mp4','Crear una Obra');
+function inicio_sesion(){
+    $j('#titulo').html('Inicio de Sesión');
+    verVideo('1_1_iniciarSesion.mp4','Inicio de Sesión');
 }
-function modificar_obra(){
-    verVideo('modificacionObra.mp4','Modificar una Obra');
+
+function registro_avance(){
+    $j('#titulo').html('Registrar Avances');
+    verVideo('2_1_AltaAvances.mp4','Registrar Avances');
 }
-function agregar_clasificacion(){
-    verVideo('agregarClasificacion.mp4','Agregar una Clasificación');
+
+function cons_filtro(){
+    verVideo('3_1_consFiltros.mp4','Consulta Mediante Filtros');
 }
-function buscar_clasificacion(){
-    verVideo('buscarClasificacion.mp4','Buscar una Clasificación');
+
+function cons_predef(){
+    verVideo('3_2_consPredef.mp4','Consulta Predefinidos');
 }
+
+function cons_listado(){
+    verVideo('3_3_listadeAvances.mp4','Lista de Acciones');
+}
+function alta_meta(){
+    verVideo('4_1_altaMeta.mp4','Registro de Metas');
+}
+
+function modif_meta(){
+    verVideo('4_2_modifMeta.mp4','Modificar Metas');
+}
+
+function baja_meta(){
+    verVideo('4_3_eliminarCatalogo.mp4','Eliminar Metas');
+}
+
 function verVideo(nombreVideo,titulo){
 
 
