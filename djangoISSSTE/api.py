@@ -3477,7 +3477,7 @@ class MetasSinAvancesPptxEndpoint(ProtectedResourceView):
         shapes = slide.shapes
         shapes.title.text = 'Metas sin Avances'
         rows = 10
-        cols = 5
+        cols = 7
         left = Inches(0.521)
         top = Inches(1.2)
         width = Inches(6.0)
@@ -3486,9 +3486,11 @@ class MetasSinAvancesPptxEndpoint(ProtectedResourceView):
         # set column widths
         table.columns[0].width = Inches(1.3)
         table.columns[1].width = Inches(1.3)
-        table.columns[2].width = Inches(3.5)
+        table.columns[2].width = Inches(2.5)
         table.columns[3].width = Inches(1.2)
         table.columns[4].width = Inches(1.0)
+        table.columns[5].width = Inches(1.2)
+        table.columns[6].width = Inches(1.2)
 
         indice = 1
 
@@ -3500,7 +3502,7 @@ class MetasSinAvancesPptxEndpoint(ProtectedResourceView):
                 shapes.title.text = 'Resultados'
 
                 rows = 10
-                cols = 5
+                cols = 7
                 left = Inches(0.521)
                 top = Inches(1.2)
                 width = Inches(6.0)
@@ -3511,18 +3513,20 @@ class MetasSinAvancesPptxEndpoint(ProtectedResourceView):
                 # set column widths
                 table.columns[0].width = Inches(1.3)
                 table.columns[1].width = Inches(1.3)
-                table.columns[2].width = Inches(3.5)
+                table.columns[2].width = Inches(2.5)
                 table.columns[3].width = Inches(1.2)
                 table.columns[4].width = Inches(1.0)
+                table.columns[5].width = Inches(1.2)
+                table.columns[6].width = Inches(1.2)
 
-            for x in range(0, 5):
+            for x in range(0, 7):
                 cell = table.rows[0].cells[x]
                 paragraph = cell.textframe.paragraphs[0]
                 paragraph.font.size = Pt(12)
                 paragraph.font.name = 'Arial Black'
                 paragraph.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
 
-            for x in range(0, 5):
+            for x in range(0, 7):
                 cell = table.rows[indice].cells[x]
                 paragraph = cell.textframe.paragraphs[0]
                 paragraph.font.size = Pt(8)
@@ -3535,6 +3539,8 @@ class MetasSinAvancesPptxEndpoint(ProtectedResourceView):
             table.cell(0, 2).text = 'Accion'
             table.cell(0, 3).text = 'Estado'
             table.cell(0, 4).text = 'Año'
+            table.cell(0, 5).text = 'Meta'
+            table.cell(0, 6).text = 'Avance'
 
 
             # write body cells
@@ -3543,6 +3549,8 @@ class MetasSinAvancesPptxEndpoint(ProtectedResourceView):
             table.cell(indice, 2).text = avance['accion']
             table.cell(indice, 3).text = avance['estado']
             table.cell(indice, 4).text = str(avance['periodo'])
+            table.cell(indice, 5).text = str(avance['suma_meta'])
+            table.cell(indice, 6).text = str(avance['suma_avance'])
             indice += 1
 
         prs.save(output)
