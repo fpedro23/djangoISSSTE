@@ -1007,28 +1007,28 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
                     indice += 1
                 else:
                     for x in range(0, 16):
-                        cell = table.rows[indice2].cells[x]
+                        cell = table2.rows[indice2].cells[x]
                         paragraph = cell.textframe.paragraphs[0]
                         paragraph.font.size = Pt(8)
                         paragraph.font.name = 'Arial'
                         paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
 
                     # write body cells
-                    table.cell(indice2, 1).text = avance['municipio']
-                    table.cell(indice2, 2).text = str(avance['ene'])
-                    table.cell(indice2, 3).text = str(avance['feb'])
-                    table.cell(indice2, 4).text = str(avance['mar'])
-                    table.cell(indice2, 5).text = str(avance['abr'])
-                    table.cell(indice2, 6).text = str(avance['may'])
-                    table.cell(indice2, 7).text = str(avance['jun'])
-                    table.cell(indice2, 8).text = str(avance['jul'])
-                    table.cell(indice2, 9).text = str(avance['ago'])
-                    table.cell(indice2, 10).text = str(avance['sep'])
-                    table.cell(indice2, 11).text = str(avance['oct'])
-                    table.cell(indice2, 12).text = str(avance['nov'])
-                    table.cell(indice2, 13).text = str(avance['dic'])
-                    table.cell(indice2, 14).text = str(avance['suma'])
-                    table.cell(indice2, 15).text = str(avance['inversion'])
+                    table2.cell(indice2, 1).text = avance['municipio']
+                    table2.cell(indice2, 2).text = str(avance['ene'])
+                    table2.cell(indice2, 3).text = str(avance['feb'])
+                    table2.cell(indice2, 4).text = str(avance['mar'])
+                    table2.cell(indice2, 5).text = str(avance['abr'])
+                    table2.cell(indice2, 6).text = str(avance['may'])
+                    table2.cell(indice2, 7).text = str(avance['jun'])
+                    table2.cell(indice2, 8).text = str(avance['jul'])
+                    table2.cell(indice2, 9).text = str(avance['ago'])
+                    table2.cell(indice2, 10).text = str(avance['sep'])
+                    table2.cell(indice2, 11).text = str(avance['oct'])
+                    table2.cell(indice2, 12).text = str(avance['nov'])
+                    table2.cell(indice2, 13).text = str(avance['dic'])
+                    table2.cell(indice2, 14).text = str(avance['suma'])
+                    table2.cell(indice2, 15).text = str(avance['inversion'])
                     indice2 += 1
 
 
