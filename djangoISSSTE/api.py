@@ -3285,6 +3285,7 @@ class AvancePorMunicipioPptxEndpoint(ProtectedResourceView):
 
             shortened_reporte['suma_avance'] = 0
             shortened_reporte['suma_meta'] = 0
+            shortened_reporte['porcentaje']=0
 
             # ID de cada avance mensual en el reporte para poder obtener el valor del avance cada mes
             avance_mensual = AvanceMensual.objects.get(id=reporte['id'])
@@ -3300,6 +3301,9 @@ class AvancePorMunicipioPptxEndpoint(ProtectedResourceView):
             shortened_reporte['suma_meta'] += (meta.ene + meta.feb + meta.mar + meta.abr +
                                                meta.may + meta.jun + meta.jul + meta.ago +
                                                meta.sep + meta.oct + meta.nov + meta.dic)
+            if shortened_reporte['suma_meta']>0:
+                shortened_reporte['porcentaje'] +=(shortened_reporte['suma_avance']*100)/shortened_reporte['suma_meta']
+
             shortened_reporte['id'] = reporte['id']
             shortened_reporte['avancePorMunicipio_id'] = reporte['avancePorMunicipio__id']
             shortened_reporte['accion'] = reporte['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
@@ -3320,19 +3324,21 @@ class AvancePorMunicipioPptxEndpoint(ProtectedResourceView):
         shapes = slide.shapes
         shapes.title.text = 'Avances por Municipio'
         rows = 10
-        cols = 6
-        left = Inches(0.521)
+        cols = 8
+        left = Inches(0.3)
         top = Inches(1.2)
         width = Inches(6.0)
         height = Inches(0.8)
         table = shapes.add_table(rows, cols, left, top, width, height).table
         # set column widths
-        table.columns[0].width = Inches(1.2)
-        table.columns[1].width = Inches(1.2)
-        table.columns[2].width = Inches(3.0)
-        table.columns[3].width = Inches(1.2)
-        table.columns[4].width = Inches(1.2)
+        table.columns[0].width = Inches(1.0)
+        table.columns[1].width = Inches(1.0)
+        table.columns[2].width = Inches(2.0)
+        table.columns[3].width = Inches(1.0)
+        table.columns[4].width = Inches(1.0)
         table.columns[5].width = Inches(1.0)
+        table.columns[6].width = Inches(1.0)
+        table.columns[7].width = Inches(1.0)
         indice = 1
 
         for avance in json_map['reporte_por_municipio']:
@@ -3343,8 +3349,8 @@ class AvancePorMunicipioPptxEndpoint(ProtectedResourceView):
                 shapes.title.text = 'Resultados'
 
                 rows = 10
-                cols = 6
-                left = Inches(0.521)
+                cols = 8
+                left = Inches(0.3)
                 top = Inches(1.2)
                 width = Inches(6.0)
                 height = Inches(0.8)
@@ -3352,21 +3358,23 @@ class AvancePorMunicipioPptxEndpoint(ProtectedResourceView):
                 table = shapes.add_table(rows, cols, left, top, width, height).table
 
                 # set column widths
-                table.columns[0].width = Inches(1.2)
-                table.columns[1].width = Inches(1.2)
-                table.columns[2].width = Inches(3.0)
-                table.columns[3].width = Inches(1.2)
-                table.columns[4].width = Inches(1.2)
+                table.columns[0].width = Inches(1.0)
+                table.columns[1].width = Inches(1.0)
+                table.columns[2].width = Inches(2.0)
+                table.columns[3].width = Inches(1.0)
+                table.columns[4].width = Inches(1.0)
                 table.columns[5].width = Inches(1.0)
+                table.columns[6].width = Inches(1.0)
+                table.columns[7].width = Inches(1.0)
 
-            for x in range(0, 6):
+            for x in range(0, 8):
                 cell = table.rows[0].cells[x]
                 paragraph = cell.textframe.paragraphs[0]
                 paragraph.font.size = Pt(12)
                 paragraph.font.name = 'Arial Black'
                 paragraph.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
 
-            for x in range(0, 6):
+            for x in range(0, 8):
                 cell = table.rows[indice].cells[x]
                 paragraph = cell.textframe.paragraphs[0]
                 paragraph.font.size = Pt(8)
@@ -3379,7 +3387,9 @@ class AvancePorMunicipioPptxEndpoint(ProtectedResourceView):
             table.cell(0, 2).text = 'Accion'
             table.cell(0, 3).text = 'Estado'
             table.cell(0, 4).text = 'Municipio'
-            table.cell(0, 5).text = 'Avance Total'
+            table.cell(0, 5).text = 'Avance'
+            table.cell(0, 6).text = 'Meta'
+            table.cell(0, 7).text = 'Porcetaje'
 
 
             # write body cells
@@ -3389,6 +3399,8 @@ class AvancePorMunicipioPptxEndpoint(ProtectedResourceView):
             table.cell(indice, 3).text = avance['estado']
             table.cell(indice, 4).text = avance['municipio']
             table.cell(indice, 5).text = str(avance['suma_avance'])
+            table.cell(indice, 6).text = str('{0:,.2f}'.format(avance['suma_meta']))
+            table.cell(indice, 7).text = str('{0:,.2f}'.format(avance['porcentaje']))
             indice += 1
 
         prs.save(output)
