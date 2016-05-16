@@ -1,6 +1,7 @@
 # coding=utf-8
 from django import forms
 from django.contrib import admin
+from django.contrib.humanize.templatetags.humanize import intcomma
 import json
 # from django.contrib.admin.models import LogEntry
 
@@ -247,7 +248,9 @@ class MetaAdmin(admin.ModelAdmin):
 		inversionAprox = 0
 		for singleMetaMensual in MetaMensual.objects.filter(Q(meta__id=metaID)):
 			inversionAprox += singleMetaMensual.inversionAprox
-		return inversionAprox
+		inversionAprox = round(float(inversionAprox), 2)
+		#return inversionAprox
+		return "$%s%s" % (intcomma(int(inversionAprox)), ("%0.2f" % inversionAprox)[-3:])
 
 	get_subcarencia.short_description = "SubCarencia"
 	get_carencia.short_description = "Carencia"
@@ -475,7 +478,9 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 		return obj.meta.montoPromedio
 
 	def get_inversion(self,obj):
-		return obj.inversionAprox
+
+		inversionAprox = round(float(obj.inversionAprox), 2)
+		return "$%s%s" % (intcomma(int(inversionAprox)), ("%0.2f" % inversionAprox)[-3:])
 
 	get_inversion.short_description = "Inversión Aprox."
 	get_subcarencia.short_description = "Sub Carencia"
