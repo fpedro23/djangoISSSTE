@@ -59,7 +59,7 @@ function verDocPdf(nombrePdf,titulo){
 
     $('#titulo').html(titulo);
     //$j('#descripcion').html(descripcion);
-    $('#vistaPdf').html('<embed src="http://www.inclusionissste.mx/media/tutorialesPDF/'+ nombrePdf +'.pdf" width="720" height="450">');
+    $('#vistaPdf').html('<embed src="/issste/media/tutorialesPDF/'+ nombrePdf +'.pdf" width="720" height="450">');
 
 
 }
