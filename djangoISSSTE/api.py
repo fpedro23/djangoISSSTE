@@ -998,6 +998,243 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
         periodo_id = request.GET.get('periodo')
         carencia_id = request.GET.get('carencia')
         json_map ={}
+
+        #*****************************************************METAS***********************************
+
+        json_map['resultados'] = []
+
+        subCarencias = MetaMensual.objects.filter(
+            Q(meta__accionEstrategica__subCarencia__carencia=carencia_id) &
+            Q(meta__periodo__nombrePeriodo=periodo_id)
+        ).values('meta__accionEstrategica__subCarencia__nombreSubCarencia') \
+            .annotate(subCarencias=Count('meta__accionEstrategica__subCarencia__nombreSubCarencia'))
+
+        json_map = {}
+        carenciaDatos = Carencia.objects.get(id=carencia_id)
+        json_map['carencia'] = carenciaDatos.nombreCarencia
+        json_map['resultados'] = []
+        for subCarencia in subCarencias:
+            # #print "SubCarencia"
+            datos = {}
+            datos['subCarencias'] = subCarencia[
+                'meta__accionEstrategica__subCarencia__nombreSubCarencia']
+            datos['acciones'] = []
+            for accionesDatos in MetaMensual.objects.filter(
+                                    Q(meta__accionEstrategica__subCarencia__carencia=carencia_id) &
+                                    Q(meta__periodo__nombrePeriodo=periodo_id) &
+                            Q(meta__accionEstrategica__subCarencia__nombreSubCarencia=
+                              subCarencia[
+                                  'meta__accionEstrategica__subCarencia__nombreSubCarencia'])) \
+                    .values('meta__accionEstrategica__nombreAccion',
+                            'meta__accionEstrategica__unidadDeMedida__descripcionUnidad',
+                            'meta__accionEstrategica__responsable__nombreResponsable') \
+                    .annotate(acciones=Count('meta__accionEstrategica__nombreAccion')):
+
+                # #print "Accion"
+                accion = {}
+                accion['accion'] = accionesDatos['meta__accionEstrategica__nombreAccion']
+                accion['unidad'] = accionesDatos[
+                    'meta__accionEstrategica__unidadDeMedida__descripcionUnidad']
+                accion['responable'] = accionesDatos[
+                    'meta__accionEstrategica__responsable__nombreResponsable']
+                accion['metas'] = []
+                for meta in MetaMensual.objects.filter(
+                                Q(meta__accionEstrategica__nombreAccion=
+                                  accionesDatos['meta__accionEstrategica__nombreAccion']) &
+                                Q(meta__periodo__nombrePeriodo=periodo_id)
+                ):
+                    # #print "Avance"
+                    metas = {}
+                    metas['clave'] = meta.estado.claveEstado
+                    metas['estado'] = meta.estado.nombreEstado
+                    metas['ene'] = meta.ene
+                    metas['feb'] = meta.feb
+                    metas['mar'] = meta.mar
+                    metas['abr'] = meta.abr
+                    metas['may'] = meta.may
+                    metas['jun'] = meta.jun
+                    metas['jul'] = meta.jul
+                    metas['ago'] = meta.ago
+                    metas['sep'] = meta.sep
+                    metas['oct'] = meta.oct
+                    metas['nov'] = meta.nov
+                    metas['dic'] = meta.dic
+                    metas['inversion'] = meta.inversionAprox
+
+                    accion['metas'].append(metas)
+                datos['acciones'].append(accion)
+            json_map['resultados'].append(datos)
+
+        output = StringIO.StringIO()
+        book = Workbook(output)
+        sheet = book.add_worksheet('METAS')
+
+        # Add a bold format to use to highlight cells.
+        bold = book.add_format({'bold': True})
+
+        # Create a format to use in the merged range.
+        merge_format_rojo = book.add_format({
+            'bold': 1,
+            'border': 1,
+            'align': 'center',
+            'valign': 'vcenter',
+            'fg_color': 'C3534C'})
+        merge_format_rojo.set_border_color('white')
+        merge_format_rojo.set_border(3)
+        merge_format_rojo.set_font_color('white')
+
+        merge_format_naranja = book.add_format({
+            'bold': 1,
+            'border': 1,
+            'align': 'center',
+            'valign': 'vcenter',
+            'fg_color': 'FA934C'})
+        merge_format_naranja.set_border_color('white')
+        merge_format_naranja.set_border(3)
+        merge_format_naranja.set_font_color('white')
+
+        merge_format_verde = book.add_format({
+            'bold': 1,
+            'border': 1,
+            'align': 'center',
+            'valign': 'vcenter',
+            'fg_color': '9CBB5C'})
+        merge_format_verde.set_border_color('white')
+        merge_format_verde.set_border(3)
+        merge_format_verde.set_font_color('white')
+
+
+        merge_format_gris = book.add_format({
+            'bold': 1,
+            'border': 1,
+            'align': 'center',
+            'valign': 'vcenter',
+            'fg_color': 'BFBFBF'})
+        merge_format_gris.set_border_color('white')
+        merge_format_gris.set_border(3)
+        merge_format_gris.set_font_color('white')
+
+
+        merge_format_blanco = book.add_format({
+            'bold': 1,
+            'border': 1,
+            'align': 'center',
+            'valign': 'vcenter',
+            'fg_color': 'FFFFFF'})
+        merge_format_gris.set_border_color('white')
+        merge_format_gris.set_border(1)
+        merge_format_gris.set_font_color('black')
+
+        # Merge 2 cells.
+        sheet.set_column(5, 0, 10)
+        sheet.set_column(5, 1, 20)
+        sheet.set_column(5, 2, 30)
+        for i in range(0, 5):
+            sheet.set_row(i, 40)
+        sheet.set_row(5, 30)
+        sheet.merge_range('A1:C1', 'Carencia', merge_format_rojo)
+        sheet.merge_range('A2:C2', 'SubCarencia', merge_format_naranja)
+        sheet.merge_range('A3:C3', 'Accion Estrategica', merge_format_rojo)
+        sheet.merge_range('A4:C4', 'Unidad de Medida', merge_format_naranja)
+        sheet.merge_range('A5:C5', 'Avances', merge_format_verde)
+        sheet.merge_range('D5:P5', "Avance Mensual", merge_format_verde)
+
+
+        # avances
+        format = book.add_format()
+        format.set_font_color('black')
+        format.set_font_name('Calibri')
+
+
+        indice=0
+        columna=0
+        for reporte in json_map['resultados']:
+            for accion in reporte['acciones']:
+                indice+=1
+                if indice==1:
+                    sheet.merge_range('D1:P1', json_map['carencia'], merge_format_rojo)
+                    sheet.merge_range('D2:P2', reporte['subCarencias'], merge_format_gris)
+                    columna=0
+                    sheet.merge_range('D3:P3', accion['accion'],merge_format_blanco)
+                    sheet.merge_range('D4:P4', accion['unidad'],merge_format_blanco)
+                elif indice==2:
+                    sheet.merge_range('Q1:AF1', json_map['carencia'], merge_format_rojo)
+                    sheet.merge_range('Q2:AF2', reporte['subCarencias'], merge_format_gris)
+                    columna=columna+16
+                    sheet.merge_range('Q3:AF3', accion['accion'],merge_format_blanco)
+                    sheet.merge_range('Q4:AF4', accion['unidad'],merge_format_blanco)
+                    sheet.merge_range('Q5:AF5', 'Avances', merge_format_verde)
+                    sheet.merge_range('Q5:AF5', "Avance Mensual", merge_format_verde)
+
+                elif indice==3:
+                    sheet.merge_range('AG1:AV1', json_map['carencia'], merge_format_rojo)
+                    sheet.merge_range('AG2:AV2', reporte['subCarencias'], merge_format_gris)
+                    columna=columna+16
+                    sheet.merge_range('AG3:AV3', accion['accion'],merge_format_blanco)
+                    sheet.merge_range('AG4:AV4', accion['unidad'],merge_format_blanco)
+                    sheet.merge_range('AG5:AV5', 'Avances', merge_format_verde)
+                    sheet.merge_range('AG5:AV5', "Avance Mensual", merge_format_verde)
+                elif indice==4:
+                    sheet.merge_range('AW1:BL1', json_map['carencia'], merge_format_rojo)
+                    sheet.merge_range('AW2:BL2', reporte['subCarencias'], merge_format_gris)
+                    columna=columna+16
+                    sheet.merge_range('AW3:BL3', accion['accion'],merge_format_blanco)
+                    sheet.merge_range('AW4:BL4', accion['unidad'],merge_format_blanco)
+                    sheet.merge_range('AW5:BL5', 'Avances', merge_format_verde)
+                    sheet.merge_range('AW5:BL5', "Avance Mensual", merge_format_verde)
+                elif indice==5:
+                    sheet.merge_range('BM1:CB1', json_map['carencia'], merge_format_rojo)
+                    sheet.merge_range('BM2:CB2', reporte['subCarencias'], merge_format_gris)
+                    columna=columna+16
+                    sheet.merge_range('BM3:CB3', accion['accion'],merge_format_blanco)
+                    sheet.merge_range('BM4:CB4', accion['unidad'],merge_format_blanco)
+                    sheet.merge_range('BM5:CB5', 'Avances', merge_format_verde)
+                    sheet.merge_range('BM5:CB5', "Avance Mensual", merge_format_verde)
+                elif indice==6:
+                    sheet.merge_range('CC1:CR1', json_map['carencia'], merge_format_rojo)
+                    sheet.merge_range('CC2:CR2', reporte['subCarencias'], merge_format_gris)
+                    columna=columna+16
+                    sheet.merge_range('CC3:CR3', accion['accion'],merge_format_blanco)
+                    sheet.merge_range('CC4:CR4', accion['unidad'],merge_format_blanco)
+                    sheet.merge_range('CC5:CR5', 'Avances', merge_format_verde)
+                    sheet.merge_range('CC5:CR5', "Avance Mensual", merge_format_verde)
+
+
+                sheet.write(5, columna +0, "Clave", merge_format_rojo)
+                sheet.write(5, columna +1, "Entidad", merge_format_rojo)
+                sheet.write(5, columna +4, "Enero", bold)
+                sheet.write(5, columna +5, "Febrero", bold)
+                sheet.write(5, columna +6, "Marzo", bold)
+                sheet.write(5, columna +7, "Abril", bold)
+                sheet.write(5, columna +8, "Mayo", bold)
+                sheet.write(5, columna +9, "Junio", bold)
+                sheet.write(5, columna +10, "Julio", bold)
+                sheet.write(5, columna +11, "Agosto", bold)
+                sheet.write(5, columna +12, "Septiembre", bold)
+                sheet.write(5, columna +13, "Octubre", bold)
+                sheet.write(5, columna +14, "Noviembre", bold)
+                sheet.write(5, columna +15, "Diciembre", bold)
+                renAvance=6
+                for avance in accion['metas']:
+                    sheet.write(renAvance, columna +0, avance["clave"], format)
+                    sheet.write(renAvance, columna +1, avance["estado"], format)
+                    sheet.write(renAvance, columna +2, avance["municipio"], format)
+                    sheet.write(renAvance, columna +3, avance['2014_2015'], format)
+                    sheet.write(renAvance, columna +4, avance["ene"], format)
+                    sheet.write(renAvance, columna +5, avance["feb"], format)
+                    sheet.write(renAvance, columna +6, avance["mar"], format)
+                    sheet.write(renAvance, columna +7, avance["abr"], format)
+                    sheet.write(renAvance, columna +8, avance["may"], format)
+                    sheet.write(renAvance, columna +9, avance["jun"], format)
+                    sheet.write(renAvance, columna +10, avance["jul"], format)
+                    sheet.write(renAvance, columna +11, avance["ago"], format)
+                    sheet.write(renAvance, columna +12, avance["sep"], format)
+                    sheet.write(renAvance, columna +13, avance["oct"], format)
+                    sheet.write(renAvance, columna +14, avance["nov"], format)
+                    sheet.write(renAvance, columna +15, avance["dic"], format)
+                    renAvance+=1
+        #**********************************************FIN METAS *************************************
+
         json_map['resultados'] = []
 
         subCarencias = AvanceMensual.objects.filter(
@@ -1074,9 +1311,9 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
                 datos['acciones'].append(accion)
             json_map['resultados'].append(datos)
 
-        output = StringIO.StringIO()
-        book = Workbook(output)
-        sheet = book.add_worksheet('avances')
+        #output = StringIO.StringIO()
+        #book = Workbook(output)
+        sheet = book.add_worksheet('AVANCES')
 
         # Add a bold format to use to highlight cells.
         bold = book.add_format({'bold': True})
@@ -1146,7 +1383,7 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
         sheet.merge_range('A3:C3', 'Accion Estrategica', merge_format_rojo)
         sheet.merge_range('A4:C4', 'Unidad de Medida', merge_format_naranja)
         sheet.merge_range('A5:C5', 'Avances', merge_format_verde)
-        sheet.merge_range('D5:O5', "Avance Mensual", merge_format_verde)
+        sheet.merge_range('D5:P5', "Avance Mensual", merge_format_verde)
 
 
         # avances
@@ -1161,86 +1398,88 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
             for accion in reporte['acciones']:
                 indice+=1
                 if indice==1:
-                    sheet.merge_range('D1:O1', json_map['carencia'], merge_format_rojo)
-                    sheet.merge_range('D2:O2', reporte['subCarencias'], merge_format_gris)
+                    sheet.merge_range('D1:P1', json_map['carencia'], merge_format_rojo)
+                    sheet.merge_range('D2:P2', reporte['subCarencias'], merge_format_gris)
                     columna=0
-                    sheet.merge_range('D3:O3', accion['accion'],merge_format_blanco)
-                    sheet.merge_range('D4:O4', accion['unidad'],merge_format_blanco)
+                    sheet.merge_range('D3:P3', accion['accion'],merge_format_blanco)
+                    sheet.merge_range('D4:P4', accion['unidad'],merge_format_blanco)
                 elif indice==2:
-                    sheet.merge_range('Q1:AE1', json_map['carencia'], merge_format_rojo)
-                    sheet.merge_range('Q2:AE2', reporte['subCarencias'], merge_format_gris)
+                    sheet.merge_range('Q1:AF1', json_map['carencia'], merge_format_rojo)
+                    sheet.merge_range('Q2:AF2', reporte['subCarencias'], merge_format_gris)
                     columna=columna+16
-                    sheet.merge_range('Q3:AE3', accion['accion'],merge_format_blanco)
-                    sheet.merge_range('Q4:AE4', accion['unidad'],merge_format_blanco)
-                    sheet.merge_range('Q5:AE5', 'Avances', merge_format_verde)
-                    sheet.merge_range('Q5:AE5', "Avance Mensual", merge_format_verde)
+                    sheet.merge_range('Q3:AF3', accion['accion'],merge_format_blanco)
+                    sheet.merge_range('Q4:AF4', accion['unidad'],merge_format_blanco)
+                    sheet.merge_range('Q5:AF5', 'Avances', merge_format_verde)
+                    sheet.merge_range('Q5:AF5', "Avance Mensual", merge_format_verde)
 
                 elif indice==3:
-                    sheet.merge_range('AG1:AU1', json_map['carencia'], merge_format_rojo)
-                    sheet.merge_range('AG2:AU2', reporte['subCarencias'], merge_format_gris)
+                    sheet.merge_range('AG1:AV1', json_map['carencia'], merge_format_rojo)
+                    sheet.merge_range('AG2:AV2', reporte['subCarencias'], merge_format_gris)
                     columna=columna+16
-                    sheet.merge_range('AG3:AU3', accion['accion'],merge_format_blanco)
-                    sheet.merge_range('AG4:AU4', accion['unidad'],merge_format_blanco)
-                    sheet.merge_range('AG5:AU5', 'Avances', merge_format_verde)
-                    sheet.merge_range('AG5:AU5', "Avance Mensual", merge_format_verde)
+                    sheet.merge_range('AG3:AV3', accion['accion'],merge_format_blanco)
+                    sheet.merge_range('AG4:AV4', accion['unidad'],merge_format_blanco)
+                    sheet.merge_range('AG5:AV5', 'Avances', merge_format_verde)
+                    sheet.merge_range('AG5:AV5', "Avance Mensual", merge_format_verde)
                 elif indice==4:
-                    sheet.merge_range('AW1:BK1', json_map['carencia'], merge_format_rojo)
-                    sheet.merge_range('AW2:BK2', reporte['subCarencias'], merge_format_gris)
+                    sheet.merge_range('AW1:BL1', json_map['carencia'], merge_format_rojo)
+                    sheet.merge_range('AW2:BL2', reporte['subCarencias'], merge_format_gris)
                     columna=columna+16
-                    sheet.merge_range('AW3:BK3', accion['accion'],merge_format_blanco)
-                    sheet.merge_range('AW4:BK4', accion['unidad'],merge_format_blanco)
-                    sheet.merge_range('AW5:BK5', 'Avances', merge_format_verde)
-                    sheet.merge_range('AW5:BK5', "Avance Mensual", merge_format_verde)
+                    sheet.merge_range('AW3:BL3', accion['accion'],merge_format_blanco)
+                    sheet.merge_range('AW4:BL4', accion['unidad'],merge_format_blanco)
+                    sheet.merge_range('AW5:BL5', 'Avances', merge_format_verde)
+                    sheet.merge_range('AW5:BL5', "Avance Mensual", merge_format_verde)
                 elif indice==5:
-                    sheet.merge_range('BM1:CA1', json_map['carencia'], merge_format_rojo)
-                    sheet.merge_range('BM2:CA2', reporte['subCarencias'], merge_format_gris)
+                    sheet.merge_range('BM1:CB1', json_map['carencia'], merge_format_rojo)
+                    sheet.merge_range('BM2:CB2', reporte['subCarencias'], merge_format_gris)
                     columna=columna+16
-                    sheet.merge_range('BM3:CA3', accion['accion'],merge_format_blanco)
-                    sheet.merge_range('BM4:CA4', accion['unidad'],merge_format_blanco)
-                    sheet.merge_range('BM5:CA5', 'Avances', merge_format_verde)
-                    sheet.merge_range('BM5:CA5', "Avance Mensual", merge_format_verde)
+                    sheet.merge_range('BM3:CB3', accion['accion'],merge_format_blanco)
+                    sheet.merge_range('BM4:CB4', accion['unidad'],merge_format_blanco)
+                    sheet.merge_range('BM5:CB5', 'Avances', merge_format_verde)
+                    sheet.merge_range('BM5:CB5', "Avance Mensual", merge_format_verde)
                 elif indice==6:
-                    sheet.merge_range('CC1:CQ1', json_map['carencia'], merge_format_rojo)
-                    sheet.merge_range('CC2:CQ2', reporte['subCarencias'], merge_format_gris)
+                    sheet.merge_range('CC1:CR1', json_map['carencia'], merge_format_rojo)
+                    sheet.merge_range('CC2:CR2', reporte['subCarencias'], merge_format_gris)
                     columna=columna+16
-                    sheet.merge_range('CC3:CQ3', accion['accion'],merge_format_blanco)
-                    sheet.merge_range('CC4:CQ4', accion['unidad'],merge_format_blanco)
-                    sheet.merge_range('CC5:CQ5', 'Avances', merge_format_verde)
-                    sheet.merge_range('CC5:CQ5', "Avance Mensual", merge_format_verde)
+                    sheet.merge_range('CC3:CR3', accion['accion'],merge_format_blanco)
+                    sheet.merge_range('CC4:CR4', accion['unidad'],merge_format_blanco)
+                    sheet.merge_range('CC5:CR5', 'Avances', merge_format_verde)
+                    sheet.merge_range('CC5:CR5', "Avance Mensual", merge_format_verde)
 
 
                 sheet.write(5, columna +0, "Clave", merge_format_rojo)
                 sheet.write(5, columna +1, "Entidad", merge_format_rojo)
                 sheet.write(5, columna +2, "Municipio", merge_format_rojo)
-                sheet.write(5, columna +3, "Enero", bold)
-                sheet.write(5, columna +4, "Febrero", bold)
-                sheet.write(5, columna +5, "Marzo", bold)
-                sheet.write(5, columna +6, "Abril", bold)
-                sheet.write(5, columna +7, "Mayo", bold)
-                sheet.write(5, columna +8, "Junio", bold)
-                sheet.write(5, columna +9, "Julio", bold)
-                sheet.write(5, columna +10, "Agosto", bold)
-                sheet.write(5, columna +11, "Septiembre", bold)
-                sheet.write(5, columna +12, "Octubre", bold)
-                sheet.write(5, columna +13, "Noviembre", bold)
-                sheet.write(5, columna +14, "Diciembre", bold)
+                sheet.write(5, columna +3, "Diciembre 2014-2015", bold)
+                sheet.write(5, columna +4, "Enero", bold)
+                sheet.write(5, columna +5, "Febrero", bold)
+                sheet.write(5, columna +6, "Marzo", bold)
+                sheet.write(5, columna +7, "Abril", bold)
+                sheet.write(5, columna +8, "Mayo", bold)
+                sheet.write(5, columna +9, "Junio", bold)
+                sheet.write(5, columna +10, "Julio", bold)
+                sheet.write(5, columna +11, "Agosto", bold)
+                sheet.write(5, columna +12, "Septiembre", bold)
+                sheet.write(5, columna +13, "Octubre", bold)
+                sheet.write(5, columna +14, "Noviembre", bold)
+                sheet.write(5, columna +15, "Diciembre", bold)
                 renAvance=6
                 for avance in accion['avances']:
                     sheet.write(renAvance, columna +0, avance["clave"], format)
                     sheet.write(renAvance, columna +1, avance["estado"], format)
                     sheet.write(renAvance, columna +2, avance["municipio"], format)
-                    sheet.write(renAvance, columna +3, avance["ene"], format)
-                    sheet.write(renAvance, columna +4, avance["feb"], format)
-                    sheet.write(renAvance, columna +5, avance["mar"], format)
-                    sheet.write(renAvance, columna +6, avance["abr"], format)
-                    sheet.write(renAvance, columna +7, avance["may"], format)
-                    sheet.write(renAvance, columna +8, avance["jun"], format)
-                    sheet.write(renAvance, columna +9, avance["jul"], format)
-                    sheet.write(renAvance, columna +10, avance["ago"], format)
-                    sheet.write(renAvance, columna +11, avance["sep"], format)
-                    sheet.write(renAvance, columna +12, avance["oct"], format)
-                    sheet.write(renAvance, columna +13, avance["nov"], format)
-                    sheet.write(renAvance, columna +14, avance["dic"], format)
+                    sheet.write(renAvance, columna +3, avance['2014_2015'], format)
+                    sheet.write(renAvance, columna +4, avance["ene"], format)
+                    sheet.write(renAvance, columna +5, avance["feb"], format)
+                    sheet.write(renAvance, columna +6, avance["mar"], format)
+                    sheet.write(renAvance, columna +7, avance["abr"], format)
+                    sheet.write(renAvance, columna +8, avance["may"], format)
+                    sheet.write(renAvance, columna +9, avance["jun"], format)
+                    sheet.write(renAvance, columna +10, avance["jul"], format)
+                    sheet.write(renAvance, columna +11, avance["ago"], format)
+                    sheet.write(renAvance, columna +12, avance["sep"], format)
+                    sheet.write(renAvance, columna +13, avance["oct"], format)
+                    sheet.write(renAvance, columna +14, avance["nov"], format)
+                    sheet.write(renAvance, columna +15, avance["dic"], format)
                     renAvance+=1
 
 
