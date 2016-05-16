@@ -184,13 +184,12 @@ TEMPLATETAGS_DIRS = (
     os.path.join(BASE_DIR, 'djangoISSSTE/templatetags/'),
 )
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.9/howto/static-files/
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
+EMAIL_HOST = 'mail.inclusionissste.mx'
+EMAIL_HOST_USER = 'inclusioni'
+EMAIL_HOST_PASSWORD = 'CbxxdWaz'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 
-
-# Extra places for collectstatic to find static files.
-
-
-#STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
