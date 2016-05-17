@@ -1705,7 +1705,7 @@ function tablaD(Datos){
     sHtmlExporta= '<table id="tablaExporta" class="table table-striped">'
                 +' <colgroup>'
                 +' <col width="40%">'
-                //+' <col width="20%">'
+                +' <col width="20%">'
                 +' <col width="20%">'
                 +' <col width="20%">'
                 +' </colgroup> '
@@ -1715,13 +1715,14 @@ function tablaD(Datos){
                             //+'<th>Estado</th>'
                             +'<th>Avance</th>'
                             +'<th>Meta</th>'
+                            +'<th>(%)</th>'
                         +'</tr>'
                 +'</thead>'
                 +'<tbody>';
     sHtmlShorter ='<table cellspacing="1"  id="tablaDerecha">'
                 +' <colgroup>'
                 +' <col width="40%">'
-                //+' <col width="20%">'
+                +' <col width="20%">'
                 +' <col width="20%">'
                 +' <col width="20%">'
                 +' </colgroup> ';
@@ -1733,6 +1734,7 @@ function tablaD(Datos){
                            // +'<th width= "20%">Estado</th>'
                             +'<th width= "20%">Avance</th>'
                             +'<th width= "20%">Meta</th>'
+                            +'<th width= "20%">(%)</th>'
                         +'</tr>'
                     +'</thead>'
                     +'<tfoot>'
@@ -1741,9 +1743,10 @@ function tablaD(Datos){
                             +'<th>TOTALES</th>'
                             +'<th style="text-align:right;">'+ formato_numero(totalAvances, 0, '.', ',') +'</th>'
                             +'<th style="text-align:right; padding-right:10px;">'+ formato_numero(totalInversion, 0, '.', ',') +'</th>'
+                            +'<th></th>'
                         +'</tr>'
 
-                        +'<tr><td class="pager" id="pagerD" colspan="3">'
+                        +'<tr><td class="pager" id="pagerD" colspan="4">'
                         //+'<div class="first principioFLECHA" id="firstD" style="height:11px"></div>'
                         +'<img src="../../static/assets/tablesorter/addons/pager/icons/first.png" class="first" id="firstD"/>'
                         +'<img src="../../static/assets/tablesorter/addons/pager/icons/prev.png" class="prev" id="prevD"/>'
@@ -1767,7 +1770,8 @@ function tablaD(Datos){
             //+ '<td width= "40%"></td>'
             + '<td width= "40%" align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
             + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].avance, 0, '.', ',') + '</td>'
-            + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].suma_meta, 0, '.', ',') + '</td>'
+            + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].suma_meta, 2, '.', ',') + '</td>'
+            + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].porcentaje, 2, '.', ',') + '</td>'
             + '</tr>'
 
             sHtmlExporta += '<tr>'
@@ -1775,6 +1779,8 @@ function tablaD(Datos){
             + '<td width= "40%" align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
             + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].avance, 0, '.', ',') + '</td>'
             + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].suma_meta, 2, '.', ',') + '</td>'
+            + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].porcentaje, 2, '.', ',') + '</td>'
+
             + '</tr>'
         }
     }else{
@@ -1786,6 +1792,7 @@ function tablaD(Datos){
                 + '<td width= "40%" align="right">' + Datos.reporte_por_carencia[i].nombreCarencia + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_carencia[i].avance, 0, '.', ',') + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_carencia[i].suma_meta, 0, '.', ',') + '</td>'
+                + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].porcentaje, 2, '.', ',') + '</td>'
                 + '</tr>'
 
                 sHtmlExporta += '<tr>'
@@ -1793,6 +1800,7 @@ function tablaD(Datos){
                 + '<td width= "40%" align="right">' + Datos.reporte_por_carencia[i].nombreCarencia + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_carencia[i].avance, 0, '.', ',') + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_carencia[i].suma_meta, 2, '.', ',') + '</td>'
+                + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].porcentaje, 2, '.', ',') + '</td>'
                 + '</tr>'
             }
         }else{
@@ -1803,6 +1811,7 @@ function tablaD(Datos){
                 + '<td width= "40%" align="right">' + Datos.reporte_por_accion[i].nombreAccion + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_accion[i].avance, 0, '.', ',') + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_accion[i].suma_meta, 0, '.', ',') + '</td>'
+                + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].porcentaje, 2, '.', ',') + '</td>'
                 + '</tr>'
 
                 sHtmlExporta += '<tr>'
@@ -1810,6 +1819,7 @@ function tablaD(Datos){
                 + '<td width= "40%" align="right">' + Datos.reporte_por_accion[i].nombreAccion + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_accion[i].avance, 0, '.', ',') + '</td>'
                 + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_accion[i].suma_meta, 2, '.', ',') + '</td>'
+                + '<td width= "20%" align="right">' + formato_numero(Datos.reporte_por_estado[i].porcentaje, 2, '.', ',') + '</td>'
                 + '</tr>'
             }
         }
@@ -1959,8 +1969,9 @@ $j.tablaGrafica = function(Datos){
                         +'<tr>'
                             //+'<th>Carencia</th>'
                             +'<th>' + tituloColumna +'</th>'
-                            +'<th>Avances</th>'
+                            +'<th>Avance</th>'
                             +'<th>Meta</th>'
+                            +'<th>(%)</th>'
                         +'</tr>'
                     +'</thead>'
                     +'<tfoot>'
@@ -1969,9 +1980,10 @@ $j.tablaGrafica = function(Datos){
                             +'<th>TOTALES</th>'
                             +'<th style="text-align:right;">'+ formato_numero(totalAvances, 0, '.', ',') +'</th>'
                             +'<th style="text-align:right; padding-right:10px;">'+ formato_numero(totalInversion, 0, '.', ',') +'</th>'
+                            +'<th></th>'
                         +'</tr>'
 
-                        +'<tr><td class="pager" id="pagerG" colspan="3">'
+                        +'<tr><td class="pager" id="pagerG" colspan="4">'
                         +'<img src="../../static/assets/tablesorter/addons/pager/icons/first.png" class="first" id="firstG"/>'
                         +'<img src="../../static/assets/tablesorter/addons/pager/icons/prev.png" class="prev" id="prevG"/>'
                         +'<span class="pagedisplay" id="displayPageG"></span>'
@@ -1994,7 +2006,8 @@ $j.tablaGrafica = function(Datos){
             //+ '<td>' + Datos.reporte_por_estado[i].carencia + '</td>'
             + '<td align="right">' + Datos.reporte_por_estado[i].estado + '</td>'
             + '<td align="right">' + formato_numero(Datos.reporte_por_estado[i].avance, 0, '.', ',') + '</td>'
-            + '<td align="right">' + formato_numero(Datos.reporte_por_estado[i].suma_meta, 0, '.', ',') + '</td>'
+            + '<td align="right">' + formato_numero(Datos.reporte_por_estado[i].suma_meta, 2, '.', ',') + '</td>'
+            + '<td align="right">' + formato_numero(Datos.reporte_por_estado[i].porcentaje, 2, '.', ',') + '</td>'
             + '</tr>'
         }
     }else{
@@ -2005,7 +2018,8 @@ $j.tablaGrafica = function(Datos){
                 //+ '<td></td>'
                 + '<td align="right">' + Datos.reporte_por_carencia[i].nombreCarencia + '</td>'
                 + '<td align="right">' + formato_numero(Datos.reporte_por_carencia[i].avance, 0, '.', ',') + '</td>'
-                + '<td align="right">' + formato_numero(Datos.reporte_por_carencia[i].suma_meta, 0, '.', ',') + '</td>'
+                + '<td align="right">' + formato_numero(Datos.reporte_por_carencia[i].suma_meta, 2, '.', ',') + '</td>'
+                + '<td align="right">' + formato_numero(Datos.reporte_por_estado[i].porcentaje, 2, '.', ',') + '</td>'
                 + '</tr>'
             }
         }else{
@@ -2015,7 +2029,8 @@ $j.tablaGrafica = function(Datos){
                 //+ '<td></td>'
                 + '<td align="right">' + Datos.reporte_por_accion[i].nombreAccion + '</td>'
                 + '<td align="right">' + formato_numero(Datos.reporte_por_accion[i].avance, 0, '.', ',') + '</td>'
-                + '<td align="right">' + formato_numero(Datos.reporte_por_accion[i].suma_meta, 0, '.', ',') + '</td>'
+                + '<td align="right">' + formato_numero(Datos.reporte_por_accion[i].suma_meta, 2, '.', ',') + '</td>'
+                + '<td align="right">' + formato_numero(Datos.reporte_por_estado[i].porcentaje, 2, '.', ',') + '</td>'
                 + '</tr>'
             }
         }
