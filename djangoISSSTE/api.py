@@ -3725,7 +3725,7 @@ class BalancePorAccionEndpoint(ListView):
     def get(self, request):
 
         # prs = Presentation('static/ppt/balance_por_accion.pptx')
-        '''prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/balance_por_accion.pptx')'''
+        # prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/balance_por_accion.pptx')
 
         json_map = {}
         json_map['balancePorAccion'] = []
