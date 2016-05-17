@@ -856,8 +856,8 @@ class FichaTecnicaForiPadAvancesEndpoint(ListView):
 #Clase para devolver datos de la ficha técnica
 class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
-        prs = Presentation('djangoISSSTE/static/ppt/Ficha_Tecnica_Avance.pptx')
-        #prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/Ficha_Tecnica_Avance.pptx')
+        #prs = Presentation('djangoISSSTE/static/ppt/Ficha_Tecnica_Avance.pptx')
+        prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/Ficha_Tecnica_Avance.pptx')
         # Obteniendo los datos de la url
         periodo_id = get_array_or_none(request.GET.get('periodo'))
         accion_id = get_array_or_none(request.GET.get('accion'))
@@ -1034,11 +1034,11 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
 
-        prs.save('djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx')
-        the_file = 'djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx'
+        #prs.save('djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx')
+        #the_file = 'djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx'
 
-        #prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx')
-        #the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx'
+        prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx'
 
         filename = os.path.basename(the_file)
         chunk_size = 8192
@@ -2625,8 +2625,8 @@ def date_handler(obj):
 class BalanceGeneralEndpoint(ProtectedResourceView):
     def get(self, request):
 
-        prs = Presentation('djangoISSSTE/static/ppt/balance_general.pptx')
-        #prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/balance_general.pptx')
+        #prs = Presentation('djangoISSSTE/static/ppt/balance_general.pptx')
+        prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/balance_general.pptx')
 
         json_map = {}
         json_map['balance'] = []
@@ -2753,11 +2753,11 @@ class BalanceGeneralEndpoint(ProtectedResourceView):
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
 
-        prs.save('djangoISSSTE/static/ppt/ppt-generados/balance_general_' + str(usuario.usuario.user.id) + '.pptx')
-        the_file = 'djangoISSSTE/static/ppt/ppt-generados/balance_general_' + str(usuario.usuario.user.id) + '.pptx'
+        #prs.save('djangoISSSTE/static/ppt/ppt-generados/balance_general_' + str(usuario.usuario.user.id) + '.pptx')
+        #the_file = 'djangoISSSTE/static/ppt/ppt-generados/balance_general_' + str(usuario.usuario.user.id) + '.pptx'
 
-        #prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_general_' + str(usuario.usuario.user.id) + '.pptx')
-        #the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_general_' + str(usuario.usuario.user.id) + '.pptx'
+        prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_general_' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_general_' + str(usuario.usuario.user.id) + '.pptx'
 
         filename = os.path.basename(the_file)
         chunk_size = 8192
