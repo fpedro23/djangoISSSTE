@@ -856,8 +856,8 @@ class FichaTecnicaForiPadAvancesEndpoint(ListView):
 #Clase para devolver datos de la ficha técnica
 class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
-        prs = Presentation('djangoISSSTE/static/ppt/Ficha_Tecnica_Avance.pptx')
-        #prs = Presentation('/home/sisefenlin/visitas/static/ppt/fichaTecnica_sisef.pptx')
+        #prs = Presentation('djangoISSSTE/static/ppt/Ficha_Tecnica_Avance.pptx')
+        prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/Ficha_Tecnica_Avance.pptx')
         # Obteniendo los datos de la url
         periodo_id = get_array_or_none(request.GET.get('periodo'))
         accion_id = get_array_or_none(request.GET.get('accion'))
@@ -1034,11 +1034,11 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
 
-        prs.save('djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx')
-        the_file = 'djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx'
+        #prs.save('djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx')
+        #the_file = 'djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx'
 
-        #prs.save('/home/sisefenlin/visitas/static/ppt/ppt-generados/FichaTecnicaVisitas_' + str(usuario.user.id) + '.pptx')
-        #the_file = '/home/sisefenlin/visitas/static/ppt/ppt-generados/FichaTecnicaVisitas_' + str(usuario.user.id) + '.pptx'
+        prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx'
 
         filename = os.path.basename(the_file)
         chunk_size = 8192
@@ -2343,7 +2343,7 @@ class ReporteInicioEndpoint(ProtectedResourceView):
 
 
         # Grafico, obras totales
-        avances_totales_educacion = avances.filter(avancemensual__avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=1)
+        avances_totales_educacion = avances.filter(avancemensual__avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=2)
         the_list = []
         if avances_totales_educacion:
             avances_values=get_avance_values(avances_totales_educacion)
@@ -2356,7 +2356,7 @@ class ReporteInicioEndpoint(ProtectedResourceView):
             reporte['reporte_total']['avance_educacion']['avances'] = the_list
             reporte['reporte_total']['avance_educacion']['total'] = 0
 
-        avances_totales_salud = avances.filter(avancemensual__avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=2)
+        avances_totales_salud = avances.filter(avancemensual__avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=3)
         the_list = []
         if avances_totales_salud:
             avances_values=get_avance_values(avances_totales_salud)
@@ -2369,7 +2369,7 @@ class ReporteInicioEndpoint(ProtectedResourceView):
             reporte['reporte_total']['avance_salud']['avances'] = the_list
             reporte['reporte_total']['avance_salud']['total'] = 0
 
-        avances_totales_vivienda = avances.filter(avancemensual__avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=3)
+        avances_totales_vivienda = avances.filter(avancemensual__avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=5)
         the_list = []
         if avances_totales_vivienda:
             avances_values=get_avance_values(avances_totales_vivienda)
@@ -2382,7 +2382,7 @@ class ReporteInicioEndpoint(ProtectedResourceView):
             reporte['reporte_total']['avance_vivienda']['avances'] = the_list
             reporte['reporte_total']['avance_vivienda']['total'] = 0
 
-        avances_totales_alimentacion = avances.filter(avancemensual__avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=4)
+        avances_totales_alimentacion = avances.filter(avancemensual__avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=1)
         the_list = []
         if avances_totales_alimentacion:
             avances_values=get_avance_values(avances_totales_alimentacion)
@@ -2519,6 +2519,7 @@ class PD_AvancePorMunicipioEndpoint(ProtectedResourceView):
 
             shortened_reporte['suma_avance'] = 0
             shortened_reporte['suma_meta'] = 0
+            shortened_reporte['porcentaje'] = 0
 
             # ID de cada avance mensual en el reporte para poder obtener el valor del avance cada mes
             avance_mensual = AvanceMensual.objects.get(id=reporte['id'])
@@ -2527,6 +2528,7 @@ class PD_AvancePorMunicipioEndpoint(ProtectedResourceView):
                                            estado__nombreEstado=reporte['avancePorMunicipio__estado__nombreEstado'])
 
             # Si no se indicaron meses. habrá que obtener el valor de todos
+
             shortened_reporte['suma_avance'] += (avance_mensual.ene + avance_mensual.feb + avance_mensual.mar +
                                                 avance_mensual.abr + avance_mensual.may + avance_mensual.jun +
                                                 avance_mensual.jul + avance_mensual.ago + avance_mensual.sep +
@@ -2534,6 +2536,9 @@ class PD_AvancePorMunicipioEndpoint(ProtectedResourceView):
             shortened_reporte['suma_meta'] += (meta.ene + meta.feb + meta.mar + meta.abr +
                                                meta.may + meta.jun + meta.jul + meta.ago +
                                                meta.sep + meta.oct + meta.nov + meta.dic)
+            if shortened_reporte['suma_meta']>0:
+                shortened_reporte['porcentaje'] +=(shortened_reporte['suma_avance']*100)/shortened_reporte['suma_meta']
+
             shortened_reporte['id'] = reporte['id']
             shortened_reporte['avancePorMunicipio_id'] = reporte['avancePorMunicipio__id']
             shortened_reporte['accion'] = reporte['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
@@ -2620,8 +2625,8 @@ def date_handler(obj):
 class BalanceGeneralEndpoint(ProtectedResourceView):
     def get(self, request):
 
-        prs = Presentation('djangoISSSTE/static/ppt/balance_general.pptx')
-        #prs = Presentation('/home/sisefenlin/visitas/static/ppt/balance_general.pptx')
+        #prs = Presentation('djangoISSSTE/static/ppt/balance_general.pptx')
+        prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/balance_general.pptx')
 
         json_map = {}
         json_map['balance'] = []
@@ -2694,11 +2699,11 @@ class BalanceGeneralEndpoint(ProtectedResourceView):
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
 
-        prs.save('djangoISSSTE/static/ppt/ppt-generados/balance_general_' + str(usuario.usuario.user.id) + '.pptx')
-        the_file = 'djangoISSSTE/static/ppt/ppt-generados/balance_general_' + str(usuario.usuario.user.id) + '.pptx'
+        #prs.save('djangoISSSTE/static/ppt/ppt-generados/balance_general_' + str(usuario.usuario.user.id) + '.pptx')
+        #the_file = 'djangoISSSTE/static/ppt/ppt-generados/balance_general_' + str(usuario.usuario.user.id) + '.pptx'
 
-        #prs.save('/home/sisefenlin/visitas/static/ppt/ppt-generados/FichaTecnicaVisitas_' + str(usuario.user.id) + '.pptx')
-        #the_file = '/home/sisefenlin/visitas/static/ppt/ppt-generados/FichaTecnicaVisitas_' + str(usuario.user.id) + '.pptx'
+        prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_general_' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_general_' + str(usuario.usuario.user.id) + '.pptx'
 
         filename = os.path.basename(the_file)
         chunk_size = 8192
@@ -2712,8 +2717,8 @@ class BalanceGeneralEndpoint(ProtectedResourceView):
 
 class BalancePorEntidadEndpoint(ProtectedResourceView):
     def get(self, request):
-        prs = Presentation('djangoISSSTE/static/ppt/balance_por_estado.pptx')
-        #prs = Presentation('/home/sisefenlin/visitas/static/ppt/balance_por_estado.pptx')
+        #prs = Presentation('djangoISSSTE/static/ppt/balance_por_estado.pptx')
+        prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/balance_por_estado.pptx')
 
         json_map = {}
         json_map['balancePorEntidad'] = []
@@ -2730,20 +2735,25 @@ class BalancePorEntidadEndpoint(ProtectedResourceView):
                 list_carencias = {}
                 list_carencias['carencia'] = carencia.nombreCarencia
                 list_carencias['total_avances'] = 0
+                list_carencias['inversionAvance'] = 0
+                list_carencias['porcentaje'] = 0
                 query_avance = Q(avancePorMunicipio__estado__id=estado.id)&\
-                               Q(avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia = carencia.id)
+                               Q(avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia = carencia.id)&\
+                               Q(avancePorMunicipio__periodo_id = 5)
 
                 for avance in AvanceMensual.objects.filter(query_avance).values(
-                    'avancePorMunicipio__estado__nombreEstado').annotate(
+                    'avancePorMunicipio__estado__nombreEstado','avancePorMunicipio__meta__montoPromedio').annotate(
                     ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
                     jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
                     total = avance['ene'] + avance['feb'] + avance['mar'] + avance['abr'] + avance['may'] + avance['jun'] +\
                             avance['jul'] + avance['ago'] + avance['sep'] + avance['oct'] + avance['nov'] + avance['dic']
                     list_carencias['total_avances'] = total
+                    list_carencias['inversionAvance'] = total*avance['avancePorMunicipio__meta__montoPromedio']
 
                 list_carencias['total_metas'] = 0
-                for meta in MetaMensual.objects.filter(estado__id=estado.id,
-                        meta__accionEstrategica__subCarencia__carencia__id=carencia.id).values('estado__nombreEstado').annotate(
+                list_carencias['inversionMeta'] = 0
+                for meta in MetaMensual.objects.filter(estado__id=estado.id,meta__periodo_id=5,
+                        meta__accionEstrategica__subCarencia__carencia__id=carencia.id).values('estado__nombreEstado','inversionAprox').annotate(
                     ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
                     jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
 
@@ -2751,24 +2761,31 @@ class BalancePorEntidadEndpoint(ProtectedResourceView):
                             meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
 
                     list_carencias['total_metas'] = total
+                    list_carencias['inversionMeta'] = meta['inversionAprox']
+
+                if list_carencias['total_metas']>0:
+                    list_carencias['porcentaje'] = (list_carencias['total_avances']*100)/list_carencias['total_metas']
+
                 list_estados['datos'].append(list_carencias)
             json_map['balancePorEntidad'].append(list_estados)
 
             iSlide=0
             for balanceEstado in json_map['balancePorEntidad']:
                 table = prs.slides[iSlide].shapes[0].table
-                for x in range(1, 6):
-                    cell = table.rows[x].cells[1]
+                for x in range(2, 7):
+                    cell = table.rows[x].cells[0]
                     paragraph = cell.textframe.paragraphs[0]
-                    paragraph.font.size = Pt(12)
+                    paragraph.font.size = Pt(10)
                     paragraph.font.name = 'Arial'
                     paragraph.font.color.rgb = RGBColor(0xFF, 0x7F, 0x50)
 
-                indice = 1
+                indice = 2
                 sumAvances=0
                 sumMetas=0
+                sumInversionAvance=0
+                sumInversionMeta=0
                 for avance in balanceEstado['datos']:
-                    for x in range(1, 3):
+                    for x in range(1, 6):
                         cell = table.rows[indice].cells[x]
                         paragraph = cell.textframe.paragraphs[0]
                         paragraph.font.size = Pt(10)
@@ -2778,22 +2795,36 @@ class BalancePorEntidadEndpoint(ProtectedResourceView):
                     # write body cells
                     table.cell(indice, 0).text = avance['carencia']
                     table.cell(indice, 1).text = str('{0:,}'.format(avance['total_avances']))
-                    table.cell(indice, 2).text = str('{0:,}'.format(avance['total_metas']))
+                    table.cell(indice, 2).text = str('{0:,.2f}'.format(avance['inversionAvance']))
+                    table.cell(indice, 3).text = str('{0:,}'.format(avance['total_metas']))
+                    table.cell(indice, 4).text = str('{0:,.2f}'.format(avance['inversionMeta']))
+                    table.cell(indice, 5).text = str('{0:,.2f}'.format(avance['porcentaje']))
                     sumAvances+=avance['total_avances']
                     sumMetas+=avance['total_metas']
+                    sumInversionAvance+=avance['inversionAvance']
+                    sumInversionMeta+=avance['inversionMeta']
                     indice += 1
 
-                table.cell(6, 1).text = str('{0:,}'.format(sumAvances))
-                table.cell(6, 2).text = str('{0:,}'.format(sumMetas))
+                for x in range(1, 6):
+                    cell = table.rows[7].cells[x]
+                    paragraph = cell.textframe.paragraphs[0]
+                    paragraph.font.size = Pt(10)
+                    paragraph.font.name = 'Arial'
+                    paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+                table.cell(7, 1).text = str('{0:,}'.format(sumAvances))
+                table.cell(7, 2).text = str('{0:,.2f}'.format(sumInversionAvance))
+                table.cell(7, 3).text = str('{0:,}'.format(sumMetas))
+                table.cell(7, 4).text = str('{0:,.2f}'.format(sumInversionMeta))
                 iSlide+=1
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
 
-        prs.save('djangoISSSTE/static/ppt/ppt-generados/balance_por_estado' + str(usuario.usuario.user.id) + '.pptx')
-        the_file = 'djangoISSSTE/static/ppt/ppt-generados/balance_por_estado' + str(usuario.usuario.user.id) + '.pptx'
+        #prs.save('djangoISSSTE/static/ppt/ppt-generados/balance_por_estado' + str(usuario.usuario.user.id) + '.pptx')
+        #the_file = 'djangoISSSTE/static/ppt/ppt-generados/balance_por_estado' + str(usuario.usuario.user.id) + '.pptx'
 
-        #prs.save('/home/sisefenlin/visitas/static/ppt/ppt-generados/FichaTecnicaVisitas_' + str(usuario.user.id) + '.pptx')
-        #the_file = '/home/sisefenlin/visitas/static/ppt/ppt-generados/FichaTecnicaVisitas_' + str(usuario.user.id) + '.pptx'
+        prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_por_estado_' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_por_estado_' + str(usuario.usuario.user.id) + '.pptx'
 
         filename = os.path.basename(the_file)
         chunk_size = 8192
@@ -2807,8 +2838,8 @@ class BalancePorEntidadEndpoint(ProtectedResourceView):
 
 class InformacionGeneralEndpoint(ProtectedResourceView):
     def get(self, request):
-        prs = Presentation('djangoISSSTE/static/ppt/informacion_general.pptx')
-        #prs = Presentation('/home/sisefenlin/visitas/static/ppt/balance_por_estado.pptx')
+        #prs = Presentation('static/ppt/informacion_general.pptx')
+        prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/informacion_general.pptx')
         json_map = {}
         json_map['balance'] = []
         for carencia in Carencia.objects.all():
@@ -2862,11 +2893,11 @@ class InformacionGeneralEndpoint(ProtectedResourceView):
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
 
-        prs.save('djangoISSSTE/static/ppt/ppt-generados/informacion_general_' + str(usuario.usuario.user.id) + '.pptx')
-        the_file = 'djangoISSSTE/static/ppt/ppt-generados/informacion_general_' + str(usuario.usuario.user.id) + '.pptx'
+        #prs.save('static/ppt/ppt-generados/informacion_general_' + str(usuario.usuario.user.id) + '.pptx')
+        #the_file = 'static/ppt/ppt-generados/informacion_general_' + str(usuario.usuario.user.id) + '.pptx'
 
-        #prs.save('/home/sisefenlin/visitas/static/ppt/ppt-generados/FichaTecnicaVisitas_' + str(usuario.user.id) + '.pptx')
-        #the_file = '/home/sisefenlin/visitas/static/ppt/ppt-generados/FichaTecnicaVisitas_' + str(usuario.user.id) + '.pptx'
+        prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/informacion_general_' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/informacion_general_' + str(usuario.usuario.user.id) + '.pptx'
 
         filename = os.path.basename(the_file)
         chunk_size = 8192
@@ -2880,8 +2911,8 @@ class InformacionGeneralEndpoint(ProtectedResourceView):
 
 class AvancesPorPeriodoEndPoint(ProtectedResourceView):
     def get(self, request):
-        prs = Presentation('djangoISSSTE/static/ppt/avances_por_periodo.pptx')
-        #prs = Presentation('/home/sisefenlin/visitas/static/ppt/avance_por_periodo.pptx')
+        #prs = Presentation('static/ppt/avances_por_periodo.pptx')
+        prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/avances_por_periodo.pptx')
         json_map = {}
         json_map['balance'] = []
 
@@ -2952,11 +2983,11 @@ class AvancesPorPeriodoEndPoint(ProtectedResourceView):
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
 
-        prs.save('djangoISSSTE/static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx')
-        the_file = 'djangoISSSTE/static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx'
+        #prs.save('static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx')
+        #the_file = 'static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx'
 
-        #prs.save('/home/sisefenlin/visitas/static/ppt/ppt-generados/FichaTecnicaVisitas_' + str(usuario.user.id) + '.pptx')
-        #the_file = '/home/sisefenlin/visitas/static/ppt/ppt-generados/FichaTecnicaVisitas_' + str(usuario.user.id) + '.pptx'
+        prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx'
 
         filename = os.path.basename(the_file)
         chunk_size = 8192
@@ -2970,8 +3001,8 @@ class AvancesPorPeriodoEndPoint(ProtectedResourceView):
 
 class PresentacioneAvancesEndPoint(ProtectedResourceView):
     def get(self, request):
-        prs = Presentation('djangoISSSTE/static/ppt/presentacion_avances.pptx')
-        #prs = Presentation('/home/sisefenlin/visitas/static/ppt/presentacion_avances.pptx')
+        #prs = Presentation('static/ppt/presentacion_avances.pptx')
+        prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/presentacion_avances.pptx')
         json_map = {}
         json_map['reporte1'] = []
         json_map['reporte2'] = []
@@ -3154,11 +3185,11 @@ class PresentacioneAvancesEndPoint(ProtectedResourceView):
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
 
-        prs.save('djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx')
-        the_file = 'djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx'
+        #prs.save('static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx')
+        #the_file = 'static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx'
 
-        #prs.save('/home/sisefenlin/visitas/static/ppt/ppt-generados/FichaTecnicaVisitas_' + str(usuario.user.id) + '.pptx')
-        #the_file = '/home/sisefenlin/visitas/static/ppt/ppt-generados/FichaTecnicaVisitas_' + str(usuario.user.id) + '.pptx'
+        prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx'
 
         filename = os.path.basename(the_file)
         chunk_size = 8192
@@ -3280,6 +3311,7 @@ class AvancePorMunicipioPptxEndpoint(ProtectedResourceView):
 
             shortened_reporte['suma_avance'] = 0
             shortened_reporte['suma_meta'] = 0
+            shortened_reporte['porcentaje']=0
 
             # ID de cada avance mensual en el reporte para poder obtener el valor del avance cada mes
             avance_mensual = AvanceMensual.objects.get(id=reporte['id'])
@@ -3295,6 +3327,9 @@ class AvancePorMunicipioPptxEndpoint(ProtectedResourceView):
             shortened_reporte['suma_meta'] += (meta.ene + meta.feb + meta.mar + meta.abr +
                                                meta.may + meta.jun + meta.jul + meta.ago +
                                                meta.sep + meta.oct + meta.nov + meta.dic)
+            if shortened_reporte['suma_meta']>0:
+                shortened_reporte['porcentaje'] +=(shortened_reporte['suma_avance']*100)/shortened_reporte['suma_meta']
+
             shortened_reporte['id'] = reporte['id']
             shortened_reporte['avancePorMunicipio_id'] = reporte['avancePorMunicipio__id']
             shortened_reporte['accion'] = reporte['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
@@ -3315,19 +3350,21 @@ class AvancePorMunicipioPptxEndpoint(ProtectedResourceView):
         shapes = slide.shapes
         shapes.title.text = 'Avances por Municipio'
         rows = 10
-        cols = 6
-        left = Inches(0.521)
+        cols = 8
+        left = Inches(0.3)
         top = Inches(1.2)
         width = Inches(6.0)
         height = Inches(0.8)
         table = shapes.add_table(rows, cols, left, top, width, height).table
         # set column widths
-        table.columns[0].width = Inches(1.2)
-        table.columns[1].width = Inches(1.2)
-        table.columns[2].width = Inches(3.0)
-        table.columns[3].width = Inches(1.2)
-        table.columns[4].width = Inches(1.2)
+        table.columns[0].width = Inches(1.0)
+        table.columns[1].width = Inches(1.0)
+        table.columns[2].width = Inches(2.0)
+        table.columns[3].width = Inches(1.0)
+        table.columns[4].width = Inches(1.0)
         table.columns[5].width = Inches(1.0)
+        table.columns[6].width = Inches(1.0)
+        table.columns[7].width = Inches(1.0)
         indice = 1
 
         for avance in json_map['reporte_por_municipio']:
@@ -3338,8 +3375,8 @@ class AvancePorMunicipioPptxEndpoint(ProtectedResourceView):
                 shapes.title.text = 'Resultados'
 
                 rows = 10
-                cols = 6
-                left = Inches(0.521)
+                cols = 8
+                left = Inches(0.3)
                 top = Inches(1.2)
                 width = Inches(6.0)
                 height = Inches(0.8)
@@ -3347,21 +3384,23 @@ class AvancePorMunicipioPptxEndpoint(ProtectedResourceView):
                 table = shapes.add_table(rows, cols, left, top, width, height).table
 
                 # set column widths
-                table.columns[0].width = Inches(1.2)
-                table.columns[1].width = Inches(1.2)
-                table.columns[2].width = Inches(3.0)
-                table.columns[3].width = Inches(1.2)
-                table.columns[4].width = Inches(1.2)
+                table.columns[0].width = Inches(1.0)
+                table.columns[1].width = Inches(1.0)
+                table.columns[2].width = Inches(2.0)
+                table.columns[3].width = Inches(1.0)
+                table.columns[4].width = Inches(1.0)
                 table.columns[5].width = Inches(1.0)
+                table.columns[6].width = Inches(1.0)
+                table.columns[7].width = Inches(1.0)
 
-            for x in range(0, 6):
+            for x in range(0, 8):
                 cell = table.rows[0].cells[x]
                 paragraph = cell.textframe.paragraphs[0]
                 paragraph.font.size = Pt(12)
                 paragraph.font.name = 'Arial Black'
                 paragraph.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
 
-            for x in range(0, 6):
+            for x in range(0, 8):
                 cell = table.rows[indice].cells[x]
                 paragraph = cell.textframe.paragraphs[0]
                 paragraph.font.size = Pt(8)
@@ -3374,7 +3413,9 @@ class AvancePorMunicipioPptxEndpoint(ProtectedResourceView):
             table.cell(0, 2).text = 'Accion'
             table.cell(0, 3).text = 'Estado'
             table.cell(0, 4).text = 'Municipio'
-            table.cell(0, 5).text = 'Avance Total'
+            table.cell(0, 5).text = 'Avance'
+            table.cell(0, 6).text = 'Meta'
+            table.cell(0, 7).text = 'Porcetaje'
 
 
             # write body cells
@@ -3384,6 +3425,8 @@ class AvancePorMunicipioPptxEndpoint(ProtectedResourceView):
             table.cell(indice, 3).text = avance['estado']
             table.cell(indice, 4).text = avance['municipio']
             table.cell(indice, 5).text = str(avance['suma_avance'])
+            table.cell(indice, 6).text = str('{0:,.2f}'.format(avance['suma_meta']))
+            table.cell(indice, 7).text = str('{0:,.2f}'.format(avance['porcentaje']))
             indice += 1
 
         prs.save(output)
@@ -3460,7 +3503,7 @@ class MetasSinAvancesPptxEndpoint(ProtectedResourceView):
         shapes = slide.shapes
         shapes.title.text = 'Metas sin Avances'
         rows = 10
-        cols = 5
+        cols = 7
         left = Inches(0.521)
         top = Inches(1.2)
         width = Inches(6.0)
@@ -3469,9 +3512,11 @@ class MetasSinAvancesPptxEndpoint(ProtectedResourceView):
         # set column widths
         table.columns[0].width = Inches(1.3)
         table.columns[1].width = Inches(1.3)
-        table.columns[2].width = Inches(3.5)
+        table.columns[2].width = Inches(2.5)
         table.columns[3].width = Inches(1.2)
         table.columns[4].width = Inches(1.0)
+        table.columns[5].width = Inches(1.2)
+        table.columns[6].width = Inches(1.2)
 
         indice = 1
 
@@ -3483,7 +3528,7 @@ class MetasSinAvancesPptxEndpoint(ProtectedResourceView):
                 shapes.title.text = 'Resultados'
 
                 rows = 10
-                cols = 5
+                cols = 7
                 left = Inches(0.521)
                 top = Inches(1.2)
                 width = Inches(6.0)
@@ -3494,18 +3539,20 @@ class MetasSinAvancesPptxEndpoint(ProtectedResourceView):
                 # set column widths
                 table.columns[0].width = Inches(1.3)
                 table.columns[1].width = Inches(1.3)
-                table.columns[2].width = Inches(3.5)
+                table.columns[2].width = Inches(2.5)
                 table.columns[3].width = Inches(1.2)
                 table.columns[4].width = Inches(1.0)
+                table.columns[5].width = Inches(1.2)
+                table.columns[6].width = Inches(1.2)
 
-            for x in range(0, 5):
+            for x in range(0, 7):
                 cell = table.rows[0].cells[x]
                 paragraph = cell.textframe.paragraphs[0]
                 paragraph.font.size = Pt(12)
                 paragraph.font.name = 'Arial Black'
                 paragraph.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
 
-            for x in range(0, 5):
+            for x in range(0, 7):
                 cell = table.rows[indice].cells[x]
                 paragraph = cell.textframe.paragraphs[0]
                 paragraph.font.size = Pt(8)
@@ -3518,6 +3565,8 @@ class MetasSinAvancesPptxEndpoint(ProtectedResourceView):
             table.cell(0, 2).text = 'Accion'
             table.cell(0, 3).text = 'Estado'
             table.cell(0, 4).text = 'Año'
+            table.cell(0, 5).text = 'Meta'
+            table.cell(0, 6).text = 'Avance'
 
 
             # write body cells
@@ -3526,6 +3575,8 @@ class MetasSinAvancesPptxEndpoint(ProtectedResourceView):
             table.cell(indice, 2).text = avance['accion']
             table.cell(indice, 3).text = avance['estado']
             table.cell(indice, 4).text = str(avance['periodo'])
+            table.cell(indice, 5).text = str(avance['suma_meta'])
+            table.cell(indice, 6).text = str(avance['suma_avance'])
             indice += 1
 
         prs.save(output)
