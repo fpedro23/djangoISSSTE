@@ -1179,7 +1179,7 @@ function Piramide(Series) {
                 },
                 labels: {
                     formatter: function () {
-                        return Math.abs(this.value) + '%';
+                        return Math.abs(this.value);
                     }
                 }
             },
