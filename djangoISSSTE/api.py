@@ -3001,8 +3001,8 @@ class AvancesPorPeriodoEndPoint(ProtectedResourceView):
 
 class PresentacioneAvancesEndPoint(ProtectedResourceView):
     def get(self, request):
-        #prs = Presentation('static/ppt/presentacion_avances.pptx')
-        prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/presentacion_avances.pptx')
+        prs = Presentation('djangoISSSTE/static/ppt/presentacion_avances.pptx')
+        #prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/presentacion_avances.pptx')
         json_map = {}
         json_map['reporte1'] = []
         json_map['reporte2'] = []
@@ -3011,23 +3011,43 @@ class PresentacioneAvancesEndPoint(ProtectedResourceView):
             list_carencias = {}
             list_carencias['carencia'] = carencia.nombreCarencia
             list_carencias['total_avances'] = 0
-            query = Q(avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=carencia.id)
+            list_carencias['inversionAvance'] = 0
+            list_carencias['porcentaje'] = 0
+            query = Q(avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=carencia.id,avancePorMunicipio__periodo_id=5,)
 
             usuario = get_usuario_for_token(request.GET.get('access_token'))
             if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
                 query = query & Q(avancePorMunicipio__estado=usuario.usuario.estado)
 
-            for avance in AvanceMensual.objects.filter(query).values(
-                    'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia').annotate(
+            for avance in AvanceMensual.objects.filter(query).values('avancePorMunicipio__meta__montoPromedio',
+                                                                     'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia').annotate(
                 ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
                 jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
                 total = avance['ene'] + avance['feb'] + avance['mar'] + avance['abr'] + avance['may'] + avance['jun'] + \
                         avance['jul'] + avance['ago'] + avance['sep'] + avance['oct'] + avance['nov'] + avance['dic']
                 list_carencias['total_avances'] = total
+                list_carencias['inversionAvance'] = total*avance['avancePorMunicipio__meta__montoPromedio']
 
-            query_meta = Q(meta__accionEstrategica__subCarencia__carencia__id=carencia.id)
+            query_meta = Q(meta__accionEstrategica__subCarencia__carencia__id=carencia.id,meta__periodo_id=5,)
             if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
                 query_meta = query_meta & Q(estado=usuario.usuario.estado)
+
+            list_carencias['total_metas'] = 0
+            list_carencias['inversionMeta'] = 0
+            for meta in MetaMensual.objects.filter(query_meta).\
+                    values('meta__accionEstrategica__subCarencia__carencia__nombreCarencia','inversionAprox')\
+                    .annotate(ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
+                 jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+
+                 total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
+                         meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
+
+                 list_carencias['total_metas'] += total
+                 list_carencias['inversionMeta'] += meta['inversionAprox']
+
+            if list_carencias['total_metas']>0:
+                list_carencias['porcentaje'] = (list_carencias['total_avances']*100)/list_carencias['total_metas']
+
             json_map['reporte1'].append(list_carencias)
 
 
@@ -3039,15 +3059,37 @@ class PresentacioneAvancesEndPoint(ProtectedResourceView):
         for estado in Estado.objects.filter(query):
             list_estados = {}
             list_estados['estado'] = estado.nombreEstado
-            for avance in AvanceMensual.objects.filter(avancePorMunicipio__estado = estado).values(
-                    'avancePorMunicipio__estado__nombreEstado').annotate(
+            list_estados['total_metas'] = 0
+            list_estados['inversionMeta'] = 0
+            list_estados['total_avances'] = 0
+            list_estados['inversionAvance'] = 0
+            list_estados['porcentaje'] = 0
+
+            for avance in AvanceMensual.objects.filter(avancePorMunicipio__estado = estado,avancePorMunicipio__periodo_id=5).values(
+                    'avancePorMunicipio__estado__nombreEstado','avancePorMunicipio__meta__montoPromedio').annotate(
                 ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
                 jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
                 total = avance['ene'] + avance['feb'] + avance['mar'] + avance['abr'] + avance['may'] + avance['jun'] + \
                         avance['jul'] + avance['ago'] + avance['sep'] + avance['oct'] + avance['nov'] + avance['dic']
 
                 list_estados['total_avances'] = total
+                list_estados['inversionAvance'] = total*avance['avancePorMunicipio__meta__montoPromedio']
                 list_estados['estado'] = avance[ 'avancePorMunicipio__estado__nombreEstado']
+
+            for meta in MetaMensual.objects.filter(estado = estado,meta__periodo_id=5).\
+                    values('meta__accionEstrategica__subCarencia__carencia__nombreCarencia','inversionAprox')\
+                    .annotate(ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
+                 jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+
+                 total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
+                         meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
+
+                 list_estados['total_metas'] += total
+                 list_estados['inversionMeta'] += meta['inversionAprox']
+
+            if list_estados['total_metas']>0:
+                list_estados['porcentaje'] = (list_estados['total_avances']*100)/list_estados['total_metas']
+
 
             json_map['reporte2'].append(list_estados)
 
@@ -3066,11 +3108,14 @@ class PresentacioneAvancesEndPoint(ProtectedResourceView):
                 list_carencias = {}
                 list_carencias['carencia'] = carencia.nombreCarencia
                 list_carencias['total_avances'] = 0
-                query_avance = Q(avancePorMunicipio__estado__id=estado.id) & \
+                list_carencias['inversionAvance'] = 0
+                list_carencias['inversionMeta'] = 0
+                list_carencias['porcentaje'] = 0
+                query_avance = Q(avancePorMunicipio__estado__id=estado.id,avancePorMunicipio__periodo_id=5) & \
                                Q(avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia=carencia.id)
 
                 for avance in AvanceMensual.objects.filter(query_avance).values(
-                        'avancePorMunicipio__estado__nombreEstado').annotate(
+                        'avancePorMunicipio__estado__nombreEstado','avancePorMunicipio__meta__montoPromedio').annotate(
                     ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
                     jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
                     total = avance['ene'] + avance['feb'] + avance['mar'] + avance['abr'] + avance['may'] + avance[
@@ -3078,48 +3123,72 @@ class PresentacioneAvancesEndPoint(ProtectedResourceView):
                             avance['jul'] + avance['ago'] + avance['sep'] + avance['oct'] + avance['nov'] + avance[
                                 'dic']
                     list_carencias['total_avances'] = total
-
+                    list_carencias['inversionAvance'] = total*avance['avancePorMunicipio__meta__montoPromedio']
                 list_carencias['total_metas'] = 0
-                for meta in MetaMensual.objects.filter(estado__id=estado.id,
+                for meta in MetaMensual.objects.filter(estado__id=estado.id,meta__periodo_id=5,
                                                        meta__accionEstrategica__subCarencia__carencia__id=carencia.id).values(
-                    'estado__nombreEstado').annotate(
+                    'estado__nombreEstado','inversionAprox').annotate(
                     ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
                     jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
                     total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
                             meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
 
-                    list_carencias['total_metas'] = total
+                    list_carencias['total_metas'] += total
+                    list_carencias['inversionMeta'] += meta['inversionAprox']
+
+                if list_carencias['total_metas']>0:
+                    list_carencias['porcentaje'] = (list_carencias['total_avances']*100)/list_carencias['total_metas']
+
                 list_estados['datos'].append(list_carencias)
             json_map['reporte3'].append(list_estados)
 
         table = prs.slides[0].shapes[0].table
-        for x in range(1, 6):
+        for x in range(2, 7):
             cell = table.rows[x].cells[1]
             paragraph = cell.textframe.paragraphs[0]
             paragraph.font.size = Pt(12)
             paragraph.font.name = 'Arial'
             paragraph.font.color.rgb = RGBColor(0xFF, 0x7F, 0x50)
 
-        indice = 1
+        indice = 2
         sumAvances=0
         sumMetas=0
+        sumInversionAvance=0
+        sumInversionMeta=0
         for avance in json_map['reporte1']:
-            for x in range(1, 2):
+            for x in range(1, 6):
                 cell = table.rows[indice].cells[x]
                 paragraph = cell.textframe.paragraphs[0]
-                paragraph.font.size = Pt(12)
+                paragraph.font.size = Pt(10)
                 paragraph.font.name = 'Arial'
                 paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
 
             # write body cells
             table.cell(indice, 0).text = avance['carencia']
             table.cell(indice, 1).text = str('{0:,}'.format(avance['total_avances']))
+            table.cell(indice, 2).text = str('{0:,.2f}'.format(avance['inversionAvance']))
+            table.cell(indice, 3).text = str('{0:,}'.format(avance['total_metas']))
+            table.cell(indice, 4).text = str('{0:,.2f}'.format(avance['inversionMeta']))
+            table.cell(indice, 5).text = str('{0:,.2f}'.format(avance['porcentaje']))
             sumAvances+=avance['total_avances']
+            sumMetas+=avance['total_avances']
+            sumInversionAvance+=avance['inversionAvance']
+            sumInversionMeta+=avance['inversionMeta']
             indice += 1
 
-        table.cell(6, 1).text = str('{0:,}'.format(sumAvances))
+        for x in range(1, 6):
+            cell = table.rows[7].cells[x]
+            paragraph = cell.textframe.paragraphs[0]
+            paragraph.font.size = Pt(11)
+            paragraph.font.name = 'Arial'
+            paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
 
-        #mapa
+        table.cell(7, 1).text = str('{0:,}'.format(sumAvances))
+        table.cell(7, 2).text = str('{0:,.2f}'.format(sumInversionAvance))
+        table.cell(7, 3).text = str('{0:,}'.format(sumMetas))
+        table.cell(7, 4).text = str('{0:,.2f}'.format(sumInversionMeta))
+
+        #mapa unidades de avance
         for x in range(4, 36):
             prs.slides[1].shapes[x].text_frame.paragraphs[0].font.size = Pt(6)
             prs.slides[1].shapes[x].text_frame.paragraphs[0].font.name = 'Arial Black'
@@ -3130,17 +3199,28 @@ class PresentacioneAvancesEndPoint(ProtectedResourceView):
             prs.slides[1].shapes[i].text = str('{0:,}'.format(avance['total_avances']))
             i += 1
 
-        #tabla diapositiva 3
+        #mapa porcentaje de avance
+        for x in range(4, 36):
+            prs.slides[2].shapes[x].text_frame.paragraphs[0].font.size = Pt(6)
+            prs.slides[2].shapes[x].text_frame.paragraphs[0].font.name = 'Arial Black'
+            prs.slides[2].shapes[x].text_frame.paragraphs[0].font.color.rgb = RGBColor(0xCD, 0x00, 0x00)
 
-        table = prs.slides[2].shapes[0].table
-        table2 = prs.slides[3].shapes[0].table
+        i = 4
+        for avance in json_map['reporte2']:
+            prs.slides[2].shapes[i].text = str('{0:,.2f}'.format(avance['porcentaje'])+" %")
+            i += 1
+
+        #tabla diapositiva 3 y 4
+
+        table = prs.slides[3].shapes[0].table
+        table2 = prs.slides[4].shapes[0].table
         indice = 1
         indice2 = 1
         sumAvances=0
         sumMetas=0
         for avance in json_map['reporte3']:
-            if indice<18:
-                for x in range(0, 11):
+            if indice<16:
+                for x in range(0, 16):
                     cell = table.rows[indice].cells[x]
                     paragraph = cell.textframe.paragraphs[0]
                     paragraph.font.size = Pt(8)
@@ -3153,18 +3233,15 @@ class PresentacioneAvancesEndPoint(ProtectedResourceView):
                 for dato in avance['datos']:
                     table.cell(indice, iCol).text = str('{0:,}'.format(dato['total_avances']))
                     table.cell(indice, iCol+1).text = str('{0:,}'.format(dato['total_metas']))
-                    '''if table2.cell(17, iCol)=="":
-                        table2.cell(17, iCol).text="0"
-                        table2.cell(17, iCol+1).text="0"
-                    table2.cell(17, iCol).text = str('{0:,}'.format(float(table2.cell(17, iCol))+dato['total_avances']))
-                    table2.cell(17, iCol+1).text = str('{0:,}'.format(float(table2.cell(17, iCol+1))+dato['total_metas']))'''
-                    iCol+=2
+                    table.cell(indice, iCol+2).text = str('{0:,.2f}'.format(dato['porcentaje']))
+
+                    iCol+=3
                 indice += 1
             else:
-                for x in range(0, 11):
+                for x in range(0, 16):
                     cell = table2.rows[indice2].cells[x]
                     paragraph = cell.textframe.paragraphs[0]
-                    paragraph.font.size = Pt(8)
+                    paragraph.font.size = Pt(7)
                     paragraph.font.name = 'Arial'
                     paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
 
@@ -3174,22 +3251,61 @@ class PresentacioneAvancesEndPoint(ProtectedResourceView):
                 for dato in avance['datos']:
                     table2.cell(indice2, iCol).text = str('{0:,}'.format(dato['total_avances']))
                     table2.cell(indice2, iCol+1).text = str('{0:,}'.format(dato['total_metas']))
-                    '''if table2.cell(17, iCol)=="":
-                        table2.cell(17, iCol).text="0"
-                        table2.cell(17, iCol+1).text="0"
-                    table2.cell(17, iCol).text = str('{0:,}'.format(float(table2.cell(17, iCol))+dato['total_avances']))
-                    table2.cell(17, iCol+1).text = str('{0:,}'.format(float(table2.cell(17, iCol+1))+dato['total_metas']))'''
-                    iCol+=2
+                    table2.cell(indice2, iCol+2).text = str('{0:,.2f}'.format(dato['porcentaje']))
+                    iCol+=3
                 indice2 += 1
 
+        #tabla diapositiva 5 y 6
+
+        table = prs.slides[5].shapes[0].table
+        table2 = prs.slides[6].shapes[0].table
+        indice = 1
+        indice2 = 1
+        sumAvances=0
+        sumMetas=0
+        for avance in json_map['reporte3']:
+            if indice<16:
+                for x in range(0, 16):
+                    cell = table.rows[indice].cells[x]
+                    paragraph = cell.textframe.paragraphs[0]
+                    paragraph.font.size = Pt(6)
+                    paragraph.font.name = 'Arial'
+                    paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+                # write body cells
+                table.cell(indice, 0).text = avance['estado']
+                iCol=1
+                for dato in avance['datos']:
+                    table.cell(indice, iCol).text = str('{0:,.2f}'.format(dato['inversionAvance']))
+                    table.cell(indice, iCol+1).text = str('{0:,.2f}'.format(dato['inversionMeta']))
+                    table.cell(indice, iCol+2).text = str('{0:,.2f}'.format(dato['porcentaje']))
+                    iCol+=3
+                indice += 1
+            else:
+                for x in range(0, 16):
+                    cell = table2.rows[indice2].cells[x]
+                    paragraph = cell.textframe.paragraphs[0]
+                    paragraph.font.size = Pt(6)
+                    paragraph.font.name = 'Arial'
+                    paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+                # write body cells
+                table2.cell(indice2, 0).text = avance['estado']
+                iCol=1
+                for dato in avance['datos']:
+                    table2.cell(indice2, iCol).text = str('{0:,.2f}'.format(dato['inversionAvance']))
+                    table2.cell(indice2, iCol+1).text = str('{0:,.2f}'.format(dato['inversionMeta']))
+                    table2.cell(indice2, iCol+2).text = str('{0:,.2f}'.format(dato['porcentaje']))
+                    iCol+=3
+                indice2 += 1
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
 
-        #prs.save('static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx')
-        #the_file = 'static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx'
+        prs.save('djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = 'djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx'
 
-        prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx')
-        the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx'
+        #prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx')
+        #the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx'
 
         filename = os.path.basename(the_file)
         chunk_size = 8192
