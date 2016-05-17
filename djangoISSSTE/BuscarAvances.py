@@ -44,6 +44,7 @@ class BuscarAvances:
 	def buscar(self):			# Formando el query que filtrará los avances por municipio
 		query_estado = Q()
 		query = Q()
+
 		if self.carencias is not  None:
 			query = query | Q(avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id__in = self.carencias)
 			query_estado = query_estado | Q(meta__accionEstrategica__subCarencia__carencia__id__in = self.carencias)
@@ -71,8 +72,8 @@ class BuscarAvances:
 			query = query & Q(porcentajeAvance__range=(self.avance_minimo, self.avance_maximo))
 
 		if self.inversion_minima is not None and self.inversion_maxima is not None:
-			query = query & Q(avancePorMunicipio__inversionAprox__range = (self.inversion_minima, self.inversion_maxima))
-			query_estado = query_estado & Q(inversionAprox__range = (self.inversion_minima, self.inversion_maxima))
+			query = query & Q(avancePorMunicipio__inversionAprox__range = (self.inversion_minima[0], self.inversion_maxima[0]))
+			query_estado = query_estado & Q(inversionAprox__range = (self.inversion_minima[0], self.inversion_maxima[0]))
 
 		if self.observaciones is not None:
 			query = query & Q(avancePorMunicipio__meta__observaciones__contains = self.observaciones)
@@ -167,7 +168,7 @@ class BuscarAvances:
 			the_query = the_query & Q(meta__periodo__id__in=self.periodos)
 
 		if self.inversion_minima is not None and self.inversion_maxima is not None:
-			the_query = the_query & Q(inversionAprox__range=(self.inversion_minima, self.inversion_maxima))
+			the_query = the_query & Q(inversionAprox__range=(self.inversion_minima[0], self.inversion_maxima[0]))
 
 		if self.observaciones is not None:
 			the_query = the_query & Q(meta__observaciones__contains=self.observaciones)

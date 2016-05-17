@@ -329,7 +329,7 @@ class avancesMensualesPorMetaEndpoint(ProtectedResourceView):
 
 
 # Clase EndPoint (oauth2) para implementar el buscador en base al filtro grande
-class BuscadorEndpoint(ProtectedResourceView):
+class BuscadorEndpoint(ListView):
     def get(self, request):
         # myObj: objeto a construir con lo parámetros obtenidos en la URL y que serán
         # mandados al buscador para que éste los filtre
@@ -444,7 +444,10 @@ class BuscadorEndpoint(ProtectedResourceView):
                     shortened_reporte['suma_meta'] += meta_mensual['nov']
                     shortened_reporte['suma_meta'] += meta_mensual['dic']
 
-
+            if shortened_reporte['suma_meta'] <= 0:
+                shortened_reporte['porcentaje'] = 100
+            else:
+                shortened_reporte['porcentaje'] = round((shortened_reporte['suma_avance'] * 100) / shortened_reporte['suma_meta'],2)
             shortened_reporte['id'] = reporte['id']
             shortened_reporte['avancePorMunicipio_id'] = reporte['avancePorMunicipio__id']
             shortened_reporte['accion'] = reporte['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
@@ -529,6 +532,11 @@ class BuscadorEndpoint(ProtectedResourceView):
                     shortened_reporte['suma_meta'] += meta_mensual['nov']
                     shortened_reporte['suma_meta'] += meta_mensual['dic']
 
+            if shortened_reporte['suma_meta'] <= 0:
+                shortened_reporte['porcentaje'] = 100
+            else:
+                shortened_reporte['porcentaje'] = round(
+                    (shortened_reporte['avance'] * 100) / shortened_reporte['suma_meta'], 2)
             shortened_reporte['estado'] = reporte['avancePorMunicipio__estado__nombreEstado']
             shortened_reporte['latitud'] = reporte['avancePorMunicipio__estado__latitud']
             shortened_reporte['longitud'] = reporte['avancePorMunicipio__estado__longitud']
@@ -603,6 +611,12 @@ class BuscadorEndpoint(ProtectedResourceView):
                     shortened_reporte['suma_meta'] += meta_mensual['nov']
                     shortened_reporte['suma_meta'] += meta_mensual['dic']
 
+            if shortened_reporte['suma_meta'] <= 0:
+                shortened_reporte['porcentaje'] = 100
+            else:
+                shortened_reporte['porcentaje'] = round(
+                    (shortened_reporte['avance'] * 100) / shortened_reporte['suma_meta'], 2)
+
             shortened_reporte['carenciaId'] = reporte[
                 'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id']
             shortened_reporte['nombreCarencia'] = reporte[
@@ -676,6 +690,12 @@ class BuscadorEndpoint(ProtectedResourceView):
                     shortened_reporte['suma_meta'] += meta_mensual["oct"]
                     shortened_reporte['suma_meta'] += meta_mensual["nov"]
                     shortened_reporte['suma_meta'] += meta_mensual["dic"]
+
+            if shortened_reporte['suma_meta'] <= 0:
+                shortened_reporte['porcentaje'] = 100
+            else:
+                shortened_reporte['porcentaje'] = round(
+                    (shortened_reporte['avance'] * 100) / shortened_reporte['suma_meta'], 2)
 
             shortened_reporte['accionId'] = reporte[
                 'avancePorMunicipio__meta__accionEstrategica__id']
