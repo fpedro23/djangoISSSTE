@@ -3872,7 +3872,7 @@ class BalancePorAccionEndpoint(ListView):
         json_map = {}
         json_map['balancePorAccion'] = []
         for accion in AccionEstrategica.objects.all():
-            print accion.nombreAccion
+            #print accion.nombreAccion
             list_acciones = {}
             list_acciones['accion_estrategica'] = accion.nombreAccion
             list_acciones['unidad_medida'] = accion.unidadDeMedida.descripcionUnidad
