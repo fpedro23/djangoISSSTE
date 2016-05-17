@@ -68,12 +68,12 @@ class BuscarAvances:
 			query = query & Q(avancePorMunicipio__periodo__id__in=self.periodos)
 			query_estado = query_estado & Q(periodo__id__in=self.periodos)
 
-		if self.avance_minimo is not None and self.avance_maximo is not None:
-			query = query & Q(porcentajeAvance__range=(self.avance_minimo, self.avance_maximo))
+		#if self.avance_minimo is not None and self.avance_maximo is not None:
+		#	query = query & Q(porcentajeAvance__range=(self.avance_minimo, self.avance_maximo))
 
-		if self.inversion_minima is not None and self.inversion_maxima is not None:
-			query = query & Q(avancePorMunicipio__inversionAprox__range = (self.inversion_minima[0], self.inversion_maxima[0]))
-			query_estado = query_estado & Q(inversionAprox__range = (self.inversion_minima[0], self.inversion_maxima[0]))
+		#if self.inversion_minima is not None and self.inversion_maxima is not None:
+		#	query = query & Q(avancePorMunicipio__inversionAprox__range = (self.inversion_minima[0], self.inversion_maxima[0]))
+		#	query_estado = query_estado & Q(inversionAprox__range = (self.inversion_minima[0], self.inversion_maxima[0]))
 
 		if self.observaciones is not None:
 			query = query & Q(avancePorMunicipio__meta__observaciones__contains = self.observaciones)
@@ -167,8 +167,8 @@ class BuscarAvances:
 		if self.periodos is not None:
 			the_query = the_query & Q(meta__periodo__id__in=self.periodos)
 
-		if self.inversion_minima is not None and self.inversion_maxima is not None:
-			the_query = the_query & Q(inversionAprox__range=(self.inversion_minima[0], self.inversion_maxima[0]))
+		#if self.inversion_minima is not None and self.inversion_maxima is not None:
+		#	the_query = the_query & Q(inversionAprox__range=(self.inversion_minima[0], self.inversion_maxima[0]))
 
 		if self.observaciones is not None:
 			the_query = the_query & Q(meta__observaciones__contains=self.observaciones)
