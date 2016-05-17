@@ -51,6 +51,7 @@ function main_consulta() {
     valida_token();
     $j('#balanceGeneral').on('click', balanceGeneral)
     $j('#balanceEntidad').on('click', balanceEntidad)
+    $j('#balanceAccion').on('click', balanceAccion)
     $j('#informacionGeneral').on('click', informacionGeneral)
     $j('#avancesPeriodo').on('click', avancesPeriodo)
     $j('#presentacionAvances').on('click', presentacionAvances)
@@ -168,6 +169,13 @@ function balanceEntidad() {
     location.href = URL;
 
 }
+
+function balanceAccion() {
+    var URL="/issste/api/balanceAccion?access_token="+newToken;
+    location.href = URL;
+
+}
+
 
 function avancesPeriodo() {
     var URL="/issste/api/reporteAvancesPeriodo?access_token="+newToken;

@@ -2769,6 +2769,153 @@ class BalanceGeneralEndpoint(ProtectedResourceView):
 
         #return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True,), 'application/json')
 
+class BalanceAccionEndpoint(ProtectedResourceView):
+    def get(self, request):
+
+        #prs = Presentation('djangoISSSTE/static/ppt/balance_accion.pptx')
+        prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/balance_accion.pptx')
+
+        json_map = {}
+        json_map['balance'] = []
+        for accion in AccionEstrategica.objects.all():
+            list_acciones = {}
+            list_acciones['accion'] = accion.nombreAccion
+            list_acciones['total_avances'] = 0
+            list_acciones['total_metas'] = 0
+            list_acciones['porcentajeAvance'] = 0
+            list_acciones['inversionAvance'] = 0
+            list_acciones['inversionMeta'] = 0
+            query = Q(avancePorMunicipio__meta__accionEstrategica__id=accion.id,avancePorMunicipio__periodo_id=5)
+
+            usuario = get_usuario_for_token(request.GET.get('access_token'))
+            if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
+                query = query & Q(avancePorMunicipio__estado=usuario.usuario.estado)
+
+            for avance in AvanceMensual.objects.filter(query).values('avancePorMunicipio__meta__montoPromedio',
+                'avancePorMunicipio__meta__accionEstrategica__nombreAccion').annotate(
+                ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
+                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+
+                total = avance['ene'] + avance['feb'] + avance['mar'] + avance['abr'] + avance['may'] + avance['jun'] +\
+                        avance['jul'] + avance['ago'] + avance['sep'] + avance['oct'] + avance['nov'] + avance['dic']
+                list_acciones['total_avances'] = total
+                list_acciones['inversionAvance']=total*avance['avancePorMunicipio__meta__montoPromedio']
+
+            query_meta = Q(meta__accionEstrategica__id=accion.id,meta__periodo_id=5)
+            if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
+                query_meta = query_meta & Q(estado=usuario.usuario.estado)
+
+            for meta in MetaMensual.objects.filter(query_meta).values('inversionAprox',
+                'meta__accionEstrategica__nombreAccion').annotate(
+                ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
+                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+
+                total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
+                        meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
+
+                list_acciones['total_metas'] += total
+                list_acciones['inversionMeta'] += meta['inversionAprox']
+
+            if list_acciones['total_metas'] > 0:
+                list_acciones['porcentajeAvance'] = (list_acciones['total_avances'] * 100)/list_acciones['total_metas']
+
+            json_map['balance'].append(list_acciones)
+
+        # unidades de avance y metas
+        table = prs.slides[0].shapes[0].table
+        for x in range(1, 9):
+            cell = table.rows[x].cells[0]
+            paragraph = cell.textframe.paragraphs[0]
+            paragraph.font.size = Pt(10)
+            paragraph.font.name = 'Arial'
+            paragraph.font.color.rgb = RGBColor(0x00, 0x00, 0x00)
+
+        indice = 1
+        sumAvances=0
+        sumMetas=0
+
+        for avance in json_map['balance']:
+            for x in range(1, 4):
+                cell = table.rows[indice].cells[x]
+                paragraph = cell.textframe.paragraphs[0]
+                paragraph.font.size = Pt(10)
+                paragraph.font.name = 'Arial'
+                paragraph.font.color.rgb = RGBColor(0x00, 0x00, 0x00)
+
+            # write body cells
+            table.cell(indice, 0).text = avance['accion']
+            table.cell(indice, 1).text = str('{0:,}'.format(avance['total_avances']))
+            table.cell(indice, 2).text = str('{0:,}'.format(avance['total_metas']))
+            table.cell(indice, 3).text = str('{0:,.2f}'.format(avance['porcentajeAvance']))
+            sumAvances+=avance['total_avances']
+            sumMetas+=avance['total_metas']
+
+            indice += 1
+
+        table.cell(9, 1).text = str('{0:,}'.format(sumAvances))
+        table.cell(9, 2).text = str('{0:,}'.format(sumMetas))
+
+
+        # inversión de avance y metas
+        table = prs.slides[1].shapes[0].table
+        for x in range(1, 9):
+            cell = table.rows[x].cells[0]
+            paragraph = cell.textframe.paragraphs[0]
+            paragraph.font.size = Pt(10)
+            paragraph.font.name = 'Arial'
+            paragraph.font.color.rgb = RGBColor(0x00, 0x00, 0x00)
+
+        indice = 1
+        sumAvances=0
+        sumMetas=0
+
+        for avance in json_map['balance']:
+            for x in range(1, 4):
+                cell = table.rows[indice].cells[x]
+                paragraph = cell.textframe.paragraphs[0]
+                paragraph.font.size = Pt(10)
+                paragraph.font.name = 'Arial'
+                paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+            # write body cells
+            table.cell(indice, 0).text = avance['accion']
+            table.cell(indice, 1).text = '$ '+ str('{0:,}'.format(avance['inversionAvance']))
+            table.cell(indice, 2).text = '$ '+ str('{0:,}'.format(avance['inversionMeta']))
+            table.cell(indice, 3).text = str('{0:,.2f}'.format(avance['porcentajeAvance']))
+            sumAvances+=avance['inversionAvance']
+            sumMetas+=avance['inversionMeta']
+
+            indice += 1
+
+        for x in range(1, 4):
+                cell = table.rows[9].cells[x]
+                paragraph = cell.textframe.paragraphs[0]
+                paragraph.font.size = Pt(10)
+                paragraph.font.name = 'Arial'
+                paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+        table.cell(9, 1).text = '$ '+ str('{0:,}'.format(sumAvances))
+        table.cell(9, 2).text = '$ '+ str('{0:,}'.format(sumMetas))
+
+
+        usuario = get_usuario_for_token(request.GET.get('access_token'))
+
+        #prs.save('djangoISSSTE/static/ppt/ppt-generados/balance_accion_' + str(usuario.usuario.user.id) + '.pptx')
+        #the_file = 'djangoISSSTE/static/ppt/ppt-generados/balance_accion_' + str(usuario.usuario.user.id) + '.pptx'
+
+        prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_accion_' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_accion_' + str(usuario.usuario.user.id) + '.pptx'
+
+        filename = os.path.basename(the_file)
+        chunk_size = 8192
+        response = StreamingHttpResponse(FileWrapper(open(the_file,"rb"), chunk_size),
+                               content_type=mimetypes.guess_type(the_file)[0])
+        response['Content-Length'] = os.path.getsize(the_file)
+        response['Content-Disposition'] = "attachment; filename=%s" % filename
+        return response
+
+        #return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True,), 'application/json')
+
 class BalancePorEntidadEndpoint(ProtectedResourceView):
     def get(self, request):
         #prs = Presentation('djangoISSSTE/static/ppt/balance_por_estado.pptx')
