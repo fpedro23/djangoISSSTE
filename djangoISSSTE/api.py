@@ -350,8 +350,8 @@ class BuscadorEndpoint(ListView):
             observaciones=request.GET.get('observaciones'),
             avance_minimo=request.GET.get('avanceMinimo'),
             avance_maximo=request.GET.get('avanceMaximo'),
-            inversion_minima=get_array_or_none(request.GET.get('inversionMinima')),
-            inversion_maxima=get_array_or_none(request.GET.get('inversionMaxima')),
+            inversion_minima=request.GET.get('inversionMinima'),
+            inversion_maxima=request.GET.get('inversionMaxima'),
             unidad_de_medida=request.GET.get('unidadDeMedida'),
             limite_inferior=request.GET.get('limiteInferior'),
             limite_superior=request.GET.get('limiteSuperior')
@@ -450,22 +450,32 @@ class BuscadorEndpoint(ListView):
                 shortened_reporte['porcentaje'] = round((shortened_reporte['suma_avance'] * 100) / shortened_reporte['suma_meta'],2)
 
             doAdd = False
+            doAddInversion  = False
             if myObj.avance_minimo is None:
                 myObj.avance_minimo = 0
-
             if myObj.avance_maximo is None:
                 myObj.avance_maximo = 99999
 
-            # print "Estrategia " + reporte['avancePorMunicipio__meta__accionEstrategica__nombreEstrategia']
-            print "Minimo: %d" % int(myObj.avance_minimo)
-            print "Porcentaje: %f" % float(shortened_reporte['porcentaje'])
-            print "Maximo: %d" % int(myObj.avance_maximo)
-            print "---------------"
+            if myObj.inversion_minima is None:
+                myObj.inversion_minima = 0
+
+            #print "Minimo: %d" % int(myObj.avance_minimo)
+            #print "Porcentaje: %f" % float(shortened_reporte['porcentaje'])
+            #print "Maximo: %d" % int(myObj.avance_maximo)
+            #print "---------------"
+
+            monto = reporte['avancePorMunicipio__meta__montoPromedio']
+            if  myObj.inversion_maxima is not None:
+                if (shortened_reporte['suma_avance'] * monto >= float(myObj.inversion_minima)) &\
+                        (shortened_reporte['suma_avance'] * monto <= float(myObj.inversion_maxima)):
+                    doAddInversion = True
+            elif shortened_reporte['suma_avance'] * monto > float(myObj.inversion_minima):
+                doAddInversion = True
 
             if shortened_reporte['porcentaje'] >= float(myObj.avance_minimo) and shortened_reporte[
                 'porcentaje'] <= float(myObj.avance_maximo):
-
                 doAdd = True
+
                 shortened_reporte['id'] = reporte['id']
                 shortened_reporte['avancePorMunicipio_id'] = reporte['avancePorMunicipio__id']
                 shortened_reporte['accion'] = reporte['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
@@ -480,6 +490,7 @@ class BuscadorEndpoint(ListView):
                 shortened_reporte['latitud'] = reporte['municipio__latitud']
                 shortened_reporte['longitud'] = reporte['municipio__longitud']
 
+            if doAdd & doAddInversion:
                 json_map['reporte_general'].append(shortened_reporte)
 
 
@@ -678,7 +689,6 @@ class BuscadorEndpoint(ListView):
             shortened_reporte['nombreCarencia'] = reporte[
                 'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
             if doAdd == True:
-                print "Appending"
                 json_map['reporte_por_carencia'].append(shortened_reporte)
 
 
@@ -762,12 +772,6 @@ class BuscadorEndpoint(ListView):
 
             if myObj.avance_maximo is None:
                 myObj.avance_maximo = 99999
-
-            # print "Estrategia " + reporte['avancePorMunicipio__meta__accionEstrategica__nombreEstrategia']
-            # print "Minimo: %d" % int(myObj.avance_minimo)
-            # print "Porcentaje: %f" % float(shortened_reporte['porcentaje'])
-            # print "Maximo: %d" % int(myObj.avance_maximo)
-            # print "---------------"
 
             if shortened_reporte['porcentaje'] >= float(myObj.avance_minimo) and shortened_reporte[
                 'porcentaje'] <= float(myObj.avance_maximo):

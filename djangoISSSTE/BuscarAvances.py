@@ -103,6 +103,7 @@ class BuscarAvances:
 			'avancePorMunicipio__meta__accionEstrategica__nombreAccion',
 			'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia',
 			'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia',
+			'avancePorMunicipio__meta__montoPromedio',
 			'avancePorMunicipio__estado__nombreEstado',
 			'avancePorMunicipio__estado__id',
 			'municipio__nombreMunicipio',
