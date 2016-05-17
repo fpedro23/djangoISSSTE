@@ -3779,6 +3779,7 @@ class MetasSinAvancesPptxEndpoint(ProtectedResourceView):
 
         return response
 
+
 class AvancesSinActividadEndpoint(ListView):
     def get(self, request, *args, **kwargs):
         the_list = []
