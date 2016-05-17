@@ -1297,6 +1297,11 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
         # Merge 2 cells.
         sheet.set_column(5, 0, 10)
         sheet.set_column(5, 1, 20)
+
+        for x in range(2,15):
+            sheet.set_column(5, x, 8)
+
+
         for i in range(0, 5):
             sheet.set_row(i, 40)
         sheet.set_row(5, 30)
@@ -1542,6 +1547,9 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
         merge_format_blanco.set_font_color('black')
 
         # Merge 2 cells.
+        for x in range(3,16):
+            sheet.set_column(5, x, 8)
+
         sheet.set_column(5, 0, 10)
         sheet.set_column(5, 1, 20)
         sheet.set_column(5, 2, 30)
