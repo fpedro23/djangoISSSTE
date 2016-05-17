@@ -59,6 +59,6 @@ urlpatterns = [
 	url(r'^api/AvancePorMunicipioPptx', api.AvancePorMunicipioPptxEndpoint.as_view()),
 	url(r'^api/MetasSinAvancePptx', api.MetasSinAvancesPptxEndpoint.as_view()),
 	url(r'^api/AvancesSinActividadPptx', api.AvancesSinActividadEndpoint.as_view()),
-	url(r'^media/(?P<path>.*)$', 'django.views.static.serve',{'document_root': settings.MEDIA_ROOT}),
+	#url(r'^media/(?P<path>.*)$', 'django.views.static.serve',{'document_root': settings.MEDIA_ROOT}),
 
 ]

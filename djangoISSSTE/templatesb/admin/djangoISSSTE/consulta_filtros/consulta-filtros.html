@@ -1,0 +1,1351 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static %}
+{% block extrastyle %}{{ block.super }}
+
+    <script type="text/javascript" src="{% static "assets/tablesorter/jquery-latest.min.js"%}"></script>
+
+
+    <link class="ui-theme" rel="stylesheet" href="{% static "assets/tablesorter/css/jquery-ui.min.css"%}">
+    <link class="theme blue" rel="stylesheet" href="{% static "assets/tablesorter/themes/blue/theme.blue.css"%}">
+
+    <script type="text/javascript" src="{% static "assets/tablesorter/jquery.tablesorter.js"%}"></script>
+
+    <script src="{% static "assets/tablesorter/widget-scroller.js"%}"></script>
+	<script type="text/javascript" src="{% static "assets/tablesorter/widget-pager.js"%}"></script>
+
+
+
+
+    <script id="js" type="text/javascript">
+    var $ts = jQuery.noConflict();
+	$ts(function() {
+        $ts('.tablesorter').tablesorter({
+		theme: 'blue',
+		// widthFixed: true, // <- now automatically set by the scroller widget
+		showProcessing: true,
+		headerTemplate : '{content} {icon}',
+		widgets: [ 'uitheme', 'zebra', 'pager', 'scroller' ],
+		widgetOptions : {
+			scroller_height : 190,
+			// scroll tbody to top after sorting
+			scroller_upAfterSort: true,
+			// pop table header into view while scrolling up the page
+			scroller_jumpToHeader: true,
+			// In tablesorter v2.19.0 the scroll bar width is auto-detected
+			// add a value here to override the auto-detected setting
+			scroller_barWidth : null
+			// scroll_idPrefix was removed in v2.18.0
+			// scroller_idPrefix : 's_'
+		}
+    });
+	});
+	</script>
+
+    <link rel="stylesheet" type="text/css" href="{% static "assets/bootstrap/css/bootstrap.css"%}" />
+
+
+    <link rel="stylesheet" type="text/css" href="{% static "assets/jquery-mulsel/css/jquery.multiselect.css"%}" />
+    <link rel="stylesheet" type="text/css" href="{% static "assets/jquery-mulsel/css/style.css"%}" />
+    <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.css" />
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.js"></script>
+    <script type="text/javascript" src="{% static "assets/jquery-mulsel/js/jquery.multiselect.js"%}"></script>
+
+
+
+
+    <script type="text/javascript">
+        var $l = jQuery.noConflict();
+    $l(function(){
+        $l("#ajaxProgress").hide();
+        // off
+        $l("#msCarencias").multiselect({
+            header: true,
+            checkAllText: 'Marcar todas',
+            uncheckAllText: 'Desmarcar todas',
+            noneSelectedText: 'Carencia',
+            selectedText: '# Carencia'
+        });
+        // off
+        $l("#msSubCarencias").multiselect({
+            header: true,
+            checkAllText: 'Marcar todas',
+            uncheckAllText: 'Desmarcar todas',
+            noneSelectedText: 'SubCarencia',
+            selectedText: '# SubCarencias'
+        });
+        // off
+        $l("#msAcciones").multiselect({
+            header: true,
+            checkAllText: 'Marcar todas',
+            uncheckAllText: 'Desmarcar todas',
+            noneSelectedText: 'Acción estratégica',
+            selectedText: '# Acciones'
+        });
+        // off
+        $l("#msUnidadMedida").multiselect({
+            header: true,
+            checkAllText: 'Marcar todas',
+            uncheckAllText: 'Desmarcar todas',
+            noneSelectedText: 'Unidad de Medida',
+            selectedText: '# Unidades de Medida'
+        });
+        // off
+        $l("#msEstados").multiselect({
+            header: true,
+            checkAllText: 'Marcar todos',
+            uncheckAllText: 'Desmarcar todos',
+            noneSelectedText: 'Estado',
+            selectedText: '# Estados'
+        });
+        // off
+        $l("#msMunicipios").multiselect({
+            header: true,
+            checkAllText: 'Marcar todos',
+            uncheckAllText: 'Desmarcar todos',
+            noneSelectedText: 'Municipio',
+            selectedText: '# Municipios'
+        });
+        // off
+        $l("#msPeriodos").multiselect({
+            header: true,
+            checkAllText: 'Marcar todos',
+            uncheckAllText: 'Desmarcar todos',
+            noneSelectedText: 'Año',
+            selectedText: '# Años'
+        });
+        // off
+        $l("#msMeses").multiselect({
+            header: true,
+            checkAllText: 'Marcar todos',
+            uncheckAllText: 'Desmarcar todos',
+            noneSelectedText: 'Mes',
+            selectedText: '# Meses'
+        });
+        // off
+        $l("#msResponsables").multiselect({
+            header: true,
+            checkAllText: 'Marcar todos',
+            uncheckAllText: 'Desmarcar todos',
+            noneSelectedText: 'Responsable',
+            selectedText: '# Responsables'
+        });
+    });
+    </script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
+
+
+
+ <script type="text/javascript">
+         google.maps.event.addDomListener(window, 'load', initialize);
+         function initialize() {
+          var mapOptions = {
+            zoom: 4,
+            center: new google.maps.LatLng(22.6526121, -100.1780452),
+              mapTypeId: google.maps.MapTypeId.SATELLITE
+          }
+          var map = new google.maps.Map(document.getElementById('map-canvas'),
+                                        mapOptions);
+          var map2 = new google.maps.Map(document.getElementById('mapa'),
+                                        mapOptions);
+          //setMarkers(map, beaches);
+        }
+    </script>
+
+
+
+    <link href="{% static "assets/bootstrap/css/bootstrap-datepicker3.min.css"%}" rel="stylesheet">
+
+
+    <style type="text/css">
+        /**
+ * Fade-zoom animation for first dialog
+ */
+/* start state */
+.my-mfp-zoom-in .zoom-anim-dialog {
+	opacity: 0;
+	-webkit-transition: all 0.2s ease-in-out;
+	-moz-transition: all 0.2s ease-in-out;
+	-o-transition: all 0.2s ease-in-out;
+	transition: all 0.2s ease-in-out;
+	-webkit-transform: scale(0.8);
+	-moz-transform: scale(0.8);
+	-ms-transform: scale(0.8);
+	-o-transform: scale(0.8);
+	transform: scale(0.8);
+}
+/* animate in */
+.my-mfp-zoom-in.mfp-ready .zoom-anim-dialog {
+	opacity: 1;
+	-webkit-transform: scale(1);
+	-moz-transform: scale(1);
+	-ms-transform: scale(1);
+	-o-transform: scale(1);
+	transform: scale(1);
+}
+/* animate out */
+.my-mfp-zoom-in.mfp-removing .zoom-anim-dialog {
+	-webkit-transform: scale(0.8);
+	-moz-transform: scale(0.8);
+	-ms-transform: scale(0.8);
+	-o-transform: scale(0.8);
+	transform: scale(0.8);
+	opacity: 0;
+}
+/* Dark overlay, start state */
+.my-mfp-zoom-in.mfp-bg {
+	opacity: 0;
+	-webkit-transition: opacity 0.3s ease-out;
+	-moz-transition: opacity 0.3s ease-out;
+	-o-transition: opacity 0.3s ease-out;
+	transition: opacity 0.3s ease-out;
+}
+/* animate in */
+.my-mfp-zoom-in.mfp-ready.mfp-bg {
+	opacity: 0.8;
+}
+/* animate out */
+.my-mfp-zoom-in.mfp-removing.mfp-bg {
+	opacity: 0;
+}
+/**
+ * Fade-move animation for second dialog
+ */
+/* at start */
+.my-mfp-slide-bottom .zoom-anim-dialog {
+	opacity: 0;
+	-webkit-transition: all 0.2s ease-out;
+	-moz-transition: all 0.2s ease-out;
+	-o-transition: all 0.2s ease-out;
+	transition: all 0.2s ease-out;
+	-webkit-transform: translateY(-20px) perspective( 600px ) rotateX( 10deg );
+	-moz-transform: translateY(-20px) perspective( 600px ) rotateX( 10deg );
+	-ms-transform: translateY(-20px) perspective( 600px ) rotateX( 10deg );
+	-o-transform: translateY(-20px) perspective( 600px ) rotateX( 10deg );
+	transform: translateY(-20px) perspective( 600px ) rotateX( 10deg );
+}
+/* animate in */
+.my-mfp-slide-bottom.mfp-ready .zoom-anim-dialog {
+	opacity: 1;
+	-webkit-transform: translateY(0) perspective( 600px ) rotateX( 0deg );
+	-moz-transform: translateY(0) perspective( 600px ) rotateX( 0deg );
+	-ms-transform: translateY(0) perspective( 600px ) rotateX( 0deg );
+	-o-transform: translateY(0) perspective( 600px ) rotateX( 0deg );
+	transform: translateY(0) perspective( 600px ) rotateX( 0deg );
+}
+/* animate out */
+.my-mfp-slide-bottom.mfp-removing .zoom-anim-dialog {
+	opacity: 0;
+	-webkit-transform: translateY(-10px) perspective( 600px ) rotateX( 10deg );
+	-moz-transform: translateY(-10px) perspective( 600px ) rotateX( 10deg );
+	-ms-transform: translateY(-10px) perspective( 600px ) rotateX( 10deg );
+	-o-transform: translateY(-10px) perspective( 600px ) rotateX( 10deg );
+	transform: translateY(-10px) perspective( 600px ) rotateX( 10deg );
+}
+/* Dark overlay, start state */
+.my-mfp-slide-bottom.mfp-bg {
+	opacity: 0;
+	-webkit-transition: opacity 0.3s ease-out;
+	-moz-transition: opacity 0.3s ease-out;
+	-o-transition: opacity 0.3s ease-out;
+	transition: opacity 0.3s ease-out;
+}
+/* animate in */
+.my-mfp-slide-bottom.mfp-ready.mfp-bg {
+	opacity: 0.8;
+}
+/* animate out */
+.my-mfp-slide-bottom.mfp-removing.mfp-bg {
+	opacity: 0;
+}
+
+
+
+		</style>
+
+    <!-- Magnific Popup core CSS file -->
+<link rel="stylesheet" href="{% static "assets/Popup/magnific-popup.css"%}">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<!-- Magnific Popup core JS file -->
+<script src="{% static "assets/Popup/jquery.magnific-popup.js"%}"></script>
+<!-- Magnific Popup core CSS file -->
+<link rel="stylesheet" href="{% static "assets/Popup/site.css"%}">
+
+
+<script>
+var $pp = jQuery.noConflict();
+
+$pp( document ).ready(function() {
+  $pp('#div-grafica').addClass("mfp-hide");
+});
+
+$pp('#tabla-exporta').hide();
+$pp('#tabla-exporta2').hide();
+
+
+$pp(function () {
+	  $pp('.popup-modal').magnificPopup({
+	    type: 'inline',
+	    preloader: true,
+	    modal: true,
+          fixedContentPos: false,
+		fixedBgPos: true,
+		overflowY: 'auto',
+		closeBtnInside: true,
+		preloader: false,
+		midClick: true,
+		removalDelay: 300,
+		mainClass: 'my-mfp-zoom-in'
+	  });
+	  $pp(document).on('click', '.popup-modal-dismiss', function (e) {
+	    e.preventDefault();
+	    $pp.magnificPopup.close();
+	  });
+      $pp('.popup-exporta').magnificPopup({
+	    type: 'inline',
+	    preloader: false,
+	    modal: true,
+          fixedContentPos: false,
+		fixedBgPos: true,
+		overflowY: 'auto',
+		closeBtnInside: true,
+		preloader: false,
+		midClick: true,
+		removalDelay: 300,
+		mainClass: 'my-mfp-zoom-in'
+	  });
+	  $pp(document).on('click', '.popup-exporta-dismiss', function (e) {
+	    e.preventDefault();
+	    $pp.magnificPopup.close();
+	  });
+    $pp('#container2').highcharts({
+        chart: {
+            type: 'column',
+            margin: 75,
+            options3d: {
+                enabled: true,
+                alpha: 10,
+                beta: 25,
+                depth: 70
+            }
+        },
+        title: {
+            text: '3D chart with null values'
+        },
+        subtitle: {
+            text: 'Notice the difference between a 0 value and a null point'
+        },
+        plotOptions: {
+            column: {
+                depth: 25
+            }
+        },
+        xAxis: {
+            categories: Highcharts.getOptions().lang.shortMonths
+        },
+        yAxis: {
+            title: {
+                text: null
+            }
+        },
+        series: [{
+            name: 'Sales',
+            data: [2, 3, null, 4, 0, 5, 1, 50, 6, 3]
+        }]
+    });
+});
+</script>
+
+
+
+
+<script src="{% static "assets/graficas/highmap/highcharts.js"%}"></script>
+<script src="{% static "assets/graficas/highcharts/js/highcharts-3d.js"%}"></script>
+    <script src="{% static "assets/graficas/highcharts/js/highcharts-more.js"%}"></script>
+    <script src="{% static "assets/graficas/highcharts/js/themes/grid-light.js"%}"></script>
+
+<script src="{% static "assets/graficas/highcharts/js/modules/exporting.js"%}"></script>
+
+
+
+
+    <!--libs para exportar a excel, pdf y power point -->
+    <script type="text/javascript" src="{% static "assets/export/tableExport.js"%}"></script>
+	<script type="text/javascript" src="{% static "assets/export/jquery.base64.js"%}"></script>
+	<script type="text/javascript" src="{% static "assets/export/html2canvas.js"%}"></script>
+	<script type="text/javascript" src="{% static "assets/export/jspdf/libs/sprintf.js"%}"}></script>
+	<script type="text/javascript" src="{% static "assets/export/jspdf/jspdf.js"%}"></script>
+	<script type="text/javascript" src="{% static "assets/export/jspdf/libs/base64.js"%}"></script>
+    <script type="text/javascript" src="{% static "assets/export/FileSaver.min.js"%}"></script>
+
+
+
+<script type="text/javascript" src="{% static "assets/js/jspdf.js"%}"></script>
+    <script type="text/javascript" src="{% static "assets/js/jspdf.min.js"%}"></script>
+<script>
+
+$( document ).ready(function() {
+  $('#cmd').on('click', PDF)
+  $("#ajaxProgress").hide();
+});
+
+
+function PDF () {
+    var doc = new jsPDF();
+    var specialElementHandlers = {
+        '#editor': function (element, renderer) {
+            return true;
+        }
+    };
+
+    doc.fromHTML($('#datos').html(), 15, 15, {
+        'width': 200,
+            'elementHandlers': specialElementHandlers
+    });
+    doc.save('sample-file.pdf');
+}
+
+</script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="{% static "assets/export/jquery.table2excel.js"%}"></script>
+<script>
+var et$ = jQuery.noConflict();
+et$(function() {
+				et$("#enviaEXCEL2").click(function(){
+
+				et$(".table2excel").table2excel({
+					exclude: ".noExl",
+    				name: "Resultados"
+
+				});
+				 });
+});
+
+
+</script>
+
+<script type="text/javascript" src="{% static "assets/js/ajax-consulta.js"%}"></script>
+
+
+{% endblock %}
+{% block breadcrumbs %}
+{% endblock %}
+
+{% block content %}
+
+
+
+<body style="font: 110% soberana_textoregular;height: 600px;">
+
+<div id="editor"></div>
+<!--<button id="cmd">generate PDF</button> -->
+
+    <!-- inicio contenido de la consulta por filtros-->
+    <div id="tabla-exporta" >
+
+    </div>
+    <div id="tabla-exporta2" >
+
+    </div>
+
+    <div id="modal-exporta" class="green-popup-block mfp-hide centerDiv"  style="width: 40%;">
+        <div class="row" style="background:linear-gradient(#206341,#206341,#1E613F,#276947,#206341)  ;border: 2px solid #ffffff;">
+            <div class="row exportarALERTA" style="padding-top: 15px;padding-left: 20px;width:100%"> EXPORTAR RESULTADOS </div>
+            <div class="row textoEXPORTAR" style="padding-left: 20px;width:100%;padding-top: 15px;">Seleccionar el formato en el que se exportarán los resultados. </div>
+                    <div class="row " style="width: 60%;padding-top: 15px;margin-left: auto;margin-right: auto">
+                        <div class="col-md-4" >
+                            <article id="ver_datos">
+                                {% csrf_token %}
+                                <div class="pdf"  id="enviaPDF" ></div>
+                            </article>
+                        </div>
+                        <div class="col-md-4" >
+                            <article id="ver_datos">
+                                {% csrf_token %}
+                                <div class="excel" id="enviaEXCEL" onClick ="$pp('#tabla-exporta').show();$pp('#tablaExporta').tableExport({type:'excel',escape:'false'}); $pp('#tabla-exporta').hide();"></div>
+                            </article>
+                        </div>
+                        <div class="col-md-4" >
+                            <article id="ver_datos">
+                                {% csrf_token %}
+                                <!--<div class="ppt"  id="enviaPPT" onClick ="$pp('#tabla-exporta').show();$pp('#tablaExporta').tableExport({type:'powerpoint',escape:'false'}); $pp('#tabla-exporta').hide();"></div>-->
+                                <div class="ppt"  id="enviaPPT"></div>
+                            </article>
+                        </div>
+            </div>
+            <div class="row" style="width: 60%;padding-top: 15px;margin-left: auto;margin-right: auto">
+                <article id="salir_exporta">
+                    {% csrf_token %}
+                    <div class="salirBTNC popup-exporta-dismiss" id="salirExporta" style="height: 30px">
+                    </div>
+                </article>
+            </div><br>
+        </div>
+    </div>
+
+<!--onClick ="$pp('#tabla-exporta2').show();$pp('#tablaExporta2').tableExport({type:'pdf',escape:'false',pdfFontSize: 8,pdfLeftMargin: 10}); $pp('#tabla-exporta2').hide();" -->
+    <div id="modal-exporta2" class="green-popup-block mfp-hide centerDiv"  style="width: 40%;">
+        <div class="row" style="background:linear-gradient(#206341,#206341,#1E613F,#276947,#206341)  ;border: 2px solid #ffffff;">
+            <div class="row exportarALERTA" style="padding-top: 15px;padding-left: 20px;width:100%"> EXPORTAR RESULTADOS </div>
+            <div class="row textoEXPORTAR" style="padding-left: 20px;width:100%;padding-top: 15px;">Seleccionar el formato en el que se exportarán los resultados. </div>
+                    <div class="row " style="width: 60%;padding-top: 15px;margin-left: auto;margin-right: auto">
+                        <div class="col-md-4" >
+                            <article id="ver_datos">
+                                {% csrf_token %}
+                                <div class="pdf"  id="enviaPDF2" ></div>
+                            </article>
+                        </div>
+                        <div class="col-md-4" >
+                            <article id="ver_datos">
+                                {% csrf_token %}
+                                <!--<div class="excel" id="enviaEXCEL2" onClick ="$pp('#tabla-exporta2').show();$pp('#tablaExporta2').tableExport({type:'excel',escape:'false'}); $pp('#tabla-exporta2').hide();"></div>-->
+                                <div class="excel" id="enviaEXCEL2"></div>
+                            </article>
+                        </div>
+                        <div class="col-md-4" >
+                            <article id="ver_datos">
+                                {% csrf_token %}
+                                <!--<div class="ppt"  id="enviaPPT2" onClick ="$pp('#tabla-exporta2').show();$pp('#tablaExporta2').tableExport({type:'powerpoint',escape:'false'}); $pp('#tabla-exporta2').hide();"></div>-->
+                                <div class="ppt"  id="enviaPPT2"></div>
+
+                            </article>
+                        </div>
+            </div>
+            <div class="row" style="width: 60%;padding-top: 15px;margin-left: auto;margin-right: auto">
+                <article id="salir_exporta">
+                    {% csrf_token %}
+                    <div class="salirBTNC popup-exporta-dismiss" id="salirExporta" style="height: 30px">
+                    </div>
+                </article>
+            </div><br>
+        </div>
+    </div>
+
+
+  <div class= "col-md-12 mfp-hide" id="div-grafica" style="background: #ffffff;padding-right: 0px;padding-left: 0px;">
+       <article id="regresaGraficas">
+           {% csrf_token %}
+            <div id="regresarBTN" ></div>
+        </article>
+       <!--AGREGAR A DONDE SE VA A REGRESAR CON ESTA URL REGRESA A LA PÀGINA PRINCIPAL-->
+
+       <div id="welcome" >GRAFICA</div>
+
+
+       <div class= "centerDiv"  style="width: 100%;height: 40%;">
+           <div class="row" style="padding-bottom: 4px;padding-left: 20px;padding-right: 20px;">
+               <div class="rowP" style="padding-right: 5px;padding-left: 3px; padding-bottom: 0px; padding-top: 0px;height: auto; ">
+                   <div   id="containerGrafica" style="height: 300px"></div>
+               </div>
+           </div>
+
+
+           <div class="row" style="padding-left: 20px;padding-right: 20px;">
+               <div class="col-md-4" style="padding-left: 0px; padding-right: 0px; ">
+                    <div class="col-md-12-box" style="margin-right: 0px;margin-left: 0px; padding-left: 4px; padding-right: 4px;height: 205px; padding-top: 3px; ">
+                          <div class="panel panel-default panel-table" style="padding-right: 3px; padding-left: 3px; padding-bottom: 3px; padding-top: 0px; ">
+                            <div class="panel-body" style="padding-right: 3px; padding-left: 3px; padding-bottom: 0px; padding-top: 0px ">
+                                <div class="tr" style="padding-right: 4px; padding-left: 4px; padding-bottom: 0px; padding-top: 0px ">
+                                    <div class="td" ><h5>MOSTRAR GR&Aacute;FICA POR: </h5></div>
+                                </div>
+                                <div class="tr"  style="padding-right: 3px; padding-left: 3px; padding-bottom: 0px; padding-top: 0px ">
+                                    <div class="row" style="padding-right: 3px; padding-left: 3px; padding-bottom: 0px; padding-top: 0px ">
+                                        <div class="col-xs-2">
+                                           <p>Estado</p>
+                                       </div>
+                                       <div class="col-xs-1">
+                                           <article id="ver_grafica_estado">
+                                               {% csrf_token %}
+                                                <p><input type="radio" name="graficaTipo" id="estado" value="Estado" checked/></p>
+
+                                            </article>
+                                       </div>
+
+                                        <div class="col-xs-2">
+                                           <p>Carencia</p>
+                                       </div>
+                                       <div class="col-xs-1">
+                                           <article id="ver_grafica_carencia">
+                                               {% csrf_token %}
+                                                <p><input type="radio" name="graficaTipo" id="carencia" value="Carencia"/></p>
+                                            </article>
+                                       </div>
+
+                                        <div class="col-xs-2">
+                                       <p>Acci&oacute;n</p>
+                                       </div>
+                                       <div class="col-xs-1">
+                                           <article id="ver_grafica_accion">
+                                               {% csrf_token %}
+                                                <p><input type="radio" name="graficaTipo" id="accion" value="Accion"/></p>
+                                            </article>
+                                       </div>
+                                    </div>
+                                </div>
+                            </div>
+                       </div>
+
+                           <div class="panel panel-default panel-table" style="padding-right: 3px; padding-left: 3px; padding-bottom: 0px; padding-top: 0px; ">
+
+                                <div class="panel-body" style="padding-right: 3px; padding-left: 3px; padding-bottom: 0px; padding-top: 0px ">
+                                    <div class="tr" style="padding-right: 3px; padding-left: 3px; padding-bottom: 0px; padding-top: 0px ">
+                                        <div class="td" ><h5>CONFIGURAR GR&Aacute;FICA </h5></div>
+                                    </div>
+                                    <div class="tr" style="padding-right: 3px; padding-left: 3px; padding-bottom: 0px; padding-top: 0px ">
+                                        <div class="row" style="padding-right: 3px; padding-left: 3px; padding-bottom: 0px; padding-top: 0px ">
+                                            <div class="col-xs-6">
+                                                <p>Datos a graficar</p>
+                                            </div>
+                                            <div class="col-xs-2">
+                                               <article id="ver_grafica_datos">
+                                                    {% csrf_token %}
+                                                    <select class="selectpicker" data-size="5" id="datosGrafica">
+                                                          <option value="Numero">N&uacute;mero de avances</option>
+                                                          <option value="Monto">Meta total</option>
+                                                    </select>
+                                               </article>
+                                            </div>
+                                        </div>
+                                        <div class="row" style="padding-right: 3px; padding-left: 3px; padding-bottom: 0px; padding-top: 0px ">
+                                            <div class="col-xs-6">
+                                                <p>Tipo de gr&aacute;fica</p>
+                                            </div>
+                                            <div class="col-xs-2">
+                                               <article id="ver_grafica_tipos">
+                                                    {% csrf_token %}
+                                                    <select class="selectpicker" data-size="5" id="tipoGrafica">
+                                                          <option value="Columna3D">Columna 3D</option>
+                                                          <option value="Columna2D">Columna 2D</option>
+                                                          <option value="Pastel">Pastel</option>
+                                                          <option value="Dona">Dona</option>
+                                                          <option value="Barra">Barras</option>
+                                                          <option value="columnaTipeada">Columnas tipo 2</option>
+                                                          <option value="BarraApiladaBarra">Barras Apiladas</option>
+                                                          <option value="BarraApiladaColumna">Columnas Apiladas</option>
+                                                          <option value="Area">Area</option>
+                                                          <option value="Piramide">Pirámide</option>
+
+                                                    </select>
+                                               </article>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                   </div >
+               </div>
+               <div class="col-md-8" style="margin-right: 0px;margin-left: 0px; padding-left: 4px; padding-right: 0px; ">
+                   <div class="col-md-12-box"  style="margin-right: 0px;margin-left: 0px; padding-left: 4px; padding-right: 0px;height: 205px; ">
+                       <div id="divTablaGrafica"  > </div>
+                   </div>
+               </div>
+           </div>
+
+       </div>
+  </div>
+
+   <form id="forma" >
+   <input type="hidden" name="historico" id="historico"/>
+   <div class= "container2" id="pagina">
+   <div id="regresarBTN" onclick="location.href='/consultas'">
+    </div>   <!--AGREGAR A DONDE SE VA A REGRESAR CON ESTA URL REGRESA A LA PÀGINA PRINCIPAL-->
+
+    <div id="welcome">Consulta Mediante Filtros</div>
+
+
+                <div class="row" style="padding-bottom: 4px;">
+                    <div class="rowP" style="padding-right: 5px;padding-left: 3px; padding-bottom: 0px; padding-top: 0px ">
+                    <div class="col-md-12 titulo">
+                        <div class="row">
+                            <div class="col-md-6">
+                                Par&aacute;metros de Consulta
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6" style="padding-right: 3px; padding-left: 10px; padding-bottom: 0px; padding-top: 0px ">
+                        <div class="row">
+
+                            <div class="col-md-6" style="padding-right: 4px; padding-left: 4px; padding-bottom: 0px; padding-top: 0px ">
+                                <div class="panel panel-default panel-table">
+                                    <div class="panel-body" style="padding-right: 4px; padding-left: 4px; padding-bottom: 4px; padding-top: 4px ">
+                                        <div class="tr">
+                                            <div class="row">
+                                                <div class="col-md-10" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+
+                                                    <select id="msCarencias" multiple="multiple" style="width: 100%;height: auto;">
+                                                        {% for obj in carencias %}
+                                                             <option value={{obj.id}}>{{obj.nombreCarencia}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-10" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+
+                                                    <select id="msSubCarencias" multiple="multiple" style="width: 100%;height: auto;">
+                                                        {% for obj in subcarencias %}
+                                                             <option value={{obj.id}}>{{obj.nombreSubCarencia}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-10"  style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+                                                    <select id="msAcciones" multiple="multiple" style="width: 100%;height: auto;">
+                                                        {% for dep in acciones %}
+                                                             <option value={{dep.id}}>{{dep.nombreAccion}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-10"  style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+                                                    <select id="msUnidadMedida" multiple="multiple" style="width: 100%;height: auto;">
+                                                        {% for dep in unidadesMedida %}
+                                                             <option value={{dep.id}}>{{dep.descripcionUnidad}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-10" id="divSubDep" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+                                                    <select id="msResponsables" multiple="multiple" style="width: 100%;height: auto;">
+                                                        {% for dep in responsables %}
+                                                             <option value={{dep.id}}>{{dep.nombreResponsable}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6" style="padding-right: 4px; padding-left: 4px; padding-bottom: 0px; padding-top: 0px ">
+                                <div class="panel panel-default panel-table">
+                                    <div class="panel-body" style="padding-right: 4px; padding-left: 4px; padding-bottom: 4px; padding-top: 4px ">
+                                        <div class="tr">
+
+
+                                            <div class="row">
+                                                <div class="col-md-10" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+                                                    <select id="msEstados" multiple="multiple"  style="width: 100%;height: auto;">
+                                                        {% for obj in estados %}
+                                                             <option value={{obj.id}}>{{obj.nombreEstado}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-10" id="divMunicipios" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+                                                    <select id="msMunicipios" multiple="multiple"  style="width: 100%;height: auto;">
+                                                        {% for obj in municipios %}
+                                                             <option value={{obj.id}}>{{obj.nombreMunicipio}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-10" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+
+                                                    <select id="msPeriodos" multiple="multiple" style="width: 100%;height: auto;">
+                                                        {% for obj in periodos %}
+                                                             <option value={{obj.id}}>{{obj.nombrePeriodo}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-10" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+                                                    <select id="msMeses" multiple="multiple" style="width: 100%;height: auto;">
+                                                        {% for dep in meses %}
+                                                             <option value={{dep.id}}>{{dep.nombreMes}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-6" style="padding-right: 10px; padding-left: 25px; padding-bottom: 0px; padding-top: 0px ">
+                        <div class="row">
+
+                            <div class="col-md-6" style="padding-right: 3px; padding-left: 3px; padding-bottom: 0px; padding-top: 0px ">
+                                <div class="panel panel-default panel-table ">
+                                <div class="panel-body " style="padding-right: 4px; padding-left: 4px; padding-bottom: 4px; padding-top: 4px ">
+                                    <div class="tr">
+
+                                        <div class="row">
+                                            <div class="col-md-12 " style="padding-right: 4px; padding-left: 4px; padding-bottom: 0px; padding-top: 0px ">
+                                                <center>Rango de Avance VS Meta (%)</center>
+                                            </div>
+                                        </div>
+                                        <div class="row"><center>
+                                            <div class="col-md-1 " style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+                                               De:
+                                            </div>
+                                            <div class="col-md-5" style=" padding-bottom: 0px; padding-top: 0px ">
+                                                    <input type="text" class="form-control2 positive-integer" id="avanceInicial" placeholder="0 %">
+                                            </div></center>
+                                            <div class="col-md-1 " style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+                                                A:
+                                            </div>
+                                            <div class="col-md-5 " style=" padding-bottom: 0px; padding-top: 0px ">
+                                                    <input type="text" class="form-control2 positive-integer " id="avanceFinal" placeholder="0 %">
+                                            </div></center>
+
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-12 " style="padding-right: 4px; padding-left: 4px; padding-bottom: 0px; padding-top: 0px ">
+                                                <center>Rango de Inversi&oacute;n</center>
+                                            </div>
+                                        </div>
+                                        <div class="row"><center>
+                                            <div class="col-md-1 " style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+                                               De:
+                                            </div>
+                                            <div class="col-md-5" style=" padding-bottom: 0px; padding-top: 0px ">
+                                                    <input type="text" class="form-control2" id="inversionInicial" placeholder="0.00">
+                                            </div></center>
+                                            <div class="col-md-1 " style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+                                                A:
+                                            </div>
+                                            <div class="col-md-5 " style=" padding-bottom: 0px; padding-top: 0px ">
+                                                    <input type="text" class="form-control2" id="inversionFinal" placeholder="0.00">
+                                            </div></center>
+                                        </div>
+
+                                    </div>
+                                </div>
+                             </div>
+                            </div>
+                            <div class="col-md-6" style="padding-right: 4px; padding-left: 4px; padding-bottom: 0px; padding-top: 0px ">
+                                <div class="panel panel-default panel-table" style="padding-right: 3px; padding-left: 3px; padding-bottom: 0px; padding-top: 0px ">
+                                <div class="panel-body" style="padding-right: 4px; padding-left: 4px; padding-bottom: 4px; padding-top: 4px ">
+                                    <div class="tr" style="padding-right: 4px; padding-left: 4px; padding-bottom: 3px; padding-top: 3px ">
+                                        <div class="row" >
+                                            <div class="col-md-12" style="padding-right: 4px; padding-left: 15px; padding-bottom: 1px; padding-top: 1px ">
+                                                Observaciones
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12" style="padding-right: 15px; padding-left: 15px; padding-bottom: 4px; padding-top: 1px "><center>
+                                                <input type="text" class="form-control2" id="observaciones" placeholder="Texto Observaciones"></center>
+                                            </div>
+                                        </div>
+
+
+
+
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                             <div class="col-md-4" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+                                <article id="listado">
+                                   {% csrf_token %}
+                                    <div class="listarBTN" id="listar" style="height: 30px"></div>
+                                </article>
+                             </div>
+                             <div class="col-md-4" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+                                  <article id="art_limpiar">
+                                     {% csrf_token %}
+                                     <div class="limpiarBTN" id="limpiar" style="height: 30px"></div>
+                                  </article>
+                             </div>
+                             <div class="col-md-4" style="padding-right: 4px; padding-left: 15px; padding-bottom: 0px; padding-top: 0px ">
+                                  <article id="ver_datos">
+                                      {% csrf_token %}
+                                      <div class="consultarBTN" id="button" style="height: 30px"></div>
+                                  </article>
+                             </div>
+                        </div>
+                    </div>
+
+
+
+
+
+                </div>
+    </div>
+
+
+    <div class="row">
+          <div class="col-md-3" style="padding-left: 0px; padding-right: 0px; ">
+            <div class="col-md-12-box" style="margin-right: 0px;margin-left: 0px; padding-left: 4px; padding-right: 4px; ">
+                <div class="row">
+                       <div class="col-md-12">
+                            <div class="row titulo">
+                                 <div class="col-md-8">
+                                     Resultados
+                                 </div>
+                                 <div class="col-md-2">
+                                   <article id="ver_exporta">
+                                       {% csrf_token %}
+                                       <div class="col-xs-2 exportarBTN popup-exporta" href="#modal-exporta2" id="exportar" style="height: 30px"></div>
+                                   </article>
+                                 </div>
+                            </div>
+                       </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12" id="datos">
+                       <table cellspacing="1" class="tablesorter" id="tablaIzquierda">
+                            <thead>
+
+                                <tr>
+                                    <th>Carencia</th>
+                                    <th>SubCarencia</th>
+                                    <th>Acci&oacute;n</th>
+                                    <th>Municipio</th>
+                                    <th>Avance Total</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>Carencia</th>
+                                    <th>SubCarencia</th>
+                                    <th>Acci&oacute;n</th>
+                                    <th>Municipio</th>
+                                    <th>Avance Total</th>
+                                </tr>
+                                <tr><td class="pager" id="pagerI" colspan="5">
+
+                                <img src="../../static/assets/tablesorter/addons/pager/icons/first.png" class="first" id="firstI"/>
+                                <img src="../../static/assets/tablesorter/addons/pager/icons/prev.png" class="prev" id="prevI"/>
+                                <span class="pagedisplay" id="pagedisplayI"></span>
+                                <img src="../../static/assets/tablesorter/addons/pager/icons/next.png" class="next" id="nextI"/>
+                                <img src="../../static/assets/tablesorter/addons/pager/icons/last.png" class="last" id="lastI"/>
+                                <select class="pagesize" id="pagesizeI">
+                                <option selected="selected"  value="10">10</option>
+                                    <option value="20">20</option>
+                                    <option value="30">30</option>
+                                    <option  value="40">40</option>
+                                </select></td></tr>
+                            </tfoot>
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+
+                       </table>
+                    </div >
+                </div >
+            </div >
+
+       </div>
+           <div class="col-md-6" style="margin-right: 0px;margin-left: 0px; padding-left: 4px; padding-right: 4px; ">
+               <div class="col-md-12-box"  style="margin-right: 0px;margin-left: 0px; padding-left: 4px; padding-right: 4px; ">
+                   <div class="row" style="padding-bottom: 4px;">
+                         <div class="col-md-3 titulo">
+                             Mapa
+                         </div>
+
+                       <div class="col-md-5" id="ajaxProgress">
+                            <img src="../../static/assets/gifs/loading-barra2.gif">
+                       </div>
+                   </div>
+                   <div id="map-canvas" style="height: 285px;margin: 0px;padding: 0px;">
+                   </div>
+                   <br>
+               </div>
+           </div>
+           <div class="col-md-3" style="margin-right: 0px;margin-left: 0px; padding-left: 0px; padding-right: 0px; ">
+                <div class="col-md-12-box"  style="margin-left: 0px; padding-right: 4px;padding-left: 4px">
+               <div class="row">
+                   <div class="col-md-12">
+                        <div class="row titulo">
+                             <div class="col-md-7">
+                                 Reporte
+                             </div>
+                             <div class="col-md-2">
+                               <article id="ver_exporta">
+                                   {% csrf_token %}
+                                   <div class="col-xs-2 exportarBTN popup-exporta" href="#modal-exporta" id="exportar" style="height: 30px"></div>
+                               </article>
+                             </div>
+                             <div class="col-md-2">
+                                   <article id="ver_grafica">
+                                       {% csrf_token %}
+                                       <div class="col-xs-2 graficoBTN"  id="grafica" style="height: 30px"></div>
+                                   </article>
+                             </div>
+                        </div>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col-md-12" id="datostablaDerecha">
+                        <table cellspacing="1" class="tablesorter" id="tablaDer">
+                        <thead>
+
+                            <tr>
+                                <th>Concepto</th>
+                                <th>Avance Total</th>
+                                <th>Meta Total</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+
+                                <th>Concepto</th>
+                                <th>Avance Total</th>
+                                <th>Meta Total</th>
+                            </tr>
+                            <tr><td class="pager" id="pager2" colspan="3">
+                            <img src="../../static/assets/tablesorter/addons/pager/icons/first.png" class="first"/>
+                            <img src="../../static/assets/tablesorter/addons/pager/icons/prev.png" class="prev"/>
+                            <span class="pagedisplay"></span>
+                            <img src="../../static/assets/tablesorter/addons/pager/icons/next.png" class="next"/>
+                            <img src="../../static/assets/tablesorter/addons/pager/icons/last.png" class="last"/>
+                            <select class="pagesize">
+                            <option selected="selected"  value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option  value="40">40</option>
+                            </select></td></tr>
+                        </tfoot>
+                        <tbody>
+                            <tr>
+
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+
+                        </tbody>
+                        </table>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col-md-12">
+                        <fieldset>
+                           <div class="row"><div class="col-xs-8">
+                               Estado
+                               </div>
+                               <div class="col-xs-2">
+                                   <article id="ver_tabla_estado">
+                                       {% csrf_token %}
+                                        <input type="radio" name="tipoReporte" id="estado" value="Estado" checked/>
+                                    </article>
+                               </div>
+                           </div>
+                           <div class="row"><div class="col-xs-8">
+                               Carencia
+                               </div>
+                               <div class="col-xs-2">
+                                   <article id="ver_tabla_carencia">
+                                       {% csrf_token %}
+                                        <input type="radio" name="tipoReporte" id="carencia" value="Carencia"/>
+                                    </article>
+                               </div>
+                           </div>
+                           <div class="row"><div class="col-xs-8">
+                               Acci&oacute;n Estrat&eacute;gica
+                               </div>
+                               <div class="col-xs-2">
+                                   <article id="ver_tabla_accion">
+                                       {% csrf_token %}
+                                        <input type="radio" name="tipoReporte" id="accion" value="Acción Estratégica"/>
+                                    </article>
+                               </div>
+                           </div>
+                        </fieldset>
+                   </div>
+               </div>
+           </div>
+           </div>
+    </div>
+  </div>
+
+
+
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+           <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>  LO CANCELO PARA QUE SE MUESTREN LOS MENUS COMO EL DE INICIO DE SESION-->
+        <script src="../../static/assets/bootstrap/js/bootstrap-datepicker.js"></script>
+           <script type="text/javascript">
+            var $dp = jQuery.noConflict();
+
+                $dp('#fechaInicial1').datepicker({
+                           autoclose: true  ,
+                           setEndDate: $dp('#fechaInicial2').val()
+                           }).on('changeDate', function (selected) {
+                                 var startDate = new Date(selected.date.valueOf());
+                                 var endDate = $dp('#fechaInicial2').val();
+                                 var NDDate =   new Date($dp('#fechaInicial2').datepicker("getDate"));
+                                 if (endDate != "") {
+                                     if (startDate > NDDate) {
+                                         //alert("La fecha de Inicio debe ser anterior a la fecha de Término");
+                                         $j.magnificPopup.open({
+                                               items: {
+                                                   src:  '<div id="test-modal" class="alertaVENTANA" style="top:0px; left: 450px;">'
+                                                         + '<div class="textoALERTA">'
+                                                         +  'La fecha de inicio debe ser anterior a la fecha final en este rango.'
+                                                         + '</div>'
+                                                         + '<a class="popup-modal-dismiss" href="#"><div class="aceptarBTN" style="left:150px;"> </div></a>'
+                                                         + '</div>'
+                                               },
+                                               type: 'inline',
+                                               preloader: true,
+                                               modal: true
+                                         });
+
+                                         $j(document).on('click', '.popup-modal-dismiss', function (e) {
+                                               e.preventDefault();
+                                               $j.magnificPopup.close();
+                                         });
+
+                                         $dp('#fechaInicial1').datepicker('setEndDate', endDate);
+                                         $dp('#fechaInicial1').SetDate(endDate);
+                                     }
+                                     else
+                                     {
+                                         $dp('#fechaInicial2').datepicker('setStartDate', startDate);
+                                     }
+                                 }
+                                 else
+                                 {
+                                     $dp('#fechaInicial2').datepicker('setStartDate', startDate);
+                                 }
+                           }).on('clearDate', function (selected) {
+                                $dp('#fechaInicial2').datepicker('setStartDate', null);
+                });
+
+
+$dp('#fechaInicial2').datepicker({
+                           autoclose: true          ,
+                           setStartDate: $dp('#fechaInicial1').val()
+                           }).on('changeDate', function (selected) {
+                               var endDate = new Date(selected.date.valueOf());
+                               var startDate = $dp('#fechaInicial1').val();
+                               var STDate =   new Date($dp('#fechaInicial1').datepicker("getDate"));
+
+                               if (startDate != "") {
+                                   if (STDate > endDate) {
+                                       //alert("La fecha de Término debe ser posterior a la fecha de Inicio");
+
+                                       $j.magnificPopup.open({
+                                               items: {
+                                                   src:  '<div id="test-modal" class="alertaVENTANA" style="top:0px; left: 450px;">'
+                                                         + '<div class="textoALERTA">'
+                                                         +  'La fecha de final  debe ser posterior a la fecha de inicio en este rango.'
+                                                         + '</div>'
+                                                         + '<a class="popup-modal-dismiss" href="#"><div class="aceptarBTN" style="left:150px;"> </div></a>'
+                                                         + '</div>'
+                                               },
+                                               type: 'inline',
+                                               preloader: true,
+                                               modal: true
+                                           });
+
+                                           $j(document).on('click', '.popup-modal-dismiss', function (e) {
+                                               e.preventDefault();
+                                               $j.magnificPopup.close();
+                                           });
+
+                                       $dp('#fechaInicial2').datepicker('setStartDate', startDate);
+                                       $dp('#fechaInicial2').setDate(startDate);
+                                   }
+                                   else
+                                   {
+                                       $dp('#fechaInicial1').datepicker('setEndDate', endDate);
+                                   }
+                               }
+                               else
+                               {
+                                   $dp('#fechaInicial1').datepicker('setEndDate', endDate);
+                               }
+                           }).on('clearDate', function (selected) {
+                           $dp('#fechaInicial1').datepicker('setEndDate', null);
+                });
+
+
+$dp('#fechaFinal1').datepicker({
+                           autoclose: true  ,
+                           setEndDate: $dp('#fechaFinal2').val()
+                           }).on('changeDate', function (selected) {
+                                 var startDate = new Date(selected.date.valueOf());
+                                 var endDate = $dp('#fechaFinal2').val();
+                                 var NDDate =   new Date($dp('#fechaFinal2').datepicker("getDate"));
+                                 if (endDate != "") {
+                                     if (startDate > NDDate) {
+                                         //alert("La fecha de Inicio debe ser anterior a la fecha de Término");
+                                         $j.magnificPopup.open({
+                                               items: {
+                                                   src:  '<div id="test-modal" class="alertaVENTANA" style="top:0px; left: 450px;">'
+                                                         + '<div class="textoALERTA">'
+                                                         +  'La fecha de inicio debe ser anterior a la fecha final en este rango.'
+                                                         + '</div>'
+                                                         + '<a class="popup-modal-dismiss" href="#"><div class="aceptarBTN" style="left:150px;"> </div></a>'
+                                                         + '</div>'
+                                               },
+                                               type: 'inline',
+                                               preloader: true,
+                                               modal: true
+                                         });
+
+                                         $j(document).on('click', '.popup-modal-dismiss', function (e) {
+                                               e.preventDefault();
+                                               $j.magnificPopup.close();
+                                         });
+
+                                         $dp('#fechaFinal1').datepicker('setEndDate', endDate);
+                                         $dp('#fechaFinal1').SetDate(endDate);
+                                     }
+                                     else
+                                     {
+                                         $dp('#fechaFinal2').datepicker('setStartDate', startDate);
+                                     }
+                                 }
+                                 else
+                                 {
+                                     $dp('#fechaFinal2').datepicker('setStartDate', startDate);
+                                 }
+                           }).on('clearDate', function (selected) {
+                                $dp('#fechaFinal2').datepicker('setStartDate', null);
+                });
+
+
+$dp('#fechaFinal2').datepicker({
+                           autoclose: true          ,
+                           setStartDate: $dp('#fechaFinal1').val()
+                           }).on('changeDate', function (selected) {
+                               var endDate = new Date(selected.date.valueOf());
+                               var startDate = $dp('#fechaFinal1').val();
+                               var STDate =   new Date($dp('#fechaFinal1').datepicker("getDate"));
+
+                               if (startDate != "") {
+                                   if (STDate > endDate) {
+                                       //alert("La fecha de Término debe ser posterior a la fecha de Inicio");
+
+                                       $j.magnificPopup.open({
+                                               items: {
+                                                   src:  '<div id="test-modal" class="alertaVENTANA" style="top:0px; left: 450px;">'
+                                                         + '<div class="textoALERTA">'
+                                                         +  'La fecha de final  debe ser posterior a la fecha de inicio en este rango.'
+                                                         + '</div>'
+                                                         + '<a class="popup-modal-dismiss" href="#"><div class="aceptarBTN" style="left:150px;"> </div></a>'
+                                                         + '</div>'
+                                               },
+                                               type: 'inline',
+                                               preloader: true,
+                                               modal: true
+                                           });
+
+                                           $j(document).on('click', '.popup-modal-dismiss', function (e) {
+                                               e.preventDefault();
+                                               $j.magnificPopup.close();
+                                           });
+
+                                       $dp('#fechaFinal2').datepicker('setStartDate', startDate);
+                                       $dp('#fechaFinal2').setDate(startDate);
+                                   }
+                                   else
+                                   {
+                                       $dp('#fechaFinal1').datepicker('setEndDate', endDate);
+                                   }
+                               }
+                               else
+                               {
+                                   $dp('#fechaFinal1').datepicker('setEndDate', endDate);
+                               }
+                           }).on('clearDate', function (selected) {
+                           $dp('#fechaFinal1').datepicker('setEndDate', null);
+                });
+            </script>
+
+        <script src="../../static/assets/js/jquery.numeric.js"></script>
+           <script src="../../static/assets/js/utilerias.js"></script>
+  </form>
+  </body>
+  <!-- Final contenido de la consulta por filtros-->
+{% endblock %}
+
+

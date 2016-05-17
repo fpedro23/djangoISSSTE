@@ -329,7 +329,7 @@ class avancesMensualesPorMetaEndpoint(ProtectedResourceView):
 
 
 # Clase EndPoint (oauth2) para implementar el buscador en base al filtro grande
-class BuscadorEndpoint(ProtectedResourceView):
+class BuscadorEndpoint(ListView):
     def get(self, request):
         # myObj: objeto a construir con lo parámetros obtenidos en la URL y que serán
         # mandados al buscador para que éste los filtre
@@ -350,8 +350,8 @@ class BuscadorEndpoint(ProtectedResourceView):
             observaciones=request.GET.get('observaciones'),
             avance_minimo=request.GET.get('avanceMinimo'),
             avance_maximo=request.GET.get('avanceMaximo'),
-            inversion_minima=get_array_or_none(request.GET.get('inversionMinima')),
-            inversion_maxima=get_array_or_none(request.GET.get('inversionMaxima')),
+            inversion_minima=request.GET.get('inversionMinima'),
+            inversion_maxima=request.GET.get('inversionMaxima'),
             unidad_de_medida=request.GET.get('unidadDeMedida'),
             limite_inferior=request.GET.get('limiteInferior'),
             limite_superior=request.GET.get('limiteSuperior')
@@ -444,22 +444,55 @@ class BuscadorEndpoint(ProtectedResourceView):
                     shortened_reporte['suma_meta'] += meta_mensual['nov']
                     shortened_reporte['suma_meta'] += meta_mensual['dic']
 
+            if shortened_reporte['suma_meta'] <= 0:
+                shortened_reporte['porcentaje'] = 100
+            else:
+                shortened_reporte['porcentaje'] = round((shortened_reporte['suma_avance'] * 100) / shortened_reporte['suma_meta'],2)
 
-            shortened_reporte['id'] = reporte['id']
-            shortened_reporte['avancePorMunicipio_id'] = reporte['avancePorMunicipio__id']
-            shortened_reporte['accion'] = reporte['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
-            shortened_reporte['carencia'] = reporte[
-                'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
-            shortened_reporte['subCarencia'] = reporte[
-                'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
-            shortened_reporte['estado'] = reporte['avancePorMunicipio__estado__nombreEstado']
-            shortened_reporte['municipio'] = reporte['municipio__nombreMunicipio']
-            shortened_reporte['periodo'] = reporte['avancePorMunicipio__periodo__nombrePeriodo']
-            shortened_reporte['periodo_id'] = reporte['avancePorMunicipio__periodo__id']
-            shortened_reporte['latitud'] = reporte['municipio__latitud']
-            shortened_reporte['longitud'] = reporte['municipio__longitud']
+            doAdd = False
+            doAddInversion  = False
+            if myObj.avance_minimo is None:
+                myObj.avance_minimo = 0
+            if myObj.avance_maximo is None:
+                myObj.avance_maximo = 99999
 
-            json_map['reporte_general'].append(shortened_reporte)
+            if myObj.inversion_minima is None:
+                myObj.inversion_minima = 0
+
+            #print "Minimo: %d" % int(myObj.avance_minimo)
+            #print "Porcentaje: %f" % float(shortened_reporte['porcentaje'])
+            #print "Maximo: %d" % int(myObj.avance_maximo)
+            #print "---------------"
+
+            monto = reporte['avancePorMunicipio__meta__montoPromedio']
+            if  myObj.inversion_maxima is not None:
+                if (shortened_reporte['suma_avance'] * monto >= float(myObj.inversion_minima)) &\
+                        (shortened_reporte['suma_avance'] * monto <= float(myObj.inversion_maxima)):
+                    doAddInversion = True
+            elif shortened_reporte['suma_avance'] * monto > float(myObj.inversion_minima):
+                doAddInversion = True
+
+            if shortened_reporte['porcentaje'] >= float(myObj.avance_minimo) and shortened_reporte[
+                'porcentaje'] <= float(myObj.avance_maximo):
+                doAdd = True
+
+                shortened_reporte['id'] = reporte['id']
+                shortened_reporte['avancePorMunicipio_id'] = reporte['avancePorMunicipio__id']
+                shortened_reporte['accion'] = reporte['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
+                shortened_reporte['carencia'] = reporte[
+                    'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
+                shortened_reporte['subCarencia'] = reporte[
+                    'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
+                shortened_reporte['estado'] = reporte['avancePorMunicipio__estado__nombreEstado']
+                shortened_reporte['municipio'] = reporte['municipio__nombreMunicipio']
+                shortened_reporte['periodo'] = reporte['avancePorMunicipio__periodo__nombrePeriodo']
+                shortened_reporte['periodo_id'] = reporte['avancePorMunicipio__periodo__id']
+                shortened_reporte['latitud'] = reporte['municipio__latitud']
+                shortened_reporte['longitud'] = reporte['municipio__longitud']
+
+            if doAdd & doAddInversion:
+                json_map['reporte_general'].append(shortened_reporte)
+
 
         for reporte in resultados['reporte_por_estado']:
             shortened_reporte = {}
@@ -529,10 +562,36 @@ class BuscadorEndpoint(ProtectedResourceView):
                     shortened_reporte['suma_meta'] += meta_mensual['nov']
                     shortened_reporte['suma_meta'] += meta_mensual['dic']
 
+            shortened_reporte['porcentaje'] = 0
+            if shortened_reporte['suma_meta'] <= 0:
+                shortened_reporte['porcentaje'] = 100
+            else:
+                shortened_reporte['porcentaje'] = round(
+                    (shortened_reporte['avance'] * 100) / shortened_reporte['suma_meta'], 2)
+
+
+            doAdd = False
+            if myObj.avance_minimo is None:
+                myObj.avance_minimo = 0
+
+            if myObj.avance_maximo is None:
+                myObj.avance_maximo = 99999
+
+            #print "Estado " + reporte['avancePorMunicipio__estado__nombreEstado']
+            #print "Minimo: %d" % int(myObj.avance_minimo)
+            #print "Porcentaje: %f" % float(shortened_reporte['porcentaje'])
+            #print "Maximo: %d" % int(myObj.avance_maximo)
+            #print "---------------"
+
+            if shortened_reporte['porcentaje'] >= float(myObj.avance_minimo) and \
+                            shortened_reporte['porcentaje'] <= float(myObj.avance_maximo):
+                doAdd = True
+
             shortened_reporte['estado'] = reporte['avancePorMunicipio__estado__nombreEstado']
             shortened_reporte['latitud'] = reporte['avancePorMunicipio__estado__latitud']
             shortened_reporte['longitud'] = reporte['avancePorMunicipio__estado__longitud']
-            json_map['reporte_por_estado'].append(shortened_reporte)
+            if doAdd == True:
+                json_map['reporte_por_estado'].append(shortened_reporte)
 
 
         for reporte in resultados['reporte_por_carencia']:
@@ -603,11 +662,35 @@ class BuscadorEndpoint(ProtectedResourceView):
                     shortened_reporte['suma_meta'] += meta_mensual['nov']
                     shortened_reporte['suma_meta'] += meta_mensual['dic']
 
+            if shortened_reporte['suma_meta'] <= 0:
+                shortened_reporte['porcentaje'] = 100
+            else:
+                shortened_reporte['porcentaje'] = round(
+                    (shortened_reporte['avance'] * 100) / shortened_reporte['suma_meta'], 2)
+
+            doAdd = False
+            if myObj.avance_minimo is None:
+                myObj.avance_minimo = 0
+
+            if myObj.avance_maximo is None:
+                myObj.avance_maximo = 99999
+
+            #print "Carencia " + reporte['avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
+            #print "Minimo: %d" % int(myObj.avance_minimo)
+            #print "Porcentaje: %f" % float(shortened_reporte['porcentaje'])
+            #print "Maximo: %d" % int(myObj.avance_maximo)
+            #print "---------------"
+
+            if shortened_reporte['porcentaje'] >= float(myObj.avance_minimo) and shortened_reporte['porcentaje'] <= float(myObj.avance_maximo):
+                doAdd = True
+
             shortened_reporte['carenciaId'] = reporte[
                 'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id']
             shortened_reporte['nombreCarencia'] = reporte[
                 'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
-            json_map['reporte_por_carencia'].append(shortened_reporte)
+            if doAdd == True:
+                json_map['reporte_por_carencia'].append(shortened_reporte)
+
 
         for reporte in resultados['reporte_por_accion']:
             shortened_reporte = {}
@@ -677,11 +760,29 @@ class BuscadorEndpoint(ProtectedResourceView):
                     shortened_reporte['suma_meta'] += meta_mensual["nov"]
                     shortened_reporte['suma_meta'] += meta_mensual["dic"]
 
+            if shortened_reporte['suma_meta'] <= 0:
+                shortened_reporte['porcentaje'] = 100
+            else:
+                shortened_reporte['porcentaje'] = round(
+                    (shortened_reporte['avance'] * 100) / shortened_reporte['suma_meta'], 2)
+
+            doAdd = False
+            if myObj.avance_minimo is None:
+                myObj.avance_minimo = 0
+
+            if myObj.avance_maximo is None:
+                myObj.avance_maximo = 99999
+
+            if shortened_reporte['porcentaje'] >= float(myObj.avance_minimo) and shortened_reporte[
+                'porcentaje'] <= float(myObj.avance_maximo):
+                doAdd = True
+
             shortened_reporte['accionId'] = reporte[
                 'avancePorMunicipio__meta__accionEstrategica__id']
             shortened_reporte['nombreAccion'] = reporte[
                 'avancePorMunicipio__meta__accionEstrategica__nombreAccion']
-            json_map['reporte_por_accion'].append(shortened_reporte)
+            if doAdd == True:
+                json_map['reporte_por_accion'].append(shortened_reporte)
 
         return HttpResponse(json.dumps(json_map, indent=6, sort_keys=True, ensure_ascii=False),
                                 'application/json', )
