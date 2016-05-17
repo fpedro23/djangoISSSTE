@@ -3062,8 +3062,8 @@ class BalancePorEntidadEndpoint(ProtectedResourceView):
                     total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
                             meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
 
-                    list_carencias['total_metas'] = total
-                    list_carencias['inversionMeta'] = meta['inversionAprox']
+                    list_carencias['total_metas'] += total
+                    list_carencias['inversionMeta'] += meta['inversionAprox']
 
                 if list_carencias['total_metas']>0:
                     list_carencias['porcentaje'] = (list_carencias['total_avances']*100)/list_carencias['total_metas']
