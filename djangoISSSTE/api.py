@@ -2588,10 +2588,10 @@ class PD_AvancePorMunicipioEndpoint(ProtectedResourceView):
     def get(self, request):
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
-        if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
-			avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__periodo__id=5)
-        else:
+        if usuario.usuario.rol == "FE" or usuario.usuario.rol == "UE":
             avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__estado__id = usuario.usuario.estado.id,avancePorMunicipio__periodo__id=5)
+        else:
+            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__periodo__id=5)
 
         avances = avancesRol
 
@@ -2664,12 +2664,13 @@ class PD_MetasSinAvancesEndpoint(ProtectedResourceView):
     def get(self, request):
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
-        if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
-            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__periodo__id=5)
-            metasRol = MetaMensual.objects.filter(meta__periodo__id=5)
-        else:
+        if usuario.usuario.rol == "FE" or usuario.usuario.rol == "UE":
             avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__estado__id = usuario.usuario.estado.id,avancePorMunicipio__periodo__id=5)
             metasRol = MetaMensual.objects.filter(estado__id = usuario.usuario.estado.id,meta__periodo__id=5)
+        else:
+            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__periodo__id=5)
+            metasRol = MetaMensual.objects.filter(meta__periodo__id=5)
+
 
         avances = avancesRol.values('avancePorMunicipio__meta__accionEstrategica__id')
         metas = metasRol.exclude(meta__accionEstrategica__id__in=avances)
@@ -3697,10 +3698,10 @@ class AvancePorMunicipioPptxEndpoint(ProtectedResourceView):
     def get(self, request):
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
-        if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
-			avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__periodo__id=5)
-        else:
+        if usuario.usuario.rol == "FE" or usuario.usuario.rol == "UE":
             avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__estado__id = usuario.usuario.estado.id,avancePorMunicipio__periodo__id=5)
+        else:
+            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__periodo__id=5)
 
         avances = avancesRol
 
@@ -3861,12 +3862,15 @@ class MetasSinAvancesPptxEndpoint(ProtectedResourceView):
     def get(self, request):
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
-        if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
-            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__periodo__id=5)
-            metasRol = MetaMensual.objects.filter(meta__periodo__id=5)
-        else:
+
+
+        if usuario.usuario.rol == "FE" or usuario.usuario.rol == "UE":
             avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__estado__id = usuario.usuario.estado.id,avancePorMunicipio__periodo__id=5)
             metasRol = MetaMensual.objects.filter(estado__id = usuario.usuario.estado.id,meta__periodo__id=5)
+        else:
+            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__periodo__id=5)
+            metasRol = MetaMensual.objects.filter(meta__periodo__id=5)
+
 
         avances = avancesRol.values('avancePorMunicipio__meta__accionEstrategica__id')
         metas = metasRol.exclude(meta__accionEstrategica__id__in=avances)
@@ -4014,11 +4018,13 @@ class AvancesSinActividadEndpoint(ListView):
         comp_date = date.today() - timedelta(days=15)
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
-        if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
-			avancesRol = AvanceMensual.objects.filter(fecha_ultima_modificacion__lt=comp_date,avancePorMunicipio__periodo__id=5)
-        else:
+
+        if usuario.usuario.rol == "FE" or usuario.usuario.rol == "UE":
             avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__estado__id = usuario.usuario.estado.id,
                                                       fecha_ultima_modificacion__lt=comp_date,avancePorMunicipio__periodo__id=5)
+        else:
+            avancesRol = AvanceMensual.objects.filter(fecha_ultima_modificacion__lt=comp_date,avancePorMunicipio__periodo__id=5)
+
 
         avances = avancesRol
 
