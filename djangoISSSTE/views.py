@@ -75,6 +75,8 @@ def meta(request):
                               context_instance=RequestContext(request))
     return HttpResponse('Secret contents!', status=200)
 
+def validation(request):
+    return HttpResponse('Secret contents!', status=200)
 
 @login_required()
 def ayuda(request):
