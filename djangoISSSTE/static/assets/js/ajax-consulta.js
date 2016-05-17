@@ -537,7 +537,7 @@ function graficas(){
                 categorias.push(datosJson.reporte_por_carencia[i].nombreCarencia);
                 datas.push(datosJson.reporte_por_carencia[i].avance);
                 montos.push(datosJson.reporte_por_carencia[i].suma_meta);
-                titulo="Total de alcances por Carencia";
+                titulo="Total de avances por Carencia";
             }
             Series = jsonSeries(datosJson, tipoReporte);
             SeriesCategorias = jsonSeriesCategorias(datosJson, tipoReporte);
@@ -547,7 +547,7 @@ function graficas(){
                 categorias.push(datosJson.reporte_por_accion[i].nombreAccion);
                 datas.push(datosJson.reporte_por_accion[i].avance);
                 montos.push(datosJson.reporte_por_accion[i].suma_meta);
-                titulo="Total de alcances por Acción";
+                titulo="Total de avances por Acción";
             }
             Series = jsonSeries(datosJson, tipoReporte);
             SeriesCategorias = jsonSeriesCategorias(datosJson, tipoReporte);
@@ -1713,8 +1713,8 @@ function tablaD(Datos){
                         +'<tr>'
                             +'<th>' + tituloColumna + '</th>'
                             //+'<th>Estado</th>'
-                            +'<th>Avance Total</th>'
-                            +'<th>Meta Total</th>'
+                            +'<th>Avance</th>'
+                            +'<th>Meta</th>'
                         +'</tr>'
                 +'</thead>'
                 +'<tbody>';
@@ -1731,8 +1731,8 @@ function tablaD(Datos){
                         +'<tr>'
                             +'<th width= "40%">' + tituloColumna + '</th>'
                            // +'<th width= "20%">Estado</th>'
-                            +'<th width= "20%">Avance Total</th>'
-                            +'<th width= "20%">Meta Total</th>'
+                            +'<th width= "20%">Avance</th>'
+                            +'<th width= "20%">Meta</th>'
                         +'</tr>'
                     +'</thead>'
                     +'<tfoot>'
