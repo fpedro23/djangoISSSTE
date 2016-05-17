@@ -330,7 +330,7 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 					   'get_septiembre', 'get_octubre', 'get_noviembre', 'get_diciembre', 'get_accion',
 					   'get_inversion', 'get_monto_promedio','get_inversion_formato', 'get_inversion_meta',)
 
-	list_display = ('id', 'get_carencia', 'get_subcarencia', 'get_accion', 'periodo', 'estado', 'get_inversion_formato', 'get_monto_promedio', 'get_inversion_meta')
+	list_display = ('id', 'get_carencia', 'get_subcarencia', 'get_accion', 'periodo', 'estado', 'get_inversion_formato', 'get_monto_promedio', 'get_inversion_meta_formato')
 	ordering = ['meta__nombreMeta', ]
 
 
@@ -485,15 +485,20 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 		return obj.inversionAprox
 
 	def get_inversion_meta(self, obj):
-		arreglo_metas = []
+		val_meta = obj.meta.id
+		val_estado = obj.estado.id
+		inversion_meta = MetaMensual.objects.get(meta__id=val_meta, estado__id=val_estado).inversionAprox
+		return inversion_meta
+
+	def get_inversion_meta_formato(self, obj):
 		val_meta = obj.meta.id
 		val_estado = obj.estado.id
 		inversion = MetaMensual.objects.get(meta__id=val_meta, estado__id=val_estado).inversionAprox
-		inversion_meta = round(float(inversion),2)
-		return "$%s%s" % (intcomma(int(inversion_meta)),("%0.2f" % inversion_meta)[-3:])
+		inversion_meta = round(float(inversion), 2)
+		return "$%s%s" % (intcomma(int(inversion_meta)), ("%0.2f" % inversion_meta)[-3:])
 
-	get_inversion.short_description = "Inversión Avance."
-	get_inversion_formato.short_description = "Inversión Avance."
+	get_inversion.short_description = "Inversión Avance"
+	get_inversion_formato.short_description = "Inversión Avance"
 	get_subcarencia.short_description = "Sub Carencia"
 	get_carencia.short_description = "Carencia"
 	get_unidad_medida.short_description = "Unidad de Medida"
@@ -513,6 +518,7 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 	get_accion.short_description = "Acción Estratégica"
 	get_monto_promedio.short_description = "Monto promedio"
 	get_inversion_meta.short_description = "Inversión Meta"
+	get_inversion_meta_formato.short_description = "Inversión Meta"
 
 
 	# Esta funcion se ejecuta al desplegar la lista de Avances por municipio. Dentro
