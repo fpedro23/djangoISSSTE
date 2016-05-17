@@ -76,9 +76,7 @@ def meta(request):
     return HttpResponse('Secret contents!', status=200)
 
 def validation(request):
-    response = HttpResponse()
-    response.write("B9vBxfpN")
-    return response
+    return HttpResponse('Secret contents!', status=200)
 
 @login_required()
 def ayuda(request):
