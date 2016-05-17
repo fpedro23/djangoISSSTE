@@ -1766,16 +1766,11 @@ class ResultadosPptxEndpoint(ProtectedResourceView):
         estados = get_array_or_none(request.GET.get('estados'))
         municipios = get_array_or_none(request.GET.get('municipios'))
         if estados is None or len(estados) == 0:
-            if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
-                estados = None
-            else:
+            if usuario.usuario.rol == "FE" or usuario.usuario.rol == "UE":
                 estados = [usuario.estado.id]
-
-        if municipios is None or len(municipios) == 0:
-            if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
-                municipios = None
             else:
-                municipios = [Municipio.objects.filter(estado_id = usuario.estado.id)]
+                estados = None
+
 
 
         myObj = BuscarAvances(
@@ -3214,7 +3209,7 @@ class InformacionGeneralEndpoint(ProtectedResourceView):
 
 class AvancesPorPeriodoEndPoint(ProtectedResourceView):
     def get(self, request):
-        #prs = Presentation('static/ppt/avances_por_periodo.pptx')
+        #prs = Presentation('djangoISSSTE/static/ppt/avances_por_periodo.pptx')
         prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/avances_por_periodo.pptx')
         json_map = {}
         json_map['balance'] = []
@@ -3224,6 +3219,7 @@ class AvancesPorPeriodoEndPoint(ProtectedResourceView):
             list_datos['periodo'] = periodo.nombrePeriodo
             list_datos['metas'] = 0
             list_datos['avances'] = 0
+            list_datos['porcentaje'] = 0
             query = Q(avancePorMunicipio__periodo__id=periodo.id)
             usuario = get_usuario_for_token(request.GET.get('access_token'))
             if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
@@ -3252,11 +3248,14 @@ class AvancesPorPeriodoEndPoint(ProtectedResourceView):
 
                 list_datos['metas'] = total
 
+            if list_datos['metas']>0:
+                list_datos['porcentaje'] = (list_datos['avances']*100)/list_datos['metas']
+
             json_map['balance'].append(list_datos)
 
         table = prs.slides[0].shapes[0].table
         for x in range(1, 8):
-            cell = table.rows[x].cells[1]
+            cell = table.rows[x].cells[0]
             paragraph = cell.textframe.paragraphs[0]
             paragraph.font.size = Pt(12)
             paragraph.font.name = 'Arial'
@@ -3266,7 +3265,7 @@ class AvancesPorPeriodoEndPoint(ProtectedResourceView):
         sumAvances=0
         sumMetas=0
         for avance in json_map['balance']:
-            for x in range(1, 3):
+            for x in range(1, 4):
                 cell = table.rows[indice].cells[x]
                 paragraph = cell.textframe.paragraphs[0]
                 paragraph.font.size = Pt(10)
@@ -3277,6 +3276,7 @@ class AvancesPorPeriodoEndPoint(ProtectedResourceView):
             table.cell(indice, 0).text = str(avance['periodo'])
             table.cell(indice, 1).text = str('{0:,}'.format(avance['avances']))
             table.cell(indice, 2).text = str('{0:,}'.format(avance['metas']))
+            table.cell(indice, 3).text = str('{0:,.2f}'.format(avance['porcentaje']))
             sumAvances+=avance['avances']
             sumMetas+=avance['metas']
             indice += 1
@@ -3286,8 +3286,8 @@ class AvancesPorPeriodoEndPoint(ProtectedResourceView):
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
 
-        #prs.save('static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx')
-        #the_file = 'static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx'
+        #prs.save('djangoISSSTE/static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx')
+        #the_file = 'djangoISSSTE/static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx'
 
         prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx')
         the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx'
@@ -3627,11 +3627,12 @@ class FechaUltimaActualizacionEndpoint(ListView):
         comp_date = date.today() - timedelta(days=15)
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
-        if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
-			avancesRol = AvanceMensual.objects.filter(fecha_ultima_modificacion__lt=comp_date,avancePorMunicipio__periodo__id=5)
-        else:
+        if usuario.usuario.rol == "FE" or usuario.usuario.rol == "UE":
             avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__estado__id = usuario.usuario.estado.id,
                                                       fecha_ultima_modificacion__lt=comp_date,avancePorMunicipio__periodo__id=5)
+        else:
+            avancesRol = AvanceMensual.objects.filter(fecha_ultima_modificacion__lt=comp_date,avancePorMunicipio__periodo__id=5)
+
 
         avances = avancesRol
 
