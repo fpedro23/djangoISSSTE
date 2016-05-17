@@ -3719,3 +3719,52 @@ class AvancesSinActividadEndpoint(ListView):
         output.seek(0)
 
         return response
+
+##Regresa todos los avances y metas de cada una de las acciones estrategicas
+class BalancePorAccionEndpoint(ListView):
+    def get(self, request):
+
+        # prs = Presentation('static/ppt/balance_por_accion.pptx')
+        '''prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/balance_por_accion.pptx')'''
+
+        json_map = {}
+        json_map['balancePorAccion'] = []
+        for accion in AccionEstrategica.objects.all():
+            print accion.nombreAccion
+            list_acciones = {}
+            list_acciones['accion_estrategica'] = accion.nombreAccion
+            list_acciones['unidad_medida'] = accion.unidadDeMedida.descripcionUnidad
+            list_acciones['total_avances'] = 0
+            list_acciones['total_metas'] = 0
+            query = Q(avancePorMunicipio__meta__accionEstrategica__id=accion.id)
+
+            usuario = get_usuario_for_token(request.GET.get('access_token'))
+            if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
+                query = query & Q(avancePorMunicipio__estado=usuario.usuario.estado)
+
+            for avance in AvanceMensual.objects.filter(query).values(
+                    'avancePorMunicipio__meta__accionEstrategica__nombreAccion').annotate(
+                ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
+                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+                total = avance['ene'] + avance['feb'] + avance['mar'] + avance['abr'] + avance['may'] + avance[
+                    'jun'] + \
+                        avance['jul'] + avance['ago'] + avance['sep'] + avance['oct'] + avance['nov'] + avance[
+                            'dic']
+                list_acciones['total_avances'] = total
+
+            query_meta = Q(meta__accionEstrategica__id=accion.id)
+            if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
+                query_meta = query_meta & Q(estado=usuario.usuario.estado)
+
+            for meta in MetaMensual.objects.filter(query_meta).values(
+                    'meta__accionEstrategica__nombreAccion').annotate(
+                ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
+                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+                total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
+                        meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
+
+                list_acciones['total_metas'] = total
+
+            json_map['balancePorAccion'].append(list_acciones)
+
+        return HttpResponse(json.dumps(json_map, indent=4, separators=(',', ': '), sort_keys=True,), 'application/json')
