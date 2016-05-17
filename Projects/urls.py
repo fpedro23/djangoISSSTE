@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'^api/municipios_por_estado', api.MunicipiosForEstadosEndpoint.as_view()),
     url(r'^api/inicio', api.ReporteInicioEndpoint.as_view()),
     url(r'^validation/', djangoISSSTE.views.validation),
+    url(r'^ios/', djangoISSSTE.views.ios_view),
 
 
     url(r'^chaining/', include('smart_selects.urls')),
