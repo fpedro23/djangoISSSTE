@@ -9,6 +9,17 @@
         $(document).ready(function($){
 
            $('.guardarotroBTN').hide();
+
+            {% if not change %}
+            /*deshabilita los periodos 2012 a 2016*/
+
+                $("select#id_periodo").find("option[value='1']").attr('disabled', true);
+                $("select#id_periodo").find("option[value='2']").attr('disabled', true);
+                $("select#id_periodo").find("option[value='3']").attr('disabled', true);
+                $("select#id_periodo").find("option[value='4']").attr('disabled', true);
+                $("select#id_periodo").find("option[value='5']").attr('disabled', true);
+                 $("select#id_periodo").find("option[value='6']").attr('selected',true);
+            {% endif %}
         });
 
     </script>

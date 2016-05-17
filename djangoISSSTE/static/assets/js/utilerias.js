@@ -35,7 +35,7 @@ $nums(document).ready(function() {
     $nums('#id_detalleinversion_set-6-monto').numeric({ decimalPlaces: 2 });
     */
 
-    $nums('.tamcontrol').numeric({ decimalPlaces: 2 });
+    
 
 
     $nums(".numeric").numeric();
