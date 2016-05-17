@@ -2756,17 +2756,18 @@ class BalanceGeneralEndpoint(ProtectedResourceView):
 
                 total = avance['ene'] + avance['feb'] + avance['mar'] + avance['abr'] + avance['may'] + avance['jun'] +\
                         avance['jul'] + avance['ago'] + avance['sep'] + avance['oct'] + avance['nov'] + avance['dic']
-                list_carencias['total_avances'] = total
-                list_carencias['inversionAvance']=total*avance['avancePorMunicipio__meta__montoPromedio']
+                list_carencias['total_avances'] += total
+                list_carencias['inversionAvance']+=total*avance['avancePorMunicipio__meta__montoPromedio']
 
             query_meta = Q(meta__accionEstrategica__subCarencia__carencia__id=carencia.id,meta__periodo_id=5)
             if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
                 query_meta = query_meta & Q(estado=usuario.usuario.estado)
 
-            for meta in MetaMensual.objects.filter(query_meta).values('inversionAprox',
+            for meta in MetaMensual.objects.filter(query_meta).values(
                 'meta__accionEstrategica__subCarencia__carencia__nombreCarencia').annotate(
                 ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
-                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic'),
+                inversionAprox= Sum('inversionAprox')):
 
                 total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
                         meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
