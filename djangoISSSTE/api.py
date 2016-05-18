@@ -1451,7 +1451,7 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
                 ):
                     ##print "Avance"
                     avances = {}
-                    avances['clave'] = avance.municipio.claveMunicipio
+                    avances['clave'] = str(avance.avancePorMunicipio.estado.claveEstado)+str(avance.municipio.claveMunicipio)
                     avances['estado'] = avance.avancePorMunicipio.estado.nombreEstado
                     avances['municipio'] = avance.municipio.nombreMunicipio
                     avances['ene'] = avance.ene
@@ -2911,10 +2911,11 @@ class BalanceAccionEndpoint(ProtectedResourceView):
             if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
                 query_meta = query_meta & Q(estado=usuario.usuario.estado)
 
-            for meta in MetaMensual.objects.filter(query_meta).values('inversionAprox',
+            for meta in MetaMensual.objects.filter(query_meta).values(
                 'meta__accionEstrategica__nombreAccion').annotate(
                 ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
-                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic'),
+                inversionAprox=Sum('inversionAprox')):
 
                 total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
                         meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
@@ -3060,9 +3061,10 @@ class BalancePorEntidadEndpoint(ProtectedResourceView):
                 list_carencias['total_metas'] = 0
                 list_carencias['inversionMeta'] = 0
                 for meta in MetaMensual.objects.filter(estado__id=estado.id,meta__periodo_id=5,
-                        meta__accionEstrategica__subCarencia__carencia__id=carencia.id).values('estado__nombreEstado','inversionAprox').annotate(
+                        meta__accionEstrategica__subCarencia__carencia__id=carencia.id).values('estado__nombreEstado').annotate(
                     ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
-                    jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+                    jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic'),
+                    inversionAprox=Sum('inversionAprox')):
 
                     total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
                             meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
@@ -3347,9 +3349,10 @@ class PresentacioneAvancesEndPoint(ProtectedResourceView):
             list_carencias['total_metas'] = 0
             list_carencias['inversionMeta'] = 0
             for meta in MetaMensual.objects.filter(query_meta).\
-                    values('meta__accionEstrategica__subCarencia__carencia__nombreCarencia','inversionAprox')\
+                    values('meta__accionEstrategica__subCarencia__carencia__nombreCarencia')\
                     .annotate(ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
-                 jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+                    jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic'),
+                    inversionAprox=Sum('inversionAprox')):
 
                  total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
                          meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
@@ -3389,9 +3392,10 @@ class PresentacioneAvancesEndPoint(ProtectedResourceView):
                 list_estados['estado'] = avance[ 'avancePorMunicipio__estado__nombreEstado']
 
             for meta in MetaMensual.objects.filter(estado = estado,meta__periodo_id=5).\
-                    values('meta__accionEstrategica__subCarencia__carencia__nombreCarencia','inversionAprox')\
+                    values('meta__accionEstrategica__subCarencia__carencia__nombreCarencia')\
                     .annotate(ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
-                 jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+                    jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic'),
+                    inversionAprox=Sum('inversionAprox')):
 
                  total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
                          meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
@@ -3439,9 +3443,10 @@ class PresentacioneAvancesEndPoint(ProtectedResourceView):
                 list_carencias['total_metas'] = 0
                 for meta in MetaMensual.objects.filter(estado__id=estado.id,meta__periodo_id=5,
                                                        meta__accionEstrategica__subCarencia__carencia__id=carencia.id).values(
-                    'estado__nombreEstado','inversionAprox').annotate(
+                    'estado__nombreEstado').annotate(
                     ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
-                    jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+                    jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic'),
+                    inversionAprox=Sum('inversionAprox')):
                     total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
                             meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
 
