@@ -985,42 +985,63 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
                    jun=Sum('jun'), jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'),
                    nov=Sum('nov'), dic=Sum('dic'))
 
-        the_json = []
+        the_json = {}
+        the_json['avance'] = []
+        the_json['meta'] = []
+        if resultados[0] is not []:
+            the_json['responsable'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable']
+            the_json['observaciones'] = resultados[0]['avancePorMunicipio__meta__observaciones']
+            the_json['periodo'] = str(resultados[0]['avancePorMunicipio__periodo__nombrePeriodo'])
+            the_json['carencia'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
+            the_json['subCarencia'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
+            the_json['unidad'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad']
+            the_json['montoPromedio'] = str(resultados[0]['avancePorMunicipio__meta__montoPromedio'])
+            the_json['accion'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
+            the_json['estado'] = resultados[0]['avancePorMunicipio__estado__nombreEstado']
+
         for datos in resultados:
             the_list = {}
-            the_list['carencia'] = datos[
-                'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
-            the_list['subCarencia'] = datos[
-                'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
-            the_list['accion'] = datos['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
-            the_list['unidad'] = datos['avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad']
-            the_list['responsable'] = datos[
-                'avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable']
-            the_list['observaciones'] = datos['avancePorMunicipio__meta__observaciones']
-            the_list['inversion'] = datos['avancePorMunicipio__inversionAprox']
-            the_list['estado'] = datos['avancePorMunicipio__estado__nombreEstado']
             the_list['municipio'] = datos['municipio__nombreMunicipio']
-            the_list['periodo'] = datos['avancePorMunicipio__periodo__nombrePeriodo']
-            the_list['latitud'] = datos['municipio__latitud']
-            the_list['longitud'] = datos['municipio__longitud']
-            the_list['montoPromedio'] = datos['avancePorMunicipio__meta__montoPromedio']
+            the_list['latitud'] = str(datos['municipio__latitud'])
+            the_list['longitud'] = str(datos['municipio__longitud'])
+            the_list['ene'] = str(datos['ene'])
+            the_list['feb'] = str(datos['feb'])
+            the_list['mar'] = str(datos['mar'])
+            the_list['abr'] = str(datos['abr'])
+            the_list['may'] = str(datos['may'])
+            the_list['jun'] = str(datos['jun'])
+            the_list['jul'] = str(datos['jul'])
+            the_list['ago'] = str(datos['ago'])
+            the_list['sep'] = str(datos['sep'])
+            the_list['oct'] = str(datos['oct'])
+            the_list['nov'] = str(datos['nov'])
+            the_list['dic'] = str(datos['dic'])
+            suma = datos['ene'] + datos['feb'] + datos['mar'] + datos['abr'] + datos['may'] + datos['jun'] + \
+                   datos['jul'] + datos['ago'] + datos['sep'] + datos['oct'] + datos['nov'] + datos['dic']
+            the_list['suma'] = str(suma)
+            the_list['inversion'] = str(suma * datos['avancePorMunicipio__meta__montoPromedio'])
+            the_json['avance'].append(the_list)
 
-            the_list['ene'] = datos['ene']
-            the_list['feb'] = datos['feb']
-            the_list['mar'] = datos['mar']
-            the_list['abr'] = datos['abr']
-            the_list['may'] = datos['may']
-            the_list['jun'] = datos['jun']
-            the_list['jul'] = datos['jul']
-            the_list['ago'] = datos['ago']
-            the_list['sep'] = datos['sep']
-            the_list['oct'] = datos['oct']
-            the_list['nov'] = datos['nov']
-            the_list['dic'] = datos['dic']
-            suma=datos['ene']+datos['feb']+datos['mar']+datos['abr']+datos['may']+datos['jun']+datos['jul']+datos['ago']+datos['sep']+datos['oct']+datos['nov']+datos['dic']
-            the_list['suma'] =suma
-            the_list['inversion'] =suma*datos['avancePorMunicipio__meta__montoPromedio']
-            the_json.append(the_list)
+        for meta in MetaMensual.objects.filter(
+                                Q(meta__periodo__id__in=periodo_id) &
+                                Q(meta__id__in=accion_id) &
+                        Q(estado__id__in=estado_id)
+        ):
+            the_meta_list = {}
+            the_meta_list['ene'] = str(meta.ene)
+            the_meta_list['feb'] = str(meta.feb)
+            the_meta_list['mar'] = str(meta.mar)
+            the_meta_list['abr'] = str(meta.abr)
+            the_meta_list['may'] = str(meta.may)
+            the_meta_list['jun'] = str(meta.jun)
+            the_meta_list['jul'] = str(meta.jul)
+            the_meta_list['ago'] = str(meta.ago)
+            the_meta_list['sep'] = str(meta.sep)
+            the_meta_list['oct'] = str(meta.oct)
+            the_meta_list['nov'] = str(meta.nov)
+            the_meta_list['dic'] = str(meta.dic)
+
+            the_json['meta'].append(the_meta_list)
 
         if the_json.__len__()>0:
             table = prs.slides[0].shapes[0].table
@@ -1032,9 +1053,9 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
                 paragraph.font.name = 'Arial'
                 paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
 
-            table.cell(0, 1).text = the_json[0]['carencia']
-            table.cell(1, 1).text = the_json[0]['subCarencia']
-            table.cell(2, 1).text = the_json[0]['accion']
+            table.cell(0, 1).text = the_json['carencia']
+            table.cell(1, 1).text = the_json['subCarencia']
+            table.cell(2, 1).text = the_json['accion']
 
             table = prs.slides[0].shapes[1].table
             for x in range(0, 4):
@@ -1044,10 +1065,10 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
                 paragraph.font.name = 'Arial'
                 paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
 
-            table.cell(0, 1).text = the_json[0]['unidad']
-            table.cell(1, 1).text = the_json[0]['responsable']
-            table.cell(2, 1).text = str(the_json[0]['periodo'])
-            table.cell(3, 1).text = the_json[0]['observaciones']
+            table.cell(0, 1).text = the_json['unidad']
+            table.cell(1, 1).text = the_json['responsable']
+            table.cell(2, 1).text = str(the_json['periodo'])
+            table.cell(3, 1).text = the_json['observaciones']
 
             table = prs.slides[0].shapes[2].table
 
@@ -1058,9 +1079,9 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
                 paragraph.font.name = 'Arial'
                 paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
 
-            table2.cell(0, 1).text = the_json[0]['carencia']
-            table2.cell(1, 1).text = the_json[0]['subCarencia']
-            table2.cell(2, 1).text = the_json[0]['accion']
+            table2.cell(0, 1).text = the_json['carencia']
+            table2.cell(1, 1).text = the_json['subCarencia']
+            table2.cell(2, 1).text = the_json['accion']
 
             table2 = prs.slides[0].shapes[1].table
             for x in range(0, 4):
@@ -1070,18 +1091,65 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
                 paragraph.font.name = 'Arial'
                 paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
 
-            table2.cell(0, 1).text = the_json[0]['unidad']
-            table2.cell(1, 1).text = the_json[0]['responsable']
-            table2.cell(2, 1).text = str(the_json[0]['periodo'])
-            table2.cell(3, 1).text = the_json[0]['observaciones']
+            table2.cell(0, 1).text = the_json['unidad']
+            table2.cell(1, 1).text = the_json['responsable']
+            table2.cell(2, 1).text = str(the_json['periodo'])
+            table2.cell(3, 1).text = the_json['observaciones']
 
             table2 = prs.slides[1].shapes[2].table
 
-            indice = 2
-            indice2 = 2
-            for avance in the_json:
 
-                if indice <=10:
+            for avance in the_json['meta']:
+                for x in range(0, 16):
+                    cell = table.rows[0].cells[x]
+                    paragraph = cell.textframe.paragraphs[0]
+                    paragraph.font.size = Pt(8)
+                    paragraph.font.name = 'Arial'
+                    paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+                # write body cells
+
+                table.cell(0, 2).text = str(avance['ene'])
+                table.cell(0, 3).text = str(avance['feb'])
+                table.cell(0, 4).text = str(avance['mar'])
+                table.cell(0, 5).text = str(avance['abr'])
+                table.cell(0, 6).text = str(avance['may'])
+                table.cell(0, 7).text = str(avance['jun'])
+                table.cell(0, 8).text = str(avance['jul'])
+                table.cell(0, 9).text = str(avance['ago'])
+                table.cell(0, 10).text = str(avance['sep'])
+                table.cell(0, 11).text = str(avance['oct'])
+                table.cell(0, 12).text = str(avance['nov'])
+                table.cell(0, 13).text = str(avance['dic'])
+
+                for x in range(0, 16):
+                    cell = table2.rows[0].cells[x]
+                    paragraph = cell.textframe.paragraphs[0]
+                    paragraph.font.size = Pt(8)
+                    paragraph.font.name = 'Arial'
+                    paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+                # write body cells
+
+                table2.cell(0, 2).text = str(avance['ene'])
+                table2.cell(0, 3).text = str(avance['feb'])
+                table2.cell(0, 4).text = str(avance['mar'])
+                table2.cell(0, 5).text = str(avance['abr'])
+                table2.cell(0, 6).text = str(avance['may'])
+                table2.cell(0, 7).text = str(avance['jun'])
+                table2.cell(0, 8).text = str(avance['jul'])
+                table2.cell(0, 9).text = str(avance['ago'])
+                table2.cell(0, 10).text = str(avance['sep'])
+                table2.cell(0, 11).text = str(avance['oct'])
+                table2.cell(0, 12).text = str(avance['nov'])
+                table2.cell(0, 13).text = str(avance['dic'])
+
+
+            indice = 3
+            indice2 = 3
+            for avance in the_json['avance']:
+
+                if indice <=13:
                     for x in range(0, 16):
                         cell = table.rows[indice].cells[x]
                         paragraph = cell.textframe.paragraphs[0]
