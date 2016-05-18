@@ -75,8 +75,9 @@ def meta(request):
                               context_instance=RequestContext(request))
     return HttpResponse('Secret contents!', status=200)
 
-def validation(request):
-    return HttpResponse('Secret contents!', status=200)
+@login_required
+def ios_view(request):
+    return render_to_response('ios.html')
 
 @login_required()
 def ayuda(request):
