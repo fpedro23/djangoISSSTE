@@ -985,42 +985,63 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
                    jun=Sum('jun'), jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'),
                    nov=Sum('nov'), dic=Sum('dic'))
 
-        the_json = []
+        the_json = {}
+        the_json['avance'] = []
+        the_json['meta'] = []
+        if resultados[0] is not []:
+            the_json['responsable'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable']
+            the_json['observaciones'] = resultados[0]['avancePorMunicipio__meta__observaciones']
+            the_json['periodo'] = str(resultados[0]['avancePorMunicipio__periodo__nombrePeriodo'])
+            the_json['carencia'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
+            the_json['subCarencia'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
+            the_json['unidad'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad']
+            the_json['montoPromedio'] = str(resultados[0]['avancePorMunicipio__meta__montoPromedio'])
+            the_json['accion'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
+            the_json['estado'] = resultados[0]['avancePorMunicipio__estado__nombreEstado']
+
         for datos in resultados:
             the_list = {}
-            the_list['carencia'] = datos[
-                'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
-            the_list['subCarencia'] = datos[
-                'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
-            the_list['accion'] = datos['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
-            the_list['unidad'] = datos['avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad']
-            the_list['responsable'] = datos[
-                'avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable']
-            the_list['observaciones'] = datos['avancePorMunicipio__meta__observaciones']
-            the_list['inversion'] = datos['avancePorMunicipio__inversionAprox']
-            the_list['estado'] = datos['avancePorMunicipio__estado__nombreEstado']
             the_list['municipio'] = datos['municipio__nombreMunicipio']
-            the_list['periodo'] = datos['avancePorMunicipio__periodo__nombrePeriodo']
-            the_list['latitud'] = datos['municipio__latitud']
-            the_list['longitud'] = datos['municipio__longitud']
-            the_list['montoPromedio'] = datos['avancePorMunicipio__meta__montoPromedio']
+            the_list['latitud'] = str(datos['municipio__latitud'])
+            the_list['longitud'] = str(datos['municipio__longitud'])
+            the_list['ene'] = str(datos['ene'])
+            the_list['feb'] = str(datos['feb'])
+            the_list['mar'] = str(datos['mar'])
+            the_list['abr'] = str(datos['abr'])
+            the_list['may'] = str(datos['may'])
+            the_list['jun'] = str(datos['jun'])
+            the_list['jul'] = str(datos['jul'])
+            the_list['ago'] = str(datos['ago'])
+            the_list['sep'] = str(datos['sep'])
+            the_list['oct'] = str(datos['oct'])
+            the_list['nov'] = str(datos['nov'])
+            the_list['dic'] = str(datos['dic'])
+            suma = datos['ene'] + datos['feb'] + datos['mar'] + datos['abr'] + datos['may'] + datos['jun'] + \
+                   datos['jul'] + datos['ago'] + datos['sep'] + datos['oct'] + datos['nov'] + datos['dic']
+            the_list['suma'] = str(suma)
+            the_list['inversion'] = str(suma * datos['avancePorMunicipio__meta__montoPromedio'])
+            the_json['avance'].append(the_list)
 
-            the_list['ene'] = datos['ene']
-            the_list['feb'] = datos['feb']
-            the_list['mar'] = datos['mar']
-            the_list['abr'] = datos['abr']
-            the_list['may'] = datos['may']
-            the_list['jun'] = datos['jun']
-            the_list['jul'] = datos['jul']
-            the_list['ago'] = datos['ago']
-            the_list['sep'] = datos['sep']
-            the_list['oct'] = datos['oct']
-            the_list['nov'] = datos['nov']
-            the_list['dic'] = datos['dic']
-            suma=datos['ene']+datos['feb']+datos['mar']+datos['abr']+datos['may']+datos['jun']+datos['jul']+datos['ago']+datos['sep']+datos['oct']+datos['nov']+datos['dic']
-            the_list['suma'] =suma
-            the_list['inversion'] =suma*datos['avancePorMunicipio__meta__montoPromedio']
-            the_json.append(the_list)
+        for meta in MetaMensual.objects.filter(
+                                Q(meta__periodo__id__in=periodo_id) &
+                                Q(meta__id__in=accion_id) &
+                        Q(estado__id__in=estado_id)
+        ):
+            the_meta_list = {}
+            the_meta_list['ene'] = str(meta.ene)
+            the_meta_list['feb'] = str(meta.feb)
+            the_meta_list['mar'] = str(meta.mar)
+            the_meta_list['abr'] = str(meta.abr)
+            the_meta_list['may'] = str(meta.may)
+            the_meta_list['jun'] = str(meta.jun)
+            the_meta_list['jul'] = str(meta.jul)
+            the_meta_list['ago'] = str(meta.ago)
+            the_meta_list['sep'] = str(meta.sep)
+            the_meta_list['oct'] = str(meta.oct)
+            the_meta_list['nov'] = str(meta.nov)
+            the_meta_list['dic'] = str(meta.dic)
+
+            the_json['meta'].append(the_meta_list)
 
         if the_json.__len__()>0:
             table = prs.slides[0].shapes[0].table
@@ -1032,9 +1053,9 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
                 paragraph.font.name = 'Arial'
                 paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
 
-            table.cell(0, 1).text = the_json[0]['carencia']
-            table.cell(1, 1).text = the_json[0]['subCarencia']
-            table.cell(2, 1).text = the_json[0]['accion']
+            table.cell(0, 1).text = the_json['carencia']
+            table.cell(1, 1).text = the_json['subCarencia']
+            table.cell(2, 1).text = the_json['accion']
 
             table = prs.slides[0].shapes[1].table
             for x in range(0, 4):
@@ -1044,10 +1065,10 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
                 paragraph.font.name = 'Arial'
                 paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
 
-            table.cell(0, 1).text = the_json[0]['unidad']
-            table.cell(1, 1).text = the_json[0]['responsable']
-            table.cell(2, 1).text = str(the_json[0]['periodo'])
-            table.cell(3, 1).text = the_json[0]['observaciones']
+            table.cell(0, 1).text = the_json['unidad']
+            table.cell(1, 1).text = the_json['responsable']
+            table.cell(2, 1).text = str(the_json['periodo'])
+            table.cell(3, 1).text = the_json['observaciones']
 
             table = prs.slides[0].shapes[2].table
 
@@ -1058,9 +1079,9 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
                 paragraph.font.name = 'Arial'
                 paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
 
-            table2.cell(0, 1).text = the_json[0]['carencia']
-            table2.cell(1, 1).text = the_json[0]['subCarencia']
-            table2.cell(2, 1).text = the_json[0]['accion']
+            table2.cell(0, 1).text = the_json['carencia']
+            table2.cell(1, 1).text = the_json['subCarencia']
+            table2.cell(2, 1).text = the_json['accion']
 
             table2 = prs.slides[0].shapes[1].table
             for x in range(0, 4):
@@ -1070,18 +1091,65 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
                 paragraph.font.name = 'Arial'
                 paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
 
-            table2.cell(0, 1).text = the_json[0]['unidad']
-            table2.cell(1, 1).text = the_json[0]['responsable']
-            table2.cell(2, 1).text = str(the_json[0]['periodo'])
-            table2.cell(3, 1).text = the_json[0]['observaciones']
+            table2.cell(0, 1).text = the_json['unidad']
+            table2.cell(1, 1).text = the_json['responsable']
+            table2.cell(2, 1).text = str(the_json['periodo'])
+            table2.cell(3, 1).text = the_json['observaciones']
 
             table2 = prs.slides[1].shapes[2].table
 
-            indice = 2
-            indice2 = 2
-            for avance in the_json:
 
-                if indice <=10:
+            for avance in the_json['meta']:
+                for x in range(0, 16):
+                    cell = table.rows[0].cells[x]
+                    paragraph = cell.textframe.paragraphs[0]
+                    paragraph.font.size = Pt(8)
+                    paragraph.font.name = 'Arial'
+                    paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+                # write body cells
+
+                table.cell(0, 2).text = str(avance['ene'])
+                table.cell(0, 3).text = str(avance['feb'])
+                table.cell(0, 4).text = str(avance['mar'])
+                table.cell(0, 5).text = str(avance['abr'])
+                table.cell(0, 6).text = str(avance['may'])
+                table.cell(0, 7).text = str(avance['jun'])
+                table.cell(0, 8).text = str(avance['jul'])
+                table.cell(0, 9).text = str(avance['ago'])
+                table.cell(0, 10).text = str(avance['sep'])
+                table.cell(0, 11).text = str(avance['oct'])
+                table.cell(0, 12).text = str(avance['nov'])
+                table.cell(0, 13).text = str(avance['dic'])
+
+                for x in range(0, 16):
+                    cell = table2.rows[0].cells[x]
+                    paragraph = cell.textframe.paragraphs[0]
+                    paragraph.font.size = Pt(8)
+                    paragraph.font.name = 'Arial'
+                    paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+                # write body cells
+
+                table2.cell(0, 2).text = str(avance['ene'])
+                table2.cell(0, 3).text = str(avance['feb'])
+                table2.cell(0, 4).text = str(avance['mar'])
+                table2.cell(0, 5).text = str(avance['abr'])
+                table2.cell(0, 6).text = str(avance['may'])
+                table2.cell(0, 7).text = str(avance['jun'])
+                table2.cell(0, 8).text = str(avance['jul'])
+                table2.cell(0, 9).text = str(avance['ago'])
+                table2.cell(0, 10).text = str(avance['sep'])
+                table2.cell(0, 11).text = str(avance['oct'])
+                table2.cell(0, 12).text = str(avance['nov'])
+                table2.cell(0, 13).text = str(avance['dic'])
+
+
+            indice = 3
+            indice2 = 3
+            for avance in the_json['avance']:
+
+                if indice <=13:
                     for x in range(0, 16):
                         cell = table.rows[indice].cells[x]
                         paragraph = cell.textframe.paragraphs[0]
@@ -1297,6 +1365,11 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
         # Merge 2 cells.
         sheet.set_column(5, 0, 10)
         sheet.set_column(5, 1, 20)
+
+        for x in range(2,15):
+            sheet.set_column(5, x, 8)
+
+
         for i in range(0, 5):
             sheet.set_row(i, 40)
         sheet.set_row(5, 30)
@@ -1446,7 +1519,7 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
                 ):
                     ##print "Avance"
                     avances = {}
-                    avances['clave'] = avance.municipio.claveMunicipio
+                    avances['clave'] = str(avance.avancePorMunicipio.estado.claveEstado)+str(avance.municipio.claveMunicipio)
                     avances['estado'] = avance.avancePorMunicipio.estado.nombreEstado
                     avances['municipio'] = avance.municipio.nombreMunicipio
                     avances['ene'] = avance.ene
@@ -1542,6 +1615,9 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
         merge_format_blanco.set_font_color('black')
 
         # Merge 2 cells.
+        for x in range(3,16):
+            sheet.set_column(5, x, 8)
+
         sheet.set_column(5, 0, 10)
         sheet.set_column(5, 1, 20)
         sheet.set_column(5, 2, 30)
@@ -1766,16 +1842,11 @@ class ResultadosPptxEndpoint(ProtectedResourceView):
         estados = get_array_or_none(request.GET.get('estados'))
         municipios = get_array_or_none(request.GET.get('municipios'))
         if estados is None or len(estados) == 0:
-            if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
-                estados = None
-            else:
+            if usuario.usuario.rol == "FE" or usuario.usuario.rol == "UE":
                 estados = [usuario.estado.id]
-
-        if municipios is None or len(municipios) == 0:
-            if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
-                municipios = None
             else:
-                municipios = [Municipio.objects.filter(estado_id = usuario.estado.id)]
+                estados = None
+
 
 
         myObj = BuscarAvances(
@@ -2588,10 +2659,10 @@ class PD_AvancePorMunicipioEndpoint(ProtectedResourceView):
     def get(self, request):
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
-        if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
-			avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__periodo__id=5)
-        else:
+        if usuario.usuario.rol == "FE" or usuario.usuario.rol == "UE":
             avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__estado__id = usuario.usuario.estado.id,avancePorMunicipio__periodo__id=5)
+        else:
+            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__periodo__id=5)
 
         avances = avancesRol
 
@@ -2664,12 +2735,13 @@ class PD_MetasSinAvancesEndpoint(ProtectedResourceView):
     def get(self, request):
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
-        if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
-            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__periodo__id=5)
-            metasRol = MetaMensual.objects.filter(meta__periodo__id=5)
-        else:
+        if usuario.usuario.rol == "FE" or usuario.usuario.rol == "UE":
             avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__estado__id = usuario.usuario.estado.id,avancePorMunicipio__periodo__id=5)
             metasRol = MetaMensual.objects.filter(estado__id = usuario.usuario.estado.id,meta__periodo__id=5)
+        else:
+            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__periodo__id=5)
+            metasRol = MetaMensual.objects.filter(meta__periodo__id=5)
+
 
         avances = avancesRol.values('avancePorMunicipio__meta__accionEstrategica__id')
         metas = metasRol.exclude(meta__accionEstrategica__id__in=avances)
@@ -2752,17 +2824,18 @@ class BalanceGeneralEndpoint(ProtectedResourceView):
 
                 total = avance['ene'] + avance['feb'] + avance['mar'] + avance['abr'] + avance['may'] + avance['jun'] +\
                         avance['jul'] + avance['ago'] + avance['sep'] + avance['oct'] + avance['nov'] + avance['dic']
-                list_carencias['total_avances'] = total
-                list_carencias['inversionAvance']=total*avance['avancePorMunicipio__meta__montoPromedio']
+                list_carencias['total_avances'] += total
+                list_carencias['inversionAvance']+=total*avance['avancePorMunicipio__meta__montoPromedio']
 
             query_meta = Q(meta__accionEstrategica__subCarencia__carencia__id=carencia.id,meta__periodo_id=5)
             if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
                 query_meta = query_meta & Q(estado=usuario.usuario.estado)
 
-            for meta in MetaMensual.objects.filter(query_meta).values('inversionAprox',
+            for meta in MetaMensual.objects.filter(query_meta).values(
                 'meta__accionEstrategica__subCarencia__carencia__nombreCarencia').annotate(
                 ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
-                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic'),
+                inversionAprox= Sum('inversionAprox')):
 
                 total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
                         meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
@@ -2906,10 +2979,11 @@ class BalanceAccionEndpoint(ProtectedResourceView):
             if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
                 query_meta = query_meta & Q(estado=usuario.usuario.estado)
 
-            for meta in MetaMensual.objects.filter(query_meta).values('inversionAprox',
+            for meta in MetaMensual.objects.filter(query_meta).values(
                 'meta__accionEstrategica__nombreAccion').annotate(
                 ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
-                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+                jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic'),
+                inversionAprox=Sum('inversionAprox')):
 
                 total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
                         meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
@@ -3055,9 +3129,10 @@ class BalancePorEntidadEndpoint(ProtectedResourceView):
                 list_carencias['total_metas'] = 0
                 list_carencias['inversionMeta'] = 0
                 for meta in MetaMensual.objects.filter(estado__id=estado.id,meta__periodo_id=5,
-                        meta__accionEstrategica__subCarencia__carencia__id=carencia.id).values('estado__nombreEstado','inversionAprox').annotate(
+                        meta__accionEstrategica__subCarencia__carencia__id=carencia.id).values('estado__nombreEstado').annotate(
                     ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
-                    jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+                    jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic'),
+                    inversionAprox=Sum('inversionAprox')):
 
                     total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
                             meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
@@ -3213,7 +3288,7 @@ class InformacionGeneralEndpoint(ProtectedResourceView):
 
 class AvancesPorPeriodoEndPoint(ProtectedResourceView):
     def get(self, request):
-        #prs = Presentation('static/ppt/avances_por_periodo.pptx')
+        #prs = Presentation('djangoISSSTE/static/ppt/avances_por_periodo.pptx')
         prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/avances_por_periodo.pptx')
         json_map = {}
         json_map['balance'] = []
@@ -3223,6 +3298,7 @@ class AvancesPorPeriodoEndPoint(ProtectedResourceView):
             list_datos['periodo'] = periodo.nombrePeriodo
             list_datos['metas'] = 0
             list_datos['avances'] = 0
+            list_datos['porcentaje'] = 0
             query = Q(avancePorMunicipio__periodo__id=periodo.id)
             usuario = get_usuario_for_token(request.GET.get('access_token'))
             if usuario.usuario.rol == "UE" or usuario.usuario.rol == "FE":
@@ -3251,11 +3327,14 @@ class AvancesPorPeriodoEndPoint(ProtectedResourceView):
 
                 list_datos['metas'] = total
 
+            if list_datos['metas']>0:
+                list_datos['porcentaje'] = (list_datos['avances']*100)/list_datos['metas']
+
             json_map['balance'].append(list_datos)
 
         table = prs.slides[0].shapes[0].table
         for x in range(1, 8):
-            cell = table.rows[x].cells[1]
+            cell = table.rows[x].cells[0]
             paragraph = cell.textframe.paragraphs[0]
             paragraph.font.size = Pt(12)
             paragraph.font.name = 'Arial'
@@ -3265,7 +3344,7 @@ class AvancesPorPeriodoEndPoint(ProtectedResourceView):
         sumAvances=0
         sumMetas=0
         for avance in json_map['balance']:
-            for x in range(1, 3):
+            for x in range(1, 4):
                 cell = table.rows[indice].cells[x]
                 paragraph = cell.textframe.paragraphs[0]
                 paragraph.font.size = Pt(10)
@@ -3276,6 +3355,7 @@ class AvancesPorPeriodoEndPoint(ProtectedResourceView):
             table.cell(indice, 0).text = str(avance['periodo'])
             table.cell(indice, 1).text = str('{0:,}'.format(avance['avances']))
             table.cell(indice, 2).text = str('{0:,}'.format(avance['metas']))
+            table.cell(indice, 3).text = str('{0:,.2f}'.format(avance['porcentaje']))
             sumAvances+=avance['avances']
             sumMetas+=avance['metas']
             indice += 1
@@ -3285,8 +3365,8 @@ class AvancesPorPeriodoEndPoint(ProtectedResourceView):
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
 
-        #prs.save('static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx')
-        #the_file = 'static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx'
+        #prs.save('djangoISSSTE/static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx')
+        #the_file = 'djangoISSSTE/static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx'
 
         prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx')
         the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx'
@@ -3337,9 +3417,10 @@ class PresentacioneAvancesEndPoint(ProtectedResourceView):
             list_carencias['total_metas'] = 0
             list_carencias['inversionMeta'] = 0
             for meta in MetaMensual.objects.filter(query_meta).\
-                    values('meta__accionEstrategica__subCarencia__carencia__nombreCarencia','inversionAprox')\
+                    values('meta__accionEstrategica__subCarencia__carencia__nombreCarencia')\
                     .annotate(ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
-                 jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+                    jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic'),
+                    inversionAprox=Sum('inversionAprox')):
 
                  total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
                          meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
@@ -3379,9 +3460,10 @@ class PresentacioneAvancesEndPoint(ProtectedResourceView):
                 list_estados['estado'] = avance[ 'avancePorMunicipio__estado__nombreEstado']
 
             for meta in MetaMensual.objects.filter(estado = estado,meta__periodo_id=5).\
-                    values('meta__accionEstrategica__subCarencia__carencia__nombreCarencia','inversionAprox')\
+                    values('meta__accionEstrategica__subCarencia__carencia__nombreCarencia')\
                     .annotate(ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
-                 jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+                    jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic'),
+                    inversionAprox=Sum('inversionAprox')):
 
                  total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
                          meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
@@ -3429,9 +3511,10 @@ class PresentacioneAvancesEndPoint(ProtectedResourceView):
                 list_carencias['total_metas'] = 0
                 for meta in MetaMensual.objects.filter(estado__id=estado.id,meta__periodo_id=5,
                                                        meta__accionEstrategica__subCarencia__carencia__id=carencia.id).values(
-                    'estado__nombreEstado','inversionAprox').annotate(
+                    'estado__nombreEstado').annotate(
                     ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'), jun=Sum('jun'),
-                    jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic')):
+                    jul=Sum('jul'), ago=Sum('ago'), sep=Sum('sep'), oct=Sum('oct'), nov=Sum('nov'), dic=Sum('dic'),
+                    inversionAprox=Sum('inversionAprox')):
                     total = meta['ene'] + meta['feb'] + meta['mar'] + meta['abr'] + meta['may'] + meta['jun'] + \
                             meta['jul'] + meta['ago'] + meta['sep'] + meta['oct'] + meta['nov'] + meta['dic']
 
@@ -3626,11 +3709,12 @@ class FechaUltimaActualizacionEndpoint(ListView):
         comp_date = date.today() - timedelta(days=15)
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
-        if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
-			avancesRol = AvanceMensual.objects.filter(fecha_ultima_modificacion__lt=comp_date,avancePorMunicipio__periodo__id=5)
-        else:
+        if usuario.usuario.rol == "FE" or usuario.usuario.rol == "UE":
             avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__estado__id = usuario.usuario.estado.id,
                                                       fecha_ultima_modificacion__lt=comp_date,avancePorMunicipio__periodo__id=5)
+        else:
+            avancesRol = AvanceMensual.objects.filter(fecha_ultima_modificacion__lt=comp_date,avancePorMunicipio__periodo__id=5)
+
 
         avances = avancesRol
 
@@ -3697,10 +3781,10 @@ class AvancePorMunicipioPptxEndpoint(ProtectedResourceView):
     def get(self, request):
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
-        if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
-			avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__periodo__id=5)
-        else:
+        if usuario.usuario.rol == "FE" or usuario.usuario.rol == "UE":
             avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__estado__id = usuario.usuario.estado.id,avancePorMunicipio__periodo__id=5)
+        else:
+            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__periodo__id=5)
 
         avances = avancesRol
 
@@ -3861,12 +3945,15 @@ class MetasSinAvancesPptxEndpoint(ProtectedResourceView):
     def get(self, request):
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
-        if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
-            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__periodo__id=5)
-            metasRol = MetaMensual.objects.filter(meta__periodo__id=5)
-        else:
+
+
+        if usuario.usuario.rol == "FE" or usuario.usuario.rol == "UE":
             avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__estado__id = usuario.usuario.estado.id,avancePorMunicipio__periodo__id=5)
             metasRol = MetaMensual.objects.filter(estado__id = usuario.usuario.estado.id,meta__periodo__id=5)
+        else:
+            avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__periodo__id=5)
+            metasRol = MetaMensual.objects.filter(meta__periodo__id=5)
+
 
         avances = avancesRol.values('avancePorMunicipio__meta__accionEstrategica__id')
         metas = metasRol.exclude(meta__accionEstrategica__id__in=avances)
@@ -4014,11 +4101,13 @@ class AvancesSinActividadEndpoint(ListView):
         comp_date = date.today() - timedelta(days=15)
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
-        if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'UR' or usuario.usuario.rol == 'FR':
-			avancesRol = AvanceMensual.objects.filter(fecha_ultima_modificacion__lt=comp_date,avancePorMunicipio__periodo__id=5)
-        else:
+
+        if usuario.usuario.rol == "FE" or usuario.usuario.rol == "UE":
             avancesRol = AvanceMensual.objects.filter(avancePorMunicipio__estado__id = usuario.usuario.estado.id,
                                                       fecha_ultima_modificacion__lt=comp_date,avancePorMunicipio__periodo__id=5)
+        else:
+            avancesRol = AvanceMensual.objects.filter(fecha_ultima_modificacion__lt=comp_date,avancePorMunicipio__periodo__id=5)
+
 
         avances = avancesRol
 
