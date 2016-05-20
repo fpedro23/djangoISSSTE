@@ -533,6 +533,13 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 	get_inversion_meta_formato.short_description = "Inversión Meta"
 	get_inversion_mar_jul.short_description = "Inversión Mar-Jul"
 
+	get_carencia.admin_order_field = 'meta__accionEstrategica__subCarencia__carencia'
+	get_subcarencia.admin_order_field = 'meta__accionEstrategica__subCarencia'
+	get_subcarencia.admin_order_field = 'meta__accionEstrategica__subCarencia'
+	get_accion.admin_order_field = 'meta__accionEstrategica'
+	get_inversion_formato.admin_order_field = 'inversionAprox'
+	get_monto_promedio.admin_order_field = 'meta__montoPromedio'
+	#get_inversion_meta_formato.admin_order_field = ''
 
 	# Esta funcion se ejecuta al desplegar la lista de Avances por municipio. Dentro
 	# de ella se aplica un filtro por el rol del usuario y de su estado
