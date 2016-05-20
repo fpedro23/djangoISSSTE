@@ -312,7 +312,7 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 	fieldsets = (
 		('Avance', {
 			'fields': (
-				'periodo', 'meta', 'estado', 'get_carencia', 'get_inversion_meta',
+				'periodo', 'meta', 'estado', 'get_carencia', 'get_inversion_meta', 'get_inversion_mar_jul',
 				'get_subcarencia', 'get_inversion','get_observaciones', 'get_unidad_medida','get_monto_promedio','get_accion',
 			)
 		}),
@@ -327,11 +327,11 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 
 	readonly_fields = ('get_carencia', 'get_subcarencia', 'get_unidad_medida', 'get_observaciones', 'get_enero',
 					   'get_febrero', 'get_marzo', 'get_abril', 'get_mayo', 'get_junio', 'get_julio', 'get_agosto',
-					   'get_septiembre', 'get_octubre', 'get_noviembre', 'get_diciembre', 'get_accion',
-					   'get_inversion', 'get_monto_promedio','get_inversion_formato', 'get_inversion_meta',)
+					   'get_septiembre', 'get_octubre', 'get_noviembre', 'get_diciembre', 'get_accion','get_inversion',
+					   'get_monto_promedio','get_inversion_formato', 'get_inversion_meta', 'get_inversion_mar_jul')
 
 	list_display = ('id', 'get_carencia', 'get_subcarencia', 'get_accion', 'periodo', 'estado', 'get_inversion_formato', 'get_monto_promedio', 'get_inversion_meta_formato')
-	ordering = ['meta__nombreMeta', ]
+	ordering = []
 
 
 	def get_action(self, obj):
@@ -490,12 +490,24 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 		inversion_meta = MetaMensual.objects.get(meta__id=val_meta, estado__id=val_estado).inversionAprox
 		return inversion_meta
 
+
 	def get_inversion_meta_formato(self, obj):
 		val_meta = obj.meta.id
 		val_estado = obj.estado.id
 		inversion = MetaMensual.objects.get(meta__id=val_meta, estado__id=val_estado).inversionAprox
 		inversion_meta = round(float(inversion), 2)
 		return "$%s%s" % (intcomma(int(inversion_meta)), ("%0.2f" % inversion_meta)[-3:])
+
+	def get_inversion_mar_jul(self, obj):
+		val_meta = obj.meta.id
+		monto = Meta.objects.get(id=val_meta).montoPromedio
+		estadoID = obj.estado.id
+		AvanceMunId = AvancePorMunicipio.objects.get(meta__id=val_meta, estado__id=estadoID).id
+		sumaAvances = 0
+		for avance in AvanceMensual.objects.filter(avancePorMunicipio__id=AvanceMunId):
+			sumaAvances = avance.mar + avance.abr + avance.may + avance.jun + avance.jul
+
+		return round(float(sumaAvances * monto), 2)
 
 	get_inversion.short_description = "Inversión Avance"
 	get_inversion_formato.short_description = "Inversión Avance"
@@ -519,6 +531,7 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 	get_monto_promedio.short_description = "Monto promedio"
 	get_inversion_meta.short_description = "Inversión Meta"
 	get_inversion_meta_formato.short_description = "Inversión Meta"
+	get_inversion_mar_jul.short_description = "Inversión Mar-Jul"
 
 
 	# Esta funcion se ejecuta al desplegar la lista de Avances por municipio. Dentro

@@ -10,4 +10,5 @@ djangoISSSTE/migrations/
 local_settings.py
 Projects/settingsOscar.py
 Projects/wsgiOscar.py
-Projects/mailData.txt
+Projects/mailData.tx
+sql
