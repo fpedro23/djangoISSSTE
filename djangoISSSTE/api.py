@@ -9,6 +9,7 @@ from django.db.models import Sum
 from django.http import HttpResponse, StreamingHttpResponse
 from django.db.models.aggregates import Count
 from django.db.models.query_utils import Q
+from django.contrib.humanize.templatetags.humanize import intcomma
 from django.http import HttpResponse
 from django.views import generic
 from django.views.generic.list import ListView
@@ -4252,3 +4253,26 @@ class AvancesSinActividadEndpoint(ListView):
         output.seek(0)
 
         return response
+
+class ListadoAvancesEndPoint(ProtectedResourceView):
+    def get(self, request, *args, **kwargs):
+        the_json = []
+        for singleAvance in AvancePorMunicipio.objects.all()[0:40]:
+            listado = {}
+            listado['id'] = singleAvance.id
+            listado['carencia'] = singleAvance.meta.accionEstrategica.subCarencia.carencia.nombreCarencia
+            listado['subCarencia'] = singleAvance.meta.accionEstrategica.subCarencia.nombreSubCarencia
+            listado['accion'] = singleAvance.meta.accionEstrategica.nombreAccion
+            listado['periodo'] = singleAvance.periodo.nombrePeriodo
+            listado['estado'] = singleAvance.estado.nombreEstado
+            listado['inversionAvance'] = '$'+(intcomma(int(singleAvance.inversionAprox))+("%0.2f" % singleAvance.inversionAprox)[-3:])
+            listado['monto'] = '$'+(intcomma(int(singleAvance.meta.montoPromedio))+("%0.2f" % singleAvance.meta.montoPromedio)[-3:])
+            totalMetas = 0
+            for metaMes in MetaMensual.objects.filter(meta__id = singleAvance.meta.id):
+                totalMetas = totalMetas + metaMes.inversionAprox
+
+            listado['inversionMeta'] = '$'+(intcomma(int(totalMetas))+("%0.2f" % totalMetas)[-3:])
+
+
+            the_json.append(listado)
+        return HttpResponse(json.dumps(the_json, indent=4, sort_keys=True, ensure_ascii=False), 'application/json')
