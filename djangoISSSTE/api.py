@@ -4257,7 +4257,7 @@ class AvancesSinActividadEndpoint(ListView):
 class ListadoAvancesEndPoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         the_json = []
-        for singleAvance in AvancePorMunicipio.objects.all()[0:40]:
+        for singleAvance in AvancePorMunicipio.objects.all():
             listado = {}
             listado['id'] = singleAvance.id
             listado['carencia'] = singleAvance.meta.accionEstrategica.subCarencia.carencia.nombreCarencia

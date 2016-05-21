@@ -16,6 +16,117 @@
       #changelist table thead th:first-child {width: inherit}
     </style>
   {% endif %}
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+   <!-- Magnific Popup core CSS file -->
+    <link rel="stylesheet" href="{% static "assets/Popup/magnific-popup.css"%}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <!-- Magnific Popup core JS file -->
+    <script src="{% static "assets/Popup/jquery.magnific-popup.js"%}"></script>
+    <!-- Magnific Popup core CSS file -->
+    <link rel="stylesheet" href="{% static "assets/Popup/site.css"%}">
+
+
+
+
+
+    <script>
+    var $pop = jQuery.noConflict();
+        $pop( document ).ready(function() {
+      $pop('#div-grafica').addClass("mfp-hide");
+    });
+
+    $pop('#tabla-exporta').hide();
+
+
+    $pop(function () {
+          $pop('.popup-modal').magnificPopup({
+            type: 'inline',
+            preloader: true,
+            modal: true,
+              fixedContentPos: false,
+            fixedBgPos: true,
+            overflowY: 'auto',
+            closeBtnInside: true,
+            preloader: false,
+            midClick: true,
+            removalDelay: 300,
+            mainClass: 'my-mfp-zoom-in'
+          });
+          $pop(document).on('click', '.popup-modal-dismiss', function (e) {
+            e.preventDefault();
+            $pop.magnificPopup.close();
+          });
+          $pop('.popup-exporta').magnificPopup({
+            type: 'inline',
+            preloader: false,
+            modal: true,
+              fixedContentPos: false,
+            fixedBgPos: true,
+            overflowY: 'auto',
+            closeBtnInside: true,
+            preloader: false,
+            midClick: true,
+            removalDelay: 300,
+            mainClass: 'my-mfp-zoom-in'
+          });
+          $pop(document).on('click', '.popup-exporta-dismiss', function (e) {
+            e.preventDefault();
+            $pop.magnificPopup.close();
+          });
+
+        });
+
+	</script>
+
+    <!--libs para exportar a excel, pdf y power point -->
+    <script type="text/javascript" src="{% static "assets/export/tableExport.js"%}"></script>
+	<script type="text/javascript" src="{% static "assets/export/jquery.base64.js"%}"></script>
+	<script type="text/javascript" src="{% static "assets/export/html2canvas.js"%}"></script>
+	<script type="text/javascript" src="{% static "assets/export/jspdf/libs/sprintf.js"%}"}></script>
+	<script type="text/javascript" src="{% static "assets/export/jspdf/jspdf.js"%}"></script>
+	<script type="text/javascript" src="{% static "assets/export/jspdf/libs/base64.js"%}"></script>
+    <script type="text/javascript" src="{% static "assets/export/FileSaver.min.js"%}"></script>
+    <script type="text/javascript" src="{% static "assets/js/jspdf.js"%}"></script>
+    <script type="text/javascript" src="{% static "assets/js/jspdf.min.js"%}"></script>
+    <script>
+        function PDF () {
+        var doc = new jsPDF();
+        var specialElementHandlers = {
+            '#editor': function (element, renderer) {
+                return true;
+            }
+        };
+
+        doc.fromHTML($('#datos').html(), 15, 15, {
+            'width': 200,
+                'elementHandlers': specialElementHandlers
+        });
+        doc.save('sample-file.pdf');
+        }
+
+    </script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="{% static "assets/export/jquery.table2excel.js"%}"></script>
+    <script>
+    var et$ = jQuery.noConflict();
+    et$(function() {
+                    et$("#enviaEXCEL2").click(function(){
+
+                    et$(".table2excel").table2excel({
+                        exclude: ".noExl",
+                        name: "Resultados"
+
+                    });
+                     });
+    });
+    </script>
+
+     <script type="text/javascript" src="{% static "assets/js/ajax-listado-acciones.js"%}"></script>
+
 {% endblock %}
 
 {% block extrahead %}
@@ -50,6 +161,46 @@
 {% block coltype %}flex{% endblock %}
 
 {% block content %}
+    <div id="tabla-exporta" >
+
+    </div>
+    <div id="modal-exporta" class="green-popup-block mfp-hide centerDiv"  style="width: 40%;">
+        <div class="row" style="background:linear-gradient(#206341,#206341,#1E613F,#276947,#206341)  ;border: 2px solid #ffffff;">
+            <div class="row exportarALERTA" style="padding-top: 15px;padding-left: 20px;width:100%"> EXPORTAR RESULTADOS </div>
+            <div class="row textoEXPORTAR" style="padding-left: 20px;width:100%;padding-top: 15px;">Seleccionar el formato en el que se exportar&aacute;n los resultados. </div>
+                    <div class="row " style="width: 60%;padding-top: 15px;margin-left: auto;margin-right: auto">
+                        <div class="col-md-4" >
+                            <article id="ver_datos">
+                                {% csrf_token %}
+                                <div class="pdf"  id="enviaPDF2" ></div>
+                            </article>
+                        </div>
+                        <div class="col-md-4" >
+                            <article id="ver_datos">
+                                {% csrf_token %}
+                                <!--<div class="excel" id="enviaEXCEL2" onClick ="$pp('#tabla-exporta2').show();$pp('#tablaExporta2').tableExport({type:'excel',escape:'false'}); $pp('#tabla-exporta2').hide();"></div>-->
+                                <div class="excel" id="enviaEXCEL2"></div>
+                            </article>
+                        </div>
+                        <div class="col-md-4" >
+                            <article id="ver_datos">
+                                {% csrf_token %}
+                                <!--<div class="ppt"  id="enviaPPT2" onClick ="$pp('#tabla-exporta2').show();$pp('#tablaExporta2').tableExport({type:'powerpoint',escape:'false'}); $pp('#tabla-exporta2').hide();"></div>-->
+                                <div class="ppt"  id="enviaPPT2"></div>
+
+                            </article>
+                        </div>
+            </div>
+            <div class="row" style="width: 60%;padding-top: 15px;margin-left: auto;margin-right: auto">
+                <article id="salir_exporta">
+                    {% csrf_token %}
+                    <div class="salirBTNC popup-exporta-dismiss" id="salirExporta" style="height: 30px">
+                    </div>
+                </article>
+            </div><br>
+        </div>
+    </div>
+
     <div id="welcome">Lista de Acciones</div>
   <div id="content-main">
     {% block object-tools %}
@@ -80,6 +231,14 @@
       {% endif %}
 
       {% block result_list %}
+
+          <div class="col-md-2">
+                <article id="ver_exporta">
+                    {% csrf_token %}
+                    <div class="col-xs-2 exportarBTN popup-exporta" href="#modal-exporta" id="exportar" style="height: 30px"></div>
+                </article>
+          </div>
+
           {% result_list cl %}
           {% if action_form and actions_on_bottom and cl.show_admin_actions %}{% admin_actions %}{% endif %}
       {% endblock %}
