@@ -312,8 +312,8 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 	fieldsets = (
 		('Avance', {
 			'fields': (
-				'periodo', 'meta', 'estado', 'get_carencia', 'get_inversion_meta', 'get_inversion_mar_jul',
-				'get_subcarencia', 'get_inversion','get_observaciones', 'get_unidad_medida','get_monto_promedio','get_accion',
+				'periodo', 'meta', 'estado', 'get_carencia', 'get_inversion_meta', 'get_subcarencia',
+				'get_inversion_mar_jul', 'get_observaciones', 'get_unidad_medida','get_inversion','get_monto_promedio','get_accion',
 			)
 		}),
 		('Meta', {

@@ -17,8 +17,8 @@
   font-weight: bold;
   color: #0E0E1E;
   text-align:right;
-  
-  background-image:url(../Imagenes/back_header.png);
+  background-color: white;
+  /*background-image:url(../Imagenes/back_header.png);*/
 }
 
 .titleSYSTEM{

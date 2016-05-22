@@ -43,6 +43,6 @@ def addcss(field, css):
 
 @register.filter(name='formatoNumero')
 def currency(field):
-    if field=='-': field=0
+    if field=='-' or field == "None": field=0
     moneda = round(float(field), 2)
     return "$%s%s" % (intcomma(int(moneda)), ("%0.2f" % moneda)[-3:])
