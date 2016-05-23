@@ -21,8 +21,8 @@ sys.path.append('/home/inclusioni/issste')
 sys.path.append('/home/inclusioni/issste/djangoISSSTE')
 
 # Activate your virtual env
-activate_env = os.path.expanduser("/home/inclusioni/isssteEnv/bin/activate_this.py")
-execfile(activate_env, dict(__file__=activate_env))
+#activate_env = os.path.expanduser("/home/inclusioni/isssteEnv/bin/activate_this.py")
+#execfile(activate_env, dict(__file__=activate_env))
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Projects.settings")
 
