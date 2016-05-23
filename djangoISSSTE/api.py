@@ -2442,8 +2442,15 @@ class ReportePptxEndpoint(ProtectedResourceView):
 
 class ListadoAvancesPPTXEndPoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
+
+        usuario = get_usuario_for_token(request.GET.get('access_token'))
+        if usuario.usuario.rol == 'AG' or usuario.usuario.rol == 'FC' or usuario.usuario.rol == 'UC':
+			avancesRol = AvancePorMunicipio.objects.all()
+        else:
+            avancesRol = AvancePorMunicipio.objects.filter(estado__id = usuario.usuario.estado.id)
+
         the_json = []
-        for singleAvance in AvancePorMunicipio.objects.all():
+        for singleAvance in avancesRol:
             listado = {}
             listado['id'] = singleAvance.id
             listado['carencia'] = singleAvance.meta.accionEstrategica.subCarencia.carencia.nombreCarencia
