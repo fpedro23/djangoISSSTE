@@ -55,18 +55,14 @@ function main_consulta() {
 
 
 
+
 }
 
 ///********************************************************************************************************************
 function PptxReporte() {
-    var URLavancePorMunicipio="/issste/api/AvancePorMunicipioPptx?access_token=" + newToken;
-    var URLmetasSinAvance="/issste/api/MetasSinAvancePptx?access_token=" + newToken;
-    var URLavancesSinActividad="/issste/api/AvancesSinActividadPptx?access_token=" + newToken;
+    var URL="/issste/api/PPTXlistadoAvances?access_token=" + newToken;
 
-    if (cualPpxt==1) {location.href = URLavancePorMunicipio;}
-    if (cualPpxt==2) {location.href = URLmetasSinAvance;}
-    if (cualPpxt==3) {location.href = URLavancesSinActividad;}
-
+   location.href = URL;
 
 }
 
@@ -132,7 +128,7 @@ function avancePorMunicipio() {
                 tablaI(data);
             },
             error: function (data) {
-                alert('error!!! ' + data.status);
+                //alert('error!!! ' + data.status);
             }
         });
     });

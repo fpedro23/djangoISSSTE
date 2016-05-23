@@ -202,6 +202,14 @@
     </div>
 
     <div id="welcome">Lista de Acciones</div>
+
+            <div style="width: 400px; left:850px;position: absolute">
+                <article id="ver_exporta">
+                    {% csrf_token %}
+                    <div class="col-xs-2 exportarBTN popup-exporta" href="#modal-exporta" id="exportar" style="height: 30px"></div>
+                </article>
+            </div>
+
   <div id="content-main">
     {% block object-tools %}
 
@@ -230,14 +238,8 @@
         <div>{{ cl.formset.management_form }}</div>
       {% endif %}
 
-      {% block result_list %}
 
-          <div class="col-md-2">
-                <article id="ver_exporta">
-                    {% csrf_token %}
-                    <div class="col-xs-2 exportarBTN popup-exporta" href="#modal-exporta" id="exportar" style="height: 30px"></div>
-                </article>
-          </div>
+      {% block result_list %}
 
           {% result_list cl %}
           {% if action_form and actions_on_bottom and cl.show_admin_actions %}{% admin_actions %}{% endif %}

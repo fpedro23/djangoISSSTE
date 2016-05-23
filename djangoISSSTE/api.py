@@ -1239,6 +1239,7 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
         json_map = {}
         carenciaDatos = Carencia.objects.get(id=carencia_id)
         json_map['carencia'] = carenciaDatos.nombreCarencia
+        nombreArchivo="listado_avances_metas_" + carenciaDatos.nombreCarencia
         json_map['resultados'] = []
         for subCarencia in subCarencias:
             # #print "SubCarencia"
@@ -1734,7 +1735,7 @@ class ReporteExcelAvancesEndpoint(generic.ListView):
 
         response = StreamingHttpResponse(FileWrapper(output),
                                          content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename="listado_avances_metas.xlsx"'
+        response['Content-Disposition'] = 'attachment; filename=' + nombreArchivo + ".xlsx"
         response['Content-Length'] = output.tell()
 
         output.seek(0)
@@ -2432,6 +2433,154 @@ class ReportePptxEndpoint(ProtectedResourceView):
         response = StreamingHttpResponse(FileWrapper(output),
                                          content_type='application/vnd.openxmlformats-officedocument.presentationml.presentation')
         response['Content-Disposition'] = 'attachment; filename="Reporte.pptx"'
+        response['Content-Length'] = output.tell()
+
+        output.seek(0)
+
+        return response
+
+
+class ListadoAvancesPPTXEndPoint(ProtectedResourceView):
+    def get(self, request, *args, **kwargs):
+        the_json = []
+        for singleAvance in AvancePorMunicipio.objects.all():
+            listado = {}
+            listado['id'] = singleAvance.id
+            listado['carencia'] = singleAvance.meta.accionEstrategica.subCarencia.carencia.nombreCarencia
+            listado['subCarencia'] = singleAvance.meta.accionEstrategica.subCarencia.nombreSubCarencia
+            listado['accion'] = singleAvance.meta.accionEstrategica.nombreAccion
+            listado['periodo'] = singleAvance.periodo.nombrePeriodo
+            listado['estado'] = singleAvance.estado.nombreEstado
+            listado['inversionAvance'] = singleAvance.inversionAprox
+            listado['monto'] = singleAvance.meta.montoPromedio
+            totalMetas = 0
+            for metaMes in MetaMensual.objects.filter(meta__id = singleAvance.meta.id):
+                totalMetas = totalMetas + metaMes.inversionAprox
+
+            listado['inversionMeta'] = totalMetas
+
+
+            the_json.append(listado)
+
+        output = StringIO.StringIO()
+        prs = Presentation()
+        slide = prs.slides.add_slide(prs.slide_layouts[5])
+        shapes = slide.shapes
+        shapes.title.text = 'Listado de Avances'
+
+        #renglones = resultados['reporte_general']['visitas_totales'] + 1
+        renglones = len(the_json)
+        if renglones < 12:
+            rows = renglones+1
+        else:
+            rows = 12
+        cols = 9
+        left = Inches(0.921)
+        top = Inches(1.2)
+        width = Inches(6.0)
+        height = Inches(0.8)
+
+        table = shapes.add_table(rows, cols, left, top, width, height).table
+
+        # set column widths
+        table.columns[0].width = Inches(1.0)
+        table.columns[1].width = Inches(1.0)
+        table.columns[2].width = Inches(1.0)
+        table.columns[3].width = Inches(1.0)
+        table.columns[4].width = Inches(1.0)
+        table.columns[5].width = Inches(1.0)
+        table.columns[6].width = Inches(1.0)
+        table.columns[7].width = Inches(1.0)
+        table.columns[8].width = Inches(1.0)
+
+
+        # write column headings
+        table.cell(0, 0).text = 'ID'
+        table.cell(0, 1).text = 'Carencia'
+        table.cell(0, 2).text = 'SubCarencia'
+        table.cell(0, 3).text = 'Accion'
+        table.cell(0, 4).text = 'Anio'
+        table.cell(0, 5).text = 'Estado'
+        table.cell(0, 6).text = 'Inversion Avance'
+        table.cell(0, 7).text = 'Monto Promedio'
+        table.cell(0, 8).text = 'Inversion Meta'
+
+
+        # write body cells
+        indice = 1
+        for avance in the_json:
+
+            if indice == 9:
+                indice = 1
+                slide = prs.slides.add_slide(prs.slide_layouts[5])
+                shapes = slide.shapes
+                shapes.title.text = 'Listado de Avances'
+
+                rows = 12
+                cols = 9
+                left = Inches(0.921)
+                top = Inches(1.2)
+                width = Inches(6.0)
+                height = Inches(0.8)
+
+                table = shapes.add_table(rows, cols, left, top, width, height).table
+                # set column widths
+                table.columns[0].width = Inches(1.0)
+                table.columns[1].width = Inches(1.0)
+                table.columns[2].width = Inches(1.0)
+                table.columns[3].width = Inches(1.0)
+                table.columns[4].width = Inches(1.0)
+                table.columns[5].width = Inches(1.0)
+                table.columns[6].width = Inches(1.0)
+                table.columns[7].width = Inches(1.0)
+                table.columns[8].width = Inches(1.0)
+
+
+
+            # write column headings
+            for x in range(0, 9):
+                cell = table.rows[0].cells[x]
+                paragraph = cell.textframe.paragraphs[0]
+                paragraph.font.size = Pt(8)
+                paragraph.font.name = 'Arial Black'
+                paragraph.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+
+            for x in range(0, 9):
+                cell = table.rows[indice].cells[x]
+                paragraph = cell.textframe.paragraphs[0]
+                paragraph.font.size = Pt(7)
+                paragraph.font.name = 'Arial'
+                paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
+
+           	table.cell(0, 0).text = 'ID'
+            table.cell(0, 1).text = 'Carencia'
+            table.cell(0, 2).text = 'SubCarencia'
+            table.cell(0, 3).text = 'Accion'
+            table.cell(0, 4).text = 'Anio'
+            table.cell(0, 5).text = 'Estado'
+            table.cell(0, 6).text = 'Inversion Avance'
+            table.cell(0, 7).text = 'Monto Promedio'
+            table.cell(0, 8).text = 'Inversion Meta'
+
+
+
+            # write body cells
+            table.cell(indice, 0).text = str(avance['id'])
+            table.cell(indice, 1).text = avance['carencia']
+            table.cell(indice, 2).text = avance['subCarencia']
+            table.cell(indice, 3).text = avance['accion']
+            table.cell(indice, 4).text = str(avance['periodo'])
+            table.cell(indice, 5).text = avance['estado']
+            table.cell(indice, 6).text = str(avance['inversionAvance'])
+            table.cell(indice, 7).text = str(avance['monto'])
+            table.cell(indice, 8).text = str(avance['inversionMeta'])
+
+            indice += 1
+
+        prs.save(output)
+        response = StreamingHttpResponse(FileWrapper(output),
+                                         content_type='application/vnd.openxmlformats-officedocument.presentationml.presentation')
+        response['Content-Disposition'] = 'attachment; filename="Listado_de_Avances.pptx"'
         response['Content-Length'] = output.tell()
 
         output.seek(0)

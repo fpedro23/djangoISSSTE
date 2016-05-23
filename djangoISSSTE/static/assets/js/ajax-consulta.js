@@ -629,6 +629,9 @@ function graficas(){
         case "Piramide":
             Piramide(SeriesCategorias);
             break;
+        case "Histograma":
+            histograma(SeriesCategorias, "Histograma (Avances vs Metas)");
+            break;
 
         case "Mapa":
                 //alert(JSON.parse(arregloDataMapa(datosJson)));
@@ -1446,6 +1449,43 @@ function columna2DGrafica(categorias,datas,titulo,nombreData){
         }]
     });
 }
+
+
+function histograma(Series,titulo){
+    $pp('#containerGrafica').highcharts({
+        title: {
+            text: titulo,
+            x: -20 //center
+        },
+        subtitle: {
+            text: '',
+            x: -20
+        },
+        xAxis: {
+            categories: Series.categories[0]
+        },
+        yAxis: {
+            title: {
+                text: 'Unidades'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            valueSuffix: ''
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        },
+        series: Series.serie
+    });
+};
 
 
 $j.date = function(dateObject) {
