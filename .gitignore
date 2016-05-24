@@ -7,6 +7,7 @@ env2-7/
 db.sqlite3/
 .idea/
 djangoISSSTE/migrations/
+djangoISSSTE/static/ppt/ppt-generados
 local_settings.py
 Projects/settingsOscar.py
 Projects/wsgiOscar.py

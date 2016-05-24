@@ -1327,14 +1327,14 @@ ul.messagelist li.error {
 .errorlist {
   position: absolute;
   font-size: 10px;
-    right: -100px;
+    right: 630px;
   padding: 2px;
   background-color: red;
   color: white;
     z-index: 50;
   margin-top: 0px;
   /* left: 10%; */
-
+    top:10px;
 }
 
 .border-error {
