@@ -224,7 +224,7 @@ class MetaMensualInLine(admin.TabularInline):
 class MetaAdmin(admin.ModelAdmin):
 	model = Meta
 	fields = ('accionEstrategica', 'periodo', 'montoPromedio', 'observaciones',)
-	list_display = ('get_carencia', 'get_subcarencia', 'get_accionEstrategica', 'periodo', 'get_inversion')
+	list_display = ('id','get_carencia', 'get_subcarencia', 'get_accionEstrategica', 'periodo', 'get_inversion')
 	inlines = [MetaMensualInLine, ]
 	can_delete = False
 
@@ -308,6 +308,7 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 	model = AvancePorMunicipio
 	inlines = [AvanceMensualInLine, ]
 	list_filter = [CarenciasFilter, SubCarenciasFilter, MetasFilter, PeriodosFilter, EstadoListFilter, ]
+	exclude = ['inversionMeta', ]
 
 	fieldsets = (
 		('Avance', {
@@ -330,7 +331,7 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 					   'get_septiembre', 'get_octubre', 'get_noviembre', 'get_diciembre', 'get_accion','get_inversion',
 					   'get_monto_promedio','get_inversion_formato', 'get_inversion_meta', 'get_inversion_mar_jul')
 
-	list_display = ('id', 'get_carencia', 'get_subcarencia', 'get_accion', 'periodo', 'estado', 'get_inversion_formato', 'get_monto_promedio', 'get_inversion_meta_formato')
+	list_display = ('id', 'get_carencia', 'get_subcarencia', 'get_accion', 'periodo', 'estado', 'get_inversion_formato', 'get_monto_promedio','get_inversion_meta_formato')
 	ordering = []
 
 
@@ -505,7 +506,7 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 		AvanceMunId = AvancePorMunicipio.objects.get(meta__id=val_meta, estado__id=estadoID).id
 		sumaAvances = 0
 		for avance in AvanceMensual.objects.filter(avancePorMunicipio__id=AvanceMunId):
-			sumaAvances = avance.mar + avance.abr + avance.may + avance.jun + avance.jul
+			sumaAvances = sumaAvances +  avance.mar + avance.abr + avance.may + avance.jun + avance.jul
 
 		return round(float(sumaAvances * monto), 2)
 
@@ -539,7 +540,7 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 	get_accion.admin_order_field = 'meta__accionEstrategica'
 	get_inversion_formato.admin_order_field = 'inversionAprox'
 	get_monto_promedio.admin_order_field = 'meta__montoPromedio'
-	#get_inversion_meta_formato.admin_order_field = ''
+	get_inversion_meta_formato.admin_order_field = 'inversionMeta'
 
 	# Esta funcion se ejecuta al desplegar la lista de Avances por municipio. Dentro
 	# de ella se aplica un filtro por el rol del usuario y de su estado

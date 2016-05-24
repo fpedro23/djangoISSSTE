@@ -1078,7 +1078,9 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
             the_list['dic'] = str(datos['dic'])
             suma = datos['ene'] + datos['feb'] + datos['mar'] + datos['abr'] + datos['may'] + datos['jun'] + \
                    datos['jul'] + datos['ago'] + datos['sep'] + datos['oct'] + datos['nov'] + datos['dic']
+            suma_mar_jul = datos['mar'] + datos['abr'] + datos['may'] + datos['jun']
             the_list['suma'] = str(suma)
+            the_list['sumaMar-jul'] = str(suma_mar_jul)
             the_list['inversion'] = str(suma * datos['avancePorMunicipio__meta__montoPromedio'])
             the_json['avance'].append(the_list)
 
