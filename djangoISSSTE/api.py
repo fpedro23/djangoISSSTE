@@ -364,6 +364,8 @@ class BuscadorEndpoint(ListView):
         json_map['reporte_por_estado'] = []  # Entrega avances mensuales por estado
         json_map['reporte_por_carencia'] = []  # Entrega avances mensuales por carencia
         json_map['reporte_por_accion'] = []  # Entrega avances mensuales por accion
+        json_map['reporte_avance_mes'] = []  # Entrega avances mensuales por mes
+        json_map['reporte_meta_mes'] = []  # Entrega metas mensuales por mes
 
         for reporte in resultados['reporte_general']:
             shortened_reporte = {}  # Utilizado para mejorar el aspecto de las llaves del json
@@ -494,6 +496,63 @@ class BuscadorEndpoint(ListView):
             if doAdd & doAddInversion:
                 json_map['reporte_general'].append(shortened_reporte)
 
+        shortened_reporte = {}
+        shortened_reporte['ene'] =0
+        shortened_reporte['feb'] =0
+        shortened_reporte['mar'] =0
+        shortened_reporte['abr'] =0
+        shortened_reporte['may'] =0
+        shortened_reporte['jun'] =0
+        shortened_reporte['jul'] =0
+        shortened_reporte['ago'] =0
+        shortened_reporte['sep'] =0
+        shortened_reporte['oct'] =0
+        shortened_reporte['nov'] =0
+        shortened_reporte['dic'] =0
+
+        for reporte in resultados['reporte_avance_mes']:
+            shortened_reporte['ene'] += round(reporte["ene"],0)
+            shortened_reporte['feb'] += round(reporte["feb"],0)
+            shortened_reporte['mar'] += round(reporte["mar"],0)
+            shortened_reporte['abr'] += round(reporte["abr"],0)
+            shortened_reporte['may'] += round(reporte["may"],0)
+            shortened_reporte['jun'] += round(reporte["jun"],0)
+            shortened_reporte['jul'] += round(reporte["jul"],0)
+            shortened_reporte['ago'] += round(reporte["ago"],0)
+            shortened_reporte['sep'] += round(reporte["sep"],0)
+            shortened_reporte['oct'] += round(reporte["oct"],0)
+            shortened_reporte['nov'] += round(reporte["nov"],0)
+            shortened_reporte['dic'] += round(reporte["dic"],0)
+        json_map['reporte_avance_mes'].append(shortened_reporte)
+
+        shortened_reporte = {}
+        shortened_reporte['ene'] =0
+        shortened_reporte['feb'] =0
+        shortened_reporte['mar'] =0
+        shortened_reporte['abr'] =0
+        shortened_reporte['may'] =0
+        shortened_reporte['jun'] =0
+        shortened_reporte['jul'] =0
+        shortened_reporte['ago'] =0
+        shortened_reporte['sep'] =0
+        shortened_reporte['oct'] =0
+        shortened_reporte['nov'] =0
+        shortened_reporte['dic'] =0
+
+        for reporte in resultados['reporte_meta_mes']:
+            shortened_reporte['ene'] += round(reporte["ene"],0)
+            shortened_reporte['feb'] += round(reporte["feb"],0)
+            shortened_reporte['mar'] += round(reporte["mar"],0)
+            shortened_reporte['abr'] += round(reporte["abr"],0)
+            shortened_reporte['may'] += round(reporte["may"],0)
+            shortened_reporte['jun'] += round(reporte["jun"],0)
+            shortened_reporte['jul'] += round(reporte["jul"],0)
+            shortened_reporte['ago'] += round(reporte["ago"],0)
+            shortened_reporte['sep'] += round(reporte["sep"],0)
+            shortened_reporte['oct'] += round(reporte["oct"],0)
+            shortened_reporte['nov'] += round(reporte["nov"],0)
+            shortened_reporte['dic'] += round(reporte["dic"],0)
+        json_map['reporte_meta_mes'].append(shortened_reporte)
 
         for reporte in resultados['reporte_por_estado']:
             shortened_reporte = {}

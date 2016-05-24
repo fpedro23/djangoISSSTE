@@ -516,6 +516,7 @@ function graficas(){
     var Series = new Object();
     var SeriesCategorias = new Object();
     var SeriesTipeadas = new Object();
+    var SeriesMeses = new Object();
 
     $pp('#pagina').hide();
     $pp('#div-grafica').removeClass("mfp-hide");
@@ -531,6 +532,7 @@ function graficas(){
         Series=jsonSeries(datosJson,tipoReporte);
         SeriesCategorias = jsonSeriesCategorias(datosJson,tipoReporte);
         SeriesTipeadas = jsonSeriesTipeada(datosJson,tipoReporte,datosGrafica);
+        SeriesMeses=jsonSeriesCategoriasMeses(datosJson);
     }else{
         if (tipoReporte=="Carencia") {
             for (var i = 0; i < datosJson.reporte_por_carencia.length; i++) {
@@ -542,6 +544,7 @@ function graficas(){
             Series = jsonSeries(datosJson, tipoReporte);
             SeriesCategorias = jsonSeriesCategorias(datosJson, tipoReporte);
             SeriesTipeadas = jsonSeriesTipeada(datosJson, tipoReporte, datosGrafica);
+            SeriesMeses=jsonSeriesCategoriasMeses(datosJson);
         }else{
             for (var i = 0; i < datosJson.reporte_por_accion.length; i++) {
                 categorias.push(datosJson.reporte_por_accion[i].nombreAccion);
@@ -552,6 +555,7 @@ function graficas(){
             Series = jsonSeries(datosJson, tipoReporte);
             SeriesCategorias = jsonSeriesCategorias(datosJson, tipoReporte);
             SeriesTipeadas = jsonSeriesTipeada(datosJson, tipoReporte, datosGrafica);
+            SeriesMeses=jsonSeriesCategoriasMeses(datosJson);
 
         }
 
@@ -630,7 +634,7 @@ function graficas(){
             Piramide(SeriesCategorias);
             break;
         case "Histograma":
-            histograma(SeriesCategorias, "Histograma (Avances vs Metas)");
+            histograma(SeriesMeses, "Histograma (Avances vs Metas)");
             break;
 
         case "Mapa":
@@ -798,6 +802,74 @@ function jsonSeriesCategorias(Datos,tipoReporte) {
     //console.log(Series.categories[0]);
     return Series;
 }
+
+
+
+function jsonSeriesCategoriasMeses(Datos) {
+    var Series = {
+        'serie': [],
+        'categories': []
+    };
+    var arregloSimple=new Array();
+    var arregloCategoria=new Array();
+    var arregloTotal=new Array();
+    var Data ="";
+
+
+    arregloTotal.push(Datos.reporte_meta_mes[0].ene);
+    arregloSimple.push(1*Datos.reporte_avance_mes[0].ene);
+    arregloCategoria.push("Enero");
+    arregloTotal.push(Datos.reporte_meta_mes[0].feb);
+    arregloSimple.push(1*Datos.reporte_avance_mes[0].feb);
+    arregloCategoria.push("Febrero");
+    arregloTotal.push(Datos.reporte_meta_mes[0].mar);
+    arregloSimple.push(1*Datos.reporte_avance_mes[0].mar);
+    arregloCategoria.push("Marzo");
+    arregloTotal.push(Datos.reporte_meta_mes[0].abr);
+    arregloSimple.push(1*Datos.reporte_avance_mes[0].abr);
+    arregloCategoria.push("Abril");
+    arregloTotal.push(Datos.reporte_meta_mes[0].may);
+    arregloSimple.push(1*Datos.reporte_avance_mes[0].may);
+    arregloCategoria.push("Mayo");
+    arregloTotal.push(Datos.reporte_meta_mes[0].jun);
+    arregloSimple.push(1*Datos.reporte_avance_mes[0].jun);
+    arregloCategoria.push("Junio");
+    arregloTotal.push(Datos.reporte_meta_mes[0].jul);
+    arregloSimple.push(1*Datos.reporte_avance_mes[0].jul);
+    arregloCategoria.push("Julio");
+    arregloTotal.push(Datos.reporte_meta_mes[0].ago);
+    arregloSimple.push(1*Datos.reporte_avance_mes[0].ago);
+    arregloCategoria.push("Agosto");
+    arregloTotal.push(Datos.reporte_meta_mes[0].sep);
+    arregloSimple.push(1*Datos.reporte_avance_mes[0].sep);
+    arregloCategoria.push("Septiembre");
+    arregloTotal.push(Datos.reporte_meta_mes[0].oct);
+    arregloSimple.push(1*Datos.reporte_avance_mes[0].oct);
+    arregloCategoria.push("Octubre");
+    arregloTotal.push(Datos.reporte_meta_mes[0].nov);
+    arregloSimple.push(1*Datos.reporte_avance_mes[0].nov);
+    arregloCategoria.push("Noviembre");
+    arregloTotal.push(Datos.reporte_meta_mes[0].dic);
+    arregloSimple.push(1*Datos.reporte_avance_mes[0].dic);
+    arregloCategoria.push("Diciembre");
+
+        Series.serie.push({
+           'name': 'Total de Avances',
+           'data': arregloSimple
+        });
+        Series.serie.push({
+           'name': 'Meta Total',
+           'data': arregloTotal
+        });
+        Series.categories.push(arregloCategoria);
+
+
+    //console.log(Series.serie);
+    //console.log(Series.categories[0]);
+    return Series;
+}
+
+
 
 function jsonSeries(Datos,tipoReporte) {
     var Series = {
