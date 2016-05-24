@@ -1017,8 +1017,8 @@ class FichaTecnicaForiPadAvancesEndpoint(ListView):
 #Clase para devolver datos de la ficha técnica
 class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
-        #prs = Presentation('djangoISSSTE/static/ppt/Ficha_Tecnica_Avance.pptx')
-        prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/Ficha_Tecnica_Avance.pptx')
+        prs = Presentation('djangoISSSTE/static/ppt/Ficha_Tecnica_Avance.pptx')
+        #prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/Ficha_Tecnica_Avance.pptx')
         # Obteniendo los datos de la url
         periodo_id = get_array_or_none(request.GET.get('periodo'))
         accion_id = get_array_or_none(request.GET.get('accion'))
@@ -1027,6 +1027,24 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
         avances = AvanceMensual.objects.filter(Q(avancePorMunicipio__periodo__id__in = periodo_id)&
                                                Q(avancePorMunicipio__meta__id__in = accion_id)&
                                                Q(avancePorMunicipio__estado__id__in=estado_id))
+
+        avancesEncabezado = AvancePorMunicipio.objects.filter(Q(periodo__id__in = periodo_id)&
+                                               Q(meta__id__in = accion_id)&
+                                               Q(estado__id__in=estado_id))
+
+        encabezado = avancesEncabezado.values(
+            'meta__accionEstrategica__subCarencia__carencia__nombreCarencia',
+            'meta__accionEstrategica__subCarencia__nombreSubCarencia',
+            'meta__accionEstrategica__nombreAccion',
+            'meta__accionEstrategica__unidadDeMedida__descripcionUnidad',
+            'meta__accionEstrategica__responsable__nombreResponsable',
+            'meta__observaciones',
+            'inversionAprox',
+            'meta__montoPromedio',
+            'estado__nombreEstado',
+            'periodo__nombrePeriodo',
+        )
+
         resultados = avances.values(
             'avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia',
             'avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia',
@@ -1039,6 +1057,8 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
             'avancePorMunicipio__estado__nombreEstado',
             'municipio__nombreMunicipio',
             'avancePorMunicipio__periodo__nombrePeriodo',
+            'avancePorMunicipio__estado__claveEstado',
+            'municipio__claveMunicipio',
             'municipio__latitud',
             'municipio__longitud',
         ).annotate(ene=Sum('ene'), feb=Sum('feb'), mar=Sum('mar'), abr=Sum('abr'), may=Sum('may'),
@@ -1048,19 +1068,20 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
         the_json = {}
         the_json['avance'] = []
         the_json['meta'] = []
-        if resultados[0] is not []:
-            the_json['responsable'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__responsable__nombreResponsable']
-            the_json['observaciones'] = resultados[0]['avancePorMunicipio__meta__observaciones']
-            the_json['periodo'] = str(resultados[0]['avancePorMunicipio__periodo__nombrePeriodo'])
-            the_json['carencia'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
-            the_json['subCarencia'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__subCarencia__nombreSubCarencia']
-            the_json['unidad'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__unidadDeMedida__descripcionUnidad']
-            the_json['montoPromedio'] = str(resultados[0]['avancePorMunicipio__meta__montoPromedio'])
-            the_json['accion'] = resultados[0]['avancePorMunicipio__meta__accionEstrategica__nombreAccion']
-            the_json['estado'] = resultados[0]['avancePorMunicipio__estado__nombreEstado']
+        if encabezado:
+            the_json['responsable'] = encabezado[0]['meta__accionEstrategica__responsable__nombreResponsable']
+            the_json['observaciones'] = encabezado[0]['meta__observaciones']
+            the_json['periodo'] = str(encabezado[0]['periodo__nombrePeriodo'])
+            the_json['carencia'] = encabezado[0]['meta__accionEstrategica__subCarencia__carencia__nombreCarencia']
+            the_json['subCarencia'] = encabezado[0]['meta__accionEstrategica__subCarencia__nombreSubCarencia']
+            the_json['unidad'] = encabezado[0]['meta__accionEstrategica__unidadDeMedida__descripcionUnidad']
+            the_json['montoPromedio'] = str(encabezado[0]['meta__montoPromedio'])
+            the_json['accion'] = encabezado[0]['meta__accionEstrategica__nombreAccion']
+            the_json['estado'] = encabezado[0]['estado__nombreEstado']
 
         for datos in resultados:
             the_list = {}
+            the_list['clave'] = datos['avancePorMunicipio__estado__claveEstado'] + datos['municipio__claveMunicipio']
             the_list['municipio'] = datos['municipio__nombreMunicipio']
             the_list['latitud'] = str(datos['municipio__latitud'])
             the_list['longitud'] = str(datos['municipio__longitud'])
@@ -1105,7 +1126,7 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
 
             the_json['meta'].append(the_meta_list)
 
-        if the_json.__len__()>0:
+        if encabezado:
             table = prs.slides[0].shapes[0].table
             table2 = prs.slides[1].shapes[0].table
             for x in range(0, 3):
@@ -1145,7 +1166,7 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
             table2.cell(1, 1).text = the_json['subCarencia']
             table2.cell(2, 1).text = the_json['accion']
 
-            table2 = prs.slides[0].shapes[1].table
+            table2 = prs.slides[1].shapes[1].table
             for x in range(0, 4):
                 cell = table2.rows[x].cells[1]
                 paragraph = cell.textframe.paragraphs[0]
@@ -1220,6 +1241,7 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
                         paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
 
                     # write body cells
+                    table.cell(indice, 0).text = avance['clave']
                     table.cell(indice, 1).text = avance['municipio']
                     table.cell(indice, 2).text = str(avance['ene'])
                     table.cell(indice, 3).text = str(avance['feb'])
@@ -1245,6 +1267,7 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
                         paragraph.font.color.rgb = RGBColor(0x0B, 0x0B, 0x0B)
 
                     # write body cells
+                    table2.cell(indice2, 0).text = avance['clave']
                     table2.cell(indice2, 1).text = avance['municipio']
                     table2.cell(indice2, 2).text = str(avance['ene'])
                     table2.cell(indice2, 3).text = str(avance['feb'])
@@ -1265,11 +1288,11 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
 
-        #prs.save('djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx')
-        #the_file = 'djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx'
+        prs.save('djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = 'djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx'
 
-        prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx')
-        the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx'
+        #prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx')
+        #the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx'
 
         filename = os.path.basename(the_file)
         chunk_size = 8192
@@ -2538,12 +2561,12 @@ class ListadoAvancesPPTXEndPoint(ProtectedResourceView):
 
         #renglones = resultados['reporte_general']['visitas_totales'] + 1
         renglones = len(the_json)
-        if renglones < 12:
+        if renglones < 9:
             rows = renglones+1
         else:
-            rows = 12
+            rows = 9
         cols = 9
-        left = Inches(0.921)
+        left = Inches(0.3)
         top = Inches(1.2)
         width = Inches(6.0)
         height = Inches(0.8)
@@ -2554,7 +2577,7 @@ class ListadoAvancesPPTXEndPoint(ProtectedResourceView):
         table.columns[0].width = Inches(1.0)
         table.columns[1].width = Inches(1.0)
         table.columns[2].width = Inches(1.0)
-        table.columns[3].width = Inches(1.0)
+        table.columns[3].width = Inches(1.5)
         table.columns[4].width = Inches(1.0)
         table.columns[5].width = Inches(1.0)
         table.columns[6].width = Inches(1.0)
@@ -2584,9 +2607,9 @@ class ListadoAvancesPPTXEndPoint(ProtectedResourceView):
                 shapes = slide.shapes
                 shapes.title.text = 'Listado de Avances'
 
-                rows = 12
+                rows = 9
                 cols = 9
-                left = Inches(0.921)
+                left = Inches(0.3)
                 top = Inches(1.2)
                 width = Inches(6.0)
                 height = Inches(0.8)
@@ -2596,7 +2619,7 @@ class ListadoAvancesPPTXEndPoint(ProtectedResourceView):
                 table.columns[0].width = Inches(1.0)
                 table.columns[1].width = Inches(1.0)
                 table.columns[2].width = Inches(1.0)
-                table.columns[3].width = Inches(1.0)
+                table.columns[3].width = Inches(1.5)
                 table.columns[4].width = Inches(1.0)
                 table.columns[5].width = Inches(1.0)
                 table.columns[6].width = Inches(1.0)
@@ -3601,8 +3624,8 @@ class AvancesPorPeriodoEndPoint(ProtectedResourceView):
 
 class PresentacioneAvancesEndPoint(ProtectedResourceView):
     def get(self, request):
-        #prs = Presentation('djangoISSSTE/static/ppt/presentacion_avances.pptx')
-        prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/presentacion_avances.pptx')
+        prs = Presentation('djangoISSSTE/static/ppt/presentacion_avances.pptx')
+        #prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/presentacion_avances.pptx')
         json_map = {}
         json_map['reporte1'] = []
         json_map['reporte2'] = []
@@ -3904,11 +3927,11 @@ class PresentacioneAvancesEndPoint(ProtectedResourceView):
 
         usuario = get_usuario_for_token(request.GET.get('access_token'))
 
-        #prs.save('djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx')
-        #the_file = 'djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx'
+        prs.save('djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = 'djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx'
 
-        prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx')
-        the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx'
+        #prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx')
+        #the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx'
 
         filename = os.path.basename(the_file)
         chunk_size = 8192
