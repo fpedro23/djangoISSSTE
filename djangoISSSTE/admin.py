@@ -283,7 +283,7 @@ class MetaAdmin(admin.ModelAdmin):
 
 	# Redireccionamiento cuando se modifica una nueva meta
 	def response_change(self, request, obj, post_url_continue=None):
-		if not request.POST.has_key('_addanother'):
+		if request.POST.has_key('_addanother'):
 			success_message = 'La meta \"%s\" se ha modificado exitosamente.' % obj.__str__()
 			self.message_user(request, success_message, level=messages.SUCCESS)
 			return HttpResponseRedirect('/catalogos')
@@ -493,6 +493,7 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 
 
 	def get_inversion_meta_formato(self, obj):
+		# return obj.inversionMeta
 		val_meta = obj.meta.id
 		val_estado = obj.estado.id
 		inversion = MetaMensual.objects.get(meta__id=val_meta, estado__id=val_estado).inversionAprox
