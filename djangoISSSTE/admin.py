@@ -505,7 +505,7 @@ class AvancePorMunicipioAdmin(admin.ModelAdmin):
 		AvanceMunId = AvancePorMunicipio.objects.get(meta__id=val_meta, estado__id=estadoID).id
 		sumaAvances = 0
 		for avance in AvanceMensual.objects.filter(avancePorMunicipio__id=AvanceMunId):
-			sumaAvances = avance.mar + avance.abr + avance.may + avance.jun + avance.jul
+			sumaAvances = sumaAvances +  avance.mar + avance.abr + avance.may + avance.jun + avance.jul
 
 		return round(float(sumaAvances * monto), 2)
 
