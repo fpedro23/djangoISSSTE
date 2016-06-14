@@ -74,16 +74,17 @@ $j(function() {
         }
     });
 
-    // $j('#id_meta').bind('change', function () {
-    //     var meta = $(this).val();
-    //     var periodo = $('#id_periodo').find('option:selected').val();
-    //     var valor = $('#id_estado').find('option:selected').val();
-    //      alert('META: '+ valor+','+ periodo+','+meta);
-    //     if (valor != null &&  periodo != null && meta != null) {
-    //         getAvanceForPeriodo(valor,periodo,meta, function (ans) {
-    //         });
-    //     }
-    // });
+     $j('#id_meta').bind('change', function () {
+         var meta = $(this).val();
+         var periodo = $('#id_periodo').find('option:selected').val();
+         var valor = $('#id_estado').find('option:selected').val();
+         $j("select#id_estado option[value='']").attr('selected', true);
+   //      alert('META: '+ valor+','+ periodo+','+meta);
+   //      if (valor != null &&  periodo != null && meta != null) {
+   //          getAvanceForPeriodo(valor,periodo,meta, function (ans) {
+   //          });
+   //      }
+     });
 
 
 });
