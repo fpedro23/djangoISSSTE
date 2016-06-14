@@ -2769,7 +2769,7 @@ class ReporteInicioEndpoint(ProtectedResourceView):
             reporte['reporte_total']['avance_educacion']['avances'] = the_list
             reporte['reporte_total']['avance_educacion']['total'] = 0
 
-        avances_totales_salud = avances.filter(avancemensual__avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id=3)
+        avances_totales_salud = avances.filter(avancemensual__avancePorMunicipio__meta__accionEstrategica__subCarencia__carencia__id__in=[3,4])
         the_list = []
         if avances_totales_salud:
             avances_values=get_avance_values(avances_totales_salud)
