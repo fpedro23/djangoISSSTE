@@ -11,29 +11,33 @@ $j(document).on('ready', function() {
     /*
         Only do the cleanup if the field didn't contain a value already
         this is used for the edit form
-     */
+    */
 
     var estadoId = $('#id_estado').find('option:selected').val();
     var municipioId = $j('.tamcontrolsel').find('option:selected').val();
     var munlenght = $j('.tamcontrolsel').length;
 
     var mismun=[];
-    if (munlenght>0 && parseInt(estadoId) >0){
-        for (i = 0; i < munlenght - 1; i++) {
+    var nom="";
+    var idmun;
+    //if (munlenght>0 && parseInt(estadoId) >0){
+       // for (i = 0; i < munlenght - 1; i++) {
 
-            mismun[i] = $j("select#id_avancemensual_set-" + i + "-municipio").val();
-            //alert(i + ',value:' + $j('.tamcontrolsel')[i].value + "estaoId=" + estadoId);
-            clearMunicipios3(i);
-        }
+         //   mismun[i] = $j("select#id_avancemensual_set-" + i + "-municipio").val();
+          // idmun= $j('.tamcontrolsel')[i].value;
+          // nom=$j("select#id_avancemensual_set-" + i + "-municipio option:selected").text();
+           //alert(i + ',value:' + $j('.tamcontrolsel')[i].value + "estaoId=" + estadoId + "nomMun" + nom);
+          // clearMunicipios3(i);
 
-            //obtiene municipios
-        getMunicipiosForEstado(estadoId, function (ans) {
-            populateMunicpiosSelect3(ans,mismun);
+           //$j("select#id_avancemensual_set-" + i + "-municipio").append('<option value="' + idmun + '">' + nom + '</option>');
+           //$j("select#id_avancemensual_set-" + i + "-municipio option[value=" + idmun + "]").attr('selected', true);
+       // }
 
-        });
-    }
-
-
+        //obtiene municipios
+        // getMunicipiosForEstado(estadoId, function (ans) {
+        //    populateMunicpiosSelect3(ans,mismun);
+        //   });
+   // }
 
     // I know, I'm calling this again, I'll get around to fixingt it
     /*$('#id_estado').on('change', function() {
@@ -54,6 +58,30 @@ $j(document).on('ready', function() {
         }
     });*/
 
+    $j(".tamcontrolsel").on("focus",function(){
+          idmun= $( this ).attr('id');
+          idmun= idmun.substring(21,23);
+          idmun= idmun.replace('-','');
+          nom=$( this).val();
+
+        //alert(idmun+"_"+nom);
+        if ( idmun < munlenght){
+            var txt = $j("select#id_avancemensual_set-" + idmun + "-municipio option:selected").text();
+            clearMunicipios3(idmun);
+            $j("select#id_avancemensual_set-" + idmun + "-municipio").append(
+                     '<option value="' + nom + '">' + txt + '</option>');
+            $j("select#id_avancemensual_set-" + idmun + "-municipio option[value=" + nom + "]").attr('selected', true);
+            //alert(txt);
+        }
+    });
+
+    $j(".tamcontrolsel").on("change",function(){
+            if ( idmun < munlenght){
+                $j("select#id_avancemensual_set-" + idmun + "-municipio option[value=" + nom + "]").attr('selected', true);
+                $( this).val(nom);
+            }
+    });
+
     $j("tr.add-row").on("click",function(){
         var estadoId = $('#id_estado').find('option:selected').val();
         var mismun=[];
@@ -66,8 +94,6 @@ $j(document).on('ready', function() {
                 populateMunicpiosSelect2(ans,mismun);
             });
     });
-
-
 });
 
 // PARA CARGA DE MUNICIPIO POR ESTADO SELECCIONADO
