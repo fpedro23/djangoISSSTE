@@ -27,6 +27,7 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
+
 ALLOWED_HOSTS = ['www.inclusionissste.mx']
 
 ADMIN_TOOLS_MENU = 'menu.CustomMenu'

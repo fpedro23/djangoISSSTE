@@ -14,14 +14,14 @@ os.environ['PYTHON_EGG_CACHE'] = '/eggCache'
 
 
 # Add the site-packages of the chosen virtualenv to work with
-site.addsitedir('/usr/local/apache24/htdocs/inclusioni/isssteEnv/lib/python2.7/site-packages')
+site.addsitedir('/var/www/html/isssteEnv/lib/python2.7/site-packages')
 
 # Add the app's directory to the PYTHONPATH
-sys.path.append('/usr/local/apache24/htdocs/inclusioni/djangoISSSTE')
-sys.path.append('/usr/local/apache24/htdocs/inclusioni/djangoISSSTE/djangoISSSTE')
+sys.path.append('/var/www/html/djangoISSSTE')
+sys.path.append('/var/www/html/djangoISSSTE/djangoISSSTE')
 
 # Activate your virtual env
-activate_env = os.path.expanduser("/usr/local/apache24/htdocs/inclusioni/isssteEnv/bin/activate_this.py")
+activate_env = os.path.expanduser("/var/www/html/isssteEnv/bin/activate_this.py")
 execfile(activate_env, dict(__file__=activate_env))
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Projects.settings")
