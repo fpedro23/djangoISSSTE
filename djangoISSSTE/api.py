@@ -1018,7 +1018,8 @@ class FichaTecnicaForiPadAvancesEndpoint(ListView):
 class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         #prs = Presentation('djangoISSSTE/static/ppt/Ficha_Tecnica_Avance.pptx')
-        prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/Ficha_Tecnica_Avance.pptx')
+        #prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/Ficha_Tecnica_Avance.pptx')
+        prs = Presentation('/usr/local/apache24/htdocs/inclusioni/djangoISSSTE/djangoISSSTE/static/ppt/Ficha_Tecnica_Avance.pptx')
         # Obteniendo los datos de la url
         periodo_id = get_array_or_none(request.GET.get('periodo'))
         accion_id = get_array_or_none(request.GET.get('accion'))
@@ -1291,8 +1292,11 @@ class FichaTecnicaAvancesEndpoint(ProtectedResourceView):
         #prs.save('djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx')
         #the_file = 'djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx'
 
-        prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx')
-        the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx'
+        #prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx')
+        #the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx'
+
+        prs.save('/usr/local/apache24/htdocs/inclusioni/djangoISSSTE/djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = '/usr/local/apache24/htdocs/inclusioni/djangoISSSTE/djangoISSSTE/static/ppt/ppt-generados/FichaTecnicaAvance_' + str(usuario.usuario.user.id) + '.pptx'
 
         filename = os.path.basename(the_file)
         chunk_size = 8192
@@ -3040,7 +3044,8 @@ class BalanceGeneralEndpoint(ProtectedResourceView):
     def get(self, request):
 
         #prs = Presentation('djangoISSSTE/static/ppt/balance_general.pptx')
-        prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/balance_general.pptx')
+        #prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/balance_general.pptx')
+        prs = Presentation('/usr/local/apache24/htdocs/inclusioni/djangoISSSTE/djangoISSSTE/static/ppt/balance_general.pptx')
 
         json_map = {}
         json_map['balance'] = []
@@ -3171,8 +3176,11 @@ class BalanceGeneralEndpoint(ProtectedResourceView):
         #prs.save('djangoISSSTE/static/ppt/ppt-generados/balance_general_' + str(usuario.usuario.user.id) + '.pptx')
         #the_file = 'djangoISSSTE/static/ppt/ppt-generados/balance_general_' + str(usuario.usuario.user.id) + '.pptx'
 
-        prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_general_' + str(usuario.usuario.user.id) + '.pptx')
-        the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_general_' + str(usuario.usuario.user.id) + '.pptx'
+        #prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_general_' + str(usuario.usuario.user.id) + '.pptx')
+        #the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_general_' + str(usuario.usuario.user.id) + '.pptx'
+
+        prs.save('/usr/local/apache24/htdocs/inclusioni/djangoISSSTE/djangoISSSTE/static/ppt/ppt-generados/balance_general_' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = '/usr/local/apache24/htdocs/inclusioni/djangoISSSTE/djangoISSSTE/static/ppt/ppt-generados/balance_general_' + str(usuario.usuario.user.id) + '.pptx'
 
         filename = os.path.basename(the_file)
         chunk_size = 8192
@@ -3188,7 +3196,8 @@ class BalanceAccionEndpoint(ProtectedResourceView):
     def get(self, request):
 
         #prs = Presentation('djangoISSSTE/static/ppt/balance_accion.pptx')
-        prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/balance_accion.pptx')
+        #prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/balance_accion.pptx')
+        prs = Presentation('/usr/local/apache24/htdocs/inclusioni/djangoISSSTE/djangoISSSTE/static/ppt/balance_accion.pptx')
 
         json_map = {}
         json_map['balance'] = []
@@ -3319,8 +3328,11 @@ class BalanceAccionEndpoint(ProtectedResourceView):
         #prs.save('djangoISSSTE/static/ppt/ppt-generados/balance_accion_' + str(usuario.usuario.user.id) + '.pptx')
         #the_file = 'djangoISSSTE/static/ppt/ppt-generados/balance_accion_' + str(usuario.usuario.user.id) + '.pptx'
 
-        prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_accion_' + str(usuario.usuario.user.id) + '.pptx')
-        the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_accion_' + str(usuario.usuario.user.id) + '.pptx'
+        #prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_accion_' + str(usuario.usuario.user.id) + '.pptx')
+        #the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_accion_' + str(usuario.usuario.user.id) + '.pptx'
+
+        prs.save('/usr/local/apache24/htdocs/inclusioni/djangoISSSTE/djangoISSSTE/static/ppt/ppt-generados/balance_accion_' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = '/usr/local/apache24/htdocs/inclusioni/djangoISSSTE/djangoISSSTE/static/ppt/ppt-generados/balance_accion_' + str(usuario.usuario.user.id) + '.pptx'
 
         filename = os.path.basename(the_file)
         chunk_size = 8192
@@ -3335,7 +3347,8 @@ class BalanceAccionEndpoint(ProtectedResourceView):
 class BalancePorEntidadEndpoint(ProtectedResourceView):
     def get(self, request):
         #prs = Presentation('djangoISSSTE/static/ppt/balance_por_estado.pptx')
-        prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/balance_por_estado.pptx')
+        #prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/balance_por_estado.pptx')
+        prs = Presentation('/usr/local/apache24/htdocs/inclusioni/djangoISSSTE/djangoISSSTE/static/ppt/balance_por_estado.pptx')
 
         json_map = {}
         json_map['balancePorEntidad'] = []
@@ -3441,8 +3454,11 @@ class BalancePorEntidadEndpoint(ProtectedResourceView):
         #prs.save('djangoISSSTE/static/ppt/ppt-generados/balance_por_estado' + str(usuario.usuario.user.id) + '.pptx')
         #the_file = 'djangoISSSTE/static/ppt/ppt-generados/balance_por_estado' + str(usuario.usuario.user.id) + '.pptx'
 
-        prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_por_estado_' + str(usuario.usuario.user.id) + '.pptx')
-        the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_por_estado_' + str(usuario.usuario.user.id) + '.pptx'
+        #prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_por_estado_' + str(usuario.usuario.user.id) + '.pptx')
+        #the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/balance_por_estado_' + str(usuario.usuario.user.id) + '.pptx'
+
+        prs.save('/usr/local/apache24/htdocs/inclusioni/djangoISSSTE/djangoISSSTE/static/ppt/ppt-generados/balance_por_estado_' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = '/usr/local/apache24/htdocs/inclusioni/djangoISSSTE/djangoISSSTE/static/ppt/ppt-generados/balance_por_estado_' + str(usuario.usuario.user.id) + '.pptx'
 
         filename = os.path.basename(the_file)
         chunk_size = 8192
@@ -3457,7 +3473,8 @@ class BalancePorEntidadEndpoint(ProtectedResourceView):
 class InformacionGeneralEndpoint(ProtectedResourceView):
     def get(self, request):
         #prs = Presentation('static/ppt/informacion_general.pptx')
-        prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/informacion_general.pptx')
+        #prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/informacion_general.pptx')
+        prs = Presentation('/usr/local/apache24/htdocs/inclusioni/djangoISSSTE/djangoISSSTE/static/ppt/informacion_general.pptx')
         json_map = {}
         json_map['balance'] = []
         for carencia in Carencia.objects.all():
@@ -3514,8 +3531,11 @@ class InformacionGeneralEndpoint(ProtectedResourceView):
         #prs.save('static/ppt/ppt-generados/informacion_general_' + str(usuario.usuario.user.id) + '.pptx')
         #the_file = 'static/ppt/ppt-generados/informacion_general_' + str(usuario.usuario.user.id) + '.pptx'
 
-        prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/informacion_general_' + str(usuario.usuario.user.id) + '.pptx')
-        the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/informacion_general_' + str(usuario.usuario.user.id) + '.pptx'
+        #prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/informacion_general_' + str(usuario.usuario.user.id) + '.pptx')
+        #the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/informacion_general_' + str(usuario.usuario.user.id) + '.pptx'
+
+        prs.save('/usr/local/apache24/htdocs/inclusioni/djangoISSSTE/djangoISSSTE/static/ppt/ppt-generados/informacion_general_' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = '/usr/local/apache24/htdocs/inclusioni/djangoISSSTE/djangoISSSTE/static/ppt/ppt-generados/informacion_general_' + str(usuario.usuario.user.id) + '.pptx'
 
         filename = os.path.basename(the_file)
         chunk_size = 8192
@@ -3530,7 +3550,8 @@ class InformacionGeneralEndpoint(ProtectedResourceView):
 class AvancesPorPeriodoEndPoint(ProtectedResourceView):
     def get(self, request):
         #prs = Presentation('djangoISSSTE/static/ppt/avances_por_periodo.pptx')
-        prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/avances_por_periodo.pptx')
+        #prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/avances_por_periodo.pptx')
+        prs = Presentation('/usr/local/apache24/htdocs/inclusioni/djangoISSSTE/djangoISSSTE/static/ppt/avances_por_periodo.pptx')
         json_map = {}
         json_map['balance'] = []
 
@@ -3609,8 +3630,11 @@ class AvancesPorPeriodoEndPoint(ProtectedResourceView):
         #prs.save('djangoISSSTE/static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx')
         #the_file = 'djangoISSSTE/static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx'
 
-        prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx')
-        the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx'
+        #prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx')
+        #the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx'
+
+        prs.save('/usr/local/apache24/htdocs/inclusioni/djangoISSSTE/djangoISSSTE/static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = '/usr/local/apache24/htdocs/inclusioni/djangoISSSTE/djangoISSSTE/static/ppt/ppt-generados/avances_por_periodo_' + str(usuario.usuario.user.id) + '.pptx'
 
         filename = os.path.basename(the_file)
         chunk_size = 8192
@@ -3625,7 +3649,8 @@ class AvancesPorPeriodoEndPoint(ProtectedResourceView):
 class PresentacioneAvancesEndPoint(ProtectedResourceView):
     def get(self, request):
         #prs = Presentation('djangoISSSTE/static/ppt/presentacion_avances.pptx')
-        prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/presentacion_avances.pptx')
+        #prs = Presentation('/home/inclusioni/issste/djangoISSSTE/static/ppt/presentacion_avances.pptx')
+        prs = Presentation('/usr/local/apache24/htdocs/inclusioni/djangoISSSTE/djangoISSSTE/static/ppt/presentacion_avances.pptx')
         json_map = {}
         json_map['reporte1'] = []
         json_map['reporte2'] = []
@@ -3930,8 +3955,11 @@ class PresentacioneAvancesEndPoint(ProtectedResourceView):
         #prs.save('djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx')
         #the_file = 'djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx'
 
-        prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx')
-        the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx'
+        #prs.save('/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx')
+        #the_file = '/home/inclusioni/issste/djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx'
+
+        prs.save('/usr/local/apache24/htdocs/inclusioni/djangoISSSTE/djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx')
+        the_file = '/usr/local/apache24/htdocs/inclusioni/djangoISSSTE/djangoISSSTE/static/ppt/ppt-generados/presentacion_de_avances_' + str(usuario.usuario.user.id) + '.pptx'
 
         filename = os.path.basename(the_file)
         chunk_size = 8192
