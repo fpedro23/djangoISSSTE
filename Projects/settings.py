@@ -108,8 +108,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'issste',
-        'USER': 'root',
-        'PASSWORD': 'T4kionet1.',
+        'USER': 'inclusion',
+        'PASSWORD': 'inclusion',
         'HOST': '',
         'PORT': '',
     }
